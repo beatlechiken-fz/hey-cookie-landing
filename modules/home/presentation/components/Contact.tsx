@@ -194,13 +194,14 @@ export default function Contact() {
                 </button>
               </form>
             ) : (
-              <div className="flex flex-col gap-4 text-[#C68642] text-[clamp(2rem,4vh,5rem)] items-center">
+              <div className="flex flex-col gap-4 text-[#C68642] text-[clamp(2rem,4vh,5rem)] items-center min-h-[400px]">
                 <svg
                   width="88"
                   height="88"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  className="mt-12"
                 >
                   <circle
                     cx="12"
