@@ -2,15 +2,15 @@
 
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 import { CustomBreakpoint } from "@/core/types/general";
-import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type RatingKey = "taste" | "texture" | "service";
 
-const ratingItems = [
-  { key: "taste", label: "Sabor" },
-  { key: "texture", label: "Consistencia y textura" },
-  { key: "service", label: "Atención" },
+const ratingItems: { key: RatingKey }[] = [
+  { key: "taste" },
+  { key: "texture" },
+  { key: "service" },
 ];
 
 const faces = [
@@ -54,6 +54,7 @@ function FaceIcon({
 }
 
 export default function Contact() {
+  const t = useTranslations("contact");
   const breakpointsConfig: Record<
     CustomBreakpoint,
     { min?: number; max?: number }
@@ -136,8 +137,8 @@ export default function Contact() {
         {/* FORMULARIO */}
         <div className="flex justify-center w-full">
           <div className="bg-white/80 backdrop-blur rounded-3xl p-10 shadow-lg w-[440px]">
-            <h3 className="text-3xl font-extrabold text-[#6B3E26] mb-8 text-center">
-              Te escuchamos
+            <h3 className="text-4xl font-title text-[#6B3E26] mb-8 text-center">
+              {t("listen")}
             </h3>
 
             {!sended ? (
@@ -145,7 +146,7 @@ export default function Contact() {
                 {ratingItems.map((item) => (
                   <div key={item.key}>
                     <p className="mb-2 font-semibold text-[#6B3E26]">
-                      {item.label}
+                      {t(`ratings.${item.key}`)}
                     </p>
                     <div className="flex gap-4">
                       {faces.map((face) => (
@@ -219,10 +220,8 @@ export default function Contact() {
                     stroke-linejoin="round"
                   />
                 </svg>
-                <span className="font-bold">Gracias!</span>
-                <span className="text-center">
-                  Tu opinión es muy importante
-                </span>
+                <span className="font-bold">{t("thanks")}</span>
+                <span className="text-center">{t("important")}</span>
               </div>
             )}
           </div>
@@ -240,17 +239,16 @@ export default function Contact() {
               breakpoint === "clg" || breakpoint === "cmd" ? "left" : "center",
           }}
         >
-          <h3 className="text-[clamp(3.5rem,4.5vw,5rem)] font-extrabold bg-gradient-to-r from-[#8A3414] via-[#C68642] to-[#D7B07A] bg-clip-text text-transparent leading-tight">
-            Galletas para tus eventos
+          <h3 className="text-[clamp(3.5rem,4.5vw,5rem)] bg-gradient-to-r from-[#8A3414] via-[#C68642] to-[#D7B07A] bg-clip-text text-transparent leading-tight font-extrabold font-subtitle">
+            {t("title")}
           </h3>
 
           <p className="mt-6 text-[clamp(1.2rem,1.7vw,1.9rem)] text-[#6B3E26]/80 leading-tight">
-            Cotizamos pedidos especiales para eventos, regalos corporativos y
-            celebraciones. Escríbenos y creemos algo delicioso juntos.
+            {t("description")}
           </p>
 
           <p className="mt-6 text-2xl font-semibold text-[#6B3E26]">
-            📞 <span className="ml-2 text-[#47a2a5ff]">443 123 67 33</span>
+            📞 <span className="ml-2 text-[#47a2a5ff]">{t("tel")}</span>
           </p>
         </div>
       </div>

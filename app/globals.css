@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-title: var(--font-pacifico);
+  --font-subtitle: var(--font-dancing);
+  --font-body: var(--font-montserrat);
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -15,4 +21,16 @@ body {
 .vintage-bg {
   background: radial-gradient(circle at 15% 20%, #c56a4a33 0%, transparent 40%),
     radial-gradient(circle at 85% 80%, #7c8c4233 0%, transparent 40%), #f5efe6;
+}
+
+.font-title {
+  font-family: var(--font-title);
+}
+
+.font-subtitle {
+  font-family: var(--font-subtitle);
+}
+
+.font-body {
+  font-family: var(--font-body);
 }

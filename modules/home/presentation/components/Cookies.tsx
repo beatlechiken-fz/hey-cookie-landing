@@ -13,9 +13,8 @@ const cookies = [
   {
     id: 1,
     image: "/img/vc-product-splash-v2.png",
-    name: "Vainilla Chips",
-    description:
-      "Galleta clásica de vainilla rellena de chispas de chocolate Hershey con cobertura de ganache de choclate y una perla de chocolate blanco.",
+    name: "vainilla.name",
+    description: "vainilla.description",
     price: "1pz $25.00",
     sale: "2pz $40.00",
     sale2: "3pz $55.00",
@@ -23,9 +22,8 @@ const cookies = [
   {
     id: 2,
     image: "/img/ci-product-splash-v2.png",
-    name: "Chocolate intenso",
-    description:
-      "Para los amantes del chocolate, elegante galleta de cocoa rellena de chispas de chocolate Hershey, cubierta con ganache de chocolate y cacao triturado.",
+    name: "chocolate.name",
+    description: "chocolate.description",
     price: "1pz $25.00",
     sale: "2pz $40.00",
     sale2: "3pz $55.00",
@@ -33,9 +31,8 @@ const cookies = [
   {
     id: 3,
     image: "/img/rv-product-splash-v2.png",
-    name: "Red Velvet",
-    description:
-      "Disfruta de la navidad eterna con esta galleta innovadora del clásico Red Velvet con cobertura de azucar glass con arándamos",
+    name: "red.name",
+    description: "red.description",
     price: "1pz $25.00",
     sale: "2pz $40.00",
     sale2: "3pz $55.00",
@@ -43,9 +40,8 @@ const cookies = [
   {
     id: 4,
     image: "/img/mr-product-splash.png",
-    name: "Marmoleada",
-    description:
-      "Disfruta de lo mejor de dos mundos con esta deliciosa galleta de vainilla y cocoa con relleno de chispas de chocolate Hershey y cobertura de ganache de chocolate y nuez",
+    name: "marmoleada.name",
+    description: "marmoleada.description",
     price: "1pz $25.00",
     sale: "2pz $40.00",
     sale2: "3pz $55.00",
@@ -53,9 +49,8 @@ const cookies = [
   {
     id: 5,
     image: "/img/mt-product-splash.png",
-    name: "Matcha",
-    description:
-      "Si te gustan los sabores fuertes, esta galleta es para ti, elaborada a base de matcha con relleno de chocolate blanco y coco, cobertura de chocolate blanco con coco tostado",
+    name: "matcha.name",
+    description: "matcha.description",
     price: "1pz $25.00",
     sale: "2pz $40.00",
     sale2: "3pz $55.00",
@@ -63,9 +58,8 @@ const cookies = [
   {
     id: 6,
     image: "/img/ry-product-splash.png",
-    name: "Reyes",
-    description:
-      "Esta galleta de edición limitada le agrega un toque innovador a nuestra galleta clásica al cambiar la cobertura por chocolate blanco y ate.",
+    name: "reyes.name",
+    description: "reyes.description",
     price: "1pz $25.00",
     sale: "2pz $40.00",
     sale2: "3pz $55.00",
@@ -73,10 +67,15 @@ const cookies = [
 ];
 
 export default function Cookies() {
-  const t = useTranslations("home");
+  const t = useTranslations("cookies");
+
+  const cookiesTranslated = cookies.map((cookie) => ({
+    ...cookie,
+    name: t(cookie.name),
+    description: t(cookie.description),
+  }));
 
   const swipeConfidenceThreshold = 80;
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const breakpointsConfig: Record<
     CustomBreakpoint,
@@ -117,7 +116,7 @@ export default function Cookies() {
     setActiveIndex(index);
   };
 
-  const activeCookie = cookies[activeIndex];
+  const activeCookie = cookiesTranslated[activeIndex];
 
   return (
     <main className="relative w-full overflow-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]">
@@ -150,8 +149,8 @@ export default function Cookies() {
           paddingRight: breakpoint === "cxs" ? "20px" : "48px",
         }}
       >
-        <h2 className="text-5xl font-extrabold text-[#DA6C94] text-center">
-          Sweet Cookies
+        <h2 className="text-5xl text-[#DA6C94] text-center font-title">
+          {t("title")}
         </h2>
 
         <div className="w-full flex justify-center pt-4">
@@ -231,18 +230,18 @@ export default function Cookies() {
               ${hasOverflow ? "justify-start" : "justify-center"}
             `}
           >
-            {cookies.map((cookie, index) => (
+            {cookiesTranslated.map((cookie, index) => (
               <button
                 key={cookie.id}
                 onClick={() => changeCookie(index)}
                 className={`
-        text-lg font-semibold transition-all duration-300 cursor-pointer
-        ${
-          activeIndex === index
-            ? "text-[#377F81] scale-110"
-            : "text-[#377F81]/70 hover:text-[#6B3E26]"
-        }
-      `}
+                  text-lg font-semibold transition-all duration-300 cursor-pointer
+                  ${
+                    activeIndex === index
+                      ? "text-[#377F81] scale-110"
+                      : "text-[#377F81]/70 hover:text-[#6B3E26]"
+                  }
+                `}
               >
                 {cookie.name}
               </button>
@@ -253,10 +252,10 @@ export default function Cookies() {
             <button
               onClick={() => scrollMenu("right")}
               className="
-        absolute right-3 top-1/2 -translate-y-1/2
-        z-10 text-3xl text-[#6B3E26]
-        hover:scale-110 transition cursor-pointer
-      "
+                absolute right-3 top-1/2 -translate-y-1/2
+                z-10 text-3xl text-[#6B3E26]
+                hover:scale-110 transition cursor-pointer
+              "
             >
               ›
             </button>
@@ -357,13 +356,13 @@ export default function Cookies() {
                     font-extrabold
                     bg-gradient-to-r
                     from-[#3A1F14]
-                    via-[#7A4A32]
-                    to-[#B07A52]
+                    via-[#AA6A42]
+                    to-[#A07A42]
                     bg-clip-text
                     leading-tight
                     text-transparent
+                    font-subtitle
                   "
-                  style={{ textShadow: "0 4px 16px rgba(58, 31, 20, 0.28)" }}
                 >
                   {activeCookie.name}
                 </h3>

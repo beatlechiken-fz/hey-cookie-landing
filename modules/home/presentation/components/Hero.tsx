@@ -7,7 +7,7 @@ import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 
 export default function Hero() {
-  const t = useTranslations("home");
+  const t = useTranslations("hero");
 
   const breakpointsConfig: Record<
     CustomBreakpoint,
@@ -34,26 +34,26 @@ export default function Hero() {
           {/* Top Right */}
           <svg
             className="
-    absolute
-    top-[-520px]
-    right-[-520px]
-    w-[1400px]
-    h-[1400px]
-    z-0
-    pointer-events-none
-  "
+              absolute
+              top-[-520px]
+              right-[-520px]
+              w-[1400px]
+              h-[1400px]
+              z-0
+              pointer-events-none
+            "
             viewBox="0 0 400 400"
             preserveAspectRatio="xMidYMid meet"
           >
             <path
               d="
-      M200 30
-      C285 20, 365 95, 380 185
-      C395 265, 330 350, 235 370
-      C140 395, 55 330, 35 235
-      C15 135, 90 45, 200 30
-      Z
-    "
+                M200 30
+                C285 20, 365 95, 380 185
+                C395 265, 330 350, 235 370
+                C140 395, 55 330, 35 235
+                C15 135, 90 45, 200 30
+                Z
+              "
               fill="#E6C7A5"
             />
           </svg>
@@ -110,7 +110,18 @@ export default function Hero() {
 
             <div className="w-full">
               <div
-                className="w-full flex text-[clamp(2.5rem,5vw,5rem)] font-bold text-[#6B3E26] leading-tight flex-col"
+                className="w-full 
+                    flex 
+                    text-[clamp(2.5rem,5vw,5rem)]  
+                    bg-gradient-to-r
+                    from-[#3A1F14]
+                    via-[#AA6A42]
+                    to-[#F09A92]
+                    bg-clip-text
+                    leading-tight
+                    text-transparent 
+                    flex-col 
+                    font-title"
                 style={{
                   gap: breakpoint !== "clg" ? "14px" : "0",
                   justifyContent: breakpoint !== "clg" ? "center" : "start",
@@ -118,8 +129,10 @@ export default function Hero() {
                   marginTop: breakpoint !== "clg" ? "24px" : "0",
                 }}
               >
-                <h1>Un bocado</h1>
-                <h1 className="text-[#C68642]">al corazón</h1>
+                <h1 className="font-title">{t("title1")}</h1>
+                <h1 className="bg-gradient-to-r from-[#8A3414] via-[#C68642] to-[#D7B07A] bg-clip-text text-transparent">
+                  {t("title2")}
+                </h1>
               </div>
 
               <p
@@ -129,8 +142,7 @@ export default function Hero() {
                   width: breakpoint !== "clg" ? "100%" : "90%",
                 }}
               >
-                Galletas artesanales con mantequilla real, sabores intensos y un
-                toque nostálgico que enamora.
+                {t("titleDescription")}
               </p>
 
               <div
@@ -149,7 +161,7 @@ export default function Hero() {
                   }}
                   className="px-8 py-4 rounded-full bg-[#6B3E26] text-white font-semibold hover:bg-[#C68642] transition cursor-pointer"
                 >
-                  Galletas
+                  {t("cookiesButton")}
                 </button>
 
                 <a
@@ -158,7 +170,7 @@ export default function Hero() {
                   rel="noopener noreferrer"
                   className="px-8 py-4 rounded-full border-2 border-[#6B3E26] text-[#6B3E26] font-semibold hover:bg-[#6B3E26] hover:text-white transition cursor-pointer"
                 >
-                  Cotizar
+                  {t("quoteButton")}
                 </a>
               </div>
             </div>

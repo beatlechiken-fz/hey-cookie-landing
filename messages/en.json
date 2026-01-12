@@ -1,6 +1,49 @@
 {
-  "home": {
-    "title": "Bienvenido",
-    "description": "Esta es la versión en español"
+  "hero": {
+    "title1": "A bite",
+    "title2": "to the heart",
+    "titleDescription": "Handcrafted cookies made with real butter, bold flavors, and a nostalgic touch that makes you fall in love.",
+    "cookiesButton": "Cookies",
+    "quoteButton": "Get a quote"
+  },
+  "cookies": {
+    "vainilla": {
+      "name": "Vanilla Chips",
+      "description": "Classic vanilla cookie filled with Hershey’s chocolate chips, topped with chocolate ganache and a white chocolate pearl."
+    },
+    "chocolate": {
+      "name": "Intense Chocolate",
+      "description": "For true chocolate lovers: an elegant cocoa cookie filled with Hershey’s chocolate chips, topped with chocolate ganache and crushed cocoa."
+    },
+    "red": {
+      "name": "Red Velvet",
+      "description": "Enjoy a taste of everlasting holidays with this innovative Red Velvet cookie, topped with powdered sugar and cranberries."
+    },
+    "marmoleada": {
+      "name": "Marbled",
+      "description": "The best of both worlds: vanilla and cocoa cookie filled with Hershey’s chocolate chips, topped with chocolate ganache and walnuts."
+    },
+    "matcha": {
+      "name": "Matcha",
+      "description": "For bold flavor lovers: matcha-based cookie filled with white chocolate and coconut, topped with white chocolate and toasted coconut."
+    },
+    "reyes": {
+      "name": "Kings Cake Cookie",
+      "description": "A limited-edition cookie that reinvents our classic recipe with a white chocolate coating and traditional fruit paste."
+    },
+    "title": "Sweet Cookies"
+  },
+  "contact": {
+    "listen": "We’re listening",
+    "thanks": "Thank you!",
+    "important": "Your opinion means a lot to us",
+    "title": "Cookies for your events",
+    "description": "We create custom cookie orders for events, corporate gifts, and celebrations. Write to us and let’s make something delicious together.",
+    "tel": "443 123 67 33",
+    "ratings": {
+      "taste": "Taste",
+      "texture": "Texture & consistency",
+      "service": "Customer service"
+    }
   }
 }

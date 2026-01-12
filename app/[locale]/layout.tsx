@@ -1,23 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Dancing_Script, Pacifico, Montserrat } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import "../../app/globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const pacifico = Pacifico({
   subsets: ["latin"],
+  weight: "400",
+  variable: "--font-pacifico",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dancingScript = Dancing_Script({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-dancing",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  variable: "--font-body",
 });
 
 export const metadata: Metadata = {
-  title: "My App",
-  description: "Multilanguage app",
+  title: "Hey Cookie",
+  description: "Cookies & repostería",
 };
 
 type Props = {
@@ -26,17 +35,22 @@ type Props = {
 };
 
 export default async function RootLayout({ children, params }: Props) {
-  const { locale } = await params;
+  const { locale } = await params; // ✅ AQUÍ
+
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
+  setRequestLocale(locale);
+  const messages = await getMessages();
+
   return (
-    <html lang={locale} className="overflow-x-hidden">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
-      >
-        <NextIntlClientProvider locale={locale}>
+    <html
+      lang={locale}
+      className={`overflow-x-hidden ${pacifico.variable} ${dancingScript.variable} ${montserrat.variable}`}
+    >
+      <body className="font-body antialiased overflow-x-hidden">
+        <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
       </body>
