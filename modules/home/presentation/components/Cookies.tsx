@@ -143,7 +143,13 @@ export default function Cookies() {
       </svg>
 
       {/* HEADER */}
-      <div className="relative z-10 px-20 pt-32">
+      <div
+        className="relative z-10 pt-32"
+        style={{
+          paddingLeft: breakpoint === "cxs" ? "20px" : "48px",
+          paddingRight: breakpoint === "cxs" ? "20px" : "48px",
+        }}
+      >
         <h2 className="text-5xl font-extrabold text-[#DA6C94] text-center">
           Sweet Cookies
         </h2>
@@ -167,11 +173,11 @@ export default function Cookies() {
               >
                 <path
                   d="
-          M0 10
-          C6 2 12 18 18 10
-          C24 2 30 18 36 10
-          C42 2 48 18 54 10
-        "
+                    M0 10
+                    C6 2 12 18 18 10
+                    C24 2 30 18 36 10
+                    C42 2 48 18 54 10
+                  "
                   stroke="rgba(200, 184, 160, 1)"
                   stroke-width="1.8"
                   fill="none"
@@ -203,7 +209,7 @@ export default function Cookies() {
             <button
               onClick={() => scrollMenu("left")}
               className="
-        absolute left-0 top-1/2 -translate-y-1/2
+        absolute left-3 top-1/2 -translate-y-1/2
         z-10 text-3xl text-[#6B3E26]
         hover:scale-110 transition cursor-pointer
       "
@@ -216,14 +222,14 @@ export default function Cookies() {
           <div
             ref={menuRef}
             className={`
-    flex gap-10
-    max-w-[70%]
-    overflow-x-auto overflow-y-hidden
-    whitespace-nowrap
-    px-6
-    ${styles.scrollbarHide}
-    ${hasOverflow ? "justify-start" : "justify-center"}
-  `}
+              flex gap-10
+              w-[75%]
+              overflow-x-auto overflow-y-hidden
+              whitespace-nowrap
+              px-4
+              ${styles.scrollbarHide}
+              ${hasOverflow ? "justify-start" : "justify-center"}
+            `}
           >
             {cookies.map((cookie, index) => (
               <button
@@ -247,7 +253,7 @@ export default function Cookies() {
             <button
               onClick={() => scrollMenu("right")}
               className="
-        absolute right-0 top-1/2 -translate-y-1/2
+        absolute right-3 top-1/2 -translate-y-1/2
         z-10 text-3xl text-[#6B3E26]
         hover:scale-110 transition cursor-pointer
       "
@@ -259,7 +265,13 @@ export default function Cookies() {
       </div>
 
       {/* CAROUSEL CONTENT */}
-      <section className="relative z-10 mt-6 px-20 pb-36 flex overflow-hidden">
+      <section
+        className="relative z-10 mt-6 pb-36 flex overflow-hidden"
+        style={{
+          paddingLeft: breakpoint === "cxs" ? "8px" : "48px",
+          paddingRight: breakpoint === "cxs" ? "8px" : "48px",
+        }}
+      >
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -276,7 +288,8 @@ export default function Cookies() {
           {/* LEFT ARROW */}
           <button
             onClick={() => changeCookie(activeIndex - 1)}
-            className="absolute left-16 top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer"
+            className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer"
+            style={{ left: breakpoint === "cxs" ? "32px" : "56px" }}
           >
             ‹
           </button>
@@ -297,11 +310,11 @@ export default function Cookies() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.4 }}
                   className="
-    relative
-    aspect-square
-    rounded-full
-    overflow-hidden
-  "
+                    relative
+                    aspect-square
+                    rounded-full
+                    overflow-hidden
+                  "
                   style={{
                     width:
                       breakpoint === "clg"
@@ -331,7 +344,7 @@ export default function Cookies() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.4 }}
-                className="w-[85%] h-full"
+                className="h-full"
                 style={{
                   paddingTop: breakpoint === "clg" ? "82px" : "0px",
                   textAlign: breakpoint === "clg" ? "left" : "center",
@@ -340,26 +353,27 @@ export default function Cookies() {
               >
                 <h3
                   className="
-    text-[clamp(3.5rem,5.3vw,6rem)]
-    font-extrabold
-    bg-gradient-to-r
-    from-[#3A1F14]
-    via-[#7A4A32]
-    to-[#B07A52]
-    bg-clip-text
-    leading-tight
-    text-transparent
-  "
+                    text-[clamp(3rem,5.3vw,6rem)]
+                    font-extrabold
+                    bg-gradient-to-r
+                    from-[#3A1F14]
+                    via-[#7A4A32]
+                    to-[#B07A52]
+                    bg-clip-text
+                    leading-tight
+                    text-transparent
+                  "
                   style={{ textShadow: "0 4px 16px rgba(58, 31, 20, 0.28)" }}
                 >
                   {activeCookie.name}
                 </h3>
 
                 <p
-                  className="mt-10 text-[clamp(1.5rem,2vw,2rem)] text-[#6B3E26]/80 mx-auto"
+                  className="mt-10 text-[clamp(1.2rem,2vw,2rem)] text-[#6B3E26]/80 mx-auto"
                   style={{
                     width: breakpoint === "clg" ? "100%" : "60%",
                     textAlign: breakpoint === "clg" ? "left" : "center",
+                    marginTop: breakpoint === "cxs" ? "18px" : "24px",
                   }}
                 >
                   {activeCookie.description}
@@ -369,6 +383,8 @@ export default function Cookies() {
                   className="mt-10 flex items-center gap-4 w-full"
                   style={{
                     justifyContent: breakpoint !== "clg" ? "center" : "start",
+                    paddingLeft: breakpoint === "cxs" ? "32px" : "0",
+                    paddingRight: breakpoint === "cxs" ? "32px" : "0",
                   }}
                 >
                   <Chip
@@ -400,7 +416,8 @@ export default function Cookies() {
           {/* RIGHT ARROW */}
           <button
             onClick={() => changeCookie(activeIndex + 1)}
-            className="absolute right-18 top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer"
+            className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer"
+            style={{ right: breakpoint === "cxs" ? "34px" : "52px" }}
           >
             ›
           </button>

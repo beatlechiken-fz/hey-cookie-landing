@@ -110,11 +110,11 @@ export default function Hero() {
 
             <div className="w-full">
               <div
-                className="w-full flex text-[clamp(2.5rem,5vw,5rem)] font-bold text-[#6B3E26] leading-tight"
+                className="w-full flex text-[clamp(2.5rem,5vw,5rem)] font-bold text-[#6B3E26] leading-tight flex-col"
                 style={{
-                  flexDirection: breakpoint !== "clg" ? "row" : "column",
                   gap: breakpoint !== "clg" ? "14px" : "0",
                   justifyContent: breakpoint !== "clg" ? "center" : "start",
+                  alignItems: breakpoint !== "clg" ? "center" : "start",
                   marginTop: breakpoint !== "clg" ? "24px" : "0",
                 }}
               >
