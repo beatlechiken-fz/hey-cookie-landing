@@ -306,6 +306,23 @@ export default function Cookies() {
               : "610px",
         }}
       >
+        <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
+          <div className="relative h-full w-full">
+            {/* LEFT ARROW */}
+            <button
+              onClick={() => changeCookie(activeIndex - 1)}
+              className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer pointer-events-auto"
+              style={{
+                left:
+                  breakpoint === "cxxs" || breakpoint === "cxs"
+                    ? "32px"
+                    : "56px",
+              }}
+            >
+              ‹
+            </button>
+          </div>
+        </div>
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -319,24 +336,6 @@ export default function Cookies() {
           }}
           className="w-full"
         >
-          <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
-            <div className="relative h-full w-full">
-              {/* LEFT ARROW */}
-              <button
-                onClick={() => changeCookie(activeIndex - 1)}
-                className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer pointer-events-auto"
-                style={{
-                  left:
-                    breakpoint === "cxxs" || breakpoint === "cxs"
-                      ? "32px"
-                      : "56px",
-                }}
-              >
-                ‹
-              </button>
-            </div>
-          </div>
-
           <div
             className={`grid w-full gap-16 ${
               breakpoint === "clg" ? "grid-cols-2 items-center" : "grid-cols-1"
@@ -455,25 +454,25 @@ export default function Cookies() {
               </motion.div>
             </AnimatePresence>
           </div>
-
-          <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
-            <div className="relative h-full w-full">
-              {/* RIGHT ARROW */}
-              <button
-                onClick={() => changeCookie(activeIndex + 1)}
-                className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer pointer-events-auto"
-                style={{
-                  right:
-                    breakpoint === "cxxs" || breakpoint === "cxs"
-                      ? "34px"
-                      : "52px",
-                }}
-              >
-                ›
-              </button>
-            </div>
-          </div>
         </motion.div>
+
+        <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
+          <div className="relative h-full w-full">
+            {/* RIGHT ARROW */}
+            <button
+              onClick={() => changeCookie(activeIndex + 1)}
+              className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer pointer-events-auto"
+              style={{
+                right:
+                  breakpoint === "cxxs" || breakpoint === "cxs"
+                    ? "34px"
+                    : "52px",
+              }}
+            >
+              ›
+            </button>
+          </div>
+        </div>
       </section>
 
       {/* BOTTOM ORGANIC SHAPE */}
