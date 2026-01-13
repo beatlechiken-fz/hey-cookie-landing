@@ -13,19 +13,23 @@
     },
     "chocolate": {
       "name": "Chocolate intenso",
-      "description": "Para los amantes del chocolate, elegante galleta de cocoa rellena de chispas de chocolate Hershey, cubierta con ganache de chocolate y cacao triturado."
+      "description": "Para los amantes del chocolate, elegante galleta de cocoa rellena de chispas de chocolate Hershey, cubierta de ganache de chocolate y cacao."
     },
     "red": {
       "name": "Red Velvet",
-      "description": "Disfruta de la navidad eterna con esta galleta innovadora del clásico Red Velvet con cobertura de azucar glass con arándamos"
+      "description": "Disfruta de la navidad eterna con esta galleta innovadora del clásico Red Velvet relleno de arándanos y cobertura de azucar glass con arándamos."
     },
     "marmoleada": {
       "name": "Marmoleada",
-      "description": "Disfruta de lo mejor de dos mundos con esta deliciosa galleta de vainilla y cocoa con relleno de chispas de chocolate Hershey y cobertura de ganache de chocolate y nuez"
+      "description": "Disfruta de lo mejor de dos mundos: vainilla y cocoa con relleno de chispas de chocolate Hershey y cobertura de ganache de chocolate y nuez."
     },
     "matcha": {
       "name": "Matcha",
-      "description": "Si te gustan los sabores fuertes, esta galleta es para ti, elaborada a base de matcha con relleno de chocolate blanco y coco, cobertura de chocolate blanco con coco tostado"
+      "description": "Una galleta de sabores intensos, elaborada a base de matcha con relleno de chocolate blanco y coco, cobertura de chocolate blanco con coco."
+    },
+    "oreo": {
+      "name": "Oreo",
+      "description": "Un sabor clásico en la reportería, deliciosa galleta de vainilla con trozos de galleta oreo y para la cobertura una galleta Oreo."
     },
     "reyes": {
       "name": "Reyes",

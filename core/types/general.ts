@@ -1,1 +1,1 @@
-export type CustomBreakpoint = "cxs" | "csm" | "cmd" | "clg";
+export type CustomBreakpoint = "cxxs" | "cxs" | "csm" | "cmd" | "clg";

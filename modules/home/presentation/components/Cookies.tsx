@@ -57,6 +57,15 @@ const cookies = [
   },
   {
     id: 6,
+    image: "/img/or-product-splash.png",
+    name: "oreo.name",
+    description: "oreo.description",
+    price: "1pz $25.00",
+    sale: "2pz $40.00",
+    sale2: "3pz $55.00",
+  },
+  {
+    id: 7,
     image: "/img/ry-product-splash.png",
     name: "reyes.name",
     description: "reyes.description",
@@ -81,7 +90,8 @@ export default function Cookies() {
     CustomBreakpoint,
     { min?: number; max?: number }
   > = {
-    cxs: { max: 839 },
+    cxxs: { max: 619 },
+    cxs: { min: 620, max: 839 },
     csm: { min: 840, max: 1022 },
     cmd: { min: 1023, max: 1199 },
     clg: { min: 1200 },
@@ -90,8 +100,9 @@ export default function Cookies() {
   const breakpoint = useBreakpoint(breakpointsConfig);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const menuRef = useRef<HTMLDivElement>(null);
   const [hasOverflow, setHasOverflow] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -102,6 +113,17 @@ export default function Cookies() {
     window.addEventListener("resize", checkOverflow);
     return () => window.removeEventListener("resize", checkOverflow);
   }, []);
+
+  useEffect(() => {
+    const activeItem = itemRefs.current[activeIndex];
+    if (!activeItem) return;
+
+    activeItem.scrollIntoView({
+      behavior: "smooth",
+      inline: "center", // 👈 centrado
+      block: "nearest",
+    });
+  }, [activeIndex]);
 
   const scrollMenu = (direction: "left" | "right") => {
     if (!menuRef.current) return;
@@ -233,6 +255,9 @@ export default function Cookies() {
             {cookiesTranslated.map((cookie, index) => (
               <button
                 key={cookie.id}
+                ref={(el) => {
+                  itemRefs.current[index] = el;
+                }}
                 onClick={() => changeCookie(index)}
                 className={`
                   text-lg font-semibold transition-all duration-300 cursor-pointer
@@ -269,6 +294,16 @@ export default function Cookies() {
         style={{
           paddingLeft: breakpoint === "cxs" ? "8px" : "48px",
           paddingRight: breakpoint === "cxs" ? "8px" : "48px",
+          height:
+            breakpoint === "cxxs"
+              ? "780px"
+              : breakpoint === "cxs"
+              ? "850px"
+              : breakpoint === "csm"
+              ? "900px"
+              : breakpoint === "cmd"
+              ? "1000px"
+              : "610px",
         }}
       >
         <motion.div
@@ -284,14 +319,23 @@ export default function Cookies() {
           }}
           className="w-full"
         >
-          {/* LEFT ARROW */}
-          <button
-            onClick={() => changeCookie(activeIndex - 1)}
-            className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer"
-            style={{ left: breakpoint === "cxs" ? "32px" : "56px" }}
-          >
-            ‹
-          </button>
+          <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
+            <div className="relative h-full w-full">
+              {/* LEFT ARROW */}
+              <button
+                onClick={() => changeCookie(activeIndex - 1)}
+                className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer pointer-events-auto"
+                style={{
+                  left:
+                    breakpoint === "cxxs" || breakpoint === "cxs"
+                      ? "32px"
+                      : "56px",
+                }}
+              >
+                ‹
+              </button>
+            </div>
+          </div>
 
           <div
             className={`grid w-full gap-16 ${
@@ -412,14 +456,23 @@ export default function Cookies() {
             </AnimatePresence>
           </div>
 
-          {/* RIGHT ARROW */}
-          <button
-            onClick={() => changeCookie(activeIndex + 1)}
-            className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer"
-            style={{ right: breakpoint === "cxs" ? "34px" : "52px" }}
-          >
-            ›
-          </button>
+          <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
+            <div className="relative h-full w-full">
+              {/* RIGHT ARROW */}
+              <button
+                onClick={() => changeCookie(activeIndex + 1)}
+                className="absolute top-1/2 -translate-y-1/2 text-5xl text-[#6B3E26] hover:scale-110 transition cursor-pointer pointer-events-auto"
+                style={{
+                  right:
+                    breakpoint === "cxxs" || breakpoint === "cxs"
+                      ? "34px"
+                      : "52px",
+                }}
+              >
+                ›
+              </button>
+            </div>
+          </div>
         </motion.div>
       </section>
 

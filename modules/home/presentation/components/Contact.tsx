@@ -59,7 +59,8 @@ export default function Contact() {
     CustomBreakpoint,
     { min?: number; max?: number }
   > = {
-    cxs: { max: 839 },
+    cxxs: { max: 1 },
+    cxs: { min: 2, max: 839 },
     csm: { min: 840, max: 1022 },
     cmd: { min: 1023, max: 1199 },
     clg: { min: 1200 },
