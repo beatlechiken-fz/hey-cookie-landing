@@ -47,6 +47,7 @@
     "ratings": {
       "taste": "Sabor",
       "texture": "Consistencia y textura",
+      "visual": "Presentación",
       "service": "Atención"
     }
   }

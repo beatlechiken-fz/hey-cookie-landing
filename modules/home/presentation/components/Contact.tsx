@@ -5,11 +5,12 @@ import { CustomBreakpoint } from "@/core/types/general";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-type RatingKey = "taste" | "texture" | "service";
+type RatingKey = "taste" | "texture" | "visual" | "service";
 
 const ratingItems: { key: RatingKey }[] = [
   { key: "taste" },
   { key: "texture" },
+  { key: "visual" },
   { key: "service" },
 ];
 
@@ -72,6 +73,7 @@ export default function Contact() {
   const [ratings, setRatings] = useState<Record<RatingKey, number | null>>({
     taste: null,
     texture: null,
+    visual: null,
     service: null,
   });
 
@@ -102,7 +104,7 @@ export default function Contact() {
     }
 
     setComments("");
-    setRatings({ taste: null, texture: null, service: null });
+    setRatings({ taste: null, texture: null, visual: null, service: null });
     setSended(true);
   }
 

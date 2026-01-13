@@ -1,6 +1,5 @@
 "use client";
 
-import Images from "@/core/assets/Images";
 import AppBar from "@/core/components/app-bar/AppBar";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
