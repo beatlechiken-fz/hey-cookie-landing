@@ -12,7 +12,7 @@ import styles from "./Cookies.module.scss";
 const cookies = [
   {
     id: 1,
-    image: "/img/vc-product-splash-v2.png",
+    image: "/img/vc-product-splash.webp",
     name: "vainilla.name",
     description: "vainilla.description",
     price: "1pz $25.00",
@@ -21,7 +21,7 @@ const cookies = [
   },
   {
     id: 2,
-    image: "/img/ci-product-splash-v2.png",
+    image: "/img/ci-product-splash.webp",
     name: "chocolate.name",
     description: "chocolate.description",
     price: "1pz $25.00",
@@ -30,7 +30,7 @@ const cookies = [
   },
   {
     id: 3,
-    image: "/img/rv-product-splash-v2.png",
+    image: "/img/rv-product-splash.webp",
     name: "red.name",
     description: "red.description",
     price: "1pz $25.00",
@@ -39,7 +39,7 @@ const cookies = [
   },
   {
     id: 4,
-    image: "/img/mr-product-splash.png",
+    image: "/img/mr-product-splash.webp",
     name: "marmoleada.name",
     description: "marmoleada.description",
     price: "1pz $25.00",
@@ -48,7 +48,7 @@ const cookies = [
   },
   {
     id: 5,
-    image: "/img/mt-product-splash.png",
+    image: "/img/mt-product-splash.webp",
     name: "matcha.name",
     description: "matcha.description",
     price: "1pz $25.00",
@@ -57,7 +57,7 @@ const cookies = [
   },
   {
     id: 6,
-    image: "/img/or-product-splash.png",
+    image: "/img/or-product-splash.webp",
     name: "oreo.name",
     description: "oreo.description",
     price: "1pz $25.00",
@@ -66,7 +66,25 @@ const cookies = [
   },
   {
     id: 7,
-    image: "/img/ry-product-splash.png",
+    image: "/img/pop-product-splash.webp",
+    name: "pop.name",
+    description: "pop.description",
+    price: "1pz $25.00",
+    sale: "2pz $40.00",
+    sale2: "3pz $55.00",
+  },
+  {
+    id: 8,
+    image: "/img/tm-product-splash.webp",
+    name: "taro.name",
+    description: "taro.description",
+    price: "1pz $25.00",
+    sale: "2pz $40.00",
+    sale2: "3pz $55.00",
+  },
+  {
+    id: 9,
+    image: "/img/ry-product-splash.webp",
     name: "reyes.name",
     description: "reyes.description",
     price: "1pz $25.00",
