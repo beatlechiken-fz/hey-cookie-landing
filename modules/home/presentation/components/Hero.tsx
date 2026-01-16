@@ -90,7 +90,7 @@ export default function Hero() {
               }}
             >
               <Image
-                src="/img/hey-cookie-logo-main.png"
+                src="/img/hey-cookie-logo.webp"
                 alt="Hey Cookie"
                 width={220}
                 height={220}
@@ -196,8 +196,8 @@ export default function Hero() {
             <Image
               src={
                 breakpoint !== "clg"
-                  ? "/img/hero-splash-h.png"
-                  : "/img/hero-splash-v2.png"
+                  ? "/img/hero-splash-h.webp"
+                  : "/img/hero-splash.webp"
               }
               alt="Hey Cookie"
               width={1000}

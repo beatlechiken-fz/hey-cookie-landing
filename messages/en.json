@@ -32,11 +32,11 @@
       "description": "A classic flavor in our bakery: delicious vanilla cookie with Oreo cookie pieces, topped with a whole Oreo cookie."
     },
     "pop": {
-      "name": "Pop Corn",
+      "name": "Pop Caramel",
       "description": "An explosion of flavors on the palate: a vanilla cookie with cajeta, filled with dark and white chocolate, topped with royal icing and popcorn."
     },
     "taro": {
-      "name": "Taro Marshmallow",
+      "name": "Unicorn Taro",
       "description": "The unique flavor of taro combined with slivered almonds, topped with royal icing and marshmallows."
     },
     "reyes": {
