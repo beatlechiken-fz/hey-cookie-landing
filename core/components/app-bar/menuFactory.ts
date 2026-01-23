@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 // Creamos el tipo manualmente, equivalente a la función que retorna useTranslations()
 export type TType = (key: string, values?: Record<string, any>) => string;
 
@@ -32,43 +34,20 @@ export function createMenuNavElement(t: TType): MenuNavElement {
       label: t("home"),
       url: "/",
     },
-    dev: {
-      id: "dev",
-      label: t("apps"),
-      url: "/apps",
-      submenu: [
-        { id: "apps", label: t("dev"), url: "/apps" },
-        { id: "landing", label: t("landing"), url: "/landing" },
-        { id: "ia", label: t("ia"), url: "/" },
-      ],
+    cake: {
+      id: "cake",
+      label: t("cake"),
+      url: "/cake",
     },
-    support: {
-      id: "support",
-      label: t("support"),
-      url: "/",
-      submenu: [
-        { id: "fix", label: t("fix"), url: "/" },
-        { id: "maintainance", label: t("maintainance"), url: "/" },
-      ],
+    desserts: {
+      id: "desserts",
+      label: t("desserts"),
+      url: "/desserts",
     },
-    store: {
-      id: "store",
-      label: t("store"),
-      url: "/",
-      submenu: [
-        { id: "parts", label: t("parts"), url: "/" },
-        { id: "update", label: t("update"), url: "/" },
-      ],
-    },
-    sit: {
-      id: "sit",
-      label: t("sit"),
-      url: "/",
-      submenu: [
-        { id: "about", label: t("about"), url: "/" },
-        { id: "promotion", label: t("promotion"), url: "/" },
-        { id: "contact", label: t("contact"), url: "/" },
-      ],
+    other: {
+      id: "other",
+      label: t("other"),
+      url: "/other",
     },
   };
 }

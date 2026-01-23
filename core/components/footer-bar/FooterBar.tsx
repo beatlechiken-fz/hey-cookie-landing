@@ -1,14 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  createMenuNavElement,
-  MenuNavElement,
-} from "@/core/components/app-bar/menuFactory";
 
 export default function FooterBar() {
-  const t = useTranslations("mainnav");
-  const menu: MenuNavElement = createMenuNavElement(t);
+  const t = useTranslations("footer");
 
   // Redes sociales
   const socialLinks = [
@@ -115,7 +110,7 @@ export default function FooterBar() {
         </div>
 
         {/* ROW 3 — Texto final */}
-        <div className="text-xs text-center opacity-80">Hey Cookies. 2025</div>
+        <div className="text-xs text-center opacity-80">{t("rights")}</div>
       </div>
     </footer>
   );

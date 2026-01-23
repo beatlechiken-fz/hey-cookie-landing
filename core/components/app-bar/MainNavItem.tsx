@@ -1,137 +1,155 @@
 "use client";
 
-import Link from "next/link";
-import { useRef, useState } from "react";
-import { useLanding } from "@/modules/home/presentation/store/useLanding";
-import type { MenuNavEntry } from "./menuFactory";
+import { Link, useRouter } from "@/i18n/navigation";
 
-export interface SubmenuItem {
-  id: string;
-  label: string;
-  url: string;
-}
-
-export interface MainNavItemProps {
-  id: string; // Debe coincidir con MenuNavEntry
-  label: string;
-  submenu?: SubmenuItem[];
-  active?: boolean;
-  url: string;
-}
+// Flecha delgada tipo chevron
+const ArrowIcon = ({ open = false }: { open?: boolean }) => (
+  <svg
+    viewBox="0 0 24 24"
+    className={`
+      w-4 h-4 transition-transform duration-200
+      ${open ? "rotate-180" : ""}
+    `}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6 9l6 6 6-6" />
+  </svg>
+);
 
 export default function MainNavItem({
-  id,
   label,
-  submenu = [],
-  active = false,
   url,
-}: MainNavItemProps) {
-  const [open, setOpen] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const closeTimeoutRef = useRef<number | null>(null);
+  submenu = [],
+  active,
+  onSelect,
+  isMobile = false,
+  isOpen = false,
+  onToggle,
+}: any) {
+  const router = useRouter();
 
-  const selectMainNav = useLanding((state) => state.selectMainNav);
+  // =========================
+  // MOBILE
+  // =========================
+  if (isMobile) {
+    return (
+      <div className="flex flex-col">
+        <button
+          onClick={() => {
+            if (submenu.length > 0) {
+              onToggle();
+            } else {
+              onSelect?.();
+              router.push(url);
+            }
+          }}
+          className={`
+            px-4 py-2 rounded-xl transition
+            flex justify-between items-center
+            font-subtitle font-bold text-left
+            ${
+              active
+                ? "bg-white/20 text-[#AA5A32]"
+                : "text-[#3A1F14] hover:text-[#9A4A22]"
+            }
+          `}
+        >
+          <span>{label}</span>
+          {submenu.length > 0 && <ArrowIcon open={isOpen} />}
+        </button>
 
-  const isExpandable = submenu.length > 0;
+        {submenu.length > 0 && isOpen && (
+          <div className="mt-2 ml-4 flex flex-col gap-1">
+            {submenu.map((s: any) => (
+              <Link
+                key={s.id}
+                href={s.url}
+                onClick={onSelect}
+                className="
+                  px-3 py-2 text-sm
+                  text-[#3A1F14]/80
+                  hover:text-[#9A4A22]
+                  hover:bg-[#6B3E26]/10
+                  rounded-lg
+                "
+              >
+                {s.label}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
-  const handleEnter = () => {
-    if (closeTimeoutRef.current) {
-      window.clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-    setHovered(true);
-    isExpandable && setOpen(true);
-  };
-
-  const handleLeave = () => {
-    closeTimeoutRef.current = window.setTimeout(() => {
-      setHovered(false);
-      isExpandable && setOpen(false);
-      closeTimeoutRef.current = null;
-    }, 100);
-  };
-
-  const handleSelectMenu = (id: MenuNavEntry) => {
-    selectMainNav(id as MenuNavEntry);
-  };
-
+  // =========================
+  // DESKTOP
+  // =========================
   return (
-    <div
-      className="relative w-fit"
-      onPointerEnter={handleEnter}
-      onPointerLeave={handleLeave}
-    >
-      {/* Botón principal */}
+    <div className="relative group">
       <Link
-        className={`
-          w-fit flex items-center justify-between px-4 py-2 rounded-xl
-          transition-all duration-200 select-none text-left cursor-pointer
-          ${
-            active
-              ? "bg-white/20 text-white shadow-sm"
-              : "text-gray-300 hover:text-white hover:bg-white/5"
-          }
-          ${hovered ? "!text-sky-300" : ""}
-        `}
-        aria-expanded={open}
         href={url}
-        onClick={() => selectMainNav(id as MenuNavEntry)}
+        onClick={onSelect}
+        className={`
+          px-4 py-1 rounded-xl transition text-[24px]
+          flex items-center gap-1
+          font-subtitle font-bold
+          ${active ? "text-[#AA5A32]" : "text-[#3A1F14] hover:text-[#9A4A22]"}
+        `}
       >
-        <span className="font-semibold tracking-wide whitespace-nowrap">
-          {label}
-        </span>
+        <span>{label}</span>
 
-        {isExpandable && (
+        {submenu.length > 0 && (
           <svg
-            className={`ml-2 w-4 h-4 transition-transform ${
-              open ? "rotate-180" : "rotate-0"
-            }`}
-            viewBox="0 0 20 20"
+            viewBox="0 0 24 24"
+            className="
+              w-4 h-4 transition-transform duration-200
+              group-hover:rotate-180
+            "
             fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <path
-              d="M6 8l4 4 4-4"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <path d="M6 9l6 6 6-6" />
           </svg>
         )}
       </Link>
 
-      {/* Submenú */}
-      {isExpandable && (
+      {submenu.length > 0 && (
         <div
-          className={`
-            absolute left-0 top-full z-50
-            transform origin-top-left
-            transition-all duration-150
-            ${
-              open
-                ? "opacity-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 -translate-y-1 pointer-events-none"
-            }
-          `}
+          className="
+            absolute top-full left-0 mt-2 w-48
+            bg-[#FAF3E0]
+            border border-[#6B3E26]/20
+            rounded-xl p-3 shadow-xl
+            opacity-0 invisible
+            group-hover:opacity-100 group-hover:visible
+            transition-all
+            z-50
+          "
         >
-          <div
-            className="
-              pl-4 pr-4 py-3 flex flex-col gap-2 border border-white/10
-              bg-black/70 backdrop-blur-md rounded-xl shadow-lg
-              w-[220px]
-            "
-          >
-            {submenu.map((item) => (
-              <Link
-                key={item.id}
-                href={item.url}
-                className="text-gray-300 hover:text-white transition py-1"
-                onClick={() => selectMainNav(id as MenuNavEntry)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          {submenu.map((s: any) => (
+            <Link
+              key={s.id}
+              href={s.url}
+              onClick={onSelect}
+              className="
+                block px-3 py-2 text-sm
+                text-[#3A1F14]/80
+                hover:text-[#9A4A22]
+                hover:bg-[#6B3E26]/10
+                rounded-lg
+              "
+            >
+              {s.label}
+            </Link>
+          ))}
         </div>
       )}
     </div>

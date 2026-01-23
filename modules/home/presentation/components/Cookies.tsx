@@ -121,6 +121,7 @@ export default function Cookies() {
   const [hasOverflow, setHasOverflow] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const hasMounted = useRef(false);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -133,12 +134,17 @@ export default function Cookies() {
   }, []);
 
   useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      return;
+    }
+
     const activeItem = itemRefs.current[activeIndex];
     if (!activeItem) return;
 
     activeItem.scrollIntoView({
       behavior: "smooth",
-      inline: "center", // 👈 centrado
+      inline: "center",
       block: "nearest",
     });
   }, [activeIndex]);
@@ -152,14 +158,28 @@ export default function Cookies() {
   };
 
   const changeCookie = (index: number) => {
-    if (index < 0 || index >= cookies.length) return;
+    const total = cookies.length;
+
+    if (index < 0) {
+      setActiveIndex(total - 1);
+      return;
+    }
+
+    if (index >= total) {
+      setActiveIndex(0);
+      return;
+    }
+
     setActiveIndex(index);
   };
 
   const activeCookie = cookiesTranslated[activeIndex];
 
   return (
-    <main className="relative w-full overflow-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]">
+    <main
+      className="relative w-full overflow-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]"
+      style={{ contain: "layout paint" }}
+    >
       {/* TOP ORGANIC SHAPE */}
       <svg
         viewBox="0 0 1440 140"
@@ -218,9 +238,9 @@ export default function Cookies() {
                     C42 2 48 18 54 10
                   "
                   stroke="rgba(200, 184, 160, 1)"
-                  stroke-width="1.8"
+                  strokeWidth="1.8"
                   fill="none"
-                  stroke-linecap="round"
+                  strokeLinecap="round"
                 />
               </pattern>
             </defs>
@@ -312,19 +332,10 @@ export default function Cookies() {
         style={{
           paddingLeft: breakpoint === "cxs" ? "8px" : "48px",
           paddingRight: breakpoint === "cxs" ? "8px" : "48px",
-          height:
-            breakpoint === "cxxs"
-              ? "780px"
-              : breakpoint === "cxs"
-              ? "850px"
-              : breakpoint === "csm"
-              ? "900px"
-              : breakpoint === "cmd"
-              ? "1000px"
-              : "610px",
         }}
       >
-        <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
+        {/* ARROWS OVERLAY */}
+        <div className="absolute inset-y-0 left-0 right-0 pointer-events-none z-20">
           <div className="relative h-full w-full">
             {/* LEFT ARROW */}
             <button
@@ -339,143 +350,7 @@ export default function Cookies() {
             >
               ‹
             </button>
-          </div>
-        </div>
-        <motion.div
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={(_, info) => {
-            if (info.offset.x < -swipeConfidenceThreshold) {
-              changeCookie(activeIndex + 1);
-            } else if (info.offset.x > swipeConfidenceThreshold) {
-              changeCookie(activeIndex - 1);
-            }
-          }}
-          className="w-full"
-        >
-          <div
-            className={`grid w-full gap-16 ${
-              breakpoint === "clg" ? "grid-cols-2 items-center" : "grid-cols-1"
-            }`}
-            style={{ gap: breakpoint === "clg" ? "82px" : "16px" }}
-          >
-            {/* IMAGE */}
-            <div className="flex justify-center w-full h-full">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${activeCookie.id}-img`}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
-                  className="
-                    relative
-                    aspect-square
-                    rounded-full
-                    overflow-hidden
-                  "
-                  style={{
-                    width:
-                      breakpoint === "clg"
-                        ? "80%"
-                        : breakpoint === "cmd"
-                        ? "50%"
-                        : "55%",
-                  }}
-                >
-                  <Image
-                    src={activeCookie.image}
-                    alt={activeCookie.name}
-                    fill
-                    className="object-contain"
-                    sizes="(max-width: 768px) 70vw, 420px"
-                    priority
-                  />
-                </motion.div>
-              </AnimatePresence>
-            </div>
 
-            {/* INFO */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${activeCookie.id}-info`}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.4 }}
-                className="h-full"
-                style={{
-                  paddingTop: breakpoint === "clg" ? "82px" : "0px",
-                  textAlign: breakpoint === "clg" ? "left" : "center",
-                  width: breakpoint === "clg" ? "85%" : "100%",
-                }}
-              >
-                <h3
-                  className="
-                    text-[clamp(3rem,5.3vw,6rem)]
-                    font-extrabold
-                    bg-gradient-to-r
-                    from-[#3A1F14]
-                    via-[#AA6A42]
-                    to-[#A07A42]
-                    bg-clip-text
-                    leading-tight
-                    text-transparent
-                    font-subtitle
-                  "
-                >
-                  {activeCookie.name}
-                </h3>
-
-                <p
-                  className="mt-10 text-[clamp(1.2rem,2vw,2rem)] text-[#6B3E26]/80 mx-auto"
-                  style={{
-                    width: breakpoint === "clg" ? "100%" : "60%",
-                    textAlign: breakpoint === "clg" ? "left" : "center",
-                    marginTop: breakpoint === "cxs" ? "18px" : "24px",
-                  }}
-                >
-                  {activeCookie.description}
-                </p>
-
-                <div
-                  className="mt-10 flex items-center gap-4 w-full"
-                  style={{
-                    justifyContent: breakpoint !== "clg" ? "center" : "start",
-                    paddingLeft: breakpoint === "cxs" ? "32px" : "0",
-                    paddingRight: breakpoint === "cxs" ? "32px" : "0",
-                  }}
-                >
-                  <Chip
-                    text={activeCookie.price}
-                    color="#6B3E26"
-                    bg="transparent"
-                    border="solid 1px #6B3E26"
-                    width="130px"
-                  />
-                  <Chip
-                    text={activeCookie.sale}
-                    color="#6B3E26"
-                    bg="transparent"
-                    border="solid 1px #6B3E26"
-                    width="130px"
-                  />
-                  <Chip
-                    text={activeCookie.sale2}
-                    color="#fff"
-                    bg="#47a2a5ff"
-                    border="none"
-                    width="130px"
-                  />
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </motion.div>
-
-        <div className="absolute inset-y-0 left-0 right-0 pointer-events-none">
-          <div className="relative h-full w-full">
             {/* RIGHT ARROW */}
             <button
               onClick={() => changeCookie(activeIndex + 1)}
@@ -490,6 +365,94 @@ export default function Cookies() {
               ›
             </button>
           </div>
+        </div>
+
+        <div className="relative w-full overflow-hidden">
+          <motion.div
+            drag="x"
+            dragListener={false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.08}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -swipeConfidenceThreshold) {
+                changeCookie(activeIndex + 1);
+              } else if (info.offset.x > swipeConfidenceThreshold) {
+                changeCookie(activeIndex - 1);
+              }
+            }}
+            className="w-full"
+          >
+            <div
+              className={`grid w-full gap-16 ${
+                breakpoint === "clg"
+                  ? "grid-cols-2 items-center"
+                  : "grid-cols-1"
+              }`}
+              style={{ gap: breakpoint === "clg" ? "82px" : "16px" }}
+            >
+              {/* IMAGE */}
+              <div className="flex justify-center w-full h-full">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${activeCookie.id}-img`}
+                    drag="x"
+                    dragListener={true}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.4 }}
+                    className="relative rounded-full overflow-hidden flex items-center justify-center"
+                    style={{
+                      width:
+                        breakpoint === "clg"
+                          ? "80%"
+                          : breakpoint === "cmd"
+                          ? "60%"
+                          : "70%",
+                      maxWidth: "520px",
+                      aspectRatio: "1 / 1",
+                    }}
+                  >
+                    <Image
+                      src={activeCookie.image}
+                      alt={activeCookie.name}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 70vw, 420px"
+                      priority
+                    />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* INFO (DESCRIPCIÓN INTACTA) */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeCookie.id}-info`}
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="h-full"
+                  style={{
+                    paddingTop: breakpoint === "clg" ? "82px" : "0px",
+                    textAlign: breakpoint === "clg" ? "left" : "center",
+                    width: breakpoint === "clg" ? "85%" : "100%",
+                  }}
+                >
+                  <h3 className="text-[clamp(3rem,5.3vw,6rem)] font-extrabold bg-gradient-to-r from-[#3A1F14] via-[#AA6A42] to-[#A07A42] bg-clip-text leading-tight text-transparent font-subtitle">
+                    {activeCookie.name}
+                  </h3>
+
+                  <p className="mt-10 text-[clamp(1.2rem,2vw,2rem)] text-[#6B3E26]/80 mx-auto">
+                    {activeCookie.description}
+                  </p>
+
+                  {/* CHIPS intactos */}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
         </div>
       </section>
 

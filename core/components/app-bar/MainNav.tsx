@@ -1,55 +1,52 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { createMenuNavElement } from "./menuFactory";
-import { useLanding } from "@/modules/home/presentation/store/useLanding";
 import MainNavItem from "./MainNavItem";
 
-export default function MainNav() {
+function stripLocale(pathname: string) {
+  return pathname.replace(/^\/(en|es)(?=\/|$)/, "");
+}
+
+export default function MainNav({ isMobile = false, onSelect }: any) {
   const t = useTranslations("mainnav");
+  const pathname = usePathname();
+  const normalizedPath = stripLocale(pathname);
+
+  const [openSubmenuId, setOpenSubmenuId] = useState<string | null>(null);
+
   const menu = createMenuNavElement(t);
 
-  const mainNavSelected = useLanding((s) => s.mainNavSelected);
+  const items = Object.values(menu).map((item) => {
+    const isHome = item.url === "/";
 
-  const mainNavItems = [
-    { ...menu.home, active: mainNavSelected === "home" },
-    {
-      ...menu.dev,
-      active:
-        mainNavSelected === "dev" ||
-        mainNavSelected === "apps" ||
-        mainNavSelected === "landing" ||
-        mainNavSelected === "ia",
-    },
-    {
-      ...menu.support,
-      active:
-        mainNavSelected === "support" ||
-        mainNavSelected === "fix" ||
-        mainNavSelected === "maintainance",
-    },
-    {
-      ...menu.store,
-      active:
-        mainNavSelected === "store" ||
-        mainNavSelected === "parts" ||
-        mainNavSelected === "update",
-    },
-    {
-      ...menu.sit,
-      active:
-        mainNavSelected === "sit" ||
-        mainNavSelected === "promotion" ||
-        mainNavSelected === "about" ||
-        mainNavSelected === "contact",
-    },
-  ];
+    const active = isHome
+      ? normalizedPath === ""
+      : normalizedPath === item.url ||
+        normalizedPath.startsWith(item.url + "/");
+
+    return {
+      ...item,
+      active,
+    };
+  });
 
   return (
-    <main className="flex gap-4 items-center w-full bg-black">
-      {mainNavItems.map((item) => (
-        <MainNavItem key={item.id} {...item} />
+    <nav className={`flex ${isMobile ? "flex-col gap-4" : "gap-4"}`}>
+      {items.map((item) => (
+        <MainNavItem
+          key={item.id}
+          {...item}
+          isMobile={isMobile}
+          isOpen={openSubmenuId === item.id}
+          onToggle={() =>
+            setOpenSubmenuId(openSubmenuId === item.id ? null : item.id)
+          }
+          onSelect={onSelect}
+        />
       ))}
-    </main>
+    </nav>
   );
 }

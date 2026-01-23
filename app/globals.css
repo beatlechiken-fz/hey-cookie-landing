@@ -12,10 +12,13 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 .vintage-bg {

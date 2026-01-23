@@ -58,5 +58,20 @@
       "visual": "Presentación",
       "service": "Atención"
     }
+  },
+  "mainnav": {
+    "home": "Galletas",
+    "cake": "Pasteles & Roscas",
+    "desserts": "Repostería",
+    "other": "Otros alimentos"
+  },
+  "comingSoon": {
+    "coming": "Próximamente",
+    "comingSub": "Estamos trabajando en esta sección",
+    "comingDesc": "Muy pronto encontrarás aquí una nueva experiencia pensada con mucho detalle.",
+    "backHome": "Volver al inicio"
+  },
+  "footer": {
+    "rights": "Hey Cookies, MX. 2025"
   }
 }
