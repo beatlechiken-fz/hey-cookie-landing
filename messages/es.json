@@ -45,6 +45,47 @@
     },
     "title": "Sweet Cookies"
   },
+  "cakes": {
+    "title": "Pasteles",
+    "title2": "Roscas",
+    "title3": "Tips",
+    "vanilla": {
+      "name": "Vainilla clásica",
+      "description": "Pastel suave de vainilla con un toque nostálgico.",
+      "bread": "Vainilla",
+      "filling": "Crema dulce",
+      "topping": "Ganache blanco"
+    },
+    "chocolate": {
+      "name": "Chocolate intenso",
+      "description": "Pastel profundo de cacao para amantes del chocolate.",
+      "bread": "Cacao",
+      "filling": "Chocolate amargo",
+      "topping": "Ganache de chocolate"
+    },
+    "red": {
+      "name": "Red Velvet",
+      "description": "Clásico Red Velvet con un giro artesanal.",
+      "bread": "Red Velvet",
+      "filling": "Queso crema",
+      "topping": "Azúcar glass"
+    },
+    "tips": {
+      "sweetnessTitle": "Dulzor",
+      "sweetnessDesc": "Cada pastel tiene su nivel de dulzor para que elijas justo lo que te gusta.",
+      "sweetnessScale": "Escala: nada dulce → muy dulce",
+
+      "portionsTitle": "Porciones",
+      "portionsDesc": "Porciones pensadas para compartir y disfrutar.",
+      "height": "Altura: 6 – 7 cm",
+
+      "ingredientsTitle": "Ingredientes de calidad",
+      "ingredientsDesc": "Elaboramos cada pastel con mantequilla real, huevos frescos y materias primas de alta calidad. Todo es hecho en casa, sin premezclas ni atajos.",
+
+      "orderTitle": "Pedido con anticipación",
+      "orderDesc": "Para asegurar sabor, textura y acabado, los pedidos deben realizarse con al menos 1 día de anticipación."
+    }
+  },
   "contact": {
     "listen": "Te escuchamos",
     "thanks": "Gracias!",

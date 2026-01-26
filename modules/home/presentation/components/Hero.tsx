@@ -25,7 +25,7 @@ export default function Hero() {
 
   return (
     <>
-      <section className="relative bg-[#FAF3E0] overflow-hidden touch-pan-y">
+      <section className="relative bg-[#FAF3E0] overflow-x-hidden">
         {/* ----------- APP BAR --------------*/}
         <div className="relative z-50">
           <AppBar />

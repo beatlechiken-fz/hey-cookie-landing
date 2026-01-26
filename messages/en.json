@@ -2,7 +2,7 @@
   "hero": {
     "title1": "A bite",
     "title2": "to the heart",
-    "titleDescription": "Handcrafted cookies made with real butter, bold flavors, and a nostalgic touch that makes you fall in love.",
+    "titleDescription": "Artisan cookies made with real butter, intense flavors, and a nostalgic touch that makes you fall in love.",
     "cookiesButton": "Cookies",
     "quoteButton": "Get a quote"
   },
@@ -13,50 +13,65 @@
     },
     "chocolate": {
       "name": "Intense Chocolate",
-      "description": "For true chocolate lovers: an elegant cocoa cookie filled with Hershey’s chocolate chips, topped with chocolate ganache and cocoa powder."
+      "description": "For chocolate lovers: an elegant cocoa cookie filled with Hershey’s chocolate chips, topped with chocolate ganache and cocoa."
     },
     "red": {
       "name": "Red Velvet",
-      "description": "Enjoy an everlasting holiday feeling with this innovative Red Velvet cookie, filled with cranberries and topped with powdered sugar and dried cranberries."
+      "description": "Enjoy an eternal holiday feeling with this innovative take on the classic Red Velvet cookie, filled with cranberries and topped with powdered sugar and cranberries."
     },
     "marmoleada": {
-      "name": "Marble",
-      "description": "The best of both worlds: vanilla and cocoa cookie filled with Hershey’s chocolate chips, topped with chocolate ganache and walnuts."
+      "name": "Marbled",
+      "description": "Enjoy the best of both worlds: vanilla and cocoa, filled with Hershey’s chocolate chips and topped with chocolate ganache and walnuts."
     },
     "matcha": {
       "name": "Matcha",
-      "description": "A bold-flavored cookie made with matcha, filled with white chocolate and coconut, and topped with white chocolate and coconut."
+      "description": "A cookie with intense flavors, made with matcha, filled with white chocolate and coconut, and topped with white chocolate and coconut."
     },
     "oreo": {
       "name": "Oreo",
-      "description": "A classic flavor in our bakery: delicious vanilla cookie with Oreo cookie pieces, topped with a whole Oreo cookie."
+      "description": "A classic flavor in our bakery: delicious vanilla cookie with Oreo cookie pieces and topped with an Oreo cookie."
     },
     "pop": {
       "name": "Pop Caramel",
-      "description": "An explosion of flavors on the palate: a vanilla cookie with cajeta, filled with dark and white chocolate, topped with royal icing and popcorn."
+      "description": "An explosion of flavors on your palate: a vanilla cookie with cajeta, filled with dark and white chocolate, topped with royal icing and popcorn."
     },
     "taro": {
       "name": "Unicorn Taro",
-      "description": "The unique flavor of taro combined with slivered almonds, topped with royal icing and marshmallows."
+      "description": "The unique flavor of taro combined with sliced almonds, topped with royal icing and marshmallows."
     },
     "reyes": {
-      "name": "Reyes",
-      "description": "This limited-edition cookie adds an innovative twist to our classic recipe, replacing the topping with white chocolate and quince paste."
+      "name": "Kings",
+      "description": "This limited-edition cookie adds an innovative touch to our classic cookie by replacing the topping with white chocolate and fruit paste."
     },
     "title": "Sweet Cookies"
   },
   "contact": {
     "listen": "We’re listening",
     "thanks": "Thank you!",
-    "important": "Your opinion means a lot to us",
+    "important": "Your opinion is very important",
     "title": "Cookies for your events",
-    "description": "We create custom cookie orders for events, corporate gifts, and celebrations. Write to us and let’s make something delicious together.",
+    "description": "We quote special orders for events, corporate gifts, and celebrations. Write to us and let’s create something delicious together.",
     "tel": "443 123 67 33",
     "ratings": {
-      "taste": "Taste",
-      "texture": "Texture & consistency",
-      "visual": "Packaging",
-      "service": "Customer service"
+      "taste": "Flavor",
+      "texture": "Consistency and texture",
+      "visual": "Presentation",
+      "service": "Service"
     }
+  },
+  "mainnav": {
+    "home": "Cookies",
+    "cake": "Cakes & Roscas",
+    "desserts": "Bakery",
+    "other": "Other foods"
+  },
+  "comingSoon": {
+    "coming": "Coming soon",
+    "comingSub": "We are working on this section",
+    "comingDesc": "Very soon you’ll find a new experience here, thoughtfully crafted with great care.",
+    "backHome": "Back to home"
+  },
+  "footer": {
+    "rights": "Hey Cookies, MX. 2025"
   }
 }

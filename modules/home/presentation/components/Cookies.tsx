@@ -178,7 +178,7 @@ export default function Cookies() {
 
   return (
     <main
-      className="relative w-full overflow-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5] touch-pan-y"
+      className="relative w-full overflow-x-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]"
       style={{ contain: "layout paint" }}
     >
       {/* TOP ORGANIC SHAPE */}
