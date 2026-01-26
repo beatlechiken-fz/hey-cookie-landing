@@ -1,0 +1,46 @@
+<svg
+            width="150"
+            height="44"
+            viewBox="0 0 150 44"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              <pattern
+                id="wavePattern"
+                x="0"
+                y="0"
+                width="48"
+                height="20"
+                patternUnits="userSpaceOnUse"
+              >
+                <path
+                  d="
+                    M0 10
+                    C6 2 12 18 18 10
+                    C24 2 30 18 36 10
+                    C42 2 48 18 54 10
+                  "
+                  stroke="rgba(200, 184, 160, 1)"
+                  strokeWidth="1.8"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+              </pattern>
+            </defs>
+            <rect
+              x="0"
+              y="4"
+              width="150"
+              height="20"
+              fill="url(#wavePattern)"
+            />
+            +
+            <rect
+              x="0"
+              y="24"
+              width="150"
+              height="20"
+              fill="url(#wavePattern)"
+            />
+          </svg>
