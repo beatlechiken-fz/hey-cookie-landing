@@ -74,6 +74,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="w-full"
+            style={{ touchAction: "pan-y" }}
           >
             <div className="flex flex-col w-full gap-8">
               {/* LOGO */}
@@ -198,6 +199,7 @@ export default function Hero() {
                 priority
                 className="object-contain"
                 style={{
+                  touchAction: "pan-y",
                   width: breakpoint !== "clg" ? "70%" : "90%",
                   maxHeight: "80dvh",
                   marginTop: breakpoint !== "clg" ? "48px" : "0",

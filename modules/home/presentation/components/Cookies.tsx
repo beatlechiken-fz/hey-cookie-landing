@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
-import Chip from "@/core/components/chip/Chip";
 import styles from "./Cookies.module.scss";
 import Icons from "@/core/assets/Icons";
 
@@ -337,6 +336,7 @@ export default function Cookies() {
               }
             }}
             className="w-full"
+            style={{ touchAction: "pan-y" }}
           >
             <div
               className={`grid w-full gap-16 ${
@@ -359,6 +359,7 @@ export default function Cookies() {
                     transition={{ duration: 0.4 }}
                     className="relative rounded-full overflow-hidden flex items-center justify-center"
                     style={{
+                      touchAction: "pan-y",
                       width:
                         breakpoint === "clg"
                           ? "80%"
@@ -391,6 +392,7 @@ export default function Cookies() {
                   transition={{ duration: 0.4 }}
                   className="h-full"
                   style={{
+                    touchAction: "pan-y",
                     paddingTop: breakpoint === "clg" ? "82px" : "0px",
                     textAlign: breakpoint === "clg" ? "left" : "center",
                     width: breakpoint === "clg" ? "85%" : "100%",
