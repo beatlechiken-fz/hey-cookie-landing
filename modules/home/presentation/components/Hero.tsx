@@ -73,8 +73,10 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
+            drag={false}
+            dragListener={false}
+            whileTap={undefined}
             className="w-full"
-            style={{ touchAction: "pan-y" }}
           >
             <div className="flex flex-col w-full gap-8">
               {/* LOGO */}
@@ -184,6 +186,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
+            drag={false}
+            dragListener={false}
+            whileTap={undefined}
             className="relative flex items-center justify-center w-full"
           >
             <div className="relative flex items-center justify-center w-full">
@@ -199,7 +204,6 @@ export default function Hero() {
                 priority
                 className="object-contain"
                 style={{
-                  touchAction: "pan-y",
                   width: breakpoint !== "clg" ? "70%" : "90%",
                   maxHeight: "80dvh",
                   marginTop: breakpoint !== "clg" ? "48px" : "0",

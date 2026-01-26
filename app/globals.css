@@ -19,10 +19,12 @@ body {
   scroll-behavior: smooth;
   overflow-x: hidden;
   overscroll-behavior: none;
+  overflow-y: auto;
 }
 
 .vintage-bg {
-  background: radial-gradient(circle at 15% 20%, #c56a4a33 0%, transparent 40%),
+  background:
+    radial-gradient(circle at 15% 20%, #c56a4a33 0%, transparent 40%),
     radial-gradient(circle at 85% 80%, #7c8c4233 0%, transparent 40%), #f5efe6;
 }
 

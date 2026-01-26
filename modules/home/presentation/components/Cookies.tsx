@@ -176,10 +176,7 @@ export default function Cookies() {
   const activeCookie = cookiesTranslated[activeIndex];
 
   return (
-    <main
-      className="relative w-full overflow-x-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]"
-      style={{ contain: "layout paint" }}
-    >
+    <main className="relative w-full overflow-x-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]">
       {/* TOP ORGANIC SHAPE */}
       <svg
         viewBox="0 0 1440 140"
@@ -325,7 +322,6 @@ export default function Cookies() {
         <div className="relative w-full overflow-hidden">
           <motion.div
             drag="x"
-            dragListener={false}
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.08}
             onDragEnd={(_, info) => {
@@ -336,7 +332,6 @@ export default function Cookies() {
               }
             }}
             className="w-full"
-            style={{ touchAction: "pan-y" }}
           >
             <div
               className={`grid w-full gap-16 ${
@@ -351,15 +346,12 @@ export default function Cookies() {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`${activeCookie.id}-img`}
-                    drag="x"
-                    dragListener={true}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.4 }}
                     className="relative rounded-full overflow-hidden flex items-center justify-center"
                     style={{
-                      touchAction: "pan-y",
                       width:
                         breakpoint === "clg"
                           ? "80%"
@@ -392,7 +384,6 @@ export default function Cookies() {
                   transition={{ duration: 0.4 }}
                   className="h-full"
                   style={{
-                    touchAction: "pan-y",
                     paddingTop: breakpoint === "clg" ? "82px" : "0px",
                     textAlign: breakpoint === "clg" ? "left" : "center",
                     width: breakpoint === "clg" ? "85%" : "100%",

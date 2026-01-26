@@ -7,7 +7,7 @@ import Hero from "@/modules/home/presentation/components/Hero";
 
 export default function Home() {
   return (
-    <main className="bg-[#FAF3E0] touch-pan-y">
+    <main className="bg-[#FAF3E0]">
       {/* ----------- SECTION 1 ------------ */}
       <section>
         <Hero />
