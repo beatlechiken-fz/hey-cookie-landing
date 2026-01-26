@@ -5,7 +5,7 @@ import MainNav from "./MainNav";
 
 export default function MobileMenu({ onClose }: { onClose: () => void }) {
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -15,7 +15,7 @@ export default function MobileMenu({ onClose }: { onClose: () => void }) {
         backdrop-blur-sm
       "
     >
-      <motion.div
+      <motion.section
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
@@ -56,7 +56,7 @@ export default function MobileMenu({ onClose }: { onClose: () => void }) {
         <div className="flex flex-col gap-6">
           <MainNav isMobile onSelect={onClose} />
         </div>
-      </motion.div>
-    </motion.div>
+      </motion.section>
+    </motion.section>
   );
 }

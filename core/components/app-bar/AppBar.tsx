@@ -21,7 +21,7 @@ export default function AppBar() {
 
   return (
     <header className="top-0 left-0 z-50 w-full">
-      <motion.div
+      <motion.section
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="mx-auto flex h-[64px] items-center px-6 md:px-10 bg-transparent"
@@ -60,7 +60,7 @@ export default function AppBar() {
             ]}
           />
         </div>
-      </motion.div>
+      </motion.section>
 
       {/* Mobile Menu */}
       <AnimatePresence>
