@@ -8,6 +8,7 @@ import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 import Chip from "@/core/components/chip/Chip";
 import styles from "./Cookies.module.scss";
+import Icons from "@/core/assets/Icons";
 
 const cookies = [
   {
@@ -177,7 +178,7 @@ export default function Cookies() {
 
   return (
     <main
-      className="relative w-full overflow-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]"
+      className="relative w-full overflow-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5] touch-pan-y"
       style={{ contain: "layout paint" }}
     >
       {/* TOP ORGANIC SHAPE */}
@@ -214,52 +215,7 @@ export default function Cookies() {
         </h2>
 
         <div className="w-full flex justify-center pt-4">
-          <svg
-            width="150"
-            height="44"
-            viewBox="0 0 150 44"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <pattern
-                id="wavePattern"
-                x="0"
-                y="0"
-                width="48"
-                height="20"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="
-                    M0 10
-                    C6 2 12 18 18 10
-                    C24 2 30 18 36 10
-                    C42 2 48 18 54 10
-                  "
-                  stroke="rgba(200, 184, 160, 1)"
-                  strokeWidth="1.8"
-                  fill="none"
-                  strokeLinecap="round"
-                />
-              </pattern>
-            </defs>
-            <rect
-              x="0"
-              y="4"
-              width="150"
-              height="20"
-              fill="url(#wavePattern)"
-            />
-            +
-            <rect
-              x="0"
-              y="24"
-              width="150"
-              height="20"
-              fill="url(#wavePattern)"
-            />
-          </svg>
+          <Image src={Icons.waves} alt="" width={120} height={20} />
         </div>
 
         {/* MENU */}
@@ -407,8 +363,8 @@ export default function Cookies() {
                         breakpoint === "clg"
                           ? "80%"
                           : breakpoint === "cmd"
-                          ? "60%"
-                          : "70%",
+                            ? "60%"
+                            : "70%",
                       maxWidth: "520px",
                       aspectRatio: "1 / 1",
                     }}

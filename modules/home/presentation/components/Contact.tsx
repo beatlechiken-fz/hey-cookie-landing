@@ -109,7 +109,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="relative bg-[#FAF3E0] overflow-hidden pb-20 w-full">
+    <section className="relative bg-[#FAF3E0] overflow-hidden pb-20 w-full touch-pan-y">
       {/* Mancha izquierda */}
       <svg
         className="absolute bottom-0 left-0 w-[920px] h-[920px] -translate-x-1/3 translate-y-1/3 z-0"

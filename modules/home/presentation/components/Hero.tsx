@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 import AppBar from "@/core/components/app-bar/AppBar";
-import { useEffect } from "react";
 
 export default function Hero() {
   const t = useTranslations("hero");
@@ -24,14 +23,9 @@ export default function Hero() {
 
   const breakpoint = useBreakpoint(breakpointsConfig);
 
-  useEffect(() => {
-    document.documentElement.style.scrollBehavior = "auto";
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <>
-      <section className="relative bg-[#FAF3E0] overflow-hidden">
+      <section className="relative bg-[#FAF3E0] overflow-hidden touch-pan-y">
         {/* ----------- APP BAR --------------*/}
         <div className="relative z-50">
           <AppBar />
@@ -102,10 +96,10 @@ export default function Hero() {
                       breakpoint === "clg"
                         ? "40%"
                         : breakpoint === "cmd"
-                        ? "20%"
-                        : breakpoint === "csm"
-                        ? "32%"
-                        : "45%",
+                          ? "20%"
+                          : breakpoint === "csm"
+                            ? "32%"
+                            : "45%",
                     maxHeight: "35vh",
                     objectFit: "contain",
                   }}
