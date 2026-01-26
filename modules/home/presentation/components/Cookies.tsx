@@ -181,7 +181,7 @@ export default function Cookies() {
       <svg
         viewBox="0 0 1440 140"
         preserveAspectRatio="none"
-        className="absolute top-0 left-0 w-full h-[140px]"
+        className="absolute top-0 left-0 w-full h-[140px] pointer-events-none"
       >
         <path
           d="
@@ -280,7 +280,7 @@ export default function Cookies() {
 
       {/* CAROUSEL CONTENT */}
       <section
-        className="relative z-10 mt-6 pb-36 flex overflow-hidden"
+        className="relative z-10 mt-6 pb-36 flex overflow-x-hidden"
         style={{
           paddingLeft: breakpoint === "cxs" ? "8px" : "48px",
           paddingRight: breakpoint === "cxs" ? "8px" : "48px",
@@ -319,8 +319,8 @@ export default function Cookies() {
           </div>
         </div>
 
-        <div className="relative w-full overflow-hidden">
-          <motion.div
+        <div className="relative w-full overflow-x-hidden">
+          <motion.section
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.08}
@@ -344,13 +344,13 @@ export default function Cookies() {
               {/* IMAGE */}
               <div className="flex justify-center w-full h-full">
                 <AnimatePresence mode="wait">
-                  <motion.div
+                  <motion.section
                     key={`${activeCookie.id}-img`}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.4 }}
-                    className="relative rounded-full overflow-hidden flex items-center justify-center"
+                    className="relative rounded-full overflow-x-hidden flex items-center justify-center"
                     style={{
                       width:
                         breakpoint === "clg"
@@ -370,13 +370,13 @@ export default function Cookies() {
                       sizes="(max-width: 768px) 70vw, 420px"
                       priority
                     />
-                  </motion.div>
+                  </motion.section>
                 </AnimatePresence>
               </div>
 
               {/* INFO (DESCRIPCIÓN INTACTA) */}
               <AnimatePresence mode="wait">
-                <motion.div
+                <motion.section
                   key={`${activeCookie.id}-info`}
                   initial={{ opacity: 0, x: 40 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -398,10 +398,10 @@ export default function Cookies() {
                   </p>
 
                   {/* CHIPS intactos */}
-                </motion.div>
+                </motion.section>
               </AnimatePresence>
             </div>
-          </motion.div>
+          </motion.section>
         </div>
       </section>
 
@@ -409,7 +409,7 @@ export default function Cookies() {
       <svg
         viewBox="0 0 1440 140"
         preserveAspectRatio="none"
-        className="absolute bottom-0 left-0 w-full h-[140px]"
+        className="absolute bottom-0 left-0 w-full h-[140px] pointer-events-none"
       >
         <path
           d="

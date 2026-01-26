@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getMessages, setRequestLocale } from "next-intl/server";
+import { MotionConfig } from "framer-motion";
 import "../../app/globals.css";
 
 const pacifico = Pacifico({
@@ -51,7 +52,12 @@ export default async function RootLayout({ children, params }: Props) {
     >
       <body className="font-body antialiased overflow-x-hidden">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <MotionConfig
+            reducedMotion="user"
+            transition={{ type: "tween", ease: "easeOut" }}
+          >
+            {children}
+          </MotionConfig>
         </NextIntlClientProvider>
       </body>
     </html>

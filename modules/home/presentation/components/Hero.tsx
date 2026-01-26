@@ -32,7 +32,7 @@ export default function Hero() {
         </div>
 
         {/* DECORATIVE BACKGROUND */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-x-hidden">
           {breakpoint === "clg" && (
             <svg
               className="
@@ -42,6 +42,7 @@ export default function Hero() {
                 right-[-30vw]
                 w-[clamp(600px,80vw,1400px)]
                 h-[clamp(600px,80vw,1400px)]
+                pointer-events-none
               "
               viewBox="0 0 400 400"
               preserveAspectRatio="xMidYMid meet"
@@ -69,7 +70,7 @@ export default function Hero() {
           }}
         >
           {/* LEFT */}
-          <motion.div
+          <motion.section
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -77,6 +78,8 @@ export default function Hero() {
             dragListener={false}
             whileTap={undefined}
             className="w-full"
+            onPointerDown={(e) => e.stopPropagation()}
+            style={{ pointerEvents: "auto" }}
           >
             <div className="flex flex-col w-full gap-8">
               {/* LOGO */}
@@ -179,10 +182,10 @@ export default function Hero() {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </motion.section>
 
           {/* RIGHT */}
-          <motion.div
+          <motion.section
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -190,6 +193,8 @@ export default function Hero() {
             dragListener={false}
             whileTap={undefined}
             className="relative flex items-center justify-center w-full"
+            onPointerDown={(e) => e.stopPropagation()}
+            style={{ pointerEvents: "auto" }}
           >
             <div className="relative flex items-center justify-center w-full">
               <Image
@@ -210,7 +215,7 @@ export default function Hero() {
                 }}
               />
             </div>
-          </motion.div>
+          </motion.section>
         </div>
       </section>
     </>

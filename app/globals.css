@@ -17,9 +17,10 @@ html {
 
 body {
   scroll-behavior: smooth;
-  overflow-x: hidden;
   overscroll-behavior: none;
   overflow-y: auto;
+  touch-action: pan-y;
+  overscroll-behavior-y: contain;
 }
 
 .vintage-bg {
