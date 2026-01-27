@@ -320,20 +320,18 @@ export default function Cookies() {
         </div>
 
         <div className="relative w-full overflow-x-hidden">
-          <motion.section
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.08}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -swipeConfidenceThreshold) {
-                changeCookie(activeIndex + 1);
-              } else if (info.offset.x > swipeConfidenceThreshold) {
-                changeCookie(activeIndex - 1);
-              }
-            }}
-            className="w-full"
-          >
-            <div
+          <section className="w-full">
+            <motion.section
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.08}
+              onDragEnd={(_, info) => {
+                if (info.offset.x < -swipeConfidenceThreshold) {
+                  changeCookie(activeIndex + 1);
+                } else if (info.offset.x > swipeConfidenceThreshold) {
+                  changeCookie(activeIndex - 1);
+                }
+              }}
               className={`grid w-full gap-16 ${
                 breakpoint === "clg"
                   ? "grid-cols-2 items-center"
@@ -400,8 +398,8 @@ export default function Cookies() {
                   {/* CHIPS intactos */}
                 </motion.section>
               </AnimatePresence>
-            </div>
-          </motion.section>
+            </motion.section>
+          </section>
         </div>
       </section>
 

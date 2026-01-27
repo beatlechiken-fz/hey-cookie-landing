@@ -13,6 +13,13 @@ export default function Home() {
         <Hero />
       </section>
 
+      {/* ----------- SECTION 2 ------------ */}
+      {/*
+      <section id="cookies" className="relative z-20 w-full overflow-x-hidden">
+        <Cookies />
+      </section>
+      */}
+
       {/* ----------- SECTION 3 ------------ */}
       <section className="w-full flex items-center justify-center">
         <Contact />

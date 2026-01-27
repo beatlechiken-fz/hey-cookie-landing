@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 import AppBar from "@/core/components/app-bar/AppBar";
+import styles from "./Hero.module.scss";
 
 export default function Hero() {
   const t = useTranslations("hero");
@@ -70,17 +71,7 @@ export default function Hero() {
           }}
         >
           {/* LEFT */}
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            drag={false}
-            dragListener={false}
-            whileTap={undefined}
-            className="w-full"
-            onPointerDown={(e) => e.stopPropagation()}
-            style={{ pointerEvents: "auto" }}
-          >
+          <section className={`w-full ${styles.fadeUp}`}>
             <div className="flex flex-col w-full gap-8">
               {/* LOGO */}
               <div
@@ -182,7 +173,7 @@ export default function Hero() {
                 </div>
               </div>
             </div>
-          </motion.section>
+          </section>
 
           {/* RIGHT */}
           <motion.section
