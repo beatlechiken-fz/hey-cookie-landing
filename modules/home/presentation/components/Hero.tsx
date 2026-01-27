@@ -174,39 +174,6 @@ export default function Hero() {
               </div>
             </div>
           </section>
-
-          {/* RIGHT */}
-          <motion.section
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            drag={false}
-            dragListener={false}
-            whileTap={undefined}
-            className="relative flex items-center justify-center w-full"
-            onPointerDown={(e) => e.stopPropagation()}
-            style={{ pointerEvents: "auto" }}
-          >
-            <div className="relative flex items-center justify-center w-full">
-              <Image
-                src={
-                  breakpoint !== "clg"
-                    ? "/img/hero-splash-h.webp"
-                    : "/img/hero-splash.webp"
-                }
-                alt="Hey Cookie"
-                width={1000}
-                height={1000}
-                priority
-                className="object-contain"
-                style={{
-                  width: breakpoint !== "clg" ? "70%" : "90%",
-                  maxHeight: "80dvh",
-                  marginTop: breakpoint !== "clg" ? "48px" : "0",
-                }}
-              />
-            </div>
-          </motion.section>
         </div>
       </section>
     </>
