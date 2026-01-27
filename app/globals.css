@@ -10,17 +10,17 @@
   --font-body: var(--font-montserrat);
 }
 
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
 }
 
 body {
-  scroll-behavior: smooth;
-  overscroll-behavior: none;
   overflow-y: auto;
-  touch-action: pan-y;
-  overscroll-behavior-y: contain;
+  overflow-x: hidden;
+  touch-action: auto;
 }
 
 .vintage-bg {

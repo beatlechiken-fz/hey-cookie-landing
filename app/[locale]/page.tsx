@@ -7,21 +7,20 @@ import Hero from "@/modules/home/presentation/components/Hero";
 
 export default function Home() {
   return (
-    <main className="bg-[#FAF3E0]">
+    <main className="bg-[#FAF3E0] min-h-full">
       {/* ----------- SECTION 1 ------------ */}
       <section>
         <Hero />
       </section>
 
       {/* ----------- SECTION 2 ------------ */}
-      {/*
       <section id="cookies" className="relative z-20 w-full overflow-x-hidden">
         <Cookies />
       </section>
-      */}
 
       {/* ----------- SECTION 3 ------------ */}
-      <section className="w-full flex items-center justify-center">
+
+      <section className="w-full">
         <Contact />
       </section>
 

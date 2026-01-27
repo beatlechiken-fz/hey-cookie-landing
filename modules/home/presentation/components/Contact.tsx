@@ -109,25 +109,19 @@ export default function Contact() {
   }
 
   return (
-    <section className="relative bg-[#FAF3E0] overflow-x-hidden pb-20 w-full touch-pan-y">
-      {/* Mancha izquierda */}
-      <svg
-        className="absolute bottom-0 left-0 w-[920px] h-[920px] -translate-x-1/3 translate-y-1/3 z-0"
-        viewBox="0 0 400 400"
-      >
-        <circle cx="200" cy="200" r="200" fill="#E6D3B1" />
-      </svg>
-
-      {/* Mancha derecha */}
-      <svg
-        className="absolute bottom-0 right-0 w-[420px] h-[420px] translate-x-1/3 translate-y-1/3 z-0"
-        viewBox="0 0 400 400"
-      >
-        <circle cx="200" cy="200" r="200" fill="#E6D3B1" />
-      </svg>
+    <section className="relative bg-[#FAF3E0] overflow-x-hidden overflow-y-visible pb-20 w-full">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Mancha derecha */}
+        <svg
+          className="absolute bottom-0 right-0 w-[420px] h-[420px] translate-x-1/3 translate-y-1/3 z-0"
+          viewBox="0 0 400 400"
+        >
+          <circle cx="200" cy="200" r="200" fill="#E6D3B1" />
+        </svg>
+      </div>
 
       <div
-        className="relative z-10 mx-auto px-6 flex"
+        className="relative z-10 mx-auto px-6 flex overflow-visible"
         style={{
           width: breakpoint === "clg" ? "70%" : "85%",
           flexDirection:
@@ -139,7 +133,7 @@ export default function Contact() {
       >
         {/* FORMULARIO */}
         <div className="flex justify-center w-full">
-          <div className="bg-white/80 backdrop-blur rounded-3xl p-10 shadow-lg w-[440px]">
+          <div className="bg-white/80 backdrop-blur rounded-3xl p-10 shadow-lg w-[440px] overflow-visible">
             <h3 className="text-4xl font-title text-[#6B3E26] mb-8 text-center">
               {t("listen")}
             </h3>
@@ -198,7 +192,7 @@ export default function Contact() {
                 </button>
               </form>
             ) : (
-              <div className="flex flex-col gap-4 text-[#C68642] text-[clamp(2rem,4vh,5rem)] items-center min-h-[400px]">
+              <div className="flex flex-col gap-4 text-[#C68642] text-[clamp(2rem,4vh,5rem)] items-center">
                 <svg
                   width="88"
                   height="88"
