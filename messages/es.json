@@ -49,26 +49,47 @@
     "title": "Pasteles",
     "title2": "Roscas",
     "title3": "Tips",
-    "vanilla": {
-      "name": "Vainilla clásica",
-      "description": "Pastel suave de vainilla con un toque nostálgico.",
-      "bread": "Vainilla",
-      "filling": "Crema dulce",
-      "topping": "Ganache blanco"
-    },
-    "chocolate": {
-      "name": "Chocolate intenso",
-      "description": "Pastel profundo de cacao para amantes del chocolate.",
+    "chocolateNuezChocolate": {
+      "name": "Rosca de Chocolate con nuez",
+      "description": "Rosca esponjosa con cacao y nuez picada cubierta de ganache de chocolate",
       "bread": "Cacao",
-      "filling": "Chocolate amargo",
-      "topping": "Ganache de chocolate"
+      "filling": "Nuez",
+      "topping": "Ganache de chocolate y nuez picada"
     },
-    "red": {
-      "name": "Red Velvet",
-      "description": "Clásico Red Velvet con un giro artesanal.",
-      "bread": "Red Velvet",
-      "filling": "Queso crema",
+    "chocolateNuezChocolateGlass": {
+      "name": "Rosca de Chocolate con nuez glaseada",
+      "description": "Rosca esponjosa con cacao y nuez picada cubierta de azúcar glass.",
+      "bread": "Cacao",
+      "filling": "Nuez",
       "topping": "Azúcar glass"
+    },
+    "panqueZanahoria": {
+      "name": "Panqué de Zanahoria",
+      "description": "Panqué suave de zanahoría a base de nata",
+      "bread": "Nata y Zanahoria",
+      "filling": "",
+      "topping": ""
+    },
+    "cafe": {
+      "name": "Pastel de café",
+      "description": "Pastel de café humectado con licor de café con cobertura de café",
+      "bread": "Café",
+      "filling": "",
+      "topping": "Café"
+    },
+    "cocoFrutosRojos": {
+      "name": "Pastel de Coco con Frutos rojos",
+      "description": "Pastel estilo tres leches cóco con frutos rojos y cobertura de coco",
+      "bread": "",
+      "filling": "",
+      "topping": ""
+    },
+    "moka": {
+      "name": "Pastel de Moka",
+      "description": "Pastel estilo tres leches de moka con cobertura de ganache de chocolate.",
+      "bread": "",
+      "filling": "",
+      "topping": ""
     },
     "tips": {
       "sweetnessTitle": "Dulzor",
@@ -83,7 +104,15 @@
       "ingredientsDesc": "Elaboramos cada pastel con mantequilla real, huevos frescos y materias primas de alta calidad. Todo es hecho en casa, sin premezclas ni atajos.",
 
       "orderTitle": "Pedido con anticipación",
-      "orderDesc": "Para asegurar sabor, textura y acabado, los pedidos deben realizarse con al menos 1 día de anticipación."
+      "orderDesc": "Para asegurar sabor, textura y acabado, los pedidos deben realizarse con al menos 1 día de anticipación.",
+      "diameter": "Diámetro:",
+      "sweetness": "Dulzor:",
+      "quotes": "Porciones:",
+      "quote1": "6 - 8 personas",
+      "quote2": "8 - 10 personas",
+      "quote3": "10 - 12 personas",
+      "quote4": "16 - 20 personas",
+      "hot": "Más pedido"
     }
   },
   "contact": {

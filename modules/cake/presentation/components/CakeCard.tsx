@@ -31,7 +31,7 @@ export default function CakeCard({ cake, bgColor }: Props) {
           src={cake.image}
           alt={t(cake.name)}
           fill
-          className="object-contain p-4"
+          className="object-cover"
         />
       </div>
 
@@ -39,10 +39,13 @@ export default function CakeCard({ cake, bgColor }: Props) {
       <div className="pt-4 flex flex-col gap-2">
         <h3 className="text-xl font-title text-[#6B3E26]">{t(cake.name)}</h3>
 
-        <p className="text-sm text-[#6B3E26]/70">{t(cake.description)}</p>
+        <p className="text-sm text-[#6B3E26]/70 h-[60px]">
+          {t(cake.description)}
+        </p>
 
         {/* SWEETNESS */}
         <div className="flex items-center gap-1 mt-2">
+          <span className="text-[14px]">{t("cakes.tips.sweetness")}</span>
           {Array.from({ length: 5 }).map((_, i) => (
             <span
               key={i}
@@ -58,44 +61,60 @@ export default function CakeCard({ cake, bgColor }: Props) {
         {/* PRICES */}
         <div className="mt-2">
           <span className="block text-sm font-semibold text-[#3A1F14] mb-3">
-            Porciones
+            {t("cakes.tips.quotes")}
           </span>
 
           <div className="grid grid-cols-2 gap-3 text-center">
             {/* OPTION */}
-            <div className="rounded-2xl bg-[#FAF3E0] border border-[#E6C7A5] p-3 shadow-sm">
-              <span className="text-xs text-[#6B3E26]">8 – 10 personas</span>
-              <span className="block mt-1 text-lg font-bold text-[#377F81]">
-                {cake.price1}
-              </span>
-            </div>
+            {cake.price4 !== "" && (
+              <div className="rounded-2xl bg-[#FAF3E0] border border-[#E6C7A5] p-3 shadow-sm">
+                <span className="text-xs text-[#6B3E26]">
+                  {t("cakes.tips.quote1")}
+                </span>
+                <span className="block mt-1 text-lg font-bold text-[#377F81]">
+                  {cake.price4}
+                </span>
+              </div>
+            )}
 
             {/* OPTION */}
-            <div className="rounded-2xl bg-[#FAF3E0] border border-[#E6C7A5] p-3 shadow-sm">
-              <span className="text-xs text-[#6B3E26]">12 – 15 personas</span>
-              <span className="block mt-1 text-lg font-bold text-[#377F81]">
-                {cake.price2}
-              </span>
-            </div>
+            {cake.price3 !== "" && (
+              <div className="rounded-2xl bg-[#FAF3E0] border border-[#E6C7A5] p-3 shadow-sm">
+                <span className="text-xs text-[#6B3E26]">
+                  {t("cakes.tips.quote2")}
+                </span>
+                <span className="block mt-1 text-lg font-bold text-[#377F81]">
+                  {cake.price3}
+                </span>
+              </div>
+            )}
 
             {/* OPTION – HIGHLIGHT */}
-            <div className="relative rounded-2xl bg-[#FFF7EC] border-2 border-[#DA6C94] p-3 shadow-md">
-              <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] px-2 py-[2px] rounded-full bg-[#DA6C94] text-white">
-                Más pedido
-              </span>
-              <span className="text-xs text-[#6B3E26]">16 – 20 personas</span>
-              <span className="block mt-1 text-lg font-bold text-[#DA6C94]">
-                {cake.price3}
-              </span>
-            </div>
+            {cake.price2 !== "" && (
+              <div className="relative rounded-2xl bg-[#FFF7EC] border-2 border-[#DA6C94] p-3 shadow-md">
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] px-2 py-[2px] rounded-full bg-[#DA6C94] text-white">
+                  {t("cakes.tips.hot")}
+                </span>
+                <span className="text-xs text-[#6B3E26]">
+                  {t("cakes.tips.quote3")}
+                </span>
+                <span className="block mt-1 text-lg font-bold text-[#DA6C94]">
+                  {cake.price2}
+                </span>
+              </div>
+            )}
 
             {/* OPTION */}
-            <div className="rounded-2xl bg-[#FAF3E0] border border-[#E6C7A5] p-3 shadow-sm">
-              <span className="text-xs text-[#6B3E26]">24 – 28 personas</span>
-              <span className="block mt-1 text-lg font-bold text-[#377F81]">
-                {cake.price4}
-              </span>
-            </div>
+            {cake.price1 !== "" && (
+              <div className="rounded-2xl bg-[#FAF3E0] border border-[#E6C7A5] p-3 shadow-sm">
+                <span className="text-xs text-[#6B3E26]">
+                  {t("cakes.tips.quote4")}
+                </span>
+                <span className="block mt-1 text-lg font-bold text-[#377F81]">
+                  {cake.price1}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

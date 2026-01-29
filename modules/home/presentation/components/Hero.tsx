@@ -25,12 +25,12 @@ export default function Hero() {
 
   return (
     <section className="relative bg-[#FAF3E0] overflow-x-hidden">
-      {/* ----------- APP BAR --------------*/}
+      {/* ------------------ APP BAR ------------------ */}
       <div className="relative z-50">
         <AppBar />
       </div>
 
-      {/* CONTENT */}
+      {/* ------------------ CONTENT ------------------ */}
       <div
         className="relative z-10 flex px-10 md:px-20"
         style={{
@@ -97,7 +97,6 @@ export default function Hero() {
               }}
             >
               <h1>{t("title1")}</h1>
-
               <h1 className="bg-gradient-to-r from-[#8A3414] via-[#C68642] to-[#D7B07A] bg-clip-text text-transparent">
                 {t("title2")}
               </h1>
@@ -122,7 +121,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: "easeOut", delay: 0.45 }}
-              className="mt-10 flex gap-4"
+              className="mt-0 flex gap-4"
               style={{
                 justifyContent: breakpoint !== "clg" ? "center" : "flex-start",
               }}
@@ -130,10 +129,7 @@ export default function Hero() {
               <button
                 onClick={() => {
                   const el = document.getElementById("cookies");
-                  el?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
+                  el?.scrollIntoView({ behavior: "smooth", block: "start" });
                 }}
                 className="px-8 py-4 rounded-full bg-[#6B3E26] text-white font-semibold hover:bg-[#C68642] transition"
               >
@@ -152,7 +148,7 @@ export default function Hero() {
           </div>
         </section>
 
-        {/* RIGHT (ya lo tenías bien) */}
+        {/* RIGHT */}
         <motion.section
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -169,10 +165,13 @@ export default function Hero() {
             width={1000}
             height={1000}
             priority
-            className="object-contain"
+            className="
+              object-contain
+              drop-shadow-[0_28px_45px_rgba(107,62,38,0.35)]
+            "
             style={{
-              width: breakpoint !== "clg" ? "70%" : "90%",
-              maxHeight: "80dvh",
+              width: breakpoint !== "clg" ? "70%" : "85%",
+              maxHeight: "70dvh",
               marginTop: breakpoint !== "clg" ? "48px" : "0",
             }}
           />

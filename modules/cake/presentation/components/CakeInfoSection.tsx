@@ -30,38 +30,8 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
-        {/* DULZOR */}
-        <div>
-          <h4 className="text-xl font-bold text-[#3A1F14] mb-3">
-            {t("tips.sweetnessTitle")}
-          </h4>
-
-          <p className="text-sm text-[#6B3E26]/80 mb-4">
-            {t("tips.sweetnessDesc")}
-          </p>
-
-          <div className="flex items-center gap-1 mt-2">
-            {[...Array(5)].map((_, i) => (
-              <svg
-                key={i}
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                className="shrink-0"
-                fill={i < sweetness ? "#DA6C94" : "#E8D8C4"}
-              >
-                <path d="M12 21s-7-4.6-9.5-8.2C.7 9.9 2.2 6 6 6c2.1 0 3.4 1.2 4 2.2C10.6 7.2 11.9 6 14 6c3.8 0 5.3 3.9 3.5 6.8C19 16.4 12 21 12 21z" />
-              </svg>
-            ))}
-          </div>
-
-          <span className="block mt-2 text-xs text-[#6B3E26]">
-            {t("tips.sweetnessScale")}
-          </span>
-        </div>
-
-        {/* PORCIONES */}
-        <div>
+        {/* PORCIONES — ocupa toda la fila */}
+        <div className="lg:col-span-2">
           <h4 className="text-xl font-bold text-[#3A1F14] mb-3">
             {t("tips.portionsTitle")}
           </h4>
@@ -70,7 +40,8 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
             {t("tips.portionsDesc")}
           </p>
 
-          <div className="flex flex-col gap-4">
+          {/* Grid interno responsive */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {cakeSizes.map((size) => (
               <div
                 key={size.diameter}
@@ -101,7 +72,9 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
 
                 <div className="text-sm text-[#6B3E26]">
                   <p className="font-semibold">{size.people}</p>
-                  <p>Diámetro: {size.diameter}</p>
+                  <p>
+                    {t("tips.diameter")} {size.diameter}
+                  </p>
                   <p>{t("tips.height")}</p>
                 </div>
               </div>
@@ -114,7 +87,6 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
           <h4 className="text-xl font-bold text-[#3A1F14] mb-2">
             {t("tips.ingredientsTitle")}
           </h4>
-
           <p className="text-sm text-[#6B3E26]/80">
             {t("tips.ingredientsDesc")}
           </p>
@@ -125,7 +97,6 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
           <h4 className="text-xl font-bold text-[#3A1F14] mb-2">
             {t("tips.orderTitle")}
           </h4>
-
           <p className="text-sm text-[#6B3E26]/80">{t("tips.orderDesc")}</p>
         </div>
       </div>

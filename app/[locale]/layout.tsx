@@ -27,7 +27,10 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "Hey Cookie",
-  description: "Cookies & repostería",
+  description: "Cookies & Bakery",
+  icons: {
+    icon: "/icon.ico",
+  },
 };
 
 type Props = {
