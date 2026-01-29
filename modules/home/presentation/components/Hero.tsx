@@ -165,10 +165,14 @@ export default function Hero() {
             width={1000}
             height={1000}
             priority
-            className="
-              object-contain
-              drop-shadow-[0_28px_45px_rgba(107,62,38,0.35)]
-            "
+            className={`
+    object-contain
+    ${
+      breakpoint === "clg"
+        ? "drop-shadow-[0_28px_45px_rgba(107,62,38,0.35)]"
+        : ""
+    }
+  `}
             style={{
               width: breakpoint !== "clg" ? "70%" : "85%",
               maxHeight: "70dvh",
