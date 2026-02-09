@@ -43,6 +43,14 @@
       "name": "Reyes",
       "description": "This limited-edition cookie adds an innovative twist to our classic cookie by replacing the topping with white chocolate and fruit paste."
     },
+    "cafe": {
+      "name": "Coffee",
+      "description": "An intense, bold-flavored cookie, perfect for those who love to start their mornings with the taste of coffee."
+    },
+    "rose": {
+      "name": "Rose",
+      "description": "Our cookie for love and friendship, made with rose water dough, filled with almonds, and coated with white chocolate and rose petals."
+    },
     "title": "Sweet Cookies"
   },
   "cakes": {

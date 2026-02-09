@@ -16,8 +16,7 @@ const cookies = [
     name: "vainilla.name",
     description: "vainilla.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 2,
@@ -25,8 +24,7 @@ const cookies = [
     name: "chocolate.name",
     description: "chocolate.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 3,
@@ -34,8 +32,7 @@ const cookies = [
     name: "red.name",
     description: "red.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 4,
@@ -43,8 +40,7 @@ const cookies = [
     name: "marmoleada.name",
     description: "marmoleada.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 5,
@@ -52,8 +48,7 @@ const cookies = [
     name: "matcha.name",
     description: "matcha.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 6,
@@ -61,8 +56,7 @@ const cookies = [
     name: "oreo.name",
     description: "oreo.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 7,
@@ -70,8 +64,7 @@ const cookies = [
     name: "pop.name",
     description: "pop.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 8,
@@ -79,8 +72,7 @@ const cookies = [
     name: "taro.name",
     description: "taro.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
   },
   {
     id: 9,
@@ -88,13 +80,29 @@ const cookies = [
     name: "reyes.name",
     description: "reyes.description",
     price: "1pz $25.00",
-    sale: "2pz $40.00",
-    sale2: "3pz $55.00",
+    sale: "Lunes 2pz $40.00",
+  },
+  {
+    id: 10,
+    image: "/img/cf-product-splash.webp",
+    name: "cafe.name",
+    description: "cafe.description",
+    price: "1pz $25.00",
+    sale: "Lunes 2pz $40.00",
+  },
+  {
+    id: 11,
+    image: "/img/rs-product-splash.webp",
+    name: "rose.name",
+    description: "rose.description",
+    price: "1pz $25.00",
+    sale: "Lunes 2pz $40.00",
   },
 ];
 
 export default function Cookies() {
   const t = useTranslations("cookies");
+  const t2 = useTranslations("cakes");
 
   const cookiesTranslated = cookies.map((cookie) => ({
     ...cookie,
@@ -394,6 +402,18 @@ export default function Cookies() {
                   <p className="mt-10 text-[clamp(1.2rem,2vw,2rem)] text-[#6B3E26]/80 mx-auto">
                     {activeCookie.description}
                   </p>
+
+                  <div className="flex gap-4 text-[#6B3E26] font-bold mt-6">
+                    <span className="flex items-center justify-center rounded-[8px] border border-[#AA6A42] py-4 px-4 shadow-md">
+                      {activeCookie.price}
+                    </span>
+                    <span className="relative flex items-center justify-center rounded-[8px] py-4 px-4 bg-[#FFF7EC] border-2 border-[#DA6C94] shadow-md">
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] px-2 py-[2px] rounded-full bg-[#DA6C94] text-white">
+                        {t2("tips.hot")}
+                      </span>
+                      <span>{activeCookie.sale}</span>
+                    </span>
+                  </div>
 
                   {/* CHIPS intactos */}
                 </motion.section>

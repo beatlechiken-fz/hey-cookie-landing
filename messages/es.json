@@ -43,6 +43,14 @@
       "name": "Reyes",
       "description": "Esta galleta de edición limitada le agrega un toque innovador a nuestra galleta clásica al cambiar la cobertura por chocolate blanco y ate."
     },
+    "cafe": {
+      "name": "Café",
+      "description": "Una galleta de sabor intenso y fuerte, ideal para aquellas personas que le encanta acompañar sus mañanas con sabor a café."
+    },
+    "rose": {
+      "name": "Rose",
+      "description": "Nuestra galleta para para el amor y la amistad, con masa elaborada con agua de rosas, rellena de almendras y cubierta de chocolate blanco y pétalos de rosa."
+    },
     "title": "Sweet Cookies"
   },
   "cakes": {
