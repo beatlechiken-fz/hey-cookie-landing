@@ -3,11 +3,11 @@
 import CakeCard from "./CakeCard";
 import CakeModal from "./CakeModal";
 import { useCakeModal } from "@/core/hooks/useCakeModal";
-import { cakesData } from "@/core/data/cakesData";
+import { dessertsData } from "@/core/data/dessertsData";
 import AppBar from "@/core/components/app-bar/AppBar";
 import { useTranslations } from "next-intl";
 
-export default function CakesSection() {
+export default function DessertsSection() {
   const t = useTranslations();
 
   const {
@@ -20,7 +20,7 @@ export default function CakesSection() {
   } = useCakeModal();
 
   // 🔥 Agrupar por "line"
-  const groupedByLine = cakesData.reduce(
+  const groupedByLine = dessertsData.reduce(
     (acc, cake) => {
       if (!acc[cake.line]) acc[cake.line] = [];
       acc[cake.line].push(cake);
@@ -31,7 +31,6 @@ export default function CakesSection() {
 
   return (
     <main>
-      {/* ------------------ APP BAR ------------------ */}
       <section className="w-full max-w-6xl mx-auto px-4 py-16 space-y-20">
         {Object.entries(groupedByLine).map(([lineKey, cakes]) => (
           <div key={lineKey} className="space-y-12">
@@ -43,7 +42,7 @@ export default function CakesSection() {
             </h2>
 
             {/* ----------------------------------------- */}
-            {/*             GRID DE PASTELES              */}
+            {/*             GRID DE POSTRES              */}
             {/* ----------------------------------------- */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
               {cakes.map((cake) => (
