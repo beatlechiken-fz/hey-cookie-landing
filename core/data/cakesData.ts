@@ -376,9 +376,9 @@ export const cakesData = [
       syrupPrice: "$20",
     },
   },
-  /*{
+  {
     id: 700,
-    image: "/img/cake-panqueZanahoria.webp",
+    image: "/img/cake-panqueZanahoria-sm.webp",
     name: "cakes.panqueZanahoria.name",
     description: "cakes.panqueZanahoria.description",
     sweetness: 3,
@@ -390,7 +390,7 @@ export const cakesData = [
   },
   {
     id: 701,
-    image: "/img/cake-panqueElote.webp",
+    image: "/img/cake-panqueElote-sm.webp",
     name: "cakes.panqueElote.name",
     description: "cakes.panqueElote.description",
     sweetness: 3,
@@ -402,7 +402,7 @@ export const cakesData = [
   },
   {
     id: 702,
-    image: "/img/cake-panquePlatanoAvena.webp",
+    image: "/img/cake-panquePlatanoAvena-sm.webp",
     name: "cakes.panquePlatanoAvena.name",
     description: "cakes.panquePlatanoAvena.description",
     sweetness: 3,
@@ -415,7 +415,7 @@ export const cakesData = [
   },
   {
     id: 900,
-    image: "/img/cake-muffinPlatanoZanahoriaChocolate.webp",
+    image: "/img/cake-muffinPlatanoZanahoriaChocolate-sm.webp",
     name: "cakes.muffinPlatanoZanahoriaChocolate.name",
     description: "cakes.muffinPlatanoZanahoriaChocolate.description",
     sweetness: 3,
@@ -427,7 +427,7 @@ export const cakesData = [
   },
   {
     id: 901,
-    image: "/img/cake-muffinManzanaPlatano.webp",
+    image: "/img/cake-muffinManzanaPlatano-sm.webp",
     name: "cakes.muffinManzanaPlatano.name",
     description: "cakes.muffinManzanaPlatano.description",
     sweetness: 3,
@@ -439,7 +439,7 @@ export const cakesData = [
   },
   {
     id: 902,
-    image: "/img/cake-muffinFrambuesaArandanoChocolate.webp",
+    image: "/img/cake-muffinFrambuesaArandanoChocolate-sm.webp",
     name: "cakes.muffinFrambuesaArandanoChocolate.name",
     description: "cakes.muffinFrambuesaArandanoChocolate.description",
     sweetness: 3,
@@ -451,7 +451,7 @@ export const cakesData = [
   },
   {
     id: 903,
-    image: "/img/cake-muffinCrezaYogurt.webp",
+    image: "/img/cake-muffinCrezaYogurt-sm.webp",
     name: "cakes.muffinCrezaYogurt.name",
     description: "cakes.muffinCrezaYogurt.description",
     sweetness: 3,
@@ -463,7 +463,7 @@ export const cakesData = [
   },
   {
     id: 904,
-    image: "/img/cake-muffinChocolate.webp",
+    image: "/img/cake-muffinChocolate-sm.webp",
     name: "cakes.muffinChocolate.name",
     description: "cakes.muffinChocolate.description",
     sweetness: 3,
@@ -475,7 +475,7 @@ export const cakesData = [
   },
   {
     id: 905,
-    image: "/img/cake-muffinFresa.webp",
+    image: "/img/cake-muffinFresa-sm.webp",
     name: "cakes.muffinFresa.name",
     description: "cakes.muffinFresa.description",
     sweetness: 3,
@@ -487,7 +487,7 @@ export const cakesData = [
   },
   {
     id: 906,
-    image: "/img/cake-muffinVainilla.webp",
+    image: "/img/cake-muffinVainilla-sm.webp",
     name: "cakes.muffinVainilla.name",
     description: "cakes.muffinVainilla.description",
     sweetness: 3,
@@ -496,5 +496,5 @@ export const cakesData = [
     sizexl: {
       basePrice: "$30",
     },
-  },*/
+  },
 ];

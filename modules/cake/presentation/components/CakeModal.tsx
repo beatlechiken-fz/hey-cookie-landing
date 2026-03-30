@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import CakeSizeSelector from "./CakeSizeSelector";
 import { CakeSizeKey } from "@/core/helpers/cakeSizeLabels";
 
@@ -22,6 +22,20 @@ export default function CakeModal({
   const t = useTranslations();
 
   if (!cake) return null;
+
+  const sizePriority: CakeSizeKey[] = ["sizexl", "sizel", "sizemd", "sizesm"];
+
+  const availableSizes = sizePriority.filter((s) => cake[s]);
+
+  useEffect(() => {
+    const isValid = selectedSize && cake[selectedSize];
+
+    // Si selectedSize no es válido, aplicar fallback
+    if (!isValid) {
+      const fallback = sizePriority.find((s) => cake[s]);
+      if (fallback && fallback !== selectedSize) setSelectedSize(fallback);
+    }
+  }, [selectedSize, cake]);
 
   const sizeInfo = cake[selectedSize] ?? {};
 
@@ -80,11 +94,13 @@ export default function CakeModal({
         <p className="text-gray-700 mt-2 text-sm">{t(cake.description)}</p>
 
         {/* Size */}
-        <CakeSizeSelector
-          cake={cake}
-          value={selectedSize}
-          onChange={setSelectedSize}
-        />
+        {availableSizes.length > 1 && (
+          <CakeSizeSelector
+            cake={cake}
+            value={selectedSize}
+            onChange={setSelectedSize}
+          />
+        )}
 
         {/* Add-ons */}
         <div className="mt-6 space-y-3">
