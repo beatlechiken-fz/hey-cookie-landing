@@ -8,8 +8,8 @@ import { CakeSizeKey } from "@/core/helpers/cakeSizeLabels";
 
 interface Props {
   cake: any;
-  selectedSize: CakeSizeKey;
-  setSelectedSize: (size: CakeSizeKey) => void;
+  selectedSize: CakeSizeKey | null;
+  setSelectedSize: (size: CakeSizeKey | null) => void;
   onClose: () => void;
 }
 
@@ -37,7 +37,7 @@ export default function CakeModal({
     }
   }, [selectedSize, cake]);
 
-  const sizeInfo = cake[selectedSize] ?? {};
+  const sizeInfo = selectedSize ? (cake[selectedSize] ?? {}) : {};
 
   const cleanPrice = (p?: string) => (p ? Number(p.replace("$", "")) : 0);
 
@@ -94,7 +94,7 @@ export default function CakeModal({
         <p className="text-gray-700 mt-2 text-sm">{t(cake.description)}</p>
 
         {/* Size */}
-        {availableSizes.length > 1 && (
+        {availableSizes.length > 1 && selectedSize && (
           <CakeSizeSelector
             cake={cake}
             value={selectedSize}
