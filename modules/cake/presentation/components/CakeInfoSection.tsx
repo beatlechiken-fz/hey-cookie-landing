@@ -20,7 +20,7 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
   const t = useTranslations("cakes");
 
   return (
-    <section className="w-full pb-24 px-6 md:px-12 lg:px-24 bg-[#FAF3E0]">
+    <section className="w-full max-w-6xl mx-auto px-4 py-16 bg-[#FAF3E0]">
       <h2 className="text-5xl text-center font-title text-[#DA6C94]">
         {t("title3")}
       </h2>

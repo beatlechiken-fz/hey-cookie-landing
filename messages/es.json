@@ -55,49 +55,161 @@
   },
   "cakes": {
     "title": "Pasteles",
-    "title2": "Roscas",
+    "title2": "Bundt Cakes",
     "title3": "Tips",
-    "chocolateNuezChocolate": {
-      "name": "Rosca de Chocolate con nuez",
-      "description": "Rosca esponjosa con cacao y nuez picada cubierta de ganache de chocolate",
-      "bread": "Cacao",
-      "filling": "Nuez",
-      "topping": "Ganache de chocolate y nuez picada"
+    "sweetCategory": "Dulce",
+    "healthyCategory": "Saludable",
+    "gfCategory": "Libre de gluten",
+    "lines": {
+      "sweet": "Línea Dulce",
+      "healthy": "Línea Saludable",
+      "sweetBakery": "Panadería Dulce",
+      "healthyBakery": "Panadería Saludable",
+      "sweetDessert": "Repostería Dulce"
     },
-    "chocolateNuezChocolateGlass": {
-      "name": "Rosca de Chocolate con nuez glaseada",
-      "description": "Rosca esponjosa con cacao y nuez picada cubierta de azúcar glass.",
-      "bread": "Cacao",
-      "filling": "Nuez",
-      "topping": "Azúcar glass"
+    "sizes": {
+      "sizexl": "16–20 personas",
+      "sizel": "10–12 personas",
+      "sizemd": "8–10 personas",
+      "sizesm": "6–8 personas"
     },
-    "panqueZanahoria": {
-      "name": "Panqué de Zanahoria",
-      "description": "Panqué suave de zanahoría a base de nata",
-      "bread": "Nata y Zanahoria",
-      "filling": "",
-      "topping": ""
-    },
+    "priceTitle": "Precios",
+    "basePrice": "Precio base",
+    "finalPrice": "Precio al cliente",
+    "licorPrice": "Licor",
+    "syrupPrice": "Jarabe",
+    "coveragePrice": "Cobertura",
     "cafe": {
       "name": "Pastel de café",
-      "description": "Pastel de café humectado con licor de café con cobertura de café",
-      "bread": "Café",
-      "filling": "",
-      "topping": "Café"
+      "description": "Pastel húmedo y aromático con profundo sabor a café, relleno y cubierto con una crema suave y elegante que resalta sus notas tostadas y textura esponjosa."
     },
     "cocoFrutosRojos": {
       "name": "Pastel de Coco con Frutos rojos",
-      "description": "Pastel estilo tres leches cóco con frutos rojos y cobertura de coco",
-      "bread": "",
-      "filling": "",
-      "topping": ""
+      "description": "Pastel de coco suave y aromático con frutos rojos frescos, relleno de buttercream y cubierto con frosting de queso crema para un equilibrio perfecto entre frescura y cremosidad."
     },
     "moka": {
       "name": "Pastel de Moka",
-      "description": "Pastel estilo tres leches de moka con cobertura de ganache de chocolate.",
-      "bread": "",
-      "filling": "",
-      "topping": ""
+      "description": "Pastel moka esponjoso con notas de canela, relleno de mousse Moussline y cubierto con frosting de queso crema, ofreciendo una textura lujosa y un sabor intensamente equilibrado."
+    },
+    "zanahoria": {
+      "name": "Pastel de Zanahoria",
+      "description": "Pastel de zanahoria húmedo y especiado con nuez tostada, relleno y cubierto con un buttercream de queso crema sedoso que realza su sabor cálido y casero."
+    },
+    "milHojas": {
+      "name": "Pastel Mil Hojas",
+      "description": "Pastel mil hojas con capas crujientes de hojaldre y crema suave de vainilla, terminado con un delicado toque de azúcar glass para un postre elegante y irresistible."
+    },
+    "redVelvet": {
+      "name": "Pastel Red Velvet",
+      "description": "Red Velvet esponjoso y vibrante, con notas suaves de cacao y vainilla, perfecto con su cobertura y relleno de crema mantequilla para lograr un postre clásico, elegante e irresistible."
+    },
+    "malvavisco": {
+      "name": "Pastel de Malvavisco",
+      "description": "Pastel suave de malvavisco con crema mantequilla y merengues crocantes, ofreciendo una experiencia dulce, esponjosa y visualmente encantadora en cada rebanada."
+    },
+    "sorpresa": {
+      "name": "Pastel sorpresa",
+      "description": "Pastel de chocolate húmedo y aromático con centro sorpresa de lunetas, relleno de crema Bariloche y cubierto con crema mantequilla de chocolate para una experiencia divertida y exquisita."
+    },
+    "blackAndWhite": {
+      "name": "Pastel de chocolate oscuro y blanco",
+      "description": "Pastel elegante de chocolate blanco y oscuro, cubierto con ganache sedosa y bites de cacao amargo que realzan su contraste sofisticado y sabor profundamente equilibrado."
+    },
+    "mazapan": {
+      "name": "Pastel de Mazapán",
+      "description": "Pastel suave de mazapán con notas almendradas, relleno y cubierto con crema Moussline, ofreciendo una textura delicada y un sabor dulce y elegante irresistible."
+    },
+    "pinkVelvet": {
+      "name": "Pastel Pink Velvet",
+      "description": "Pink Velvet aromático con pétalos de rosa, relleno de suave buttercream y cubierto con frosting de queso crema para un postre delicado, floral y totalmente encantador."
+    },
+    "pistacheAlmendra": {
+      "name": "Pastel de pistache con almendra y dátil",
+      "description": "Pastel healthy de pistache y almendra, ligeramente dulce, con notas de cardamomo y limón, ideal con ganache de chocolate para un postre nutritivo y elegante."
+    },
+    "roscaChocolateNuez": {
+      "name": "Rosca de Chocolate con nuez",
+      "description": "Bundt cake de chocolate húmeda y aromática con nuez tostada, ideal sola o con ganache, ofreciendo un equilibrio perfecto entre textura crujiente y sabor intenso."
+    },
+    "roscaMarmoleada": {
+      "name": "Rosca Marmoleada",
+      "description": "Rosca marmoleada esponjosa con remolinos de vainilla y chocolate, textura suave y sabor equilibrado que la convierte en un clásico irresistible y visualmente encantador."
+    },
+    "roscaNaranja": {
+      "name": "Rosca de Naranja",
+      "description": "Rosca de naranja esponjosa y aromática, bañada con almíbar cítrico que intensifica su frescura y jugosidad para un postre clásico, brillante y delicioso."
+    },
+    "panqueZanahoria": {
+      "name": "Panqué de Zanahoria",
+      "description": "Panqué de zanahoria suave y aromático, elaborado con nata para una textura más cremosa y profunda, ofreciendo un sabor cálido, húmedo y totalmente irresistible."
+    },
+    "panqueElote": {
+      "name": "Panqué de Elote",
+      "description": "Panqué de elote cremoso y aromático, con mezcla de granos tiernos, queso crema y un toque de vainilla, logrando una textura suave y sabor tradicional irresistible."
+    },
+    "panquePlatanoAvena": {
+      "name": "Panqué de Platano con avena",
+      "description": "Panqué de plátano suave y nutritivo con avena, frutos secos y chispas de chocolate, ofreciendo un sabor cálido, textura húmeda y un toque naturalmente saludable."
+    },
+    "flanCalabaza": {
+      "name": "Panqué de Platano con avena",
+      "description": "Flan de calabaza cremoso y especiado, con textura aterciopelada y dulzor equilibrado, potenciado por queso crema para un postre otoñal elegante y profundamente reconfortante."
+    },
+    "flanNapolitano": {
+      "name": "Panqué de Platano con avena",
+      "description": "Flan napolitano ultra cremoso con queso crema y vainilla, de textura sedosa y dulzor equilibrado, perfecto para un postre clásico, refinado y siempre irresistible."
+    },
+    "carlotaLimon": {
+      "name": "Carlota de Limón",
+      "description": "Carlota de limón cremosa y refrescante, con capas suaves y un equilibrio perfecto entre acidez y dulzor, ideal como postre ligero, frío y totalmente irresistible."
+    },
+    "carlotaFresa": {
+      "name": "Carlota de Fresa",
+      "description": "Carlota de fresa suave y cremosa, con sabor frutal fresco y capas ligeras, perfecta como postre frío, delicado y naturalmente delicioso."
+    },
+    "pannaCotta": {
+      "name": "Panna Cotta",
+      "description": "Panna cotta suave y sedosa con delicado aroma a vainilla, un postre elegante y ligero que destaca por su textura aterciopelada y sabor refinado."
+    },
+    "tartaSableChocolate": {
+      "name": "Tarta Sablé con Chocolate",
+      "description": "Tarta sablé crujiente con cobertura de chocolate y relleno de crema Bariloche, combinando texturas y un sabor intenso y sofisticado en cada bocado."
+    },
+    "cremeBrulee": {
+      "name": "Crème Brûlée",
+      "description": "Crème brûlée sedosa y aromática, con una capa crujiente de caramelo flameado que contrasta perfectamente con su interior cremoso y delicadamente vainillado."
+    },
+    "miniPavlova": {
+      "name": "Mini Pavlova",
+      "description": "Pavlova crujiente por fuera y suave por dentro, coronada con crema, frutos rojos y chocolate, ofreciendo un postre ligero, sofisticado y visualmente encantador."
+    },
+    "muffinPlatanoZanahoriaChocolate": {
+      "name": "Muffin de Platano, Zanahoria y Chocolate",
+      "description": "Muffin nutritivo de plátano y zanahoria con harinas saludables, endulzado naturalmente y lleno de chispas de chocolate, ofreciendo una textura suave y un sabor equilibrado y reconfortante."
+    },
+    "muffinManzanaPlatano": {
+      "name": "Muffin de Manzana con Platano",
+      "description": "Muffin suave y aromático de manzana y plátano, ligeramente endulzado y elaborado con harinas ligeras, logrando un bocado jugoso, especiado y naturalmente delicioso."
+    },
+    "muffinFrambuesaArandanoChocolate": {
+      "name": "Muffin de Frambuesa y Arándano con Chocolate",
+      "description": "Muffin jugoso con frambuesas, arándanos y chispas de chocolate, endulzado naturalmente y elaborado con harinas ligeras para un bocado frutal, equilibrado y delicioso."
+    },
+    "muffinCrezaYogurt": {
+      "name": "Muffin de Cereza Yogurt",
+      "description": "Muffin suave y jugoso de cereza con yogurt griego, de sabor delicado y fresco, perfecto para quienes buscan un toque frutal en cada bocado."
+    },
+    "muffinChocolate": {
+      "name": "Muffin de Chocolate",
+      "description": "Muffin de chocolate intenso, húmedo y esponjoso, con un sabor profundo y envolvente que convierte cada bocado en un verdadero momento de indulgencia."
+    },
+    "muffinFresa": {
+      "name": "Muffin de Fresa",
+      "description": "Muffin esponjoso de vainilla con yogurt y fresas frescas, de sabor suave y equilibrado, ideal para quienes buscan un toque frutal en un bocado clásico."
+    },
+    "muffinVainilla": {
+      "name": "Muffin de Vainilla",
+      "description": "Muffin de vainilla suave y esponjoso, con aroma delicado y sabor clásico, perfecto como bocado ligero, versátil y siempre irresistible."
     },
     "tips": {
       "sweetnessTitle": "Dulzor",

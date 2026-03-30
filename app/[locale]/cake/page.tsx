@@ -16,11 +16,6 @@ export default function Home() {
         <CakesSection />
       </section>
 
-      {/* ----------- SECTION 2 ------------ */}
-      <section className="relative z-20 w-full overflow-x-hidden">
-        <CircleCakesSection />
-      </section>
-
       {/* ----------- SECTION 3 ------------ */}
       <section>
         <CakeInfoSection />
