@@ -55,53 +55,61 @@
   },
   "cakes": {
     "title": "Cakes",
-    "title2": "Ring Cakes",
+    "title2": "Bundt Cakes",
     "title3": "Tips",
     "sweetCategory": "Sweet",
     "healthyCategory": "Healthy",
-    "gfCategory": "Gluten-free",
+    "gfCategory": "Gluten-Free",
     "lines": {
-      "sweet": "Sweet",
-      "healthy": "Healthy",
+      "sweet": "Sweet Line",
+      "healthy": "Healthy Line",
       "sweetBakery": "Sweet Bakery",
       "healthyBakery": "Healthy Bakery",
       "sweetDessert": "Sweet Desserts"
     },
     "sizes": {
+      "sizexxl": "25–30 people",
       "sizexl": "16–20 people",
       "sizel": "10–12 people",
       "sizemd": "8–10 people",
-      "sizesm": "6–8 people"
+      "sizesm": "6–8 people",
+      "sizexxxs": "Individual"
+    },
+    "jellyType": {
+      "water": "Water",
+      "milk": "Milk",
+      "mix": "Mixed"
     },
     "priceTitle": "Prices",
     "basePrice": "Base price",
-    "finalPrice": "Price",
+    "finalPrice": "Final price",
     "licorPrice": "Liquor",
     "syrupPrice": "Syrup",
     "coveragePrice": "Coverage",
+
     "cafe": {
       "name": "Coffee Cake",
-      "description": "Moist and aromatic cake with a deep coffee flavor, filled and covered with a smooth cream that enhances its toasted notes and fluffy texture."
+      "description": "Moist and aromatic cake with a deep coffee flavor, filled and covered with a smooth and elegant cream that enhances its toasted notes and fluffy texture."
     },
     "cocoFrutosRojos": {
       "name": "Coconut & Red Berries Cake",
-      "description": "Soft coconut cake with fresh red berries, filled with buttercream and topped with cream cheese frosting for a perfect balance of freshness and creaminess."
+      "description": "Soft and aromatic coconut cake with fresh red berries, filled with buttercream and topped with cream cheese frosting for a perfect balance between freshness and creaminess."
     },
     "moka": {
       "name": "Mocha Cake",
-      "description": "Fluffy mocha cake with cinnamon notes, filled with Mousseline mousse and topped with cream cheese frosting for a luxurious texture and beautifully balanced flavor."
+      "description": "Fluffy mocha cake with cinnamon notes, filled with Moussline mousse and covered with cream cheese frosting, offering a luxurious texture and an intensely balanced flavor."
     },
     "zanahoria": {
       "name": "Carrot Cake",
-      "description": "Moist and spiced carrot cake with toasted nuts, filled and covered with silky cream cheese buttercream that enhances its warm, homemade flavor."
+      "description": "Moist and spiced carrot cake with toasted nuts, filled and topped with silky cream cheese buttercream that enhances its warm and homemade flavor."
     },
     "milHojas": {
       "name": "Mille-Feuille Cake",
-      "description": "Crispy puff pastry layers with smooth vanilla cream, finished with a delicate dusting of powdered sugar for an elegant and irresistible dessert."
+      "description": "Classic mille-feuille cake with crispy puff pastry layers and soft vanilla cream, finished with a delicate dusting of powdered sugar for an elegant and irresistible dessert."
     },
     "redVelvet": {
       "name": "Red Velvet Cake",
-      "description": "Fluffy and vibrant Red Velvet with soft notes of cocoa and vanilla, topped and filled with buttercream for a classic, elegant, and irresistible dessert."
+      "description": "Fluffy and vibrant Red Velvet cake with subtle cocoa and vanilla notes, filled and covered with buttercream for a classic, elegant, and irresistible dessert."
     },
     "malvavisco": {
       "name": "Marshmallow Cake",
@@ -109,107 +117,135 @@
     },
     "sorpresa": {
       "name": "Surprise Cake",
-      "description": "Moist and aromatic chocolate cake with a surprise candy center, filled with Bariloche cream and topped with chocolate buttercream for a fun and exquisite experience."
+      "description": "Moist and aromatic chocolate cake with a surprise center of candy, filled with Bariloche cream and covered with chocolate buttercream for a fun and delicious experience."
     },
     "blackAndWhite": {
-      "name": "Black & White Chocolate Cake",
-      "description": "Elegant white and dark chocolate cake, topped with silky ganache and bitter cocoa bites that enhance its sophisticated contrast and deeply balanced flavor."
+      "name": "Dark & White Chocolate Cake",
+      "description": "Elegant white and dark chocolate cake, covered with silky ganache and bitter cacao bites that highlight its sophisticated contrast and deeply balanced flavor."
     },
     "mazapan": {
       "name": "Mazapán Cake",
-      "description": "Soft marzipan cake with almond notes, filled and topped with Mousseline cream for a delicate texture and irresistibly sweet elegance."
+      "description": "Soft mazapán cake with almond notes, filled and covered with Moussline cream, offering a delicate texture and an irresistible sweet and elegant flavor."
     },
     "pinkVelvet": {
       "name": "Pink Velvet Cake",
-      "description": "Aromatic Pink Velvet with rose petals, filled with soft buttercream and topped with cream cheese frosting for a delicate, floral, and charming dessert."
+      "description": "Aromatic Pink Velvet cake with rose petals, filled with soft buttercream and topped with cream cheese frosting for a delicate, floral, and utterly charming dessert."
     },
     "pistacheAlmendra": {
-      "name": "Pistachio, Almond & Date Cake",
-      "description": "Healthy pistachio and almond cake, lightly sweet with cardamom and lemon notes, perfect with chocolate ganache for a nutritious and elegant dessert."
+      "name": "Pistachio Almond Date Cake",
+      "description": "Healthy pistachio and almond cake, lightly sweet, with notes of cardamom and lemon, ideal with chocolate ganache for a nutritious and elegant dessert."
     },
     "roscaChocolateNuez": {
-      "name": "Chocolate Walnut Ring Cake",
-      "description": "Moist and aromatic chocolate bundt cake with toasted walnuts, perfect on its own or with ganache, offering a balance between crunchy texture and intense flavor."
+      "name": "Chocolate Nut Bundt Cake",
+      "description": "Moist and aromatic chocolate bundt cake with toasted nuts, perfect on its own or with ganache, offering a perfect balance between crunchy texture and intense flavor."
     },
     "roscaMarmoleada": {
-      "name": "Marbled Ring Cake",
-      "description": "Fluffy marbled bundt cake with vanilla and chocolate swirls, smooth texture and balanced flavor, making it an irresistible and visually charming classic."
+      "name": "Marbled Bundt Cake",
+      "description": "Fluffy marbled bundt cake with swirls of vanilla and chocolate, with a soft texture and balanced flavor that make it an irresistible and visually charming classic."
     },
     "roscaNaranja": {
-      "name": "Orange Ring Cake",
-      "description": "Fluffy and aromatic orange bundt cake soaked in citrus syrup that enhances its freshness and juiciness for a bright and delicious classic dessert."
+      "name": "Orange Bundt Cake",
+      "description": "Soft and aromatic orange bundt cake, soaked with citrus syrup that intensifies its freshness and juiciness for a classic, bright, and delicious dessert."
     },
     "panqueZanahoria": {
-      "name": "Carrot Loaf",
-      "description": "Soft and aromatic carrot loaf made with cream for a richer, deeper texture, offering a warm, moist, and irresistible flavor."
+      "name": "Carrot Loaf Cake",
+      "description": "Soft and aromatic carrot loaf cake made with cream for a deeper and creamier texture, offering a warm, moist, and completely irresistible flavor."
     },
     "panqueElote": {
-      "name": "Corn Loaf",
-      "description": "Creamy and aromatic corn loaf with tender kernels, cream cheese, and a touch of vanilla, resulting in a smooth texture and irresistible traditional flavor."
+      "name": "Corn Loaf Cake",
+      "description": "Creamy and aromatic corn loaf cake with tender kernels, cream cheese, and a touch of vanilla, achieving a soft texture and irresistible traditional flavor."
     },
     "panquePlatanoAvena": {
-      "name": "Banana Oat Loaf",
-      "description": "Soft and nutritious banana loaf with oats, nuts, and chocolate chips, offering a warm flavor, moist texture, and naturally healthy touch."
+      "name": "Banana Oat Loaf Cake",
+      "description": "Soft and nutritious banana loaf cake with oats, nuts, and chocolate chips, offering a warm flavor, moist texture, and a naturally healthy touch."
     },
     "flanCalabaza": {
       "name": "Pumpkin Flan",
-      "description": "Creamy and spiced pumpkin flan with a velvety texture and balanced sweetness, enhanced with cream cheese for an elegant and comforting fall dessert."
+      "description": "Creamy and spiced pumpkin flan with a velvety texture and balanced sweetness, enhanced by cream cheese for an elegant and deeply comforting fall dessert."
     },
     "flanNapolitano": {
       "name": "Napolitan Flan",
-      "description": "Ultra-creamy Napolitan flan with cream cheese and vanilla, with a silky texture and balanced sweetness—classic, refined, and always irresistible."
+      "description": "Ultra-creamy Napolitan flan with cream cheese and vanilla, featuring a silky texture and balanced sweetness — a classic, refined, and always irresistible dessert."
     },
     "carlotaLimon": {
       "name": "Lemon Carlota",
-      "description": "Creamy and refreshing lemon Carlota with soft layers and a perfect balance of acidity and sweetness—ideal as a light, cold, irresistible dessert."
+      "description": "Creamy and refreshing lemon Carlota, with soft layers and a perfect balance between acidity and sweetness — ideal as a light, chilled, and totally irresistible dessert."
     },
     "carlotaFresa": {
       "name": "Strawberry Carlota",
-      "description": "Soft and creamy strawberry Carlota with fresh fruity flavor and light layers—perfect as a cold, delicate, and naturally delicious dessert."
+      "description": "Soft and creamy strawberry Carlota with a fresh fruity flavor and light layers, perfect as a chilled, delicate, and naturally delicious dessert."
     },
     "pannaCotta": {
       "name": "Panna Cotta",
-      "description": "Soft and silky panna cotta with a delicate vanilla aroma—an elegant, light dessert with a velvety texture and refined flavor."
+      "description": "Soft and silky panna cotta with a delicate vanilla aroma — an elegant, light dessert that stands out for its velvety texture and refined flavor."
     },
     "tartaSableChocolate": {
-      "name": "Sablé Chocolate Tart",
-      "description": "Crunchy sablé tart with chocolate topping and Bariloche cream filling, combining textures and intense, sophisticated flavor in every bite."
+      "name": "Chocolate Sablé Tart",
+      "description": "Crispy sablé tart with chocolate topping and Bariloche cream filling, combining textures and an intense, sophisticated flavor in every bite."
+    },
+    "tartaSableMango": {
+      "name": "Mango & Fig Sablé Tart",
+      "description": "Crispy sablé tart with sweet mango atop a layer of fig, combining textures and a tropical, sophisticated flavor in every bite."
     },
     "cremeBrulee": {
       "name": "Crème Brûlée",
-      "description": "Silky and aromatic crème brûlée with a crunchy layer of caramelized sugar that contrasts perfectly with its creamy, delicately vanilla interior."
+      "description": "Silky and aromatic crème brûlée with a crisp layer of caramelized sugar that perfectly contrasts its creamy, delicately vanilla interior."
     },
     "miniPavlova": {
       "name": "Mini Pavlova",
-      "description": "Crispy-on-the-outside, soft-on-the-inside pavlova topped with cream, red berries, and chocolate—light, sophisticated, and visually stunning."
+      "description": "Pavlova with a crispy exterior and soft interior, topped with cream, red berries, and chocolate for a light, sophisticated, and visually charming dessert."
     },
     "muffinPlatanoZanahoriaChocolate": {
       "name": "Banana, Carrot & Chocolate Muffin",
-      "description": "Nutritious banana and carrot muffin made with healthy flours, naturally sweetened, and full of chocolate chips—soft texture and comforting, balanced flavor."
+      "description": "Nutritious banana and carrot muffin made with healthy flours, naturally sweetened, and filled with chocolate chips for a soft texture and balanced, comforting flavor."
     },
     "muffinManzanaPlatano": {
-      "name": "Apple Banana Muffin",
-      "description": "Soft and aromatic apple and banana muffin, lightly sweetened and made with light flours—juicy, spiced, and naturally delicious."
+      "name": "Apple & Banana Muffin",
+      "description": "Soft and aromatic apple and banana muffin, lightly sweetened and made with light flours, resulting in a juicy, spiced, and naturally delicious bite."
     },
     "muffinFrambuesaArandanoChocolate": {
-      "name": "Raspberry & Blueberry Chocolate Muffin",
-      "description": "Juicy muffin with raspberries, blueberries, and chocolate chips, naturally sweetened and made with light flours for a fruity, balanced, delicious bite."
+      "name": "Raspberry, Blueberry & Chocolate Muffin",
+      "description": "Juicy muffin with raspberries, blueberries, and chocolate chips, naturally sweetened and made with light flours for a fruity, balanced, and delicious bite."
     },
     "muffinCrezaYogurt": {
       "name": "Cherry Yogurt Muffin",
-      "description": "Soft and juicy cherry muffin with Greek yogurt, delicate and fresh flavor—perfect for those who enjoy a fruity touch in every bite."
+      "description": "Soft and juicy cherry muffin with Greek yogurt, offering a delicate and fresh flavor—perfect for those who want a fruity touch in every bite."
     },
     "muffinChocolate": {
       "name": "Chocolate Muffin",
-      "description": "Intense chocolate muffin—moist, fluffy, and deeply flavorful—turning every bite into a true moment of indulgence."
+      "description": "Intense, moist, and fluffy chocolate muffin with a deep, enveloping flavor that turns every bite into a true moment of indulgence."
     },
     "muffinFresa": {
       "name": "Strawberry Muffin",
-      "description": "Fluffy vanilla muffin with yogurt and fresh strawberries—smooth, balanced flavor, ideal for those seeking a fruity twist in a classic bite."
+      "description": "Fluffy vanilla muffin with yogurt and fresh strawberries, offering a soft and balanced flavor—ideal for those who enjoy a fruity touch in a classic bite."
     },
     "muffinVainilla": {
       "name": "Vanilla Muffin",
-      "description": "Soft and fluffy vanilla muffin with delicate aroma and classic flavor—light, versatile, and always irresistible."
+      "description": "Soft and fluffy vanilla muffin with a delicate aroma and classic flavor—perfect as a light, versatile, and always irresistible treat."
+    },
+    "jellyPop": {
+      "name": "Jelly Pop",
+      "description": "Irresistible themed and personalized jelly pops with delicious toppings. Perfect for events, gifts, and unique cravings that stand out for their creativity and flavor. (50ml)"
+    },
+    "jellyPrincess": {
+      "name": "Princess Jelly",
+      "description": "Delicate and magical princess jelly with charming toppings, fully customizable to create the perfect dessert for any royal celebration."
+    },
+    "jellyTheme": {
+      "name": "Themed Jelly",
+      "description": "Themed jelly adaptable for any occasion, party, or celebration. Customizable in colors, design, and toppings to create the perfect dessert for every moment."
+    },
+    "jellyEncapsulated": {
+      "name": "Encapsulated Jelly",
+      "description": "Transparent jelly that encapsulates fruits or other edible elements, creating a visually magical, fresh, and delicious dessert in every bite."
+    },
+    "jellyLayers": {
+      "name": "Layered Jelly",
+      "description": "Layered jelly with vibrant colors and irresistible textures, creating a beautiful, delicious dessert perfect for any occasion."
+    },
+    "jellyFruit": {
+      "name": "Fruit Jelly",
+      "description": "Fresh, flavorful jellies made with natural fruit, creating a colorful, light, and delicious dessert."
     },
     "tips": {
       "sweetnessTitle": "Sweetness",
@@ -220,27 +256,27 @@
       "portionsDesc": "Portions designed to share and enjoy.",
       "height": "Height: 6 – 7 cm",
 
-      "ingredientsTitle": "Quality ingredients",
-      "ingredientsDesc": "We make each cake with real butter, fresh eggs, and high-quality ingredients. Everything is homemade—no premixes and no shortcuts.",
+      "ingredientsTitle": "Quality Ingredients",
+      "ingredientsDesc": "We make every cake with real butter, fresh eggs, and high-quality ingredients. Everything is homemade — no premixes or shortcuts.",
 
-      "orderTitle": "Order in advance",
+      "orderTitle": "Order in Advance",
       "orderDesc": "To ensure flavor, texture, and finish, orders must be placed at least 1 day in advance.",
       "diameter": "Diameter:",
       "sweetness": "Sweetness:",
-      "quotes": "Portions:",
+      "quotes": "Servings:",
       "quote1": "6 - 8 people",
       "quote2": "8 - 10 people",
       "quote3": "10 - 12 people",
       "quote4": "16 - 20 people",
-      "hot": "Best seller"
+      "hot": "Most requested"
     }
   },
   "contact": {
-    "listen": "We’re listening",
+    "listen": "We're listening",
     "thanks": "Thank you!",
-    "important": "Your opinion is very important",
+    "important": "Your feedback is very important",
     "title": "Cookies for your events",
-    "description": "We quote special orders for events, corporate gifts, and celebrations. Write to us and let’s create something delicious together.",
+    "description": "We quote special orders for events, corporate gifts, and celebrations. Write to us and let's create something delicious together.",
     "tel": "443 123 67 33",
     "ratings": {
       "taste": "Taste",
@@ -251,15 +287,22 @@
   },
   "mainnav": {
     "home": "Cookies",
-    "cake": "Cakes & Ring Cakes",
-    "desserts": "Desserts",
-    "other": "Other foods"
+    "cake": "Cakes & Sweet Breads",
+    "desserts": "Pastry",
+    "jelly": "Jellies",
+    "other": "Other foods",
+    "custom": "Build your cake"
   },
   "comingSoon": {
     "coming": "Coming soon",
-    "comingSub": "We're working on this section",
-    "comingDesc": "Very soon you’ll find here a new experience crafted with great attention to detail.",
+    "comingSub": "We’re working on this section",
+    "comingDesc": "Very soon you’ll find here a new experience crafted with great detail.",
     "backHome": "Back to home"
+  },
+  "orders": {
+    "title": "Build your cake",
+    "next": "Next",
+    "back": "Back"
   },
   "footer": {
     "rights": "Hey Cookies, MX. 2025"

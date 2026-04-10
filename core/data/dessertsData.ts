@@ -84,6 +84,18 @@ export const dessertsData = [
     },
   },
   {
+    id: 1009,
+    image: "/img/cake-tartaSableMango-sm.webp",
+    name: "cakes.tartaSableMango.name",
+    description: "cakes.tartaSableMango.description",
+    sweetness: 4,
+    categoryTag: ["cakes.sweetCategory"],
+    line: "sweetDessert",
+    sizexl: {
+      basePrice: "$85",
+    },
+  },
+  {
     id: 1007,
     image: "/img/cake-cremeBrulee-sm.webp",
     name: "cakes.cremeBrulee.name",

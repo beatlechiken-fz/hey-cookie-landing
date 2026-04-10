@@ -3,10 +3,10 @@
 import CakeCard from "./CakeCard";
 import CakeModal from "./CakeModal";
 import { useCakeModal } from "@/core/hooks/useCakeModal";
-import { dessertsData } from "@/core/data/dessertsData";
+import { jelliesData } from "@/core/data/jelliesData";
 import { useTranslations } from "next-intl";
 
-export default function DessertsSection() {
+export default function JelliesSection() {
   const t = useTranslations();
 
   // Ahora el hook debe regresar también selectedJelly y setSelectedJelly
@@ -22,7 +22,7 @@ export default function DessertsSection() {
   } = useCakeModal();
 
   // Agrupar por "line"
-  const groupedByLine = dessertsData.reduce(
+  const groupedByLine = jelliesData.reduce(
     (acc, cake) => {
       if (!acc[cake.line]) acc[cake.line] = [];
       acc[cake.line].push(cake);

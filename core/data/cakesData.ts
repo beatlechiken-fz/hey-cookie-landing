@@ -255,31 +255,31 @@ export const cakesData = [
       syrupPrice: "$50",
     },
   },
-  {
-    id: 11,
-    image: "/img/cake-malvavisco-sm.webp",
-    name: "cakes.malvavisco.name",
-    description: "cakes.malvavisco.description",
-    sweetness: 3,
-    categoryTag: ["cakes.sweetCategory"],
-    line: "sweet",
-    sizexl: {
-      basePrice: "$425",
-      syrupPrice: "$75",
-    },
-    sizel: {
-      basePrice: "$380",
-      syrupPrice: "$60",
-    },
-    sizemd: {
-      basePrice: "$320",
-      syrupPrice: "$55",
-    },
-    sizesm: {
-      basePrice: "$255",
-      syrupPrice: "$40",
-    },
-  },
+  //   {
+  //     id: 11,
+  //     image: "/img/cake-malvavisco-sm.webp",
+  //     name: "cakes.malvavisco.name",
+  //     description: "cakes.malvavisco.description",
+  //     sweetness: 3,
+  //     categoryTag: ["cakes.sweetCategory"],
+  //     line: "sweet",
+  //     sizexl: {
+  //       basePrice: "$425",
+  //       syrupPrice: "$75",
+  //     },
+  //     sizel: {
+  //       basePrice: "$380",
+  //       syrupPrice: "$60",
+  //     },
+  //     sizemd: {
+  //       basePrice: "$320",
+  //       syrupPrice: "$55",
+  //     },
+  //     sizesm: {
+  //       basePrice: "$255",
+  //       syrupPrice: "$40",
+  //     },
+  //   },
   {
     id: 300,
     image: "/img/cake-pistache-sm.webp",
@@ -307,7 +307,7 @@ export const cakesData = [
   },
   {
     id: 500,
-    image: "/img/cake-roscaChocolateNuez-sm.webp",
+    image: "/img/cake-roscaMarmoleada-sm.webp",
     name: "cakes.roscaChocolateNuez.name",
     description: "cakes.roscaChocolateNuez.description",
     sweetness: 4,
@@ -332,7 +332,7 @@ export const cakesData = [
   },
   {
     id: 501,
-    image: "/img/cake-roscaMarmoleada-sm.webp",
+    image: "/img/cake-roscaChocolateNuez-sm.webp",
     name: "cakes.roscaMarmoleada.name",
     description: "cakes.roscaMarmoleada.description",
     sweetness: 4,

@@ -68,10 +68,17 @@
       "sweetDessert": "Repostería Dulce"
     },
     "sizes": {
+      "sizexxl": "25–30 personas",
       "sizexl": "16–20 personas",
       "sizel": "10–12 personas",
       "sizemd": "8–10 personas",
-      "sizesm": "6–8 personas"
+      "sizesm": "6–8 personas",
+      "sizexxxs": "Individual"
+    },
+    "jellyType": {
+      "water": "Agua",
+      "milk": "Leche",
+      "mix": "Combinada"
     },
     "priceTitle": "Precios",
     "basePrice": "Precio base",
@@ -175,6 +182,10 @@
       "name": "Tarta Sablé con Chocolate",
       "description": "Tarta sablé crujiente con cobertura de chocolate y relleno de crema Bariloche, combinando texturas y un sabor intenso y sofisticado en cada bocado."
     },
+    "tartaSableMango": {
+      "name": "Tarta Sablé con Mango e Higo",
+      "description": "Tarta sablé crujiente con dulce de mango sobre una cama de higo combinando texturas y un sabor tropical y sofisticado en cada bocado."
+    },
     "cremeBrulee": {
       "name": "Crème Brûlée",
       "description": "Crème brûlée sedosa y aromática, con una capa crujiente de caramelo flameado que contrasta perfectamente con su interior cremoso y delicadamente vainillado."
@@ -210,6 +221,30 @@
     "muffinVainilla": {
       "name": "Muffin de Vainilla",
       "description": "Muffin de vainilla suave y esponjoso, con aroma delicado y sabor clásico, perfecto como bocado ligero, versátil y siempre irresistible."
+    },
+    "jellyPop": {
+      "name": "Jelly Pop",
+      "description": "Paletas de gelatina irresistibles, personalizadas y temáticas, con deliciosos toppings. Perfectas para eventos, regalos y antojos únicos que destacan por su creatividad y sabor. (50ml)"
+    },
+    "jellyPrincess": {
+      "name": "Gelatina Princesa",
+      "description": "Gelatina de princesa, delicada y mágica, con toppings encantadores y totalmente personalizable para crear el postre perfecto para cualquier celebración real."
+    },
+    "jellyTheme": {
+      "name": "Gelatina temática",
+      "description": "Gelatina temática adaptable a cualquier ocasión, fiesta o celebración. Personalizable en colores, diseño y toppings para crear el postre perfecto para cada momento."
+    },
+    "jellyEncapsulated": {
+      "name": "Gelatina encapsulada",
+      "description": "Gelatina transparente que encapsula frutas u otros comestibles, creando un postre visualmente mágico, fresco y delicioso en cada bocado."
+    },
+    "jellyLayers": {
+      "name": "Gelatina por capas",
+      "description": "Gelatina por capas con colores vibrantes y texturas irresistibles, creando un postre vistoso, delicioso y perfecto para cualquier ocasión."
+    },
+    "jellyFruit": {
+      "name": "Gelatina con frutas",
+      "description": "Gelatinas frescas y llenas de sabor, elaboradas con frutas naturales para crear un postre colorido, ligero y delicioso."
     },
     "tips": {
       "sweetnessTitle": "Dulzor",
@@ -253,13 +288,20 @@
     "home": "Galletas",
     "cake": "Pasteles & Roscas",
     "desserts": "Repostería",
-    "other": "Otros alimentos"
+    "jelly": "Gelatinas",
+    "other": "Otros alimentos",
+    "custom": "Arma tu pastel"
   },
   "comingSoon": {
     "coming": "Próximamente",
     "comingSub": "Estamos trabajando en esta sección",
     "comingDesc": "Muy pronto encontrarás aquí una nueva experiencia pensada con mucho detalle.",
     "backHome": "Volver al inicio"
+  },
+  "orders": {
+    "title": "Arma tu pastel",
+    "next": "Siguiente",
+    "back": "Anterior"
   },
   "footer": {
     "rights": "Hey Cookies, MX. 2025"
