@@ -6,6 +6,7 @@
 
 :root {
   --font-title: var(--font-pacifico);
+  --font-title-light: var(--font-playfair);
   --font-subtitle: var(--font-dancing);
   --font-body: var(--font-montserrat);
 }
@@ -31,6 +32,10 @@ body {
 
 .font-title {
   font-family: var(--font-title);
+}
+
+.font-title-light {
+  font-family: var(--font-title-light);
 }
 
 .font-subtitle {

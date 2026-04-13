@@ -1,6 +1,9 @@
 "use client";
 
+import Icons from "@/core/assets/Icons";
+import Images from "@/core/assets/Images";
 import { Link, useRouter } from "@/i18n/navigation";
+import Image from "next/image";
 
 // Flecha delgada tipo chevron
 const ArrowIcon = ({ open = false }: { open?: boolean }) => (
@@ -50,12 +53,8 @@ export default function MainNavItem({
           className={`
             px-4 py-2 rounded-xl transition
             flex justify-between items-center
-            font-subtitle font-bold text-left
-            ${
-              active
-                ? "bg-white/20 text-[#AA5A32]"
-                : "text-[#3A1F14] hover:text-[#9A4A22]"
-            }
+            font-subtitle font-bold text-left text-[20px]
+            ${active ? "text-[#AA5A32]" : "text-[#3A1F14] hover:text-[#9A4A22]"}
           `}
         >
           <span>{label}</span>
@@ -70,7 +69,7 @@ export default function MainNavItem({
                 href={s.url}
                 onClick={onSelect}
                 className="
-                  px-3 py-2 text-sm
+                  px-3 py-2
                   text-[#3A1F14]/80
                   hover:text-[#9A4A22]
                   hover:bg-[#6B3E26]/10
@@ -101,7 +100,18 @@ export default function MainNavItem({
           ${active ? "text-[#AA5A32]" : "text-[#3A1F14] hover:text-[#9A4A22]"}
         `}
       >
-        <span>{label}</span>
+        <div className="flex flex-col">
+          <span>{label}</span>
+          {active && (
+            <Image
+              src={Icons.wavesPink}
+              alt=""
+              width={60}
+              height={10}
+              className="ml-auto mr-auto"
+            />
+          )}
+        </div>
 
         {submenu.length > 0 && (
           <svg

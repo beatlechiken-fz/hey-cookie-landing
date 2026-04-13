@@ -24,14 +24,14 @@ export default function AppBar() {
       <motion.section
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="mx-auto flex h-[64px] items-center px-6 md:px-10 bg-transparent"
+        className="mx-auto flex h-[96px] items-center pr-4 lg:px-10 bg-transparent"
       >
         {/* LEFT ZONE */}
         <div className="flex items-center gap-4 order-1 lg:order-1">
           {/* Hamburger (mobile only) */}
           <button
             onClick={() => setOpen(true)}
-            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
+            className="lg:hidden flex items-center mb-6 justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
           >
             <svg viewBox="0 0 24 24" className="w-6 h-6">
               <path
@@ -50,7 +50,7 @@ export default function AppBar() {
         </div>
 
         {/* RIGHT ZONE */}
-        <div className="flex items-center gap-4 ml-auto order-2 lg:order-2">
+        <div className="flex items-center gap-4 ml-auto order-2 lg:order-2 mb-6">
           <NativeSelect
             value={locale}
             onChange={(e) => handleSetLang(e)}

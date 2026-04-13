@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import SectionSelector from "./SectionSelector";
 import SectionSelectorWithFlavor from "./SectionSelectorWithFlavor";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
+import Icons from "@/core/assets/Icons";
 
 const BIZCOCHOS = [
   {
@@ -261,11 +263,43 @@ export default function OrderForm() {
     list.find((x) => x.value === value)?.label || value;
 
   return (
-    <div className="min-h-full flex flex-col">
-      <div className="max-w-[640px] w-full min-w-[340px] mx-auto py-10 px-6 space-y-10">
+    <main className="relative min-h-full flex flex-col overflow-hidden">
+      {/* 🎨 MANCHAS DECORATIVAS */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        {[
+          // 🔴 GRANDES (protagonistas)
+          { side: "left", top: "35%", size: 520, opacity: 0.2 },
+
+          // 🟠 MEDIANAS
+          { side: "right", top: "6%", size: 260, opacity: 0.22 },
+        ].map((blob, i) => (
+          <svg
+            key={i}
+            className={`absolute ${
+              blob.side === "left"
+                ? "-translate-x-1/2 left-0"
+                : "translate-x-1/2 right-0"
+            }`}
+            style={{
+              top: blob.top,
+              width: blob.size,
+              height: blob.size,
+              opacity: blob.opacity,
+            }}
+            viewBox="0 0 400 400"
+          >
+            <circle cx="200" cy="200" r="200" fill="#C9A97E" />
+          </svg>
+        ))}
+      </div>
+
+      <div className=" relative max-w-[640px] w-full min-w-[340px] mx-auto py-10 px-6 space-y-10">
         {/* HEADER */}
         <h1 className="text-5xl text-center font-title text-[#DA6C94] mt-2">
           {t("title")}
+          <div className="w-full flex justify-center pt-4">
+            <Image src={Icons.wavesPink} alt="" width={120} height={20} />
+          </div>
         </h1>
 
         {!sendSuccessful ? (
@@ -875,6 +909,6 @@ export default function OrderForm() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

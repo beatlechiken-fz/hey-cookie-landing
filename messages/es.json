@@ -2,7 +2,8 @@
   "hero": {
     "title1": "Un bocado",
     "title2": "al corazón",
-    "titleDescription": "Galletas artesanales con mantequilla real, sabores intensos y un toque nostálgico que enamora.",
+    "titleDescription": "Reposteria",
+    "titleDescription2": "Sweet & Healthy",
     "cookiesButton": "Galletas",
     "quoteButton": "Cotizar"
   },
@@ -267,7 +268,7 @@
       "quote2": "8 - 10 personas",
       "quote3": "10 - 12 personas",
       "quote4": "16 - 20 personas",
-      "hot": "Más pedido"
+      "hot": "Hot"
     }
   },
   "contact": {

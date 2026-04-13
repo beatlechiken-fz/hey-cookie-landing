@@ -56,6 +56,7 @@ function FaceIcon({
 
 export default function Contact() {
   const t = useTranslations("contact");
+  const t2 = useTranslations("hero");
   const breakpointsConfig: Record<
     CustomBreakpoint,
     { min?: number; max?: number }
@@ -244,8 +245,17 @@ export default function Contact() {
             {t("description")}
           </p>
 
-          <p className="mt-6 text-2xl font-semibold text-[#6B3E26]">
-            📞 <span className="ml-2 text-[#47a2a5ff]">{t("tel")}</span>
+          <p className="mt-8 text-2xl font-semibold text-[#6B3E26]">
+            <a
+              href="https://wa.me/5214433853472?text=Hola%20me%20gustaría%20cotizar%20galletas"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-1/2 rounded-xl text-lg font-semibold
+            transition-all duration-300 shadow-md
+            bg-[#c87d87] text-white hover:bg-[#b36b75] px-8 py-4"
+            >
+              {t2("quoteButton")}
+            </a>
           </p>
         </div>
       </div>

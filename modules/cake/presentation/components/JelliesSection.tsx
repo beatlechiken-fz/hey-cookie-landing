@@ -5,6 +5,8 @@ import CakeModal from "./CakeModal";
 import { useCakeModal } from "@/core/hooks/useCakeModal";
 import { jelliesData } from "@/core/data/jelliesData";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
+import Icons from "@/core/assets/Icons";
 
 export default function JelliesSection() {
   const t = useTranslations();
@@ -32,12 +34,45 @@ export default function JelliesSection() {
   );
 
   return (
-    <main>
-      <section className="w-full max-w-6xl mx-auto px-4 py-16 space-y-20">
+    <main className="relative overflow-hidden">
+      {/* 🎨 MANCHAS DECORATIVAS */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        {[
+          // 🔴 GRANDES (protagonistas)
+          { side: "right", top: "35%", size: 520, opacity: 0.2 },
+
+          // 🟠 MEDIANAS
+          { side: "left", top: "6%", size: 260, opacity: 0.22 },
+          { side: "left", top: "72%", size: 420, opacity: 0.17 },
+        ].map((blob, i) => (
+          <svg
+            key={i}
+            className={`absolute ${
+              blob.side === "left"
+                ? "-translate-x-1/2 left-0"
+                : "translate-x-1/2 right-0"
+            }`}
+            style={{
+              top: blob.top,
+              width: blob.size,
+              height: blob.size,
+              opacity: blob.opacity,
+            }}
+            viewBox="0 0 400 400"
+          >
+            <circle cx="200" cy="200" r="200" fill="#C9A97E" />
+          </svg>
+        ))}
+      </div>
+
+      <section className="relative w-full max-w-6xl mx-auto px-6 py-16 space-y-20">
         {Object.entries(groupedByLine).map(([lineKey, cakes]) => (
           <div key={lineKey} className="space-y-12">
             <h2 className="text-5xl text-center font-title text-[#DA6C94]">
               {t(`cakes.lines.${lineKey}`)}
+              <div className="w-full flex justify-center pt-4">
+                <Image src={Icons.wavesPink} alt="" width={120} height={20} />
+              </div>
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">

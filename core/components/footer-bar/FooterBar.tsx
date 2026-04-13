@@ -2,7 +2,11 @@
 
 import { useTranslations } from "next-intl";
 
-export default function FooterBar() {
+interface FooterBarProps {
+  appearance?: "dark" | "light";
+}
+
+export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
   const t = useTranslations("footer");
 
   // Redes sociales
@@ -11,7 +15,12 @@ export default function FooterBar() {
       id: "wahtsapp",
       href: `href="https://wa.me/5214433853472?text=Hola%20me%20gustaría%20cotizar%20galletas"`,
       icon: (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+        <svg
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill={`${appearance === "dark" ? "white" : "#261102"}`}
+        >
           <path
             d="
     M12 2
@@ -54,7 +63,12 @@ export default function FooterBar() {
       id: "instagram",
       href: "#",
       icon: (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+        <svg
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill={`${appearance === "dark" ? "white" : "#261102"}`}
+        >
           <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm10 2c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3h10zm-5 3.2A4.8 4.8 0 1 0 16.8 12 4.8 4.8 0 0 0 12 7.2zm0 7.8a3 3 0 1 1 3-3 3 3 0 0 1-3 3zm4.8-8.6a1.1 1.1 0 1 1-1.1-1.1 1.1 1.1 0 0 1 1.1 1.1z" />
         </svg>
       ),
@@ -63,7 +77,12 @@ export default function FooterBar() {
       id: "tiktok",
       href: "#",
       icon: (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+        <svg
+          width="26"
+          height="26"
+          viewBox="0 0 24 24"
+          fill={`${appearance === "dark" ? "white" : "#261102"}`}
+        >
           <path
             d="
     M14 2
@@ -91,7 +110,12 @@ export default function FooterBar() {
   ];
 
   return (
-    <footer className="w-full bg-[#261102] text-white px-6 py-6">
+    <footer
+      className="w-full text-white px-6 py-6"
+      style={{
+        backgroundColor: appearance === "dark" ? "#261102" : "transparent",
+      }}
+    >
       <div className="w-[80%] mx-auto flex flex-col gap-4">
         {/* ROW 2 — Redes sociales */}
         <div className="flex items-center gap-6 justify-center">
@@ -110,7 +134,12 @@ export default function FooterBar() {
         </div>
 
         {/* ROW 3 — Texto final */}
-        <div className="text-xs text-center opacity-80">{t("rights")}</div>
+        <div
+          className="text-xs text-center opacity-80"
+          style={{ color: appearance === "dark" ? "white" : "#261102" }}
+        >
+          {t("rights")}
+        </div>
       </div>
     </footer>
   );

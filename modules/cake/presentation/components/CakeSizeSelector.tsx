@@ -28,7 +28,7 @@ export function CakeSizeSelector({ value, onChange, cake }: SizeProps) {
   if (sizes.length <= 1) return null;
 
   return (
-    <div className="flex gap-2 mt-4">
+    <div className="grid gap-3 mt-4 w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
       {sizes.map((size) => (
         <button
           key={size}
@@ -40,7 +40,7 @@ export function CakeSizeSelector({ value, onChange, cake }: SizeProps) {
             boxShadow:
               value === size ? "0 3px 6px rgba(183, 109, 112, 0.3)" : "none",
           }}
-          className="px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 hover:bg-[#ffd6dc] hover:text-[#ff1493]"
+          className="w-full px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-300 hover:bg-[#ffd6dc] hover:text-[#ff1493]"
         >
           {t(cakeSizeLabels[size])}
         </button>

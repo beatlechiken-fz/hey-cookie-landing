@@ -16,7 +16,7 @@ const cookies = [
     name: "vainilla.name",
     description: "vainilla.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ const cookies = [
     name: "chocolate.name",
     description: "chocolate.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 3,
@@ -32,7 +32,7 @@ const cookies = [
     name: "red.name",
     description: "red.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 4,
@@ -40,7 +40,7 @@ const cookies = [
     name: "marmoleada.name",
     description: "marmoleada.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 5,
@@ -48,7 +48,7 @@ const cookies = [
     name: "matcha.name",
     description: "matcha.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 6,
@@ -56,7 +56,7 @@ const cookies = [
     name: "oreo.name",
     description: "oreo.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 7,
@@ -64,7 +64,7 @@ const cookies = [
     name: "pop.name",
     description: "pop.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 8,
@@ -72,7 +72,7 @@ const cookies = [
     name: "taro.name",
     description: "taro.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 9,
@@ -80,7 +80,7 @@ const cookies = [
     name: "reyes.name",
     description: "reyes.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 10,
@@ -88,7 +88,7 @@ const cookies = [
     name: "cafe.name",
     description: "cafe.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ const cookies = [
     name: "rose.name",
     description: "rose.description",
     price: "1pz $25.00",
-    sale: "Lunes 2pz $40.00",
+    sale: "5pz $100.00",
   },
 ];
 
@@ -184,31 +184,10 @@ export default function Cookies() {
   const activeCookie = cookiesTranslated[activeIndex];
 
   return (
-    <main className="relative w-full overflow-x-hidden bg-gradient-to-br from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]">
-      {/* TOP ORGANIC SHAPE */}
-      <svg
-        viewBox="0 0 1440 140"
-        preserveAspectRatio="none"
-        className="absolute top-0 left-0 w-full h-[140px] pointer-events-none"
-      >
-        <path
-          d="
-      M0,80
-      C120,40 240,120 360,80
-      C480,40 600,120 720,80
-      C840,40 960,120 1080,80
-      C1200,40 1320,120 1440,80
-      L1440,0
-      L0,0
-      Z
-    "
-          fill="#FAF3E0"
-        />
-      </svg>
-
+    <main className="relative w-full overflow-x-hidden bg-gradient-to-b from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]">
       {/* HEADER */}
       <div
-        className="relative z-10 pt-32"
+        className="relative z-10 pt-16"
         style={{
           paddingLeft: breakpoint === "cxs" ? "20px" : "48px",
           paddingRight: breakpoint === "cxs" ? "20px" : "48px",
@@ -219,7 +198,7 @@ export default function Cookies() {
         </h2>
 
         <div className="w-full flex justify-center pt-4">
-          <Image src={Icons.waves} alt="" width={120} height={20} />
+          <Image src={Icons.wavesPink} alt="" width={120} height={20} />
         </div>
 
         {/* MENU */}
@@ -261,8 +240,8 @@ export default function Cookies() {
                   text-lg font-semibold transition-all duration-300 cursor-pointer
                   ${
                     activeIndex === index
-                      ? "text-[#377F81] scale-110"
-                      : "text-[#377F81]/70 hover:text-[#6B3E26]"
+                      ? "text-[#b36b75] scale-110 font-bold"
+                      : "text-[#b36b75]/70 hover:text-[#b36b75]"
                   }
                 `}
               >
@@ -403,7 +382,7 @@ export default function Cookies() {
                     {activeCookie.description}
                   </p>
 
-                  <div className="flex gap-4 text-[#6B3E26] font-bold mt-6">
+                  <div className="flex justify-center md:justify-start gap-4 text-[#6B3E26] font-bold mt-6">
                     <span className="flex items-center justify-center rounded-[8px] border border-[#AA6A42] py-4 px-4 shadow-md">
                       {activeCookie.price}
                     </span>
