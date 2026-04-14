@@ -4,17 +4,21 @@ import { motion } from "framer-motion";
 import MainNav from "./MainNav";
 import Image from "next/image";
 import FooterBar from "../footer-bar/FooterBar";
+import { createPortal } from "react-dom";
 
 export default function MobileMenu({ onClose }: { onClose: () => void }) {
-  return (
+  if (typeof window === "undefined") return null;
+
+  return createPortal(
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="
-        fixed inset-0 z-50
+        fixed inset-0
         bg-[rgba(107,62,38,0.35)]
         backdrop-blur-sm
+        z-[9999999999]
       "
     >
       <motion.section
@@ -109,6 +113,7 @@ export default function MobileMenu({ onClose }: { onClose: () => void }) {
           <FooterBar appearance="light" />
         </div>
       </motion.section>
-    </motion.section>
+    </motion.section>,
+    document.body,
   );
 }

@@ -75,7 +75,7 @@ export default function CakesSection() {
       </div>
 
       {/* CONTENIDO */}
-      <section className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 space-y-20">
+      <section className="relative z-[9] w-full max-w-6xl mx-auto px-6 py-16 space-y-20">
         {Object.entries(groupedByLine).map(([lineKey, cakes]) => (
           <div key={lineKey} className="space-y-12">
             <h2 className="text-5xl text-center font-title text-[#DA6C94]">
