@@ -35,7 +35,7 @@ export default function HeroDesktop() {
       }}
     >
       <div
-        className="relative z-10 flex px-10 md:px-20 bg-[url('/img/splash.webp')] bg-cover bg-center h-screen w-full"
+        className="relative z-10 flex px-6 md:px-20 bg-[url('/img/splash.webp')] bg-cover bg-center h-screen w-full"
         style={{
           flexDirection: breakpoint !== "clg" ? "column" : "row",
         }}
@@ -110,7 +110,7 @@ export default function HeroDesktop() {
                 from-[#ffebda]
                 via-[#ffd166]
                 to-[#ffd166]
-                text-[clamp(2.5rem,5vw,5rem)]
+                text-[clamp(2.3rem,5vw,5rem)]
               "
               style={{
                 gap: breakpoint !== "clg" ? "14px" : "0",
