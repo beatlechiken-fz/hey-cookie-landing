@@ -40,7 +40,9 @@ export const metadata: Metadata = {
   title: "Hey Cookie",
   description: "Cookies & Bakery",
   icons: {
-    icon: "/icon.ico",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
   },
 };
 
