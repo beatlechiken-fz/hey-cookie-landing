@@ -108,7 +108,7 @@ export default function CakeModal({
    * 4. UI
    ---------------------------------- */
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-9999999 p-4">
       <div
         className="
         bg-[#F7EFE9]
@@ -119,7 +119,7 @@ export default function CakeModal({
         shadow-2xl
         border border-[#ecd8ce]
         flex flex-col
-        max-h-[90vh]
+        h-[90vh]
         "
       >
         <button
@@ -129,28 +129,37 @@ export default function CakeModal({
           ✕
         </button>
 
-        <div className="w-full flex-shrink">
+        <div
+          className="
+    w-full
+    flex-shrink
+    min-h-[156px]
+    max-h-[180px]
+  "
+        >
           <Image
             src={cake.image}
             alt={t(cake.name)}
             width={500}
-            height={400}
+            height={200}
             className="
-                rounded-2xl
-                w-full
-                h-auto
-                max-h-[30vh]
-                object-cover
-                "
+      rounded-2xl
+      w-full
+      min-h-[156px]
+    max-h-[180px]
+      object-cover
+    "
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto mt-4 pr-1">
-          <h2 className="text-3xl font-bold mt-5 text-[#8b4e48] line-clamp-2">
+        <div className="flex-1 overflow-y-auto pr-1 min-h-0">
+          <h2 className="text-3xl font-bold mt-5 text-[#8b4e48] text-center">
             {t(cake.name)}
           </h2>
 
-          <p className="text-gray-700 mt-2 text-sm">{t(cake.description)}</p>
+          <p className="text-gray-700 mt-2 text-sm line-clamp-2">
+            {t(cake.description)}
+          </p>
 
           {/* SIZE */}
           <CakeSizeSelector
@@ -180,7 +189,7 @@ export default function CakeModal({
           </div>
 
           {/* Precio */}
-          <div className="mt-4 text-center">
+          <div className="mt-6 text-center">
             <p className="text-5xl font-extrabold text-[#DA6C94] mt-2">
               ${totalPrice}
             </p>
@@ -206,7 +215,22 @@ function SwitchRow({
   return (
     <button
       onClick={onToggle}
-      className={`w-full flex justify-between px-4 py-3 rounded-xl border`}
+      className="
+      w-full
+      flex
+      justify-between
+      items-center
+      px-4
+      py-2
+      rounded-xl
+      text-sm
+      font-medium
+      border
+      transition-all
+      duration-300
+      hover:bg-[#ffd6dc]
+      hover:text-[#ff1493]
+    "
       style={{
         backgroundColor: active ? "#b67d9eff" : "#fdf0f1",
         color: active ? "#ffffffff" : "#a66a6a",

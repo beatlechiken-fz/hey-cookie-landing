@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <main className="bg-[#FAF3E0]">
       {/* ------------------ APP BAR ------------------ */}
-      <div className="relative z-99999">
+      <div className="relative z-9">
         <div className="flex h-[60px] md:h-[70px]">
           <div className="relative w-[100px] h-[86px] ml-3 lg:ml-8 md:-mt-1 overflow-visible">
             {/* Imagen encima */}
