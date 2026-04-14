@@ -84,10 +84,10 @@ export default function HeroDesktop() {
               }}
             >
               <div className="flex flex-col">
-                <span className="text-[clamp(2rem,4vw,4rem)]">
+                <span className="text-[clamp(1.7rem,4vw,4rem)]">
                   {t("titleDescription")}
                 </span>
-                <span className="text-[clamp(2.5rem,5vw,5rem)]">
+                <span className="text-[clamp(2.2rem,5vw,5rem)]">
                   {t("titleDescription2")}
                 </span>
               </div>
