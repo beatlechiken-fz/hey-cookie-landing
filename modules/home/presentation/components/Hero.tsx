@@ -6,6 +6,7 @@ import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 import AppBar from "@/core/components/app-bar/AppBar";
 import HeroDesktop from "./HeroDesktop";
+import Link from "next/link";
 
 export default function Hero() {
   const t = useTranslations("hero");
@@ -29,14 +30,15 @@ export default function Hero() {
       <div className="relative z-99999">
         <div className="flex h-[60px] md:h-[70px]">
           <div className="relative w-[100px] h-[86px] ml-2 md:ml-8 md:-mt-1 overflow-visible">
-            {/* Imagen encima */}
-            <Image
-              src="/img/hey-cookie-logo-opacity.webp"
-              alt=""
-              width={100}
-              height={100}
-              className="absolute"
-            />
+            <Link href="/es">
+              <Image
+                src="/img/hey-cookie-logo-opacity.webp"
+                alt="Hey Cookie"
+                width={100}
+                height={100}
+                className="absolute cursor-pointer"
+              />
+            </Link>
           </div>
 
           <AppBar />
