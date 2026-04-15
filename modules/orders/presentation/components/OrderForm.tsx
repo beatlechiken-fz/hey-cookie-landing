@@ -202,6 +202,7 @@ export default function OrderForm() {
 
   const [cake, setCake] = useState({
     bizcocho: "",
+    altura: "",
     cobertura: { type: "ninguno", flavor: "ninguno", withLiquor: false },
     relleno: { type: "ninguno", flavor: "ninguno" },
     jarabe: { type: "ninguno", flavor: "ninguno", withLiquor: false },
@@ -308,11 +309,11 @@ export default function OrderForm() {
             <div className="w-full flex justify-center mt-10 mb-10">
               <div className="flex items-center gap-10">
                 {/*
-      Determina qué pasos mostrar:
-      - paso anterior (si existe)
-      - paso actual
-      - paso siguiente (si existe)
-    */}
+                Determina qué pasos mostrar:
+                - paso anterior (si existe)
+                - paso actual
+                - paso siguiente (si existe)
+                */}
                 {[step - 1, step, step + 1].map((i) => {
                   const s = stepsList[i];
                   if (!s) return null;
@@ -433,17 +434,33 @@ export default function OrderForm() {
 
             {/* --- 1. BIZCOCHO --- */}
             {step === 1 && (
-              <SectionSelector
-                title=""
-                options={BIZCOCHOS}
-                selected={cake.bizcocho}
-                showBack
-                onSelect={(value: string) =>
-                  setCake({ ...cake, bizcocho: value })
-                }
-                onNext={() => setStep(2)}
-                onBack={() => setStep(0)}
-              />
+              <>
+                <SectionSelector
+                  title=""
+                  options={BIZCOCHOS}
+                  selected={cake.bizcocho}
+                  showBack
+                  onSelect={(value: string) =>
+                    setCake({ ...cake, bizcocho: value })
+                  }
+                  onNext={() => setStep(2)}
+                  onBack={() => setStep(0)}
+                />
+                <input
+                  placeholder="Altura del pastel"
+                  className="
+                        w-full p-3 rounded-xl border 
+                        border-[#edcecc] 
+                        bg-[#fff8f6]
+                        focus:outline-none focus:ring-2 focus:ring-[#c87d87]
+                        text-[#6b4a2b]
+                        placeholder:text-[#d7bda6]
+                        shadow-sm
+                        "
+                  value={cake.altura}
+                  onChange={(e) => setCake({ ...cake, altura: e.target.value })}
+                />
+              </>
             )}
 
             {/* --- 2. COBERTURA --- */}
