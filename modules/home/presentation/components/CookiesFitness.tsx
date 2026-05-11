@@ -114,7 +114,7 @@ export default function CookiesFitness() {
         }}
       >
         <h2 className="text-5xl text-[#DA6C94] text-center font-title">
-          {t("title")}
+          {t("titleFiness")}
         </h2>
 
         <div className="w-full flex justify-center pt-4">

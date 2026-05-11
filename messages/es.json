@@ -68,7 +68,8 @@
       "name": "Vainilla Protein",
       "description": "Creada para quienes buscan equilibrio entre nutrición y placer. Elaborada con vainilla, nibs de cacao y trozos de dátil, con 10g de proteína, baja en azúcar y alta en fibra."
     },
-    "title": "Sweet Cookies"
+    "title": "Sweet Cookies",
+    "titleFiness": "Fitness & Healthy Cookies"
   },
   "cakes": {
     "title": "Pasteles",
