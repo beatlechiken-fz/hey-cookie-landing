@@ -72,7 +72,7 @@ const cookies = [
     name: "matcha.name",
     description: "matcha.description",
     price: "1pz $25.00",
-    sale: "5pz $100.00",
+    sale: "",
   },
   {
     id: 9,
@@ -80,7 +80,7 @@ const cookies = [
     name: "oreo.name",
     description: "oreo.description",
     price: "1pz $25.00",
-    sale: "5pz $100.00",
+    sale: "",
   },
   {
     id: 10,
@@ -88,7 +88,7 @@ const cookies = [
     name: "pop.name",
     description: "pop.description",
     price: "1pz $25.00",
-    sale: "5pz $100.00",
+    sale: "",
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ const cookies = [
     name: "taro.name",
     description: "taro.description",
     price: "1pz $25.00",
-    sale: "5pz $100.00",
+    sale: "",
   },
   {
     id: 12,
@@ -104,7 +104,7 @@ const cookies = [
     name: "reyes.name",
     description: "reyes.description",
     price: "1pz $25.00",
-    sale: "5pz $100.00",
+    sale: "",
   },
   {
     id: 13,
@@ -112,7 +112,7 @@ const cookies = [
     name: "cafe.name",
     description: "cafe.description",
     price: "1pz $25.00",
-    sale: "5pz $100.00",
+    sale: "",
   },
 ];
 
