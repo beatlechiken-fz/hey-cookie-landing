@@ -3,6 +3,7 @@
 import FooterBar from "@/core/components/footer-bar/FooterBar";
 import Contact from "@/modules/home/presentation/components/Contact";
 import Cookies from "@/modules/home/presentation/components/Cookies";
+import CookiesFitness from "@/modules/home/presentation/components/CookiesFitness";
 import Hero from "@/modules/home/presentation/components/Hero";
 
 export default function Home() {
@@ -19,6 +20,11 @@ export default function Home() {
       </section>
 
       {/* ----------- SECTION 3 ------------ */}
+      <section id="cookies" className="relative z-20 w-full overflow-x-hidden">
+        <CookiesFitness />
+      </section>
+
+      {/* ----------- SECTION 4 ------------ */}
 
       <section className="w-full">
         <Contact />

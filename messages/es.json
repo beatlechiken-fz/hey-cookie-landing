@@ -2,7 +2,7 @@
   "hero": {
     "title1": "Un bocado",
     "title2": "al corazón",
-    "titleDescription": "Reposteria",
+    "titleDescription": "Bake Lab",
     "titleDescription2": "Sweet & Healthy",
     "cookiesButton": "Galletas",
     "quoteButton": "Cotizar"
@@ -41,16 +41,32 @@
       "description": "El sabor novedoso del taro combinado con almendra en julianas, cubierta de royal icing con malvaviscos."
     },
     "reyes": {
-      "name": "Reyes",
-      "description": "Esta galleta de edición limitada le agrega un toque innovador a nuestra galleta clásica al cambiar la cobertura por chocolate blanco y ate."
+      "name": "Moreliana",
+      "description": "Esta galleta resalta y agrega un toque innovador a nuestra galleta clásica al agregar toques tradicionales de Morelia."
     },
     "cafe": {
       "name": "Café",
       "description": "Una galleta de sabor intenso y fuerte, ideal para aquellas personas que le encanta acompañar sus mañanas con sabor a café."
     },
-    "rose": {
-      "name": "Rose",
-      "description": "Nuestra galleta para para el amor y la amistad, con masa elaborada con agua de rosas, rellena de almendras y cubierta de chocolate blanco y pétalos de rosa."
+    "limon": {
+      "name": "Limón",
+      "description": "Una combinación fresca y sofisticada. Masa artesanal infusionada con notas cítricas de limón, con un equilibrio perfecto entre dulzura y acidez que despierta cada sentido."
+    },
+    "mango": {
+      "name": "Mango",
+      "description": "Inspirada en la frescura tropical. Una galleta suave y generosa con auténtico sabor a mango, creada para ofrecer una experiencia vibrante, exótica y memorable."
+    },
+    "baileys": {
+      "name": "Baileys",
+      "description": "Una creación elegante con notas cremosas y sutiles matices de licor Baileys. Su sabor profundo y aterciopelado la convierte en una experiencia verdaderamente indulgente."
+    },
+    "lunetas": {
+      "name": "M&Ms",
+      "description": "Diversión y sabor en cada mordida. Nuestra clásica masa artesanal se combina con crujientes lunetas de chocolate, creando una galleta colorida, irresistible y llena de personalidad."
+    },
+    "vainillaproteina": {
+      "name": "Vainilla Protein",
+      "description": "Creada para quienes buscan equilibrio entre nutrición y placer. Elaborada con vainilla, nibs de cacao y trozos de dátil, con 10g de proteína, baja en azúcar y alta en fibra."
     },
     "title": "Sweet Cookies"
   },

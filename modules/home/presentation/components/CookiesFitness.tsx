@@ -6,117 +6,21 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
-import styles from "./Cookies.module.scss";
+import styles from "./CookiesFitness.module.scss";
 import Icons from "@/core/assets/Icons";
 
 const cookies = [
   {
     id: 1,
-    image: "/img/vc-product-splash.webp",
-    name: "vainilla.name",
-    description: "vainilla.description",
-    price: "1pz $25.00",
+    image: "/img/prt-product-splash.webp",
+    name: "vainillaproteina.name",
+    description: "vainillaproteina.description",
+    price: "1pz $45.00",
     sale: "",
-  },
-  {
-    id: 2,
-    image: "/img/ci-product-splash.webp",
-    name: "chocolate.name",
-    description: "chocolate.description",
-    price: "1pz $25.00",
-    sale: "",
-  },
-  {
-    id: 3,
-    image: "/img/rv-product-splash.webp",
-    name: "red.name",
-    description: "red.description",
-    price: "1pz $25.00",
-    sale: "",
-  },
-  {
-    id: 4,
-    image: "/img/mr-product-splash.webp",
-    name: "marmoleada.name",
-    description: "marmoleada.description",
-    price: "1pz $25.00",
-    sale: "",
-  },
-  {
-    id: 5,
-    image: "/img/lm-product-splash.webp",
-    name: "limon.name",
-    description: "limon.description",
-    price: "1pz $30.00",
-    sale: "",
-  },
-  {
-    id: 6,
-    image: "/img/mg-product-splash.webp",
-    name: "mango.name",
-    description: "mango.description",
-    price: "1pz $30.00",
-    sale: "",
-  },
-  {
-    id: 7,
-    image: "/img/by-product-splash.webp",
-    name: "baileys.name",
-    description: "baileys.description",
-    price: "1pz $30.00",
-    sale: "",
-  },
-  {
-    id: 8,
-    image: "/img/mt-product-splash.webp",
-    name: "matcha.name",
-    description: "matcha.description",
-    price: "1pz $25.00",
-    sale: "5pz $100.00",
-  },
-  {
-    id: 9,
-    image: "/img/or-product-splash.webp",
-    name: "oreo.name",
-    description: "oreo.description",
-    price: "1pz $25.00",
-    sale: "5pz $100.00",
-  },
-  {
-    id: 10,
-    image: "/img/pop-product-splash.webp",
-    name: "pop.name",
-    description: "pop.description",
-    price: "1pz $25.00",
-    sale: "5pz $100.00",
-  },
-  {
-    id: 11,
-    image: "/img/tm-product-splash.webp",
-    name: "taro.name",
-    description: "taro.description",
-    price: "1pz $25.00",
-    sale: "5pz $100.00",
-  },
-  {
-    id: 12,
-    image: "/img/ry-product-splash.webp",
-    name: "reyes.name",
-    description: "reyes.description",
-    price: "1pz $25.00",
-    sale: "5pz $100.00",
-  },
-  {
-    id: 13,
-    image: "/img/cf-product-splash.webp",
-    name: "cafe.name",
-    description: "cafe.description",
-    price: "1pz $25.00",
-    sale: "5pz $100.00",
   },
 ];
 
-export default function Cookies() {
+export default function CookiesFitness() {
   const t = useTranslations("cookies");
   const t2 = useTranslations("cakes");
 
@@ -200,10 +104,10 @@ export default function Cookies() {
   const activeCookie = cookiesTranslated[activeIndex];
 
   return (
-    <main className="relative w-full overflow-x-hidden bg-gradient-to-b from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]">
+    <main className="relative w-full overflow-x-hidden bg-gradient-to-b from-[#FAF3E0] via-[#F1DCC9] to-[#E6C7A5]">
       {/* HEADER */}
       <div
-        className="relative z-10 pt-16"
+        className="relative z-10 pt-3"
         style={{
           paddingLeft: breakpoint === "cxs" ? "20px" : "48px",
           paddingRight: breakpoint === "cxs" ? "20px" : "48px",
