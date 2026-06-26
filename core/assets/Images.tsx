@@ -1,6 +1,7 @@
 export default class Images {
   //Brand
   static logoFullWhiteTextOpacity = "/img/sit_opacity_white_text.png";
+  static logoShortOpacity = "/img/hey-cookie-logo-opacity.webp";
 
   //Home
   static homeIABg = "/img/home_ia_bg.png";

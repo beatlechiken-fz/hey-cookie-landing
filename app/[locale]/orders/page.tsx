@@ -1,5 +1,6 @@
 "use client";
 
+import Images from "@/core/assets/Images";
 import AppBar from "@/core/components/app-bar/AppBar";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
 import OrderForm from "@/modules/orders/presentation/components/OrderForm";
@@ -15,7 +16,7 @@ export default function Orders() {
           <div className="relative w-[100px] h-[86px] ml-3 lg:ml-8 md:-mt-1 overflow-visible">
             <Link href="/es">
               <Image
-                src="/img/hey-cookie-logo-opacity.webp"
+                src={Images.logoShortOpacity}
                 alt="Hey Cookie"
                 width={100}
                 height={100}

@@ -6,6 +6,7 @@ import CakeInfoSection from "@/modules/cake/presentation/components/CakeInfoSect
 import CakesSection from "@/modules/cake/presentation/components/CakesSection";
 import Link from "next/link";
 import Image from "next/image";
+import Images from "@/core/assets/Images";
 
 export default function Home() {
   return (
@@ -16,7 +17,7 @@ export default function Home() {
           <div className="relative w-[100px] h-[86px] ml-3 lg:ml-8 md:-mt-1 overflow-visible">
             <Link href="/es">
               <Image
-                src="/img/hey-cookie-logo-opacity.webp"
+                src={Images.logoShortOpacity}
                 alt="Hey Cookie"
                 width={100}
                 height={100}
