@@ -5,15 +5,12 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-// Locales que maneja tu proyecto
-const LOCALES = ["es", "en"]; // agrega los que uses
+const LOCALES = ["es", "en"];
 
-// APIs públicas (sin sesión)
 const PUBLIC_API_PATHS: string[] = [
-  // "/api/menu",
+  "/api/public/",
 ];
 
-// Quita el prefijo de locale de un pathname: /es/admin/dashboard → /admin/dashboard
 function stripLocale(pathname: string): string {
   for (const locale of LOCALES) {
     if (pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)) {
@@ -23,36 +20,64 @@ function stripLocale(pathname: string): string {
   return pathname;
 }
 
+function activeLocale(pathname: string): string {
+  return (
+    LOCALES.find(
+      (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`),
+    ) ?? LOCALES[0]
+  );
+}
+
 function isPublicApi(pathname: string): boolean {
   return PUBLIC_API_PATHS.some((p) => pathname.startsWith(p));
 }
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const clean = stripLocale(pathname); // pathname sin el /es/ o /en/
+  const clean = stripLocale(pathname);
 
-  // 1. /api/auth/* siempre pasa (NextAuth lo necesita)
+  // /api/auth/* siempre pasa (NextAuth lo necesita)
   if (clean.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
-  // 2. /admin exacto → login, siempre público
+  // /admin exacto → login de admin, siempre público
   if (clean === "/admin") {
     return NextResponse.next();
   }
 
-  // 3. APIs públicas declaradas
+  // /user/login → login de usuario, siempre público
+  if (clean === "/user/login") {
+    return NextResponse.next();
+  }
+
+  // APIs públicas declaradas
   if (isPublicApi(clean)) {
     return NextResponse.next();
   }
 
-  // 4. Todo lo demás bajo /admin/* y /api/* → verificar JWT
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  // 4a. Rutas de API sin sesión → 401
+  // Rutas de API de admin → requiere role "admin"
+  if (clean.startsWith("/api/admin/")) {
+    if (!token || token.role !== "admin") {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
+
+  // Rutas de API de usuario → requiere role "user"
+  if (clean.startsWith("/api/user/")) {
+    if (!token || token.role !== "user") {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
+
+  // Otras APIs → cualquier token válido
   if (clean.startsWith("/api/")) {
     if (!token) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
@@ -60,16 +85,22 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4b. /admin/* sin sesión → redirigir al login (conservando el locale)
+  // /admin/* → requiere role "admin"
   if (clean.startsWith("/admin/")) {
-    if (!token) {
-      // Detectar el locale activo para redirigir a /<locale>/admin
-      const locale =
-        LOCALES.find(
-          (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`),
-        ) ?? LOCALES[0];
-
+    if (!token || token.role !== "admin") {
+      const locale = activeLocale(pathname);
       const loginUrl = new URL(`/${locale}/admin`, request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
+  }
+
+  // /user/* → requiere role "user"
+  if (clean.startsWith("/user/")) {
+    if (!token || token.role !== "user") {
+      const locale = activeLocale(pathname);
+      const loginUrl = new URL(`/${locale}/user/login`, request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
@@ -81,11 +112,11 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Con locale
     "/:locale(es|en)/admin/:path*",
+    "/:locale(es|en)/user/:path*",
     "/:locale(es|en)/api/:path*",
-    // Sin locale (por si acaso)
     "/admin/:path*",
+    "/user/:path*",
     "/api/:path*",
   ],
 };

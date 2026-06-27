@@ -1,351 +1,47 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { CustomBreakpoint } from "@/core/types/general";
-import { useBreakpoint } from "@/core/hooks/useBreakpoint";
-import styles from "./CookiesFitness.module.scss";
 import Icons from "@/core/assets/Icons";
+import dynamic from "next/dynamic";
+import type { GalletaPublica } from "./Cookies";
 
-const cookies = [
-  {
-    id: 1,
-    image: "/img/prt-product-splash.webp",
-    name: "vainillaproteina.name",
-    description: "vainillaproteina.description",
-    price: "1pz $45.00",
-    sale: "",
-  },
-];
+const CookieModal = dynamic(() => import("./CookieModal"), { ssr: false });
 
-export default function CookiesFitness() {
+interface Props {
+  productos: GalletaPublica[];
+}
+
+export default function CookiesFitness({ productos }: Props) {
   const t = useTranslations("cookies");
-  const t2 = useTranslations("cakes");
-
-  const cookiesTranslated = cookies.map((cookie) => ({
-    ...cookie,
-    name: t(cookie.name),
-    description: t(cookie.description),
-  }));
-
-  const swipeConfidenceThreshold = 80;
-
-  const breakpointsConfig: Record<
-    CustomBreakpoint,
-    { min?: number; max?: number }
-  > = {
-    cxxs: { max: 619 },
-    cxs: { min: 620, max: 839 },
-    csm: { min: 840, max: 1022 },
-    cmd: { min: 1023, max: 1199 },
-    clg: { min: 1200 },
-  };
-
-  const breakpoint = useBreakpoint(breakpointsConfig);
-
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [hasOverflow, setHasOverflow] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const hasMounted = useRef(false);
-
-  useEffect(() => {
-    const checkOverflow = () => {
-      if (!menuRef.current) return;
-      setHasOverflow(menuRef.current.scrollWidth > menuRef.current.clientWidth);
-    };
-    checkOverflow();
-    window.addEventListener("resize", checkOverflow);
-    return () => window.removeEventListener("resize", checkOverflow);
-  }, []);
-
-  useEffect(() => {
-    if (!hasMounted.current) {
-      hasMounted.current = true;
-      return;
-    }
-
-    const activeItem = itemRefs.current[activeIndex];
-    if (!activeItem) return;
-
-    activeItem.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-  }, [activeIndex]);
-
-  const scrollMenu = (direction: "left" | "right") => {
-    if (!menuRef.current) return;
-    menuRef.current.scrollBy({
-      left: direction === "left" ? -200 : 200,
-      behavior: "smooth",
-    });
-  };
-
-  const changeCookie = (index: number) => {
-    const total = cookies.length;
-
-    if (index < 0) {
-      setActiveIndex(total - 1);
-      return;
-    }
-
-    if (index >= total) {
-      setActiveIndex(0);
-      return;
-    }
-
-    setActiveIndex(index);
-  };
-
-  const activeCookie = cookiesTranslated[activeIndex];
+  const [selected, setSelected] = useState<GalletaPublica | null>(null);
 
   return (
     <main className="relative w-full overflow-x-hidden bg-gradient-to-b from-[#FAF3E0] via-[#F1DCC9] to-[#E6C7A5]">
       {/* HEADER */}
-      <div
-        className="relative z-10 pt-3"
-        style={{
-          paddingLeft: breakpoint === "cxs" ? "20px" : "48px",
-          paddingRight: breakpoint === "cxs" ? "20px" : "48px",
-        }}
-      >
+      <div className="relative z-10 pt-3 px-6 md:px-12">
         <h2 className="text-5xl text-[#DA6C94] text-center font-title">
           {t("titleFiness")}
         </h2>
-
         <div className="w-full flex justify-center pt-4">
           <Image src={Icons.wavesPink} alt="" width={120} height={20} />
         </div>
-
-        {/* MENU */}
-        {/*}
-        <div className="relative mt-6 w-full flex justify-center">
-          {hasOverflow && (
-            <button
-              onClick={() => scrollMenu("left")}
-              className="
-        absolute left-3 top-1/2 -translate-y-1/2
-        z-10 text-3xl text-[#6B3E26]
-        hover:scale-110 transition cursor-pointer
-      "
-            >
-              ‹
-            </button>
-          )}
-            */}
-
-        {/* CENTERED MENU */}
-        {/*}
-          <div
-            ref={menuRef}
-            className={`
-              flex gap-10
-              w-[75%]
-              overflow-x-auto overflow-y-hidden
-              whitespace-nowrap
-              px-4
-              ${styles.scrollbarHide}
-              ${hasOverflow ? "justify-start" : "justify-center"}
-            `}
-          >
-            {cookiesTranslated.map((cookie, index) => (
-              <button
-                key={cookie.id}
-                ref={(el) => {
-                  itemRefs.current[index] = el;
-                }}
-                onClick={() => changeCookie(index)}
-                className={`
-                  text-lg font-semibold transition-all duration-300 cursor-pointer
-                  ${
-                    activeIndex === index
-                      ? "text-[#b36b75] scale-110 font-bold"
-                      : "text-[#b36b75]/70 hover:text-[#b36b75]"
-                  }
-                `}
-              >
-                {cookie.name}
-              </button>
-            ))}
-          </div>
-
-          {hasOverflow && (
-            <button
-              onClick={() => scrollMenu("right")}
-              className="
-                absolute right-3 top-1/2 -translate-y-1/2
-                z-10 text-3xl text-[#6B3E26]
-                hover:scale-110 transition cursor-pointer
-              "
-            >
-              ›
-            </button>
-          )}
-        </div>
-        */}
       </div>
 
-      {/* CAROUSEL CONTENT */}
-      <section
-        className="relative z-10 mt-6 pb-36 flex overflow-x-hidden"
-        style={{
-          paddingLeft: breakpoint === "cxs" ? "8px" : "48px",
-          paddingRight: breakpoint === "cxs" ? "8px" : "48px",
-        }}
-      >
-        {/* ARROWS OVERLAY */}
-        <div className="absolute inset-y-0 left-0 right-0 pointer-events-none z-20">
-          <div className="relative h-full w-full">
-            {/* LEFT ARROW */}
-            <button
-              onClick={() => changeCookie(activeIndex - 1)}
-              className="
-                absolute
-                top-[20%] lg:top-1/2
-                -translate-y-1/2
-                text-5xl
-                text-[#6B3E26]
-                hover:scale-110
-                transition
-                cursor-pointer
-                pointer-events-auto
-              "
-              style={{
-                left:
-                  breakpoint === "cxxs" || breakpoint === "cxs"
-                    ? "32px"
-                    : "56px",
-              }}
-            >
-              ‹
-            </button>
-
-            {/* RIGHT ARROW */}
-            <button
-              onClick={() => changeCookie(activeIndex + 1)}
-              className="
-                absolute
-                top-[20%] lg:top-1/2
-                -translate-y-1/2
-                text-5xl
-                text-[#6B3E26]
-                hover:scale-110
-                transition
-                cursor-pointer
-                pointer-events-auto
-              "
-              style={{
-                right:
-                  breakpoint === "cxxs" || breakpoint === "cxs"
-                    ? "34px"
-                    : "52px",
-              }}
-            >
-              ›
-            </button>
+      {/* GRID */}
+      <section className="relative z-10 px-6 md:px-12 pt-10 pb-36">
+        {productos.length === 0 ? (
+          <p className="text-center text-[#AA6A42]/60 py-16 text-lg">
+            Próximamente…
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
+            {productos.map((p) => (
+              <FitnessCard key={p.id} producto={p} onOpen={() => setSelected(p)} />
+            ))}
           </div>
-        </div>
-
-        <div className="relative w-full overflow-x-hidden">
-          <section className="w-full">
-            <motion.section
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.08}
-              onDragEnd={(_, info) => {
-                if (info.offset.x < -swipeConfidenceThreshold) {
-                  changeCookie(activeIndex + 1);
-                } else if (info.offset.x > swipeConfidenceThreshold) {
-                  changeCookie(activeIndex - 1);
-                }
-              }}
-              className={`grid w-full gap-16 ${
-                breakpoint === "clg"
-                  ? "grid-cols-2 items-center"
-                  : "grid-cols-1"
-              }`}
-              style={{ gap: breakpoint === "clg" ? "82px" : "16px" }}
-            >
-              {/* IMAGE */}
-              <div className="flex justify-center w-full h-full">
-                <AnimatePresence mode="wait">
-                  <motion.section
-                    key={`${activeCookie.id}-img`}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative rounded-full overflow-x-hidden flex items-center justify-center"
-                    style={{
-                      width:
-                        breakpoint === "clg"
-                          ? "80%"
-                          : breakpoint === "cmd"
-                            ? "60%"
-                            : "70%",
-                      maxWidth: "520px",
-                      aspectRatio: "1 / 1",
-                    }}
-                  >
-                    <Image
-                      src={activeCookie.image}
-                      alt={activeCookie.name}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 768px) 70vw, 420px"
-                      priority
-                    />
-                  </motion.section>
-                </AnimatePresence>
-              </div>
-
-              {/* INFO (DESCRIPCIÓN INTACTA) */}
-              <AnimatePresence mode="wait">
-                <motion.section
-                  key={`${activeCookie.id}-info`}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className="h-full"
-                  style={{
-                    paddingTop: breakpoint === "clg" ? "82px" : "0px",
-                    textAlign: breakpoint === "clg" ? "left" : "center",
-                    width: breakpoint === "clg" ? "85%" : "100%",
-                  }}
-                >
-                  <h3 className="text-[clamp(3rem,5.3vw,6rem)] font-extrabold bg-gradient-to-r from-[#3A1F14] via-[#AA6A42] to-[#A07A42] bg-clip-text leading-tight text-transparent font-subtitle">
-                    {activeCookie.name}
-                  </h3>
-
-                  <p className="mt-10 text-[clamp(1.2rem,2vw,2rem)] text-[#6B3E26]/80 mx-auto">
-                    {activeCookie.description}
-                  </p>
-
-                  <div className="flex justify-center md:justify-start gap-4 text-[#6B3E26] font-bold mt-6">
-                    <span className="flex items-center justify-center rounded-[8px] border border-[#AA6A42] py-4 px-4 shadow-md">
-                      {activeCookie.price}
-                    </span>
-                    {activeCookie.sale && activeCookie.sale !== "" && (
-                      <span className="relative flex items-center justify-center rounded-[8px] py-4 px-4 bg-[#FFF7EC] border-2 border-[#DA6C94] shadow-md">
-                        <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] px-2 py-[2px] rounded-full bg-[#DA6C94] text-white">
-                          {t2("tips.hot")}
-                        </span>
-                        <span>{activeCookie.sale}</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* CHIPS intactos */}
-                </motion.section>
-              </AnimatePresence>
-            </motion.section>
-          </section>
-        </div>
+        )}
       </section>
 
       {/* BOTTOM ORGANIC SHAPE */}
@@ -355,19 +51,66 @@ export default function CookiesFitness() {
         className="absolute bottom-0 left-0 w-full h-[140px] pointer-events-none"
       >
         <path
-          d="
-      M0,60
-      C120,100 240,20 360,60
-      C480,100 600,20 720,60
-      C840,100 960,20 1080,60
-      C1200,100 1320,20 1440,60
-      L1440,140
-      L0,140
-      Z
-    "
+          d="M0,60 C120,100 240,20 360,60 C480,100 600,20 720,60 C840,100 960,20 1080,60 C1200,100 1320,20 1440,60 L1440,140 L0,140 Z"
           fill="#FAF3E0"
         />
       </svg>
+
+      {/* MODAL */}
+      {selected && (
+        <CookieModal producto={selected} onClose={() => setSelected(null)} />
+      )}
     </main>
+  );
+}
+
+interface CardProps {
+  producto: GalletaPublica;
+  onOpen: () => void;
+}
+
+function FitnessCard({ producto, onOpen }: CardProps) {
+  const imageSrc = producto.imagenUrl ?? "/img/prt-product-splash.webp";
+  const precio = producto.precioEstablecido;
+
+  return (
+    <article className="flex flex-col rounded-[1.25rem] border border-[#f0e0d0] bg-[#FFFDF8] overflow-hidden shadow-[0_2px_12px_rgba(170,106,66,0.08)] hover:shadow-[0_6px_24px_rgba(170,106,66,0.16)] transition-shadow">
+      {/* IMAGE */}
+      <div className="relative w-full aspect-square bg-[#FFF0E6]">
+        <Image
+          src={imageSrc}
+          alt={producto.nombre}
+          fill
+          className="object-contain p-3"
+          sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+        />
+      </div>
+
+      {/* CONTENT */}
+      <div className="flex flex-col flex-1 px-3.5 pt-3 pb-3.5 gap-2">
+        <h3 className="text-[clamp(0.78rem,1.8vw,0.95rem)] font-bold text-[#3A1F14] leading-snug line-clamp-2">
+          {producto.nombre}
+        </h3>
+
+        {producto.descripcion && (
+          <p className="text-[clamp(0.68rem,1.5vw,0.78rem)] text-[#6B3E26]/70 leading-relaxed line-clamp-2 italic flex-1">
+            {producto.descripcion}
+          </p>
+        )}
+
+        {precio != null && (
+          <span className="self-start text-xs font-semibold text-[#AA6A42] bg-[#FFF0E6] border border-[#e8c4a0] rounded-md px-2 py-0.5">
+            ${precio.toFixed(0)} / pz
+          </span>
+        )}
+
+        <button
+          onClick={onOpen}
+          className="mt-1 w-full py-2 rounded-xl border border-[#DA6C94] text-[#DA6C94] text-[0.8rem] font-semibold cursor-pointer hover:bg-[#DA6C94] hover:text-white transition-colors font-body"
+        >
+          Ver detalles
+        </button>
+      </div>
+    </article>
   );
 }

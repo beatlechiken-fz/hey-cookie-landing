@@ -6,3 +6,13 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
+.noSpinner::-webkit-inner-spin-button,
+.noSpinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.noSpinner {
+  -moz-appearance: textfield;
+}

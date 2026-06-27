@@ -21,6 +21,7 @@ function toEntity(row: any): Producto {
     descripcion: row.descripcion ?? null,
     imagenUrl: row.imagen_url ?? null,
     linea: row.linea as LineaProducto,
+    categoria: row.categoria ?? null,
     elaboracion: row.elaboracion ?? null,
     ingredientesBase: row.ingredientes_base ?? [],
     opcionesDefault: row.opciones_default ?? {},
@@ -47,6 +48,7 @@ function toRow(dto: Partial<CreateProductoDTO>) {
   if (dto.descripcion !== undefined) row.descripcion = dto.descripcion;
   if (dto.imagenUrl !== undefined) row.imagen_url = dto.imagenUrl;
   if (dto.linea !== undefined) row.linea = dto.linea;
+  if (dto.categoria !== undefined) row.categoria = dto.categoria;
   if (dto.elaboracion !== undefined) row.elaboracion = dto.elaboracion;
   if (dto.ingredientesBase !== undefined)
     row.ingredientes_base = dto.ingredientesBase;

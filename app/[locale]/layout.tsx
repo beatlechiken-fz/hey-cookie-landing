@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { MotionConfig } from "framer-motion";
+import { SessionProvider } from "@/modules/user/auth/presentation/components/SessionProvider";
 import "../../app/globals.css";
 
 const pacifico = Pacifico({
@@ -67,14 +68,16 @@ export default async function RootLayout({ children, params }: Props) {
       className={`overflow-x-hidden ${pacifico.variable} ${dancingScript.variable} ${montserrat.variable} ${playfair.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <MotionConfig
-            reducedMotion="user"
-            transition={{ type: "tween", ease: "easeOut" }}
-          >
-            {children}
-          </MotionConfig>
-        </NextIntlClientProvider>
+        <SessionProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <MotionConfig
+              reducedMotion="user"
+              transition={{ type: "tween", ease: "easeOut" }}
+            >
+              {children}
+            </MotionConfig>
+          </NextIntlClientProvider>
+        </SessionProvider>
       </body>
     </html>
   );

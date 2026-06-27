@@ -3,6 +3,7 @@
 import type { PastelConfiguracion } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
 
 export type LineaProducto = "sweet" | "fitness" | "healthy";
+export type CategoriaProducto = "cookie" | "pastel" | "gelatina" | "dessert";
 
 /** Línea de receta congelada (snapshot) que representa el "bizcocho" del producto */
 export interface IngredienteBaseItem {
@@ -64,6 +65,7 @@ export interface Producto {
   descripcion: string | null;
   imagenUrl: string | null;
   linea: LineaProducto;
+  categoria: CategoriaProducto | null;
   elaboracion: string | null;
 
   ingredientesBase: IngredienteBaseItem[];
@@ -105,6 +107,7 @@ export interface CreateProductoDTO {
   descripcion?: string | null;
   imagenUrl?: string | null;
   linea: LineaProducto;
+  categoria?: CategoriaProducto | null;
   elaboracion?: string | null;
   ingredientesBase: IngredienteBaseItem[];
   opcionesDefault: ProductoOpciones;

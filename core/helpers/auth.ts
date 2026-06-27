@@ -17,13 +17,14 @@ export const authOptions: NextAuthOptions = {
   },
 
   pages: {
-    signIn: "/admin", // ← corregido: el login está en /admin
+    signIn: "/admin",
     error: "/admin",
   },
 
   providers: [
     CredentialsProvider({
-      name: "credentials",
+      id: "admin-credentials",
+      name: "Admin",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Contraseña", type: "password" },
@@ -45,18 +46,52 @@ export const authOptions: NextAuthOptions = {
         );
         if (!valid) return null;
 
-        return { id: user.id, email: user.email, name: user.name };
+        return { id: user.id, email: user.email, name: user.name, role: "admin" } as any;
+      },
+    }),
+
+    CredentialsProvider({
+      id: "user-credentials",
+      name: "Usuario",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Contraseña", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const { data: user, error } = await supabaseAdmin
+          .from("user_accounts")
+          .select("id, email, name, password_hash")
+          .eq("email", credentials.email.toLowerCase().trim())
+          .single();
+
+        if (error || !user) return null;
+
+        const valid = await bcrypt.compare(
+          credentials.password,
+          user.password_hash,
+        );
+        if (!valid) return null;
+
+        return { id: user.id, email: user.email, name: user.name, role: "user" } as any;
       },
     }),
   ],
 
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
+      if (user) {
+        token.id = user.id;
+        token.role = (user as any).role;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) (session.user as any).id = token.id;
+      if (session.user) {
+        (session.user as any).id = token.id;
+        (session.user as any).role = token.role;
+      }
       return session;
     },
   },
@@ -64,4 +99,14 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-export const getAdminSession = () => getServerSession(authOptions);
+export const getAdminSession = async () => {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== "admin") return null;
+  return session;
+};
+
+export const getUserSession = async () => {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== "user") return null;
+  return session;
+};

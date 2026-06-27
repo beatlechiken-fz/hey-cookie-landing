@@ -1,17 +1,16 @@
 "use client";
-// src/components/admin/LoginForm.tsx
 
 import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  // Después del login va al dashboard, no de regreso al login
+  const locale = useLocale();
   const callbackUrl =
-    searchParams.get("callbackUrl") ?? "/admin/dashboard/store";
+    searchParams.get("callbackUrl") ?? `/${locale}/user/servicios`;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +22,7 @@ export function LoginForm() {
     setError(null);
 
     startTransition(async () => {
-      const res = await signIn("admin-credentials", {
+      const res = await signIn("user-credentials", {
         email,
         password,
         redirect: false,
@@ -53,13 +52,13 @@ export function LoginForm() {
               textAnchor="middle"
               fontSize="24"
             >
-              🎂
+              🍪
             </text>
           </svg>
         </div>
 
-        <h1 style={styles.title}>Panel de administración</h1>
-        <p style={styles.subtitle}>Acceso exclusivo para el equipo</p>
+        <h1 style={styles.title}>Mi cuenta</h1>
+        <p style={styles.subtitle}>Accede a tus pedidos y servicios</p>
 
         <form onSubmit={handleSubmit} style={styles.form} noValidate>
           <div style={styles.field}>
@@ -74,7 +73,7 @@ export function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isPending}
-              placeholder="admin@tupasteleria.com"
+              placeholder="tu@correo.com"
               style={styles.input}
               onFocus={(e) => Object.assign(e.target.style, styles.inputFocus)}
               onBlur={(e) =>
