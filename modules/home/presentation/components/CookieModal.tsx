@@ -27,7 +27,9 @@ export default function CookieModal({ producto, onClose }: Props) {
 
   const [qty, setQty] = useState(1);
   const [codigoCupon, setCodigoCupon] = useState("");
-  const [cuponAplicado, setCuponAplicado] = useState<CuponAplicado | null>(null);
+  const [cuponAplicado, setCuponAplicado] = useState<CuponAplicado | null>(
+    null,
+  );
   const [cuponError, setCuponError] = useState<string | null>(null);
   const [validandoCupon, setValidandoCupon] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -49,7 +51,9 @@ export default function CookieModal({ producto, onClose }: Props) {
 
   const precio = producto.precioEstablecido ?? 0;
   const subtotal = precio * qty;
-  const descuento = cuponAplicado ? calcularDescuentoCupon(cuponAplicado.cupon, subtotal) : 0;
+  const descuento = cuponAplicado
+    ? calcularDescuentoCupon(cuponAplicado.cupon, subtotal)
+    : 0;
   const total = Math.max(0, subtotal - descuento);
 
   const imageSrc = producto.imagenUrl ?? "/img/vc-product-splash.webp";
@@ -89,11 +93,17 @@ export default function CookieModal({ producto, onClose }: Props) {
     });
 
     if (cuponAplicado) {
+      const montoDescontado =
+        cuponAplicado.cupon.tipoDescuento === "porcentaje"
+          ? (precio * qty * cuponAplicado.cupon.valor) / 100
+          : cuponAplicado.cupon.valor;
+
       addCupon({
         cuponId: cuponAplicado.cupon.id,
         codigo: cuponAplicado.cupon.codigo,
         tipoDescuento: cuponAplicado.cupon.tipoDescuento,
         valor: cuponAplicado.cupon.valor,
+        montoDescontado,
       });
     }
 
@@ -108,7 +118,10 @@ export default function CookieModal({ producto, onClose }: Props) {
     <div
       ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(30,10,5,0.55)", backdropFilter: "blur(4px)" }}
+      style={{
+        backgroundColor: "rgba(30,10,5,0.55)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={(e) => e.target === overlayRef.current && onClose()}
     >
       <div
@@ -246,9 +259,7 @@ export default function CookieModal({ producto, onClose }: Props) {
             <button
               onClick={handleAdd}
               className={`w-full py-3 rounded-xl text-white font-bold text-base tracking-wide transition-colors cursor-pointer font-body flex items-center justify-center gap-2 ${
-                justAdded
-                  ? "bg-[#6ab04c]"
-                  : "bg-[#DA6C94] hover:bg-[#c0607a]"
+                justAdded ? "bg-[#6ab04c]" : "bg-[#DA6C94] hover:bg-[#c0607a]"
               }`}
             >
               {justAdded ? (
