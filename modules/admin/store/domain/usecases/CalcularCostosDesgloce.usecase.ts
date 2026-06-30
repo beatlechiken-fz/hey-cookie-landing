@@ -155,16 +155,18 @@ export function calcularCostoDesglose(
       saborRelleno.precio,
     );
 
-  // Jarabe
+  // Jarabe — si humedadJarabe === "humedo", el costo base del jarabe se multiplica ×2.2
   const jarabe = find(catalogo.jarabes, opciones.jarabeId);
-  if (jarabe)
-    baseJarabe += addEscalado(
-      `Jarabe: ${jarabe.nombre}`,
-      jarabe.costoTotal,
-      detalleFactor,
-    );
+  if (jarabe) {
+    const esHumedo = opciones.humedadJarabe === "humedo";
+    const costoJarabe = esHumedo ? jarabe.costoTotal * 2.2 : jarabe.costoTotal;
+    const labelJarabe = esHumedo
+      ? `Jarabe: ${jarabe.nombre} (húmedo ×2.2)`
+      : `Jarabe: ${jarabe.nombre}`;
+    baseJarabe += addEscalado(labelJarabe, costoJarabe, detalleFactor);
+  }
 
-  // Sabor de jarabe (precio fijo)
+  // Sabor de jarabe (precio fijo, no se ve afectado por la humedad)
   const saborJar = catalogo.saboresJarabe.find(
     (s) => s.id === opciones.saborJarabeId,
   );

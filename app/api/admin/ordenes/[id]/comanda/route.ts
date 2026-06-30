@@ -209,12 +209,18 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
       if (opciones.jarabeId) {
         const jar = byId(jarabes, opciones.jarabeId);
         const sab = byId(saboresJarabe, opciones.saborJarabeId);
+        const esHumedo = opciones.humedadJarabe === "humedo";
+        // Húmedo: todas las cantidades del jarabe ×2.2 sobre el scale ya aplicado
+        const scaleJarabe = esHumedo ? scale * 2.2 : scale;
+        const etiquetaHumedad = esHumedo ? "Húmedo (×2.2)" : "Semi húmedo";
         if (jar)
           secciones.push({
             titulo: `Jarabe: ${jar.nombre}`,
-            ingredientes: ingRowsFromJoin(jar.ingredientes ?? [], scale),
+            ingredientes: ingRowsFromJoin(jar.ingredientes ?? [], scaleJarabe),
             procedimiento: jar.elaboracion ?? null,
-            nota: sab ? `Sabor: ${sab.nombre}` : null,
+            nota: [sab ? `Sabor: ${sab.nombre}` : null, etiquetaHumedad]
+              .filter(Boolean)
+              .join(" · "),
           });
       }
 

@@ -198,9 +198,13 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
                           value: j.id,
                           label: j.nombre,
                         }))}
-                        onChange={(v) =>
-                          update("jarabeId", v === NINGUNO ? null : v)
-                        }
+                        onChange={(v) => {
+                          update("jarabeId", v === NINGUNO ? null : v);
+                          if (v === NINGUNO) {
+                            update("saborJarabeId", null);
+                            update("humedadJarabe", null);
+                          }
+                        }}
                       />
 
                       <SelectField
@@ -216,6 +220,45 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
                           update("saborJarabeId", v === NINGUNO ? null : v)
                         }
                       />
+
+                      {/* Toggle humedad — solo visible cuando hay jarabe seleccionado */}
+                      {config.jarabeId && (
+                        <div className="sm:col-span-2">
+                          <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider mb-1.5">
+                            Humedad del pastel
+                          </p>
+                          <div className="flex rounded-lg border border-[#e8c4cd] overflow-hidden w-full">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                update("humedadJarabe", "semi_humedo")
+                              }
+                              className={`flex-1 py-2 text-sm font-medium transition ${
+                                (config.humedadJarabe ?? "semi_humedo") ===
+                                "semi_humedo"
+                                  ? "bg-[#c0607a] text-white"
+                                  : "bg-white text-[#7b2d42] hover:bg-[#fdf6f0]"
+                              }`}
+                            >
+                              Semi húmedo
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => update("humedadJarabe", "humedo")}
+                              className={`flex-1 py-2 text-sm font-medium transition border-l border-[#e8c4cd] ${
+                                config.humedadJarabe === "humedo"
+                                  ? "bg-[#c0607a] text-white"
+                                  : "bg-white text-[#7b2d42] hover:bg-[#fdf6f0]"
+                              }`}
+                            >
+                              Húmedo{" "}
+                              <span className="opacity-70 text-[11px]">
+                                (×2.2 jarabe)
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
 
                       <SelectField
                         label="Licor"

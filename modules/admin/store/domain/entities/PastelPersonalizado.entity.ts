@@ -104,6 +104,13 @@ export interface PastelConfigCatalogo {
 
 // ── Configuración elegida por el usuario ──────────────────────────────────────
 
+/**
+ * Nivel de humedad del pastel cuando se usa jarabe.
+ * - semi_humedo: cantidades del jarabe sin modificar (comportamiento actual)
+ * - humedo: todas las cantidades de ingredientes del jarabe × 2.2 (más calado)
+ */
+export type HumedadJarabe = "semi_humedo" | "humedo";
+
 export interface PastelConfiguracion {
   diametroCm: number;
   bizcochoId: string | null;
@@ -114,6 +121,7 @@ export interface PastelConfiguracion {
   toppingIds: string[]; // ingrediente_id[] de topping_cantidades
   jarabeId: string | null;
   saborJarabeId: string | null;
+  humedadJarabe: HumedadJarabe | null; // null = sin jarabe / no aplica
   licorId: string | null; // ingrediente_id de licor_cantidades
   empaqueIds: string[];
   cantidad: number;
@@ -129,6 +137,7 @@ export const CONFIGURACION_VACIA: PastelConfiguracion = {
   toppingIds: [],
   jarabeId: null,
   saborJarabeId: null,
+  humedadJarabe: null,
   licorId: null,
   empaqueIds: [],
   cantidad: 1,
