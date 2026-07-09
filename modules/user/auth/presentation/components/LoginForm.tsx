@@ -9,8 +9,11 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = useLocale();
-  const callbackUrl =
-    searchParams.get("callbackUrl") ?? `/${locale}/user/servicios`;
+  const fromCart = searchParams.get("from") === "cart";
+  const justRegistered = searchParams.get("registered") === "1";
+  const callbackUrl = fromCart
+    ? `/${locale}?cart=1`
+    : searchParams.get("callbackUrl") ?? `/${locale}`;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,6 +62,12 @@ export function LoginForm() {
 
         <h1 style={styles.title}>Mi cuenta</h1>
         <p style={styles.subtitle}>Accede a tus pedidos y servicios</p>
+
+        {justRegistered && (
+          <p style={{ fontSize: "0.85rem", color: "#27ae60", backgroundColor: "#e9f7ef", border: "1px solid #a9dfbf", borderRadius: "0.5rem", padding: "0.5rem 0.75rem", marginBottom: "1rem" }}>
+            ✓ Cuenta creada. Inicia sesión para continuar.
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} style={styles.form} noValidate>
           <div style={styles.field}>
@@ -123,6 +132,16 @@ export function LoginForm() {
             {isPending ? "Verificando…" : "Iniciar sesión"}
           </button>
         </form>
+
+        <p style={{ fontSize: "0.82rem", color: "#b07a8a", marginTop: "1.25rem", textAlign: "center" }}>
+          ¿No tienes cuenta?{" "}
+          <a
+            href={`/${locale}/user/signin${fromCart ? "?from=cart" : ""}`}
+            style={{ color: "#c0607a", fontWeight: 600, textDecoration: "none" }}
+          >
+            Crear una
+          </a>
+        </p>
       </div>
     </div>
   );

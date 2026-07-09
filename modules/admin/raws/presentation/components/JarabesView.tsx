@@ -457,6 +457,7 @@ function JarabesTab() {
     create,
     update,
     remove,
+    uploadImage,
   } = useJarabes();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -722,6 +723,7 @@ function JarabesTab() {
         jarabe={editTarget}
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
+        onUploadImage={uploadImage}
       />
       <DeleteDialog
         open={Boolean(deleteTarget)}

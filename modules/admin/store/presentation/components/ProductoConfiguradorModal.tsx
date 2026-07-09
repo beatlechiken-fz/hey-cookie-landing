@@ -101,6 +101,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
             ? "establecido"
             : "sugerido",
       },
+      cuponesItem: [],
     });
     setAdded(true);
     setTimeout(() => handleClose(), 900);

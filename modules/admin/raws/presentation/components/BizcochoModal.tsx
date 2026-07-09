@@ -1,7 +1,7 @@
 "use client";
 // src/modules/admin/store/presentation/components/BizcochoModal.tsx
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
   Bizcocho,
@@ -27,16 +27,20 @@ interface Props {
   bizcocho?: Bizcocho | null;
   onClose: () => void;
   onSave: (dto: CreateBizcochoDTO) => Promise<void>;
+  onUploadImage: (file: File) => Promise<string>;
 }
 
-export function BizcochoModal({ open, bizcocho, onClose, onSave }: Props) {
+export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }: Props) {
   const isEdit = Boolean(bizcocho);
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [elaboracion, setElaboracion] = useState("");
+  const [imagenUrl, setImagenUrl] = useState<string | null>(null);
   const [lineas, setLineas] = useState<LineItem[]>([]);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [ingSearch, setIngSearch] = useState("");
   const [ingResults, setIngResults] = useState<Ingrediente[]>([]);
   const [ingLoading, setIngLoading] = useState(false);
@@ -53,6 +57,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave }: Props) {
       setNombre(bizcocho.nombre);
       setDescripcion(bizcocho.descripcion ?? "");
       setElaboracion(bizcocho.elaboracion ?? "");
+      setImagenUrl(bizcocho.imagenUrl ?? null);
       setLineas(
         bizcocho.ingredientes.map((i) => ({
           ingredienteId: i.ingredienteId,
@@ -67,12 +72,29 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave }: Props) {
       setNombre("");
       setDescripcion("");
       setElaboracion("");
+      setImagenUrl(null);
       setLineas([]);
     }
     setError(null);
     setIngSearch("");
     setIngResults([]);
   }, [open, bizcocho]);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const url = await onUploadImage(file);
+      setImagenUrl(url);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   // Debounced ingredient search
   useEffect(() => {
@@ -136,6 +158,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave }: Props) {
         nombre,
         descripcion: descripcion || null,
         elaboracion: elaboracion || null,
+        imagenUrl: imagenUrl ?? null,
         ingredientes: lineas
           .filter((l) => l.cantidad > 0)
           .map((l) => ({
@@ -203,6 +226,64 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave }: Props) {
                 onSubmit={handleSubmit}
                 className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5"
               >
+                {/* Imagen */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    Imagen
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <div className="w-24 h-24 rounded-xl border border-[#f5dce4] bg-[#fdf6f0] overflow-hidden flex items-center justify-center shrink-0">
+                      {imagenUrl ? (
+                        <img
+                          src={imagenUrl}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="w-8 h-8 text-[#e8c4cd]"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect x="3" y="3" width="18" height="18" rx="2" />
+                          <circle cx="9" cy="9" r="2" />
+                          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1 flex flex-col gap-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        id="bizcocho-image-upload"
+                      />
+                      <label
+                        htmlFor="bizcocho-image-upload"
+                        className={
+                          "cursor-pointer text-center py-2 px-3 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-[13px] font-semibold hover:bg-[#fdf6f0] transition " +
+                          (uploading ? "opacity-50 cursor-not-allowed" : "")
+                        }
+                      >
+                        {uploading
+                          ? "Subiendo…"
+                          : imagenUrl
+                            ? "Cambiar imagen"
+                            : "Subir imagen"}
+                      </label>
+                      <p className="text-[11px] text-[#b07a8a]">
+                        JPG, PNG, WEBP o GIF · máx. 5MB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Nombre */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
@@ -440,7 +521,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave }: Props) {
                 </button>
                 <button
                   onClick={handleSubmit as any}
-                  disabled={saving}
+                  disabled={saving || uploading}
                   className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
                 >
                   {saving

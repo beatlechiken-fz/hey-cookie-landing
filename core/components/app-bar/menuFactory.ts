@@ -52,7 +52,7 @@ export function createMenuNavElement(t: TType): MenuNavElement {
     custom: {
       id: "custom",
       label: t("custom"),
-      url: "/orders",
+      url: "/custom",
     },
   };
 }

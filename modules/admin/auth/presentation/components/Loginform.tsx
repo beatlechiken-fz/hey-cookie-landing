@@ -4,7 +4,7 @@
 import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 export function LoginForm() {
   const router = useRouter();

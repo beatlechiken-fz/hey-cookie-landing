@@ -18,6 +18,7 @@ export interface Jarabe {
   costoTotal: number;
   activo: boolean;
   ingredientes: JarabeIngrediente[];
+  imagenUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,6 +32,7 @@ export interface CreateJarabeDTO {
   nombre: string;
   descripcion?: string | null;
   elaboracion?: string | null;
+  imagenUrl?: string | null;
   ingredientes: CreateJarabeIngredienteDTO[];
 }
 

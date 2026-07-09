@@ -14,6 +14,7 @@ export interface GalletaPublica {
   descripcion: string | null;
   imagenUrl: string | null;
   precioEstablecido: number | null;
+  linea: "sweet" | "fitness" | "healthy";
 }
 
 interface Props {
@@ -71,6 +72,12 @@ export default function Cookies({ productos }: Props) {
   );
 }
 
+const LINE_TAG: Record<string, { label: string; cls: string }> = {
+  sweet:   { label: "Sweet",   cls: "bg-[#DA6C94] text-white" },
+  fitness: { label: "Fitness", cls: "bg-[#6ab04c] text-white" },
+  healthy: { label: "Healthy", cls: "bg-[#27ae60] text-white" },
+};
+
 interface CardProps {
   producto: GalletaPublica;
   onOpen: () => void;
@@ -79,49 +86,48 @@ interface CardProps {
 function CookieCard({ producto, onOpen }: CardProps) {
   const imageSrc = producto.imagenUrl ?? "/img/vc-product-splash.webp";
   const precio = producto.precioEstablecido;
+  const tag = LINE_TAG[producto.linea];
 
   return (
-    <article className="flex flex-col rounded-[1.25rem] border border-[#f0e0d0] bg-[#FFFDF8] overflow-hidden shadow-[0_2px_12px_rgba(170,106,66,0.08)] hover:shadow-[0_6px_24px_rgba(170,106,66,0.16)] transition-shadow">
-      {/* IMAGE — rectángulo casi cuadrado */}
-      <div className="relative w-full aspect-square bg-[#FFF0E6]">
+    <article
+      onClick={onOpen}
+      className="cursor-pointer group rounded-3xl bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 p-4"
+    >
+      {/* IMAGE */}
+      <div className="overflow-hidden rounded-2xl relative">
         <Image
           src={imageSrc}
           alt={producto.nombre}
-          fill
-          className="object-contain p-3"
+          width={400}
+          height={300}
+          className="w-full h-56 object-contain bg-[#FFF7F0] transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
         />
-      </div>
-
-      {/* CONTENT */}
-      <div className="flex flex-col flex-1 px-3.5 pt-3 pb-3.5 gap-2">
-        {/* NAME */}
-        <h3 className="text-[clamp(0.78rem,1.8vw,0.95rem)] font-bold text-[#3A1F14] leading-snug line-clamp-2">
-          {producto.nombre}
-        </h3>
-
-        {/* DESCRIPTION */}
-        {producto.descripcion && (
-          <p className="text-[clamp(0.68rem,1.5vw,0.78rem)] text-[#6B3E26]/70 leading-relaxed line-clamp-2 italic flex-1">
-            {producto.descripcion}
-          </p>
-        )}
-
-        {/* PRICE */}
-        {precio != null && (
-          <span className="self-start text-xs font-semibold text-[#AA6A42] bg-[#FFF0E6] border border-[#e8c4a0] rounded-md px-2 py-0.5">
-            ${precio.toFixed(0)} / pz
+        {tag && (
+          <span className={`absolute top-3 left-3 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${tag.cls}`}>
+            {tag.label}
           </span>
         )}
-
-        {/* BUTTON */}
-        <button
-          onClick={onOpen}
-          className="mt-1 w-full py-2 rounded-xl border border-[#DA6C94] text-[#DA6C94] text-[0.8rem] font-semibold cursor-pointer hover:bg-[#DA6C94] hover:text-white transition-colors font-body"
-        >
-          Ver detalles
-        </button>
       </div>
+
+      {/* NAME */}
+      <h3 className="text-xl font-semibold mt-4 text-[#DA6C94] group-hover:text-[#c15981] transition-colors line-clamp-2">
+        {producto.nombre}
+      </h3>
+
+      {/* DESCRIPTION */}
+      {producto.descripcion && (
+        <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+          {producto.descripcion}
+        </p>
+      )}
+
+      {/* PRICE */}
+      {precio != null && (
+        <span className="inline-block mt-2 text-xs font-semibold text-[#AA6A42] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
+          ${precio.toFixed(0)} / pz
+        </span>
+      )}
     </article>
   );
 }

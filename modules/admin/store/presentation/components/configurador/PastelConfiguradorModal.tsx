@@ -47,6 +47,7 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
         costoProduccionTotal: desglose.costoProduccionTotal,
         precioSugerido: desglose.precioSugerido,
       },
+      cuponesItem: [],
     });
     setAdded(true);
     setTimeout(() => handleClose(), 900);

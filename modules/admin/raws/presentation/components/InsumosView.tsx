@@ -156,11 +156,13 @@ function IngredienteModal({
   ingrediente,
   onClose,
   onSave,
+  onUploadImage,
 }: {
   open: boolean;
   ingrediente?: Ingrediente | null;
   onClose: () => void;
   onSave: (dto: CreateIngredienteDTO) => Promise<void>;
+  onUploadImage: (file: File) => Promise<string>;
 }) {
   const isEdit = Boolean(ingrediente);
   const [form, setForm] = useState<CreateIngredienteDTO>({
@@ -170,9 +172,12 @@ function IngredienteModal({
     unidadBase: "gr",
     costoBase: 0,
     topping: false,
+    imagenUrl: null,
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -185,6 +190,7 @@ function IngredienteModal({
               unidadBase: ingrediente.unidadBase,
               costoBase: ingrediente.costoBase,
               topping: ingrediente.topping,
+              imagenUrl: ingrediente.imagenUrl ?? null,
             }
           : {
               nombre: "",
@@ -193,11 +199,28 @@ function IngredienteModal({
               unidadBase: "gr",
               costoBase: 0,
               topping: false,
+              imagenUrl: null,
             },
       );
       setError(null);
     }
   }, [open, ingrediente]);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const url = await onUploadImage(file);
+      setForm((f) => ({ ...f, imagenUrl: url }));
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   const isWV = form.unidadBase === "gr" || form.unidadBase === "ml";
   const costoKgL =
@@ -275,6 +298,43 @@ function IngredienteModal({
                 onSubmit={handleSubmit}
                 className="px-6 py-5 flex flex-col gap-4"
               >
+                {/* Imagen */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    Imagen
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <div className="w-24 h-24 rounded-xl border border-[#f5dce4] bg-[#fdf6f0] overflow-hidden flex items-center justify-center shrink-0">
+                      {form.imagenUrl ? (
+                        <img src={form.imagenUrl} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <svg viewBox="0 0 24 24" className="w-8 h-8 text-[#e8c4cd]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="3" y="3" width="18" height="18" rx="2" />
+                          <circle cx="9" cy="9" r="2" />
+                          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="flex-1 flex flex-col gap-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        id="ingrediente-image-upload"
+                      />
+                      <label
+                        htmlFor="ingrediente-image-upload"
+                        className={"cursor-pointer text-center py-2 px-3 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-[13px] font-semibold hover:bg-[#fdf6f0] transition " + (uploading ? "opacity-50 cursor-not-allowed" : "")}
+                      >
+                        {uploading ? "Subiendo…" : form.imagenUrl ? "Cambiar imagen" : "Subir imagen"}
+                      </label>
+                      <p className="text-[11px] text-[#b07a8a]">JPG, PNG, WEBP o GIF · máx. 5MB</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
                     Nombre
@@ -454,8 +514,8 @@ function IngredienteModal({
                   </button>
                   <button
                     type="submit"
-                    disabled={saving}
-                    className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                    disabled={saving || uploading}
+                    className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 disabled:cursor-not-allowed transition"
                   >
                     {saving
                       ? "Guardando…"
@@ -767,6 +827,7 @@ function InsumosTab() {
     update,
     remove,
     toggleTopping,
+    uploadImage,
   } = useIngredientes();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -1172,6 +1233,7 @@ function InsumosTab() {
         ingrediente={editTarget}
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
+        onUploadImage={uploadImage}
       />
       <DeleteDialog
         open={Boolean(deleteTarget)}

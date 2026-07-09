@@ -9,7 +9,9 @@ import type {
 import { CONFIGURACION_VACIA } from "../../domain/entities/PastelPersonalizado.entity";
 import { calcularCostoPastel } from "../../domain/usecases/CalcularCostoPastel.usecase";
 
-export function usePastelConfigCatalogo() {
+export function usePastelConfigCatalogo(
+  url = "/api/admin/pastel-config",
+) {
   const [catalogo, setCatalogo] = useState<PastelConfigCatalogo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +22,7 @@ export function usePastelConfigCatalogo() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch("/api/admin/pastel-config");
+        const res = await fetch(url);
         if (!res.ok) {
           const err = await res.json().catch(() => ({ error: res.statusText }));
           throw new Error(err.error ?? "Error al cargar catálogo");
@@ -36,7 +38,7 @@ export function usePastelConfigCatalogo() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [url]);
 
   return { catalogo, loading, error };
 }

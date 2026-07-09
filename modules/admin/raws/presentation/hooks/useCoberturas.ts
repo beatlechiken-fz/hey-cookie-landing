@@ -87,6 +87,21 @@ export function useCoberturas() {
     load(search, page);
   };
 
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/admin/coberturas/upload", {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error ?? "Error al subir imagen");
+    }
+    const data = await res.json();
+    return data.url as string;
+  };
+
   return {
     coberturas: result?.data ?? [],
     total: result?.total ?? 0,
@@ -100,6 +115,7 @@ export function useCoberturas() {
     create,
     update,
     remove,
+    uploadImage,
   };
 }
 

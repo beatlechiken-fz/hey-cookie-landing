@@ -24,6 +24,7 @@ function toEntity(row: any, ingredientes: BizcochoIngrediente[]): Bizcocho {
     costoTotal: Number(row.costo_total ?? 0),
     activo: row.activo,
     ingredientes,
+    imagenUrl: row.imagen_url ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -123,6 +124,7 @@ export class BizcochoSupabaseDatasource {
         nombre: dto.nombre,
         descripcion: dto.descripcion ?? null,
         elaboracion: dto.elaboracion ?? null,
+        imagen_url: dto.imagenUrl ?? null,
         costo_total: costoTotal,
       })
       .select()
@@ -150,6 +152,7 @@ export class BizcochoSupabaseDatasource {
     if (dto.nombre !== undefined) updates.nombre = dto.nombre;
     if (dto.descripcion !== undefined) updates.descripcion = dto.descripcion;
     if (dto.elaboracion !== undefined) updates.elaboracion = dto.elaboracion;
+    if (dto.imagenUrl !== undefined) updates.imagen_url = dto.imagenUrl;
 
     if (dto.ingredientes) {
       const ingIds = dto.ingredientes.map((i) => i.ingredienteId);

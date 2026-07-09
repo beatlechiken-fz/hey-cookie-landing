@@ -32,6 +32,7 @@ export const OPCIONES_VACIAS: ProductoOpciones = {
   toppingIds: [],
   jarabeId: null,
   saborJarabeId: null,
+  humedadJarabe: null,
   licorId: null,
   empaqueIds: [],
 };

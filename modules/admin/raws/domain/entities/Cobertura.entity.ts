@@ -18,6 +18,7 @@ export interface Cobertura {
   costoTotal: number;
   activo: boolean;
   ingredientes: CoberturaIngrediente[];
+  imagenUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,6 +32,7 @@ export interface CreateCoberturaDTO {
   nombre: string;
   descripcion?: string | null;
   elaboracion?: string | null;
+  imagenUrl?: string | null;
   ingredientes: CreateCoberturaIngredienteDTO[];
 }
 

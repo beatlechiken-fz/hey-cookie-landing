@@ -13,8 +13,11 @@ import {
   type ProductoOpciones,
 } from "../../domain/entities/Producto.entity";
 
-export function useProductoConfigurador(producto: Producto | null) {
-  const { catalogo, loading, error } = usePastelConfigCatalogo();
+export function useProductoConfigurador(
+  producto: Producto | null,
+  catalogUrl = "/api/admin/pastel-config",
+) {
+  const { catalogo, loading, error } = usePastelConfigCatalogo(catalogUrl);
 
   const [opciones, setOpciones] = useState<ProductoOpciones>({
     ...OPCIONES_VACIAS,

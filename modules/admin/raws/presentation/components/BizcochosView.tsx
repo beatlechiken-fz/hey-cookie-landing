@@ -238,6 +238,7 @@ export function BizchosView() {
     create,
     update,
     remove,
+    uploadImage,
   } = useBizcochos();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -539,6 +540,7 @@ export function BizchosView() {
         bizcocho={editTarget}
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
+        onUploadImage={uploadImage}
       />
       <DeleteDialog
         open={Boolean(deleteTarget)}

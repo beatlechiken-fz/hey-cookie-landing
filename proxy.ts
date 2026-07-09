@@ -46,8 +46,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // /user/login → login de usuario, siempre público
-  if (clean === "/user/login") {
+  // /user/login y /user/signin → autenticación pública
+  if (clean === "/user/login" || clean === "/user/signin") {
     return NextResponse.next();
   }
 

@@ -31,6 +31,7 @@ export function ProductosView() {
     create,
     update,
     remove,
+    uploadImage,
   } = useProductos();
 
   // Modal de cotización (configurador para el cliente)
@@ -165,6 +166,7 @@ export function ProductosView() {
         open={editing !== null}
         onClose={() => setEditing(null)}
         onSave={handleSave}
+        onUploadImage={uploadImage}
       />
 
       {/* Confirmación de eliminación */}

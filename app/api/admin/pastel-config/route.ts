@@ -84,7 +84,8 @@ export async function GET() {
           t.ingredientes?.costo_unidad_minima != null
             ? Number(t.ingredientes.costo_unidad_minima)
             : null,
-      }));
+      }))
+      .sort((a: any, b: any) => a.nombre.localeCompare(b.nombre));
 
     // Licores: todos los ingredientes de categoría licores_bebidas + su cantidad si existe
     const cantMap = Object.fromEntries(

@@ -29,6 +29,7 @@ function toEntity(row: any): Ingrediente {
       ? Number(row.costo_unidad_minima)
       : null,
     topping: row.topping ?? false,
+    imagenUrl: row.imagen_url ?? null,
     activo: row.activo,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -68,6 +69,7 @@ function toRow(
   if (dto.costoUnidadMinima !== undefined)
     row.costo_unidad_minima = dto.costoUnidadMinima;
   if ((dto as any).topping !== undefined) row.topping = (dto as any).topping;
+  if ((dto as any).imagenUrl !== undefined) row.imagen_url = (dto as any).imagenUrl;
   return row;
 }
 

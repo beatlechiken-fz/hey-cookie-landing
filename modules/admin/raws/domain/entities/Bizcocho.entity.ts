@@ -18,6 +18,7 @@ export interface Bizcocho {
   costoTotal: number;
   activo: boolean;
   ingredientes: BizcochoIngrediente[];
+  imagenUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,6 +32,7 @@ export interface CreateBizcochoDTO {
   nombre: string;
   descripcion?: string | null;
   elaboracion?: string | null;
+  imagenUrl?: string | null;
   ingredientes: CreateBizcochoIngredienteDTO[];
 }
 

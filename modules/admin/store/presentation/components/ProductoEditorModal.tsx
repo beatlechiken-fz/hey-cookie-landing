@@ -35,6 +35,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSave: (dto: CreateProductoDTO, id?: string) => Promise<void>;
+  onUploadImage: (file: File) => Promise<string>;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -75,9 +76,12 @@ export function ProductoEditorModal({
   open,
   onClose,
   onSave,
+  onUploadImage,
 }: Props) {
   // ── Form fields ───────────────────────────────────────────────────────────
   const [nombre, setNombre] = useState("");
+  const [imagenUrl, setImagenUrl] = useState<string | null>(null);
+  const [imgUploading, setImgUploading] = useState(false);
   const [descripcion, setDescripcion] = useState("");
   const [linea, setLinea] = useState<LineaProducto>("sweet");
   const [elaboracion, setElaboracion] = useState("");
@@ -126,6 +130,7 @@ export function ProductoEditorModal({
     if (!open) return;
     if (producto) {
       setNombre(producto.nombre);
+      setImagenUrl(producto.imagenUrl ?? null);
       setDescripcion(producto.descripcion ?? "");
       setLinea(producto.linea);
       setElaboracion(producto.elaboracion ?? "");
@@ -170,6 +175,7 @@ export function ProductoEditorModal({
       setDefEmpaqueIds(od.empaqueIds ?? []);
     } else {
       setNombre("");
+      setImagenUrl(null);
       setDescripcion("");
       setLinea("sweet");
       setElaboracion("");
@@ -274,6 +280,22 @@ export function ProductoEditorModal({
   const toggleEmpaque = (id: string) =>
     toggleTopping(id, defEmpaqueIds, setDefEmpaqueIds);
 
+  // ── Image upload ──────────────────────────────────────────────────────────
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImgUploading(true);
+    try {
+      const url = await onUploadImage(file);
+      setImagenUrl(url);
+    } catch (err: any) {
+      setError(err.message ?? "Error al subir imagen");
+    } finally {
+      setImgUploading(false);
+      e.target.value = "";
+    }
+  }
+
   // ── Submit ────────────────────────────────────────────────────────────────
   async function handleSave() {
     if (!nombre.trim()) {
@@ -292,6 +314,7 @@ export function ProductoEditorModal({
       const dto: CreateProductoDTO = {
         nombre: nombre.trim(),
         descripcion: descripcion.trim() || null,
+        imagenUrl,
         linea,
         elaboracion: elaboracion.trim() || null,
         ingredientesBase: lineas
@@ -316,6 +339,7 @@ export function ProductoEditorModal({
           licorId: defLicorId,
           toppingIds: defToppingIds,
           empaqueIds: defEmpaqueIds,
+          humedadJarabe: null,
         },
         medidaBaseCm: permiteMedida ? Number(medidaBaseCm) || 24 : null,
         permiteMedidaPersonalizada: permiteMedida,
@@ -568,6 +592,63 @@ export function ProductoEditorModal({
                         placeholder="Pasos de preparación…"
                         className={inputCls + " resize-none"}
                       />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className={labelCls}>Imagen del producto</label>
+                      <div className="flex items-center gap-3">
+                        {imagenUrl ? (
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#e8c4cd] shrink-0">
+                            <img
+                              src={imagenUrl}
+                              alt="Preview"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-16 rounded-xl border-2 border-dashed border-[#e8c4cd] bg-[#fdf6f0] flex items-center justify-center shrink-0">
+                            <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#c0a0a8]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                              <rect x="3" y="3" width="18" height="18" rx="3" />
+                              <circle cx="8.5" cy="8.5" r="1.5" />
+                              <path d="m21 15-5-5L5 21" />
+                            </svg>
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-1.5">
+                          <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#fdf6f0] border border-[#e8c4cd] text-[12px] font-semibold text-[#7b2d42] hover:bg-[#f5dce4] transition">
+                            {imgUploading ? (
+                              <>
+                                <span className="w-3 h-3 border-2 border-[#c0607a] border-t-transparent rounded-full animate-spin" />
+                                Subiendo…
+                              </>
+                            ) : (
+                              <>
+                                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                  <polyline points="17 8 12 3 7 8" />
+                                  <line x1="12" y1="3" x2="12" y2="15" />
+                                </svg>
+                                Subir imagen
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="sr-only"
+                              disabled={imgUploading}
+                              onChange={handleFileChange}
+                            />
+                          </label>
+                          {imagenUrl && (
+                            <button
+                              type="button"
+                              onClick={() => setImagenUrl(null)}
+                              className="text-[11px] text-[#b07a8a] hover:text-[#c0607a] text-left transition"
+                            >
+                              Quitar imagen
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </>
                 )}

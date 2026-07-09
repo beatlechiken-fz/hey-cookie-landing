@@ -1,9 +1,4 @@
 "use client";
-// src/modules/admin/store/presentation/store/useCartStore.ts
-//
-// Carrito de compras en memoria (zustand). No persiste a BD —
-// se guarda al generar cotización u orden, momento en el cual
-// se traduce a CreateOrdenDTO y se envía a /api/admin/ordenes.
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -11,24 +6,20 @@ import type { PastelConfiguracion } from "../../domain/entities/PastelPersonaliz
 import type { OrdenCuponAplicado } from "../../domain/entities/Orden.entity";
 
 export interface CartItem {
-  id: string; // id local generado (uuid/crypto)
-  nombre: string; // ej: "Pastel personalizado 20cm" o "Pastel de café 24cm"
-  /**
-   * Snapshot de la configuración elegida. Para pastel personalizado es
-   * PastelConfiguracion completa; para productos del catálogo es un objeto
-   * con { productoId, opciones, diametroCm?, tamanoFijoId? }. Se guarda tal
-   * cual en orden_items.configuracion (JSONB) sin validar su forma aquí.
-   */
+  id: string;
+  nombre: string;
   configuracion: PastelConfiguracion | Record<string, any>;
   cantidad: number;
-  costoUnitario: number; // costo de producción calculado
-  precioUnitario: number; // precio de venta
-  /** Snapshot del PastelCostoDesglose — se guarda en orden_items para finanzas */
+  costoUnitario: number;
+  precioUnitario: number;
   desgloseCostos?: Record<string, any> | null;
+  /** Cupones aplicados a este item específico (desde el modal de producto) */
+  cuponesItem: OrdenCuponAplicado[];
 }
 
 interface CartState {
   items: CartItem[];
+  /** Cupones globales: se aplican al total del carrito completo */
   cupones: OrdenCuponAplicado[];
   clienteId: string | null;
   clienteNombre: string | null;
@@ -40,12 +31,23 @@ interface CartState {
   updateCantidad: (id: string, cantidad: number) => void;
   clear: () => void;
 
+  // Cupones globales (todo el carrito)
   addCupon: (cupon: OrdenCuponAplicado) => void;
   removeCupon: (cuponId: string) => void;
+
+  // Cupones por item
+  removeItemCupon: (itemId: string, cuponId: string) => void;
 
   // Derivados
   totalItems: () => number;
   subtotal: () => number;
+  /** Descuento de un item específico considerando sus cuponesItem */
+  itemDescuento: (itemId: string) => number;
+  /** Suma de todos los descuentos por item */
+  totalItemDescuentos: () => number;
+  /** Descuento de cupones globales (se aplican sobre subtotal - descuentos por item) */
+  globalDescuentoTotal: () => number;
+  /** Descuento total = por item + global */
   descuentoTotal: () => number;
   total: () => number;
 }
@@ -54,6 +56,15 @@ function genId() {
   return typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : `item-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function calcCuponMonto(
+  cupon: OrdenCuponAplicado,
+  base: number,
+): number {
+  if (cupon.tipoDescuento === "porcentaje")
+    return base * (cupon.valor / 100);
+  return Math.min(cupon.valor, base);
 }
 
 export const useCartStore = create<CartState>()(
@@ -66,7 +77,10 @@ export const useCartStore = create<CartState>()(
 
       addItem: (item) =>
         set((state) => ({
-          items: [...state.items, { ...item, id: genId() }],
+          items: [
+            ...state.items,
+            { ...item, id: genId(), cuponesItem: item.cuponesItem ?? [] },
+          ],
         })),
 
       removeItem: (id) =>
@@ -85,8 +99,6 @@ export const useCartStore = create<CartState>()(
         set({
           clienteId: cliente?.id ?? null,
           clienteNombre: cliente?.nombre ?? null,
-          // Al cambiar de cliente, los cupones individuales aplicados podrían
-          // dejar de ser válidos para el nuevo cliente; se limpian por seguridad.
           cupones: [],
         }),
 
@@ -105,21 +117,56 @@ export const useCartStore = create<CartState>()(
           cupones: state.cupones.filter((c) => c.cuponId !== cuponId),
         })),
 
+      removeItemCupon: (itemId, cuponId) =>
+        set((state) => ({
+          items: state.items.map((i) =>
+            i.id === itemId
+              ? {
+                  ...i,
+                  cuponesItem: i.cuponesItem.filter(
+                    (c) => c.cuponId !== cuponId,
+                  ),
+                }
+              : i,
+          ),
+        })),
+
       totalItems: () => get().items.reduce((s, i) => s + i.cantidad, 0),
 
       subtotal: () =>
         get().items.reduce((s, i) => s + i.precioUnitario * i.cantidad, 0),
 
-      descuentoTotal: () => {
-        const subtotal = get().subtotal();
-        return get().cupones.reduce((sum, c) => {
-          const monto =
-            c.tipoDescuento === "porcentaje"
-              ? subtotal * (c.valor / 100)
-              : Math.min(c.valor, subtotal);
-          return sum + monto;
-        }, 0);
+      itemDescuento: (itemId) => {
+        const item = get().items.find((i) => i.id === itemId);
+        if (!item) return 0;
+        const base = item.precioUnitario * item.cantidad;
+        return (item.cuponesItem ?? []).reduce(
+          (sum, c) => sum + calcCuponMonto(c, base),
+          0,
+        );
       },
+
+      totalItemDescuentos: () =>
+        get().items.reduce((sum, item) => {
+          const base = item.precioUnitario * item.cantidad;
+          return (
+            sum +
+            (item.cuponesItem ?? []).reduce(
+              (s, c) => s + calcCuponMonto(c, base),
+              0,
+            )
+          );
+        }, 0),
+
+      globalDescuentoTotal: () => {
+        const subtotal = get().subtotal();
+        const itemDisc = get().totalItemDescuentos();
+        const base = Math.max(0, subtotal - itemDisc);
+        return get().cupones.reduce((sum, c) => sum + calcCuponMonto(c, base), 0);
+      },
+
+      descuentoTotal: () =>
+        get().totalItemDescuentos() + get().globalDescuentoTotal(),
 
       total: () => Math.max(0, get().subtotal() - get().descuentoTotal()),
     }),

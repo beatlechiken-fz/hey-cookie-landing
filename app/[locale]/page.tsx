@@ -12,8 +12,8 @@ async function fetchGalletas(linea: "sweet" | "fitness"): Promise<GalletaPublica
       .from("productos")
       .select("id, nombre, descripcion, imagen_url, precio_establecido")
       .eq("linea", linea)
+      .eq("categoria", "cookie")
       .eq("activo", true)
-      .order("orden")
       .order("nombre");
 
     if (error) return [];
@@ -24,6 +24,7 @@ async function fetchGalletas(linea: "sweet" | "fitness"): Promise<GalletaPublica
       descripcion: row.descripcion ?? null,
       imagenUrl: row.imagen_url ?? null,
       precioEstablecido: row.precio_establecido != null ? Number(row.precio_establecido) : null,
+      linea: row.linea ?? linea,
     }));
   } catch {
     return [];

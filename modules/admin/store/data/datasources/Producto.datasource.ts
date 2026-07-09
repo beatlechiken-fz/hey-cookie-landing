@@ -83,7 +83,6 @@ export class ProductoSupabaseDatasource {
     if (linea) q = q.eq("linea", linea);
     if (activo !== undefined) q = q.eq("activo", activo);
     q = q
-      .order("orden")
       .order("nombre")
       .range(from, from + pageSize - 1);
 

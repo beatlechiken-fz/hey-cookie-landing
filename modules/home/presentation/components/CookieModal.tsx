@@ -23,7 +23,6 @@ export default function CookieModal({ producto, onClose }: Props) {
   const isUser = session?.user?.role === "user";
 
   const addItem = useCartStore((s) => s.addItem);
-  const addCupon = useCartStore((s) => s.addCupon);
 
   const [qty, setQty] = useState(1);
   const [codigoCupon, setCodigoCupon] = useState("");
@@ -84,28 +83,29 @@ export default function CookieModal({ producto, onClose }: Props) {
   }
 
   function handleAdd() {
+    const cuponesItem = cuponAplicado
+      ? [
+          {
+            cuponId: cuponAplicado.cupon.id,
+            codigo: cuponAplicado.cupon.codigo,
+            tipoDescuento: cuponAplicado.cupon.tipoDescuento,
+            valor: cuponAplicado.cupon.valor,
+            montoDescontado:
+              cuponAplicado.cupon.tipoDescuento === "porcentaje"
+                ? (precio * qty * cuponAplicado.cupon.valor) / 100
+                : Math.min(cuponAplicado.cupon.valor, precio * qty),
+          },
+        ]
+      : [];
+
     addItem({
       nombre: producto.nombre,
       configuracion: { productoId: producto.id, tipo: "cookie" },
       cantidad: qty,
       costoUnitario: 0,
       precioUnitario: precio,
+      cuponesItem,
     });
-
-    if (cuponAplicado) {
-      const montoDescontado =
-        cuponAplicado.cupon.tipoDescuento === "porcentaje"
-          ? (precio * qty * cuponAplicado.cupon.valor) / 100
-          : cuponAplicado.cupon.valor;
-
-      addCupon({
-        cuponId: cuponAplicado.cupon.id,
-        codigo: cuponAplicado.cupon.codigo,
-        tipoDescuento: cuponAplicado.cupon.tipoDescuento,
-        valor: cuponAplicado.cupon.valor,
-        montoDescontado,
-      });
-    }
 
     setJustAdded(true);
     setTimeout(() => {
@@ -115,19 +115,23 @@ export default function CookieModal({ producto, onClose }: Props) {
   }
 
   return (
+    /* Overlay — scroll cuando el contenido es mayor que la pantalla */
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 overflow-y-auto"
       style={{
         backgroundColor: "rgba(30,10,5,0.55)",
         backdropFilter: "blur(4px)",
       }}
-      onClick={(e) => e.target === overlayRef.current && onClose()}
+      onClick={onClose}
     >
-      <div
-        className="relative w-full max-w-2xl bg-[#FFFDF8] rounded-2xl shadow-2xl overflow-hidden"
-        style={{ maxHeight: "90vh", overflowY: "auto" }}
-      >
+      {/* Centering wrapper */}
+      <div className="flex min-h-full items-center justify-center p-4 md:p-6">
+        {/* Modal card — sin restricción de altura, toma el espacio necesario */}
+        <div
+          className="relative w-full max-w-3xl bg-[#FFFDF8] rounded-2xl shadow-2xl overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* CLOSE */}
         <button
           onClick={onClose}
@@ -137,21 +141,21 @@ export default function CookieModal({ producto, onClose }: Props) {
           ✕
         </button>
 
-        <div className="grid md:grid-cols-[2fr_3fr]">
+        <div className="grid md:grid-cols-[5fr_7fr]">
           {/* IMAGE */}
-          <div className="relative w-full aspect-square bg-[#FFF0E6]">
+          <div className="relative w-full aspect-[4/3] md:aspect-auto md:min-h-[380px] bg-[#FFF0E6]">
             <Image
               src={imageSrc}
               alt={producto.nombre}
               fill
-              className="object-contain p-4"
-              sizes="(max-width: 768px) 100vw, 340px"
+              className="object-contain p-6"
+              sizes="(max-width: 768px) 100vw, 380px"
               priority
             />
           </div>
 
           {/* CONTENT */}
-          <div className="flex flex-col gap-4 p-6">
+          <div className="flex flex-col gap-4 p-6 md:p-8">
             {/* TITLE + DESCRIPTION */}
             <div>
               <h2 className="text-2xl font-bold text-[#3A1F14] leading-tight font-subtitle">
@@ -271,13 +275,14 @@ export default function CookieModal({ producto, onClose }: Props) {
                     alt=""
                     width={18}
                     height={18}
-                    className="invert"
+                    style={{ filter: "brightness(0) invert(1)" }}
                   />
                   Agregar al carrito
                 </>
               )}
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>

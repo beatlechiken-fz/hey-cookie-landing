@@ -188,6 +188,7 @@ function CoberturasTab() {
     create,
     update,
     remove,
+    uploadImage,
   } = useCoberturas();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -470,6 +471,7 @@ function CoberturasTab() {
         cobertura={editTarget}
         onClose={() => setModalOpen(false)}
         onSave={handleSave}
+        onUploadImage={uploadImage}
       />
       <DeleteDialog
         open={Boolean(deleteTarget)}

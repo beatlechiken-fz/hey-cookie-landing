@@ -82,6 +82,21 @@ export function useProductos(initialLinea?: LineaProducto | "") {
     load(search, linea);
   };
 
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/admin/productos/upload", {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error ?? "Error al subir imagen");
+    }
+    const data = await res.json();
+    return data.url as string;
+  };
+
   return {
     productos: result?.data ?? [],
     total: result?.total ?? 0,
@@ -94,6 +109,7 @@ export function useProductos(initialLinea?: LineaProducto | "") {
     create,
     update,
     remove,
+    uploadImage,
     reload: () => load(search, linea),
   };
 }

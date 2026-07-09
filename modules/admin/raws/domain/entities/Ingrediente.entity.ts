@@ -45,6 +45,7 @@ export interface Ingrediente {
   costoKgL: number | null;
   costoUnidadMinima: number | null;
   topping: boolean; // ← nuevo
+  imagenUrl?: string | null;
   activo: boolean;
   createdAt: string;
   updatedAt: string;

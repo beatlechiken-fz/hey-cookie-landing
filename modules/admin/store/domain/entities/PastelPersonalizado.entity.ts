@@ -60,6 +60,7 @@ export interface OpcionSimple {
   id: string;
   nombre: string;
   costoTotal: number; // costo a 24cm (base); se escala por factor al calcular
+  imagenUrl?: string | null;
 }
 
 export interface OpcionSabor {
@@ -74,6 +75,7 @@ export interface OpcionToppingCantidad {
   cantidad: number | null; // cantidad a 24cm
   unidad: string;
   costoUnidadMinima: number | null;
+  imagenUrl?: string | null;
 }
 
 export interface OpcionLicorCantidad {
@@ -81,6 +83,7 @@ export interface OpcionLicorCantidad {
   nombre: string;
   cantidad: number | null; // ml a 24cm
   costoUnidadMinima: number | null;
+  imagenUrl?: string | null;
 }
 
 export interface OpcionEmpaque {
