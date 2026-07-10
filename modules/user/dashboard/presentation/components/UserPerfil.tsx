@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { useState } from "react";
+import { PasswordInput } from "@/core/components/PasswordInput";
 
 export function UserPerfil() {
   const { data: session, update } = useSession();
@@ -135,13 +136,12 @@ export function UserPerfil() {
                   <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider font-sans">
                     {label}
                   </label>
-                  <input
-                    type="password"
+                  <PasswordInput
                     value={value}
                     onChange={(e) => setter(e.target.value)}
                     placeholder={placeholder}
                     autoComplete="off"
-                    className="px-4 py-2.5 rounded-xl border border-[#e8c4cd] text-[#3A1F14] text-sm bg-[#fffbfc] outline-none focus:border-[#c0607a] transition-colors font-sans"
+                    className="px-4 py-2.5 rounded-xl border border-[#e8c4cd] text-[#3A1F14] text-sm bg-[#fffbfc] outline-none focus:border-[#c0607a] transition-colors font-sans w-full"
                   />
                 </div>
               ))}

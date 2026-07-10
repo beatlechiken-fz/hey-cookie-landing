@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useLocale } from "next-intl";
+import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -49,71 +50,22 @@ function StatusBadge({ status }: { status: string }) {
 // ── PDF ──────────────────────────────────────────────────────────────────────
 
 function downloadOrdenPDF(orden: Orden) {
-  const fecha = new Date(orden.createdAt).toLocaleDateString("es-MX", {
-    year: "numeric", month: "long", day: "numeric",
+  const html = buildOrdenClienteHtml({
+    tipo: orden.status === "cotizacion" ? "cotizacion" : "orden",
+    numero: orden.numero,
+    clienteNombre: orden.clienteNombre,
+    fechaCreacion: orden.createdAt,
+    fechaEntrega: orden.fechaEntrega,
+    items: orden.items.map((i) => ({
+      nombre: i.nombre,
+      cantidad: i.cantidad,
+      precioUnitario: i.precioUnitario,
+      subtotal: i.subtotal,
+    })),
+    subtotal: orden.subtotal,
+    descuentoTotal: orden.descuentoTotal,
+    total: orden.total,
   });
-
-  const rows = orden.items
-    .map(
-      (i) => `<tr>
-        <td style="padding:8px 0;border-bottom:1px solid #f9f0ec;color:#3A1F14;">${i.nombre}</td>
-        <td style="padding:8px 0;border-bottom:1px solid #f9f0ec;text-align:center;color:#AA6A42;">${i.cantidad}</td>
-        <td style="padding:8px 0;border-bottom:1px solid #f9f0ec;text-align:right;color:#3A1F14;">$${i.precioUnitario.toFixed(0)}</td>
-        <td style="padding:8px 0;border-bottom:1px solid #f9f0ec;text-align:right;font-weight:600;color:#3A1F14;">$${i.subtotal.toFixed(0)}</td>
-      </tr>`,
-    )
-    .join("");
-
-  const html = `<!DOCTYPE html>
-<html lang="es">
-<head><meta charset="UTF-8"><title>Orden #${orden.numero} — Hey Cookie</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:Georgia,serif;background:#fff;color:#3A1F14;padding:40px;max-width:600px;margin:auto}
-  .header{text-align:center;border-bottom:2px solid #DA6C94;padding-bottom:24px;margin-bottom:28px}
-  .brand{font-size:28px;font-weight:700;color:#7b2d42;letter-spacing:-1px}
-  .brand span{color:#DA6C94}
-  .num{font-size:13px;color:#AA6A42;margin-top:4px;font-family:sans-serif}
-  .fecha{font-size:12px;color:#b07a8a;font-family:sans-serif}
-  .label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b07a8a;font-family:sans-serif;margin-bottom:6px}
-  .section{margin-bottom:24px}
-  table{width:100%;border-collapse:collapse;font-size:13px;font-family:sans-serif}
-  th{padding:6px 0;border-bottom:2px solid #f0e0d0;color:#b07a8a;font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.5px;text-align:left}
-  th:nth-child(2){text-align:center}th:nth-child(3),th:nth-child(4){text-align:right}
-  .totals{margin-top:16px;font-family:sans-serif;font-size:13px}
-  .tot-row{display:flex;justify-content:space-between;padding:4px 0;color:#AA6A42}
-  .tot-final{display:flex;justify-content:space-between;padding:10px 0 0;font-weight:700;font-size:16px;color:#3A1F14;border-top:2px solid #f0e0d0;margin-top:6px}
-  .footer{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #f0e0d0;font-size:11px;color:#b07a8a;font-family:sans-serif}
-  @media print{body{padding:20px}@page{margin:1cm}}
-</style></head>
-<body>
-<div class="header">
-  <div class="brand">Hey <span>Cookie</span></div>
-  <div class="num">Orden #${orden.numero}</div>
-  <div class="fecha">${fecha}</div>
-</div>
-<div class="section">
-  <div class="label">Cliente</div>
-  <div style="font-size:15px;font-weight:700">${orden.clienteNombre}</div>
-</div>
-<div class="section">
-  <div class="label">Productos</div>
-  <table>
-    <thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Total</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table>
-  <div class="totals">
-    <div class="tot-row"><span>Subtotal</span><span>$${orden.subtotal.toFixed(0)}</span></div>
-    ${orden.descuentoTotal > 0 ? `<div class="tot-row" style="color:#27ae60"><span>Descuento</span><span>-$${orden.descuentoTotal.toFixed(0)}</span></div>` : ""}
-    <div class="tot-final"><span>Total</span><span>$${orden.total.toFixed(0)}</span></div>
-  </div>
-</div>
-<div class="footer">
-  <p>Hey Cookie — Repostería artesanal</p>
-  <p style="margin-top:4px">Este documento es un comprobante de tu orden.</p>
-</div>
-</body></html>`;
-
   const blob = new Blob([html], { type: "text/html;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const win = window.open(url, "_blank");

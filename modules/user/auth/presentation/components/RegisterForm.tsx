@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
+import { PasswordInput } from "@/core/components/PasswordInput";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -157,8 +158,7 @@ export function RegisterForm() {
           {/* Contraseña */}
           <div style={styles.field}>
             <label style={styles.label}>Contraseña</label>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -172,8 +172,7 @@ export function RegisterForm() {
           {/* Confirmar contraseña */}
           <div style={styles.field}>
             <label style={styles.label}>Confirmar contraseña</label>
-            <input
-              type="password"
+            <PasswordInput
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}

@@ -3,12 +3,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getAdminSession } from "@/core/helpers/auth";
+import { getSupabaseAdmin } from "@/core/helpers/supabase";
 import { OrdenRepositoryImpl } from "@/modules/admin/store/data/repositories/Orden.repository.impl";
 import {
   GetOrdenByIdUseCase,
   UpdateOrdenStatusUseCase,
 } from "@/modules/admin/store/domain/usecases/Orden.usecase";
 import { FinanzasDatasource } from "@/modules/admin/store/data/datasources/Finanzas.datasource";
+import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
+import type { Orden } from "@/modules/admin/store/domain/entities/Orden.entity";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -36,41 +39,37 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     const body = await req.json();
     const repo = new OrdenRepositoryImpl();
 
-    let updated;
+    let updated: Orden | undefined;
 
     // Actualizar status
     if (body.status !== undefined) {
-      updated = await new UpdateOrdenStatusUseCase(repo).execute(
+      const ord = await new UpdateOrdenStatusUseCase(repo).execute(
         id,
         body.status,
       );
+      updated = ord;
 
       // ── Auto-crear registro financiero al marcar como pagado ──────────────
       if (body.status === "pagado") {
         const finDs = new FinanzasDatasource();
-        // Verificar que no exista ya un registro para esta orden
         const existing = await finDs.getRegistroByOrdenId(id).catch(() => null);
 
         if (!existing) {
-          // Sumar desglose de todos los items de la orden
           let insumos = 0;
           let servicios = 0;
           let manoObra = 0;
           let utilidad = 0;
 
-          for (const item of updated.items) {
+          for (const item of ord.items) {
             const d = item.desgloseCostos as Record<string, any> | null;
             if (!d) {
-              // Sin desglose guardado: aproximar desde costoUnitario
               const costo = item.costoUnitario * item.cantidad;
-              insumos += costo * 0.55; // aprox 55% insumos
+              insumos += costo * 0.55;
               servicios += costo * 0.08;
               manoObra += costo * 0.1;
               utilidad += costo * 0.27;
             } else {
-              const cargos = (d.cargosAdicionales ?? []) as Array<{
-                monto: number;
-              }>;
+              const cargos = (d.cargosAdicionales ?? []) as Array<{ monto: number }>;
               insumos += (d.costoInsumos ?? 0) * item.cantidad;
               servicios += (cargos[0]?.monto ?? 0) * item.cantidad;
               manoObra += (cargos[1]?.monto ?? 0) * item.cantidad;
@@ -80,19 +79,67 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
 
           await finDs
             .createRegistro({
-              ordenId: updated.id,
-              ordenNumero: updated.numero,
-              clienteNombre: updated.clienteNombre ?? null,
+              ordenId: ord.id,
+              ordenNumero: ord.numero,
+              clienteNombre: ord.clienteNombre ?? null,
               fechaVenta: new Date().toISOString().slice(0, 10),
-              totalVenta: updated.total,
+              totalVenta: ord.total,
               insumos: Math.round(insumos * 100) / 100,
               servicios: Math.round(servicios * 100) / 100,
               manoDeObra: Math.round(manoObra * 100) / 100,
               utilidad: Math.round(utilidad * 100) / 100,
-              comision: null, // se asigna manualmente desde el módulo de finanzas
+              comision: null,
             })
-            .catch(console.error); // no bloquear si falla el registro financiero
+            .catch(console.error);
         }
+      }
+
+      // ── Enviar email de confirmación al cliente cuando entra en proceso ────
+      if (body.status === "en_proceso" && process.env.RESEND_API_KEY) {
+        Promise.resolve()
+          .then(async () => {
+            const { data: cliente } = await getSupabaseAdmin()
+              .from("clientes")
+              .select("email, nombre")
+              .eq("id", ord.clienteId)
+              .maybeSingle();
+
+            if (!cliente?.email) return;
+
+            const { Resend } = await import("resend");
+            const resend = new Resend(process.env.RESEND_API_KEY);
+
+            const html = buildOrdenClienteHtml({
+              tipo: "orden",
+              numero: ord.numero,
+              clienteNombre: ord.clienteNombre ?? cliente.nombre ?? "—",
+              clienteEmail: cliente.email,
+              fechaCreacion: ord.createdAt,
+              fechaEntrega: ord.fechaEntrega,
+              items: ord.items.map((item) => ({
+                nombre: item.nombre,
+                cantidad: item.cantidad,
+                precioUnitario: item.precioUnitario,
+                subtotal: item.subtotal,
+              })),
+              subtotal: ord.subtotal,
+              descuentoTotal: ord.descuentoTotal,
+              total: ord.total,
+              cupones: ord.cupones.map((c) => ({
+                codigo: c.codigo,
+                montoDescontado: c.montoDescontado,
+              })),
+              notas: ord.notas,
+            });
+
+            await resend.emails.send({
+              from: "Hey Cookie <hola@heycookie.mx>",
+              to: cliente.email,
+              subject: `✅ Tu orden #${ord.numero} está en proceso — Hey Cookie`,
+              html,
+            });
+          })
+          .catch((err) => console.error("[orden:email]", err));
       }
     }
 
