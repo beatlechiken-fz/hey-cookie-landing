@@ -12,6 +12,7 @@ export function LoginForm() {
   const locale = useLocale();
   const fromCart = searchParams.get("from") === "cart";
   const justRegistered = searchParams.get("registered") === "1";
+  const justChangedPassword = searchParams.get("changed") === "1";
   const callbackUrl = fromCart
     ? `/${locale}?cart=1`
     : searchParams.get("callbackUrl") ?? `/${locale}`;
@@ -67,6 +68,11 @@ export function LoginForm() {
         {justRegistered && (
           <p style={{ fontSize: "0.85rem", color: "#27ae60", backgroundColor: "#e9f7ef", border: "1px solid #a9dfbf", borderRadius: "0.5rem", padding: "0.5rem 0.75rem", marginBottom: "1rem" }}>
             ✓ Cuenta creada. Inicia sesión para continuar.
+          </p>
+        )}
+        {justChangedPassword && (
+          <p style={{ fontSize: "0.85rem", color: "#27ae60", backgroundColor: "#e9f7ef", border: "1px solid #a9dfbf", borderRadius: "0.5rem", padding: "0.5rem 0.75rem", marginBottom: "1rem" }}>
+            ✓ Contraseña actualizada. Inicia sesión con tu nueva contraseña.
           </p>
         )}
 

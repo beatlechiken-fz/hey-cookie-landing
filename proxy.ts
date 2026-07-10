@@ -104,6 +104,13 @@ export async function proxy(request: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
+    // Primera sesión con contraseña temporal → forzar cambio
+    if (token.mustChangePassword && clean !== "/user/cambiar-password") {
+      const locale = activeLocale(pathname);
+      return NextResponse.redirect(
+        new URL(`/${locale}/user/cambiar-password`, request.url),
+      );
+    }
     return NextResponse.next();
   }
 
