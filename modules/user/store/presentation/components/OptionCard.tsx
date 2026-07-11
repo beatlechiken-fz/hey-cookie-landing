@@ -23,7 +23,7 @@ export function OptionCard({ label, description, image, selected, onClick }: Pro
       } bg-white`}
     >
       {image && (
-        <div className="relative w-full h-36 overflow-hidden bg-[#FFF7F0]">
+        <div className="relative w-full aspect-[4/3] overflow-hidden">
           <Image
             src={image}
             alt={label}

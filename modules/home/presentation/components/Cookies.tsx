@@ -94,13 +94,12 @@ function CookieCard({ producto, onOpen }: CardProps) {
       className="cursor-pointer group rounded-3xl bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 p-4"
     >
       {/* IMAGE */}
-      <div className="overflow-hidden rounded-2xl relative">
+      <div className="overflow-hidden rounded-2xl relative aspect-[4/3]">
         <Image
           src={imageSrc}
           alt={producto.nombre}
-          width={400}
-          height={300}
-          className="w-full h-56 object-contain bg-[#FFF7F0] transition-transform duration-300 group-hover:scale-105"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
         />
         {tag && (

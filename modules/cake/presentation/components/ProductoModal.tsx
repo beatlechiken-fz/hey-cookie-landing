@@ -583,46 +583,57 @@ export default function ProductoModal({ producto, onClose }: Props) {
           </div>
 
           {/* Footer */}
-          <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-[#FFFDF8] shrink-0">
-            <button
-              type="button"
-              onClick={() => { reset(); onClose(); }}
-              className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleAdd}
-              disabled={!desglose || loading || justAdded}
-              className={`flex-1 py-2.5 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
-                justAdded
-                  ? "bg-[#6ab04c]"
-                  : "bg-[#DA6C94] hover:bg-[#c0607a] disabled:opacity-50"
-              }`}
-            >
-              {justAdded ? (
-                <>
-                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
-                  Agregado
-                </>
-              ) : (
-                <>
-                  <Image
-                    src="/icons/shopping-bag.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                    style={{ filter: "brightness(0) invert(1)" }}
-                  />
-                  Agregar al carrito
-                  {desglose && (
-                    <span className="opacity-80 text-[12px]">· ${total.toFixed(0)}</span>
-                  )}
-                </>
-              )}
-            </button>
+          <div className="px-6 py-4 border-t border-[#f0e0d0] bg-[#FFFDF8] shrink-0">
+            {desglose && !justAdded && (
+              <div className="flex items-baseline justify-end gap-1.5 mb-3">
+                {cuponAplicado && (
+                  <span className="text-sm text-[#AA6A42]/50 line-through">${subtotal.toFixed(0)}</span>
+                )}
+                <span className="text-2xl font-bold text-[#3A1F14]">${total.toFixed(0)}</span>
+                {cantidad > 1 && (
+                  <span className="text-xs text-[#AA6A42]/60">${precioBase.toFixed(0)} c/u</span>
+                )}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => { reset(); onClose(); }}
+                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAdd}
+                disabled={!desglose || loading || justAdded}
+                className={`flex-1 py-2.5 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
+                  justAdded
+                    ? "bg-[#6ab04c]"
+                    : "bg-[#DA6C94] hover:bg-[#c0607a] disabled:opacity-50"
+                }`}
+              >
+                {justAdded ? (
+                  <>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                    Agregado
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src="/icons/shopping-bag.svg"
+                      alt=""
+                      width={16}
+                      height={16}
+                      className="shrink-0"
+                      style={{ filter: "brightness(0) invert(1)" }}
+                    />
+                    <span>Agregar al carrito</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>

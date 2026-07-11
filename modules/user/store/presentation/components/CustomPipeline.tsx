@@ -411,14 +411,14 @@ function ResumenStep({
         <button
           type="button"
           onClick={onAddToCart}
-          className="flex-1 py-3 rounded-2xl bg-[#AA6A42] text-white font-semibold hover:bg-[#8B5635] transition flex items-center justify-center gap-2"
+          className="flex-[2] py-3 rounded-2xl bg-[#AA6A42] text-white font-semibold hover:bg-[#8B5635] transition flex items-center justify-center gap-2"
         >
-          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
             <line x1="3" y1="6" x2="21" y2="6" />
             <path d="M16 10a4 4 0 0 1-8 0" />
           </svg>
-          Agregar al carrito
+          <span>Agregar al carrito</span>
         </button>
       </div>
     </div>
