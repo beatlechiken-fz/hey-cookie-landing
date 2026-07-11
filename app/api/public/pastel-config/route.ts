@@ -24,7 +24,7 @@ export async function GET() {
       db.from("jarabes").select("id, nombre, costo_total").eq("activo", true).order("nombre"),
       db.from("sabores_jarabe").select("id, nombre, precio").eq("activo", true).order("nombre"),
       db.from("topping_cantidades").select(
-        "ingrediente_id, cantidad, unidad, ingredientes(nombre, unidad_base, costo_unidad_minima, activo)",
+        "ingrediente_id, cantidad, unidad, ingredientes(nombre, unidad_base, costo_unidad_minima, activo, imagen_url)",
       ),
       db.from("ingredientes").select("id, nombre, unidad_base, costo_unidad_minima")
         .eq("categoria", "licores_bebidas").eq("activo", true).order("nombre"),
@@ -46,6 +46,7 @@ export async function GET() {
           t.ingredientes?.costo_unidad_minima != null
             ? Number(t.ingredientes.costo_unidad_minima)
             : null,
+        imagenUrl: t.ingredientes?.imagen_url ?? null,
       }));
 
     const cantMap = Object.fromEntries(

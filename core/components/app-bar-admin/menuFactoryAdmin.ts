@@ -27,7 +27,7 @@ export function createAdminMenuNavElement(): AdminMenuNavElement {
     raws: {
       id: "raws",
       label: "Raws",
-      url: "/admin/dashboard/raws",
+      url: "/admin/dashboard/raws/insumos",
       submenu: [
         {
           id: "insumos",
@@ -59,7 +59,7 @@ export function createAdminMenuNavElement(): AdminMenuNavElement {
     store: {
       id: "store",
       label: "Store",
-      url: "/admin/dashboard/store",
+      url: "/admin/dashboard/store/servicios",
       submenu: [
         {
           id: "servicios",

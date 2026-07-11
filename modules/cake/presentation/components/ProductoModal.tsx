@@ -484,16 +484,27 @@ export default function ProductoModal({ producto, onClose }: Props) {
                                   : [...opciones.toppingIds, t.ingredienteId];
                                 update("toppingIds", next);
                               }}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer ${
+                              className={`flex items-center gap-2 rounded-xl text-xs font-semibold border transition cursor-pointer ${
+                                t.imagenUrl ? "pl-1.5 pr-3 py-1.5" : "px-3 py-1.5"
+                              } ${
                                 active
                                   ? "bg-[#DA6C94] text-white border-[#DA6C94]"
                                   : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
                               }`}
                             >
-                              {t.nombre}
-                              <span className="ml-1 opacity-60">
-                                {t.cantidad}{t.unidad}
-                              </span>
+                              {t.imagenUrl && (
+                                <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                                  <Image
+                                    src={t.imagenUrl}
+                                    alt={t.nombre}
+                                    fill
+                                    className="object-cover"
+                                    sizes="32px"
+                                  />
+                                </div>
+                              )}
+                              <span>{t.nombre}</span>
+                              <span className="opacity-60">{t.cantidad}{t.unidad}</span>
                             </button>
                           );
                         })}
