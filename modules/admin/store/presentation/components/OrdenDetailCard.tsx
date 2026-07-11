@@ -9,6 +9,7 @@ import type {
 } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { ORDEN_STATUS_LABELS } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { OrdenPipeline } from "./OrdenPipeline";
+import { OrdenPagosSection } from "./OrdenPagosSection";
 import {
   generarCotizacionPdf,
   generarComandaPdf,
@@ -310,6 +311,13 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                   </span>
                 </div>
               </div>
+
+              {/* Pagos parciales */}
+              <OrdenPagosSection
+                ordenId={orden.id}
+                ordenTotal={orden.total}
+                status={orden.status}
+              />
 
               {error && (
                 <p className="text-[12px] text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
