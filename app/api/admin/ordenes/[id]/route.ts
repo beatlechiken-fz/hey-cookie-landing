@@ -96,16 +96,14 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
 
       // ── Enviar email de confirmación al cliente cuando entra en proceso ────
       if (body.status === "en_proceso" && process.env.RESEND_API_KEY) {
-        Promise.resolve()
-          .then(async () => {
-            const { data: cliente } = await getSupabaseAdmin()
-              .from("clientes")
-              .select("email, nombre")
-              .eq("id", ord.clienteId)
-              .maybeSingle();
+        try {
+          const { data: cliente } = await getSupabaseAdmin()
+            .from("clientes")
+            .select("email, nombre")
+            .eq("id", ord.clienteId)
+            .maybeSingle();
 
-            if (!cliente?.email) return;
-
+          if (cliente?.email) {
             const { Resend } = await import("resend");
             const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -138,8 +136,10 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
               subject: `✅ Tu orden #${ord.numero} está en proceso — Hey Cookie`,
               html,
             });
-          })
-          .catch((err) => console.error("[orden:email]", err));
+          }
+        } catch (err) {
+          console.error("[orden:email]", err);
+        }
       }
     }
 

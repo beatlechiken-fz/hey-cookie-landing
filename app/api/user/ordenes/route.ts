@@ -383,33 +383,34 @@ export async function POST(req: NextRequest) {
       await db.from("orden_cupones").insert(cuponesRows).then(() => null);
     }
 
-    // ── Notificaciones (fire-and-forget) ────────────────────────────────────
+    // ── Notificaciones (awaiteadas para que no las mate el runtime serverless) ──
     const telegramMsg = buildTelegramMsg(numero, clienteNombre, userEmail, items, subtotal, descuentoTotal, total);
     const chatId1 = process.env.TELEGRAM_CHAT_ID ?? "";
     const chatId2 = process.env.TELEGRAM_CHAT_ID_2 ?? "";
-
+    const resendKey = process.env.RESEND_API_KEY;
     const fromEmail = process.env.RESEND_FROM_EMAIL;
+    const FROM = fromEmail ? `Hey Cookie <${fromEmail}>` : "Hey Cookie <hola@heycookie.mx>";
 
-    Promise.allSettled([
+    await Promise.allSettled([
       sendTelegram(chatId1, telegramMsg),
       chatId2 ? sendTelegram(chatId2, telegramMsg) : Promise.resolve(),
-      fromEmail
-        ? new Resend(process.env.RESEND_API_KEY).emails.send({
-            from: fromEmail,
+      resendKey
+        ? new Resend(resendKey).emails.send({
+            from: FROM,
             to: ["heycookie.mrl@gmail.com"],
             subject: `🍪 Nueva orden #${numero} — Hey Cookie`,
             html: buildAdminEmail(numero, clienteNombre, userEmail, items, subtotal, descuentoTotal, total),
           })
         : Promise.resolve(),
-      fromEmail && userEmail
-        ? new Resend(process.env.RESEND_API_KEY).emails.send({
-            from: fromEmail,
+      resendKey && userEmail
+        ? new Resend(resendKey).emails.send({
+            from: FROM,
             to: [userEmail],
             subject: `¡Tu orden #${numero} está registrada! 🍪`,
             html: buildClienteEmail(numero, clienteNombre, items, descuentoTotal, total),
           })
         : Promise.resolve(),
-    ]).catch(() => null);
+    ]);
 
     return NextResponse.json({ ordenId: orden.id, numero: orden.numero });
   } catch (e: any) {
