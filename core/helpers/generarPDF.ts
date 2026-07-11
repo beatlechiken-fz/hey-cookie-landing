@@ -455,6 +455,7 @@ export async function buildCotizacionHtml(orden: Orden): Promise<string> {
     clienteNombre: orden.clienteNombre ?? "—",
     fechaCreacion: orden.createdAt,
     fechaEntrega: orden.fechaEntrega,
+    direccionEntrega: orden.direccionEntrega,
     items,
     subtotal: orden.subtotal,
     descuentoTotal: orden.descuentoTotal,
