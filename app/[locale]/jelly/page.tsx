@@ -1,7 +1,7 @@
 import AppBar from "@/core/components/app-bar/AppBar";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
 import JelliesSection from "@/modules/cake/presentation/components/JelliesSection";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import Images from "@/core/assets/Images";
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
@@ -58,7 +58,7 @@ export default async function JellyPage() {
       <div className="relative z-9">
         <div className="flex h-[60px] md:h-[70px]">
           <div className="relative w-[100px] h-[86px] ml-3 lg:ml-8 md:-mt-1 overflow-visible">
-            <Link href="/es">
+            <Link href="/">
               <Image
                 src={Images.logoShortOpacity}
                 alt="Hey Cookie"

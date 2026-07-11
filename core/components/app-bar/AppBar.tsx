@@ -213,7 +213,7 @@ export default function AppBar() {
 
           {!isUserLoggedIn && (
             <button
-              onClick={() => router.push(`/${locale}/user/login`)}
+              onClick={() => router.push("/user/login")}
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#AA6A42]/40 text-[#AA6A42] text-xs font-semibold hover:bg-[#AA6A42]/10 transition-colors cursor-pointer font-body"
             >
               <svg

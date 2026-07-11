@@ -257,11 +257,11 @@ export function CartDrawerPublic({ open, onClose }: Props) {
 
   function goToLogin() {
     onClose();
-    router.push(`/${locale}/user/login?from=cart`);
+    router.push("/user/login?from=cart");
   }
   function goToRegister() {
     onClose();
-    router.push(`/${locale}/user/signin?from=cart`);
+    router.push("/user/signin?from=cart");
   }
 
   /* ── Per-item discount helper ──────────────────────────── */

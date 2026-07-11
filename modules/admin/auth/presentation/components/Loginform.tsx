@@ -11,8 +11,9 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   // Después del login va al dashboard, no de regreso al login
-  const callbackUrl =
-    searchParams.get("callbackUrl") ?? "/admin/dashboard/store";
+  // Strip locale prefix (/es, /en) if present — i18n router adds it automatically
+  const rawCallback = searchParams.get("callbackUrl") ?? "";
+  const callbackUrl = rawCallback.replace(/^\/(es|en)(?=\/)/, "") || "/admin/dashboard/store";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
