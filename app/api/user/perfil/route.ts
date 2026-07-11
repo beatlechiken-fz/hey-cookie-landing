@@ -1,6 +1,3 @@
-// GET  /api/user/perfil — devuelve nombre y email del usuario autenticado
-// PATCH /api/user/perfil — actualiza nombre y/o contraseña
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getUserSession } from "@/core/helpers/auth";
@@ -11,9 +8,19 @@ export async function GET() {
   const session = await getUserSession();
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
+  const db = getSupabaseAdmin();
+  const email = session.user.email ?? "";
+
+  const { data: cliente } = await db
+    .from("clientes")
+    .select("nombre, telefono")
+    .eq("email", email)
+    .maybeSingle();
+
   return NextResponse.json({
-    nombre: session.user.name ?? "",
-    email: session.user.email ?? "",
+    nombre: cliente?.nombre ?? session.user.name ?? "",
+    email,
+    telefono: cliente?.telefono ?? "",
   });
 }
 
@@ -22,8 +29,9 @@ export async function PATCH(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   try {
-    const { nombre, passwordActual, passwordNuevo } = await req.json() as {
+    const { nombre, telefono, passwordActual, passwordNuevo } = await req.json() as {
       nombre?: string;
+      telefono?: string;
       passwordActual?: string;
       passwordNuevo?: string;
     };
@@ -54,9 +62,15 @@ export async function PATCH(req: NextRequest) {
       await db.from("user_accounts").update({ password_hash: hash }).eq("email", email);
     }
 
-    if (nombre?.trim()) {
-      await db.from("user_accounts").update({ name: nombre.trim() }).eq("email", email);
-      await db.from("clientes").update({ nombre: nombre.trim() }).eq("email", email);
+    const clienteUpdate: Record<string, string> = {};
+    if (nombre?.trim()) clienteUpdate.nombre = nombre.trim();
+    if (telefono !== undefined) clienteUpdate.telefono = telefono.trim();
+
+    if (Object.keys(clienteUpdate).length > 0) {
+      await db.from("clientes").update(clienteUpdate).eq("email", email);
+      if (clienteUpdate.nombre) {
+        await db.from("user_accounts").update({ name: clienteUpdate.nombre }).eq("email", email);
+      }
     }
 
     return NextResponse.json({ ok: true });

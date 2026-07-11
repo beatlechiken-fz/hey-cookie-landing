@@ -214,11 +214,11 @@ export default function AppBar() {
           {!isUserLoggedIn && (
             <button
               onClick={() => router.push("/user/login")}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#AA6A42]/40 text-[#AA6A42] text-xs font-semibold hover:bg-[#AA6A42]/10 transition-colors cursor-pointer font-body"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border border-[#AA6A42]/40 text-[#AA6A42] text-xs font-semibold hover:bg-[#AA6A42]/10 transition-colors cursor-pointer font-body"
             >
               <svg
                 viewBox="0 0 24 24"
-                className="w-3.5 h-3.5"
+                className="w-3.5 h-3.5 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
@@ -226,7 +226,7 @@ export default function AppBar() {
               >
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" />
               </svg>
-              Iniciar sesión
+              <span className="hidden sm:inline">Iniciar sesión</span>
             </button>
           )}
 

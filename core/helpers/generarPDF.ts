@@ -80,8 +80,6 @@ export function buildOrdenClienteHtml(data: OrdenPdfData): string {
     { icon: "📅", label: "Fecha", val: fmt(data.fechaCreacion) },
     { icon: "👤", label: "Cliente", val: data.clienteNombre },
   ];
-  if (data.clienteEmail)
-    chips.push({ icon: "📧", label: "Correo", val: data.clienteEmail });
   if (data.fechaEntrega)
     chips.push({
       icon: "🎂",
