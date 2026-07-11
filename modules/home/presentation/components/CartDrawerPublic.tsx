@@ -15,6 +15,16 @@ interface Props {
   onClose: () => void;
 }
 
+interface DireccionItem {
+  id: string;
+  alias: string;
+  calle: string;
+  colonia: string | null;
+  ciudad: string | null;
+  cp: string | null;
+  referencias: string | null;
+}
+
 /* ── pequeños iconos inline ─────────────────────────────────── */
 const BagIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -68,6 +78,20 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   const [globalOk, setGlobalOk]                 = useState<string | null>(null);
   const [validandoGlobal, setValidandoGlobal]   = useState(false);
 
+  // Delivery date & address
+  const [fechaEntrega, setFechaEntrega]         = useState("");
+  const [direcciones, setDirecciones]           = useState<DireccionItem[]>([]);
+  const [selectedDirId, setSelectedDirId]       = useState<string>(""); // "" = none, "new" = form
+  const [showAddressForm, setShowAddressForm]   = useState(false);
+  const [addAlias, setAddAlias]                 = useState("");
+  const [addCalle, setAddCalle]                 = useState("");
+  const [addColonia, setAddColonia]             = useState("");
+  const [addCiudad, setAddCiudad]               = useState("");
+  const [addCp, setAddCp]                       = useState("");
+  const [addRefs, setAddRefs]                   = useState("");
+  const [savingAddr, setSavingAddr]             = useState(false);
+  const [addrError, setAddrError]               = useState<string | null>(null);
+
   // Order state
   const [generando, setGenerando]   = useState(false);
   const [ordenNum, setOrdenNum]     = useState<number | null>(null);
@@ -77,7 +101,23 @@ export function CartDrawerPublic({ open, onClose }: Props) {
     subtotal: number;
     descuentoTotal: number;
     total: number;
+    fechaEntrega: string | null;
+    direccionEntrega: string | null;
   } | null>(null);
+
+  // Cargar direcciones del cliente al abrir el carrito
+  useEffect(() => {
+    if (!open || !isUser) return;
+    fetch("/api/user/direcciones")
+      .then((r) => r.json())
+      .then((d) => {
+        const dirs: DireccionItem[] = d.direcciones ?? [];
+        setDirecciones(dirs);
+        if (dirs.length > 0 && !selectedDirId) setSelectedDirId(dirs[0].id);
+      })
+      .catch(() => null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, isUser]);
 
   // Escape key + body scroll
   useEffect(() => {
@@ -125,20 +165,61 @@ export function CartDrawerPublic({ open, onClose }: Props) {
     }
   }
 
+  /* ── Guardar nueva dirección ───────────────────────────── */
+  async function guardarDireccion() {
+    if (!addCalle.trim()) { setAddrError("La calle es requerida"); return; }
+    setSavingAddr(true);
+    setAddrError(null);
+    try {
+      const res = await fetch("/api/user/direcciones", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ alias: addAlias, calle: addCalle, colonia: addColonia, ciudad: addCiudad, cp: addCp, referencias: addRefs }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "No se pudo guardar");
+      setDirecciones((prev) => [...prev, data]);
+      setSelectedDirId(data.id);
+      setShowAddressForm(false);
+      setAddAlias(""); setAddCalle(""); setAddColonia(""); setAddCiudad(""); setAddCp(""); setAddRefs("");
+    } catch (e: any) {
+      setAddrError(e.message);
+    } finally {
+      setSavingAddr(false);
+    }
+  }
+
+  /* ── Dirección seleccionada como texto ─────────────────── */
+  function getDireccionTexto(): string | null {
+    if (!selectedDirId || selectedDirId === "new") return null;
+    const d = direcciones.find((x) => x.id === selectedDirId);
+    if (!d) return null;
+    return [d.calle, d.colonia, d.ciudad].filter(Boolean).join(", ");
+  }
+
   /* ── Generar orden ─────────────────────────────────────── */
   async function generarOrden() {
     if (!isUser || items.length === 0) return;
     setGenerando(true);
     setOrdenError(null);
+    const direccionEntrega = getDireccionTexto();
     try {
       const res = await fetch("/api/user/ordenes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, cupones, subtotal, descuentoTotal, total }),
+        body: JSON.stringify({
+          items, cupones, subtotal, descuentoTotal, total,
+          fechaEntrega: fechaEntrega || null,
+          direccionEntrega,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "No se pudo generar la orden");
-      setOrdenSnapshot({ items: [...items], subtotal, descuentoTotal, total });
+      setOrdenSnapshot({
+        items: [...items], subtotal, descuentoTotal, total,
+        fechaEntrega: fechaEntrega || null,
+        direccionEntrega,
+      });
       setOrdenNum(data.numero);
       clearCart();
     } catch (e: any) {
@@ -156,6 +237,8 @@ export function CartDrawerPublic({ open, onClose }: Props) {
       clienteNombre: session?.user?.name ?? "Cliente",
       clienteEmail: session?.user?.email,
       fechaCreacion: new Date().toISOString(),
+      fechaEntrega: ordenSnapshot.fechaEntrega,
+      direccionEntrega: ordenSnapshot.direccionEntrega,
       items: ordenSnapshot.items.map((i) => ({
         nombre: i.nombre,
         cantidad: i.cantidad,
@@ -386,6 +469,117 @@ export function CartDrawerPublic({ open, onClose }: Props) {
                         </div>
                       )}
                     </div>
+
+                    {/* Fecha de entrega */}
+                    {isUser && (
+                      <div>
+                        <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider mb-1.5">
+                          Fecha de entrega (opcional)
+                        </p>
+                        <input
+                          type="date"
+                          value={fechaEntrega}
+                          onChange={(e) => setFechaEntrega(e.target.value)}
+                          min={new Date().toISOString().split("T")[0]}
+                          className="w-full border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                        />
+                      </div>
+                    )}
+
+                    {/* Domicilio de entrega */}
+                    {isUser && (
+                      <div>
+                        <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider mb-1.5">
+                          Domicilio de entrega (opcional)
+                        </p>
+
+                        <select
+                          value={selectedDirId}
+                          onChange={(e) => {
+                            setSelectedDirId(e.target.value);
+                            setShowAddressForm(e.target.value === "new");
+                          }}
+                          className="w-full border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                        >
+                          <option value="">— Sin domicilio —</option>
+                          {direcciones.map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {d.alias} — {d.calle}{d.colonia ? `, ${d.colonia}` : ""}
+                            </option>
+                          ))}
+                          <option value="new">+ Agregar nueva dirección</option>
+                        </select>
+
+                        {showAddressForm && (
+                          <div className="mt-2 flex flex-col gap-1.5 bg-[#fdf9f5] border border-[#f0e0d0] rounded-xl p-3">
+                            <input
+                              type="text"
+                              placeholder='Alias (ej. "Casa")'
+                              value={addAlias}
+                              onChange={(e) => setAddAlias(e.target.value)}
+                              className="border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Calle y número *"
+                              value={addCalle}
+                              onChange={(e) => setAddCalle(e.target.value)}
+                              className="border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                            />
+                            <div className="flex gap-1.5">
+                              <input
+                                type="text"
+                                placeholder="Colonia"
+                                value={addColonia}
+                                onChange={(e) => setAddColonia(e.target.value)}
+                                className="flex-1 border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                              />
+                              <input
+                                type="text"
+                                placeholder="CP"
+                                value={addCp}
+                                onChange={(e) => setAddCp(e.target.value)}
+                                className="w-20 border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                              />
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="Ciudad"
+                              value={addCiudad}
+                              onChange={(e) => setAddCiudad(e.target.value)}
+                              className="border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                            />
+                            <input
+                              type="text"
+                              placeholder="Referencias (entre qué calles, color de casa…)"
+                              value={addRefs}
+                              onChange={(e) => setAddRefs(e.target.value)}
+                              className="border border-[#e8c4a0] rounded-lg px-3 py-1.5 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#c0607a] transition-colors font-body"
+                            />
+                            {addrError && (
+                              <p className="text-[11px] text-[#c0392b]">✕ {addrError}</p>
+                            )}
+                            <div className="flex gap-2 mt-0.5">
+                              <button
+                                type="button"
+                                onClick={guardarDireccion}
+                                disabled={savingAddr}
+                                className="flex-1 py-1.5 rounded-lg bg-[#AA6A42] hover:bg-[#8a5535] text-white text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50 font-body"
+                              >
+                                {savingAddr ? "Guardando…" : "Guardar dirección"}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => { setShowAddressForm(false); setSelectedDirId(direcciones[0]?.id ?? ""); }}
+                                className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-xs font-semibold cursor-pointer hover:bg-[#fdf6f0] transition-colors font-body"
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* Totals */}
                     <div className="flex flex-col gap-1.5 border-t border-[#f0e0d0] pt-3">

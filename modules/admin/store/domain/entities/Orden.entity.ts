@@ -50,6 +50,7 @@ export interface Orden {
   total: number;
   notas: string | null;
   fechaEntrega: string | null;
+  direccionEntrega: string | null;
   items: OrdenItem[];
   cupones: OrdenCuponAplicado[];
   createdAt: string;
@@ -63,6 +64,7 @@ export interface CreateOrdenDTO {
   cupones: OrdenCuponAplicado[];
   notas?: string | null;
   fechaEntrega?: string | null;
+  direccionEntrega?: string | null;
 }
 
 export interface UpdateOrdenStatusDTO {

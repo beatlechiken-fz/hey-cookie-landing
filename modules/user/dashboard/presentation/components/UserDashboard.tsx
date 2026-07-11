@@ -23,6 +23,7 @@ interface Orden {
   total: number;
   clienteNombre: string;
   fechaEntrega: string | null;
+  direccionEntrega: string | null;
   createdAt: string;
   items: OrdenItem[];
 }
@@ -56,6 +57,7 @@ function downloadOrdenPDF(orden: Orden) {
     clienteNombre: orden.clienteNombre,
     fechaCreacion: orden.createdAt,
     fechaEntrega: orden.fechaEntrega,
+    direccionEntrega: orden.direccionEntrega,
     items: orden.items.map((i) => ({
       nombre: i.nombre,
       cantidad: i.cantidad,
@@ -168,10 +170,19 @@ function OrdenCard({ orden }: { orden: Orden }) {
               <span>Total</span><span>${orden.total.toFixed(0)}</span>
             </div>
           </div>
-          {orden.fechaEntrega && (
-            <p className="mt-3 text-[12px] text-[#AA6A42] font-sans">
-              📅 Fecha de entrega: {new Date(orden.fechaEntrega).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
-            </p>
+          {(orden.fechaEntrega || orden.direccionEntrega) && (
+            <div className="mt-3 flex flex-col gap-1">
+              {orden.fechaEntrega && (
+                <p className="text-[12px] text-[#AA6A42] font-sans">
+                  📅 Entrega: {new Date(orden.fechaEntrega).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
+                </p>
+              )}
+              {orden.direccionEntrega && (
+                <p className="text-[12px] text-[#AA6A42] font-sans">
+                  📍 Domicilio: {orden.direccionEntrega}
+                </p>
+              )}
+            </div>
           )}
         </div>
       )}

@@ -263,6 +263,7 @@ export async function GET() {
         total: Number(o.total),
         clienteNombre: o.cliente_nombre ?? session.user.name ?? "Cliente",
         fechaEntrega: o.fecha_entrega ?? null,
+        direccionEntrega: null,
         createdAt: o.created_at,
         items: (itemsMap[o.id] ?? []).map((i: any) => ({
           nombre: i.nombre,
@@ -286,12 +287,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, cupones, subtotal, descuentoTotal, total } = (await req.json()) as {
+    const { items, cupones, subtotal, descuentoTotal, total, fechaEntrega, direccionEntrega } = (await req.json()) as {
       items: CartItem[];
       cupones: OrdenCuponAplicado[];
       subtotal: number;
       descuentoTotal: number;
       total: number;
+      fechaEntrega?: string | null;
+      direccionEntrega?: string | null;
     };
 
     if (!items?.length) {
@@ -341,6 +344,8 @@ export async function POST(req: NextRequest) {
         descuento_total: Math.round(descuentoTotal * 100) / 100,
         total: Math.round(total * 100) / 100,
         notas: `Orden generada por cliente: ${userEmail}`,
+        ...(fechaEntrega ? { fecha_entrega: fechaEntrega } : {}),
+        ...(direccionEntrega ? { direccion_entrega: direccionEntrega } : {}),
       })
       .select("id, numero")
       .single();

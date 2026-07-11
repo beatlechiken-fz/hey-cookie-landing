@@ -53,6 +53,7 @@ function toEntity(
     total: Number(row.total),
     notas: row.notas ?? null,
     fechaEntrega: row.fecha_entrega ?? null,
+    direccionEntrega: row.direccion_entrega ?? null,
     items,
     cupones,
     createdAt: row.created_at,
@@ -178,6 +179,7 @@ export class OrdenSupabaseDatasource {
         total,
         notas: dto.notas ?? null,
         fecha_entrega: dto.fechaEntrega ?? null,
+        ...(dto.direccionEntrega ? { direccion_entrega: dto.direccionEntrega } : {}),
       })
       .select()
       .single();

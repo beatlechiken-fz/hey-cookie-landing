@@ -22,6 +22,7 @@ export interface OrdenPdfData {
   clienteEmail?: string | null;
   fechaCreacion: string;
   fechaEntrega?: string | null;
+  direccionEntrega?: string | null;
   items: OrdenPdfItem[];
   subtotal: number;
   descuentoTotal: number;
@@ -86,9 +87,11 @@ export function buildOrdenClienteHtml(data: OrdenPdfData): string {
       icon: "🎂",
       label: "Entrega",
       val: new Date(data.fechaEntrega).toLocaleDateString("es-MX", {
-        day: "2-digit", month: "short",
+        day: "2-digit", month: "short", year: "numeric",
       }),
     });
+  if (data.direccionEntrega)
+    chips.push({ icon: "📍", label: "Domicilio", val: data.direccionEntrega });
 
   const chipsHtml = chips
     .map(
