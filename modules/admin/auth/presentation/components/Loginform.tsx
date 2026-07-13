@@ -13,7 +13,8 @@ export function LoginForm() {
   // Después del login va al dashboard, no de regreso al login
   // Strip locale prefix (/es, /en) if present — i18n router adds it automatically
   const rawCallback = searchParams.get("callbackUrl") ?? "";
-  const callbackUrl = rawCallback.replace(/^\/(es|en)(?=\/)/, "") || "/admin/dashboard/store";
+  const callbackUrl =
+    rawCallback.replace(/^\/(es|en)(?=\/)/, "") || "/admin/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

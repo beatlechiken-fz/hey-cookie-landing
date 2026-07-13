@@ -34,12 +34,12 @@ export function PasswordInput({ style, className, ...rest }: Props) {
   const [show, setShow] = useState(false);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", width: "100%" }}>
       <input
         {...rest}
         type={show ? "text" : "password"}
         className={className}
-        style={{ paddingRight: "2.75rem", ...style }}
+        style={{ paddingRight: "2.75rem", width: "100%", boxSizing: "border-box", ...style }}
       />
       <button
         type="button"
