@@ -1,5 +1,4 @@
 "use client";
-// src/modules/admin/store/presentation/hooks/useOrdenesGlobal.ts
 
 import { useState, useEffect, useCallback, useTransition } from "react";
 import type { Orden, OrdenStatus } from "../../domain/entities/Orden.entity";
