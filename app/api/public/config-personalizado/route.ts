@@ -39,8 +39,10 @@ export async function GET() {
         .eq("categoria", "licores_bebidas").eq("activo", true).order("nombre"),
       db.from("licor_cantidades").select("ingrediente_id, cantidad"),
       db.from("empaques").select("id, nombre, precio, imagen_url").eq("activo", true).order("nombre"),
-      db.from("gelatinas").select("id, nombre, descripcion, elaboracion, costo_total_leche, costo_total_agua, tiene_base_leche, tiene_base_agua, activo")
-        .eq("activo", true).order("nombre"),
+      db.from("gelatina_ingredientes")
+        .select("gelatina_id, nombre, cantidad, ingredientes(costo_unidad_minima)")
+        .eq("activo", true)
+        .order("nombre"),
     ]);
 
     const firstErr = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10].find(Boolean);
@@ -90,17 +92,20 @@ export async function GET() {
       empaques: (empaques ?? []).map((e: any) => ({
         id: e.id, nombre: e.nombre, precio: Number(e.precio), imagenUrl: e.imagen_url ?? null,
       })),
-      gelatinas: (gelatinas ?? []).map((g: any) => ({
-        id: g.id,
-        nombre: g.nombre,
-        descripcion: g.descripcion ?? null,
-        elaboracion: g.elaboracion ?? null,
-        costoTotalLeche: Number(g.costo_total_leche ?? 0),
-        costoTotalAgua: Number(g.costo_total_agua ?? 0),
-        tieneBaseLeche: g.tiene_base_leche ?? false,
-        tieneBaseAgua: g.tiene_base_agua ?? false,
-        activo: g.activo,
-      })),
+      gelatinas: (() => {
+        const gMap = new Map<string, { nombre: string; costoTotal: number }>();
+        for (const r of gelatinas ?? []) {
+          if (!gMap.has(r.gelatina_id)) gMap.set(r.gelatina_id, { nombre: r.nombre, costoTotal: 0 });
+          const g = gMap.get(r.gelatina_id)!;
+          g.costoTotal += Number(r.cantidad) * Number((r as any).ingredientes?.costo_unidad_minima ?? 0);
+        }
+        return Array.from(gMap.entries()).map(([id, g]) => ({
+          id,
+          nombre: g.nombre,
+          costoTotal: g.costoTotal,
+          activo: true,
+        }));
+      })(),
     };
 
     return NextResponse.json(catalogo);

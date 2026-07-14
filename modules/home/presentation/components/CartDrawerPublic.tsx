@@ -44,6 +44,8 @@ const TagIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const COSTO_ENVIO = 30;
+
 /* ── helpers de descuento ──────────────────────────────────── */
 function cuponMonto(c: OrdenCuponAplicado, base: number): number {
   return c.tipoDescuento === "porcentaje"
@@ -208,7 +210,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items, cupones, subtotal, descuentoTotal, total,
+          items, cupones, subtotal, descuentoTotal, total: total + COSTO_ENVIO,
           fechaEntrega: fechaEntrega || null,
           direccionEntrega,
         }),
@@ -216,7 +218,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "No se pudo generar la orden");
       setOrdenSnapshot({
-        items: [...items], subtotal, descuentoTotal, total,
+        items: [...items], subtotal, descuentoTotal, total: total + COSTO_ENVIO,
         fechaEntrega: fechaEntrega || null,
         direccionEntrega,
       });
@@ -599,9 +601,13 @@ export function CartDrawerPublic({ open, onClose }: Props) {
                           <span>−${globalDisc.toFixed(0)}</span>
                         </div>
                       )}
+                      <div className="flex justify-between text-sm text-[#AA6A42]/70">
+                        <span>Envío</span>
+                        <span>${COSTO_ENVIO}</span>
+                      </div>
                       <div className="flex justify-between font-bold text-base text-[#3A1F14] border-t border-[#f0e0d0] pt-2 mt-1">
                         <span>Total</span>
-                        <span>${total.toFixed(0)}</span>
+                        <span>${(total + COSTO_ENVIO).toFixed(0)}</span>
                       </div>
                     </div>
 

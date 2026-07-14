@@ -1,33 +1,57 @@
-// src/modules/admin/store/domain/entities/GelatinaCotizador.entity.ts
-//
-// Entidad para cotizar gelatinas personalizadas.
-// A diferencia del pastel, la gelatina tiene DOS recetas base independientes
-// (base_leche y base_agua) y el usuario configura litros de cada una.
-//
-// Costo receta = (litrosLeche × costoTotalLeche) + (litrosAgua × costoTotalAgua)
-// Factor opciones = totalLitros × FACTOR_POR_LITRO
-// Las opciones del catálogo (cobertura, relleno, etc.) están en base 24cm.
-// Por cada litro de gelatina el factor es 0.5.
+export type CategoriaGelatina = "clasica" | "healthy" | "sin_azucar";
 
 export const FACTOR_GELATINA_POR_LITRO = 0.5;
 
 export interface GelatinaCatalogo {
   id: string;
   nombre: string;
-  descripcion: string | null;
-  elaboracion: string | null;
-  costoTotalLeche: number; // costo de 1L de base leche
-  costoTotalAgua: number; // costo de 1L de base agua
-  tieneBaseLeche: boolean;
-  tieneBaseAgua: boolean;
+  costoTotal: number;
   activo: boolean;
 }
 
+// Normaliza y busca la gelatina correcta según categoría + tipo de base
+function norm(s: string) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+export function findCostoGelatina(
+  catalogo: GelatinaCatalogo[],
+  categoria: CategoriaGelatina,
+  tipo: "agua" | "leche" | "tres_leches" | "queso_crema" | "yogurt",
+): number {
+  const matchesTipo = (nombre: string): boolean => {
+    const n = norm(nombre);
+    switch (tipo) {
+      case "agua":        return n.includes("agua");
+      case "leche":       return n.includes("leche") && !n.includes("tres") && !n.includes("queso");
+      case "tres_leches": return n.includes("tres");
+      case "queso_crema": return n.includes("queso");
+      case "yogurt":      return n.includes("yogurt");
+    }
+  };
+
+  const matchesCategoria = (nombre: string): boolean => {
+    const n = norm(nombre);
+    const isHealthy    = n.includes("healthy") || n.includes("helathy");
+    const isSinAzucar  = n.includes("sin az");
+    if (categoria === "healthy")    return isHealthy;
+    if (categoria === "sin_azucar") return isSinAzucar;
+    return !isHealthy && !isSinAzucar;
+  };
+
+  return (
+    catalogo.find((g) => g.activo && matchesTipo(g.nombre) && matchesCategoria(g.nombre))
+      ?.costoTotal ?? 0
+  );
+}
+
 export interface GelatinaCotizadorConfig {
-  gelatinaId: string;
-  litrosLeche: number; // puede ser 0 si solo se pide base agua
-  litrosAgua: number; // puede ser 0 si solo se pide base leche
-  // Opciones del catálogo (mismas que el pastel)
+  categoria: CategoriaGelatina;
+  litrosAgua: number;
+  litrosLeche: number;
+  litrosTresLeches: number;
+  litrosQuesoCrema: number;
+  litrosYogurt: number;
   coberturaId: string | null;
   saborCoberturaId: string | null;
   rellenoId: string | null;
@@ -37,16 +61,18 @@ export interface GelatinaCotizadorConfig {
   saborJarabeId: string | null;
   licorId: string | null;
   empaqueIds: string[];
-  // Extras exclusivos de gelatina
   conTransfer: boolean;
   conBlonda: boolean;
   cantidad: number;
 }
 
 export const GELATINA_CONFIG_VACIA: GelatinaCotizadorConfig = {
-  gelatinaId: "",
-  litrosLeche: 1,
-  litrosAgua: 0,
+  categoria: "clasica",
+  litrosAgua: 1,
+  litrosLeche: 0,
+  litrosTresLeches: 0,
+  litrosQuesoCrema: 0,
+  litrosYogurt: 0,
   coberturaId: null,
   saborCoberturaId: null,
   rellenoId: null,
@@ -61,20 +87,17 @@ export const GELATINA_CONFIG_VACIA: GelatinaCotizadorConfig = {
   cantidad: 1,
 };
 
-// ── Desglose de costos ────────────────────────────────────────────────────────
-
 export interface GelatinaCostoDesglose {
-  litrosLeche: number;
-  litrosAgua: number;
   totalLitros: number;
-  factorOpciones: number; // totalLitros × 0.5
+  factorOpciones: number;
 
-  // Receta base
-  costoBaseLeche: number; // litrosLeche × costoTotalLeche
-  costoBaseAgua: number; // litrosAgua  × costoTotalAgua
-  costoBaseTotal: number; // suma de ambas bases
+  costoBaseAgua: number;
+  costoBaseLeche: number;
+  costoBaseTresLeches: number;
+  costoBaseQuesoCrema: number;
+  costoBaseYogurt: number;
+  costoBaseTotal: number;
 
-  // Extras del catálogo (escalados por factorOpciones)
   costoCobertura: number;
   costoRelleno: number;
   costoJarabe: number;
@@ -83,14 +106,13 @@ export interface GelatinaCostoDesglose {
   costoEmpaques: number;
   costoTransfer: number;
   costoBlonda: number;
+  costoInsumos: number;
 
-  costoInsumos: number; // suma de todo lo anterior
-
-  // Cargos adicionales (misma lógica que el pastel)
-  servicios: number; // 10% de baseEstructural
-  manoDeObra: number; // max(60, 25% de baseEstructural)
-  utilidad: number; // 90% de baseConOpciones
+  servicios: number;
+  manoDeObra: number;
+  utilidad: number;
 
   costoProduccionTotal: number;
+  cargoDecoracion: number;
   precioSugerido: number;
 }

@@ -54,6 +54,11 @@ export function createAdminMenuNavElement(): AdminMenuNavElement {
           label: "Empaques",
           url: "/admin/dashboard/raws/empaques",
         },
+        {
+          id: "gelatinas",
+          label: "Gelatinas",
+          url: "/admin/dashboard/raws/gelatinas",
+        },
       ],
     },
     store: {

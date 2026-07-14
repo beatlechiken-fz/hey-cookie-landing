@@ -36,10 +36,13 @@ export function CartDrawer({ open, onClose }: Props) {
   const { validar, validating, error: cuponError } = useValidarCupon();
   const router = useRouter();
 
+  const COSTO_ENVIO = 30;
+
   const [cuponInput, setCuponInput] = useState("");
   const [localCuponError, setLocalCuponError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [fechaEntrega, setFechaEntrega] = useState<string>("");
+  const [incluirEnvio, setIncluirEnvio] = useState(false);
 
   // Buscador de cliente
   const [clienteSearch, setClienteSearch] = useState("");
@@ -57,6 +60,7 @@ export function CartDrawer({ open, onClose }: Props) {
       setClienteSearchOpen(false);
       setClienteSearch("");
       setFechaEntrega("");
+      setIncluirEnvio(false);
     }
   }, [open]);
 
@@ -143,7 +147,7 @@ export function CartDrawer({ open, onClose }: Props) {
       try {
         const { generarCotizacionPdf } =
           await import("@/core/helpers/generarPDF");
-        await generarCotizacionPdf(orden);
+        await generarCotizacionPdf(orden, incluirEnvio ? COSTO_ENVIO : undefined);
       } catch (_) {
         /* PDF es best-effort, no bloquea el flujo */
       }
@@ -511,6 +515,31 @@ export function CartDrawer({ open, onClose }: Props) {
 
                   <div className="h-px bg-[#f5dce4]" />
 
+                  {/* Toggle envío */}
+                  <div className="flex items-center justify-between rounded-xl border border-[#e8c4cd] bg-[#fdf6f0] px-4 py-3">
+                    <div>
+                      <p className="text-[13px] font-semibold text-[#3d1a24]">
+                        Envío a domicilio
+                      </p>
+                      <p className="text-[11px] text-[#b07a8a]">
+                        +$30.00 si aplica
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIncluirEnvio((v) => !v)}
+                      className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none ${
+                        incluirEnvio ? "bg-[#c0607a]" : "bg-[#e8c4cd]"
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                          incluirEnvio ? "translate-x-5" : "translate-x-0"
+                        }`}
+                      />
+                    </button>
+                  </div>
+
                   {/* Totales */}
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between text-sm">
@@ -527,10 +556,18 @@ export function CartDrawer({ open, onClose }: Props) {
                         </span>
                       </div>
                     )}
+                    {incluirEnvio && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-[#b07a8a]">Envío</span>
+                        <span className="text-[#3d1a24] font-medium">
+                          +${COSTO_ENVIO.toFixed(2)}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between pt-1.5 border-t border-[#f5dce4]">
                       <span className="text-[#7b2d42] font-bold">Total</span>
                       <span className="text-[#c0607a] font-bold text-xl">
-                        ${total.toFixed(2)}
+                        ${(total + (incluirEnvio ? COSTO_ENVIO : 0)).toFixed(2)}
                       </span>
                     </div>
                   </div>

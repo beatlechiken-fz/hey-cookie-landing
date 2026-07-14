@@ -15,11 +15,17 @@ import {
   type PastelConfiguracion,
   type HumedadJarabe,
 } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
-import { FACTOR_GELATINA_POR_LITRO } from "@/modules/admin/store/domain/entities/GelatinaCotizador.entity";
+import {
+  FACTOR_GELATINA_POR_LITRO,
+  findCostoGelatina,
+  type CategoriaGelatina,
+} from "@/modules/admin/store/domain/entities/GelatinaCotizador.entity";
 import type { ConfigPersonalizadoCatalogo } from "@/app/api/public/config-personalizado/route";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
 
 // ── Constants ────────────────────────────────────────────────────────────────
+
+const COSTO_ENVIO = 30;
 
 const STEPS_PASTEL = [
   "Datos", "Tipo", "Bizcocho", "Cobertura", "Relleno",
@@ -29,6 +35,7 @@ const STEPS_GELATINA = [
   "Datos", "Tipo", "Bases", "Cobertura", "Jarabe", "Toppings", "Notas", "Resumen",
 ];
 const CARGO_DECORACION = 50;
+const CARGO_EMPAQUE    = 30;
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
 const MAX_FOTO_BYTES = 5 * 1024 * 1024;
 
@@ -43,15 +50,12 @@ interface DatosCliente {
 }
 
 interface GelatinaCustomConfig {
-  gelatinaId: string;
+  categoria: CategoriaGelatina;
   litrosAgua: number;
-  saborAguaId: string;
   litrosLeche: number;
-  saborLecheId: string;
+  litrosTresLeches: number;
   litrosQuesoCrema: number;
-  saborQuesoCremaId: string;
   litrosYogurt: number;
-  saborYogurtId: string;
   coberturaId: string | null;
   saborCoberturaId: string | null;
   jarabeId: string | null;
@@ -61,15 +65,12 @@ interface GelatinaCustomConfig {
 }
 
 const GELATINA_VACIA: GelatinaCustomConfig = {
-  gelatinaId: "",
+  categoria: "clasica",
   litrosAgua: 1,
-  saborAguaId: "",
   litrosLeche: 0,
-  saborLecheId: "",
+  litrosTresLeches: 0,
   litrosQuesoCrema: 0,
-  saborQuesoCremaId: "",
   litrosYogurt: 0,
-  saborYogurtId: "",
   coberturaId: null,
   saborCoberturaId: null,
   jarabeId: null,
@@ -84,16 +85,17 @@ function calcPrecioGelatina(
   gCfg: GelatinaCustomConfig,
   catalogo: ConfigPersonalizadoCatalogo,
 ): number {
-  const gelatina = catalogo.gelatinas.find((g) => g.id === gCfg.gelatinaId);
-  if (!gelatina) return 0;
-
+  const { categoria } = gCfg;
   const totalLitros =
-    gCfg.litrosAgua + gCfg.litrosLeche + gCfg.litrosQuesoCrema + gCfg.litrosYogurt;
+    gCfg.litrosAgua + gCfg.litrosLeche + gCfg.litrosTresLeches + gCfg.litrosQuesoCrema + gCfg.litrosYogurt;
   if (totalLitros <= 0) return 0;
 
   const costoBase =
-    gCfg.litrosAgua * gelatina.costoTotalAgua +
-    (gCfg.litrosLeche + gCfg.litrosQuesoCrema + gCfg.litrosYogurt) * gelatina.costoTotalLeche;
+    gCfg.litrosAgua       * findCostoGelatina(catalogo.gelatinas, categoria, "agua") +
+    gCfg.litrosLeche      * findCostoGelatina(catalogo.gelatinas, categoria, "leche") +
+    gCfg.litrosTresLeches * findCostoGelatina(catalogo.gelatinas, "clasica", "tres_leches") +
+    gCfg.litrosQuesoCrema * findCostoGelatina(catalogo.gelatinas, categoria, "queso_crema") +
+    gCfg.litrosYogurt     * findCostoGelatina(catalogo.gelatinas, categoria, "yogurt");
 
   const factor = totalLitros * FACTOR_GELATINA_POR_LITRO;
 
@@ -394,9 +396,17 @@ function ResumenStep({
             <span>−${descuento.toFixed(2)}</span>
           </div>
         )}
+        <div className="flex justify-between text-sm text-[#6B3E26]">
+          <span>Empaque</span>
+          <span>${CARGO_EMPAQUE}.00</span>
+        </div>
+        <div className="flex justify-between text-sm text-[#6B3E26]">
+          <span>Envío</span>
+          <span>${COSTO_ENVIO}.00</span>
+        </div>
         <div className="flex justify-between text-base font-bold text-[#3A1F14] pt-2 border-t border-[#f0e0d0]">
           <span>Total</span>
-          <span>${total.toFixed(2)}</span>
+          <span>${(total + CARGO_EMPAQUE + COSTO_ENVIO).toFixed(2)}</span>
         </div>
       </div>
 
@@ -590,25 +600,25 @@ export function CustomPipeline() {
         configuracion: { tipo: "pastel-custom", ...config, notas: notasPastel, fotoRef, datos },
         cantidad: 1,
         costoUnitario: desgloseP?.costoProduccionTotal ?? 0,
-        precioUnitario: (desgloseP?.precioSugerido ?? 0) + CARGO_DECORACION,
+        precioUnitario: (desgloseP?.precioSugerido ?? 0) + CARGO_DECORACION + CARGO_EMPAQUE,
         desgloseCostos: {
           costoInsumos: desgloseP?.costoInsumos ?? 0,
           cargosAdicionales: desgloseP?.cargosAdicionales ?? [],
           costoProduccionTotal: desgloseP?.costoProduccionTotal ?? 0,
-          precioSugerido: (desgloseP?.precioSugerido ?? 0) + CARGO_DECORACION,
+          precioSugerido: (desgloseP?.precioSugerido ?? 0) + CARGO_DECORACION + CARGO_EMPAQUE,
         },
         cuponesItem,
       });
     } else {
-      const totalLitros = gCfg.litrosAgua + gCfg.litrosLeche + gCfg.litrosQuesoCrema + gCfg.litrosYogurt;
-      const gelatinaNombre = catalogo?.gelatinas.find((g) => g.id === gCfg.gelatinaId)?.nombre ?? "Gelatina";
+      const totalLitros = gCfg.litrosAgua + gCfg.litrosLeche + gCfg.litrosTresLeches + gCfg.litrosQuesoCrema + gCfg.litrosYogurt;
+      const catLabel = gCfg.categoria === "clasica" ? "Clásica" : gCfg.categoria === "healthy" ? "Healthy" : "Sin Azúcar";
       addItem({
-        nombre: `${gelatinaNombre} personalizada (${totalLitros}L)`,
+        nombre: `Gelatina ${catLabel} personalizada (${totalLitros}L)`,
         configuracion: { tipo: "gelatina-custom", ...gCfg, fotoRef, datos },
         cantidad: 1,
         costoUnitario: 0,
-        precioUnitario: calcPrecioGelatina(gCfg, catalogo!),
-        desgloseCostos: { costoInsumos: 0, cargosAdicionales: [], costoProduccionTotal: 0, precioSugerido: calcPrecioGelatina(gCfg, catalogo!) },
+        precioUnitario: calcPrecioGelatina(gCfg, catalogo!) + CARGO_EMPAQUE,
+        desgloseCostos: { costoInsumos: 0, cargosAdicionales: [], costoProduccionTotal: 0, precioSugerido: calcPrecioGelatina(gCfg, catalogo!) + CARGO_EMPAQUE },
         cuponesItem,
       });
     }
@@ -1040,44 +1050,59 @@ export function CustomPipeline() {
     // ── GELATINA ─────────────────────────────────────────────────────────────
 
     if (tipo === "gelatina") {
-      // Step 2 — Gelatina base + litros
+      // Step 2 — Categoría + litros
       if (step === 2) {
-        const saboresLiq = catalogo?.saboresJarabe ?? [];
+        const CATEGORIAS: { id: CategoriaGelatina; label: string; desc: string }[] = [
+          { id: "clasica",    label: "Gelatina Clásica",   desc: "Agua, leche, tres leches, queso crema, yogurt" },
+          { id: "healthy",    label: "Gelatina Healthy",    desc: "Agua, leche, queso crema, yogurt" },
+          { id: "sin_azucar", label: "Sin Azúcar",          desc: "Agua, leche, queso crema, yogurt" },
+        ];
+        const isClasica = gCfg.categoria === "clasica";
+        const totalLitrosStep = gCfg.litrosAgua + gCfg.litrosLeche + gCfg.litrosTresLeches + gCfg.litrosQuesoCrema + gCfg.litrosYogurt;
         return (
           <div>
             <SectionTitle>Tipo de gelatina y bases líquidas</SectionTitle>
-            <p className="text-sm font-semibold text-[#3A1F14] mb-3">Elige tu gelatina</p>
-            <CardGrid>
-              {catalogo?.gelatinas.map((g) => (
-                <OptionCard
-                  key={g.id}
-                  id={g.id}
-                  label={g.nombre}
-                  description={g.descripcion}
-                  selected={gCfg.gelatinaId === g.id}
-                  onClick={() => setGCfg((c) => ({ ...c, gelatinaId: g.id }))}
-                />
+            <p className="text-sm font-semibold text-[#3A1F14] mb-3">Elige el tipo</p>
+            <div className="flex flex-wrap gap-3 mb-2">
+              {CATEGORIAS.map((cat) => (
+                <button key={cat.id} type="button"
+                  onClick={() => setGCfg((c) => ({ ...c, categoria: cat.id, litrosTresLeches: cat.id !== "clasica" ? 0 : c.litrosTresLeches }))}
+                  className={`px-4 py-2.5 rounded-2xl text-sm font-semibold border-2 transition ${
+                    gCfg.categoria === cat.id
+                      ? "border-[#AA6A42] bg-[#AA6A42]/10 text-[#AA6A42]"
+                      : "border-[#f0e0d0] text-[#6B3E26] hover:bg-[#f0e0d0]/40"
+                  }`}>
+                  {cat.label}
+                </button>
               ))}
-            </CardGrid>
-            <p className="text-sm font-semibold text-[#3A1F14] mt-6 mb-3">Bases líquidas</p>
+            </div>
+            <p className="text-xs text-[#6B3E26]/60 mb-5">
+              {CATEGORIAS.find((c) => c.id === gCfg.categoria)?.desc}
+            </p>
+            <p className="text-sm font-semibold text-[#3A1F14] mb-3">Litros por base</p>
             <div className="space-y-3">
-              <LiquidInput label="Agua" litros={gCfg.litrosAgua} saborId={gCfg.saborAguaId}
+              <LiquidInput label="Agua" litros={gCfg.litrosAgua} saborId=""
                 onLitros={(v) => setGCfg((c) => ({ ...c, litrosAgua: v }))}
-                onSabor={(v) => setGCfg((c) => ({ ...c, saborAguaId: v }))} sabores={saboresLiq} />
-              <LiquidInput label="Leche" litros={gCfg.litrosLeche} saborId={gCfg.saborLecheId}
+                onSabor={() => {}} sabores={[]} />
+              <LiquidInput label="Leche" litros={gCfg.litrosLeche} saborId=""
                 onLitros={(v) => setGCfg((c) => ({ ...c, litrosLeche: v }))}
-                onSabor={(v) => setGCfg((c) => ({ ...c, saborLecheId: v }))} sabores={saboresLiq} />
-              <LiquidInput label="Queso crema" litros={gCfg.litrosQuesoCrema} saborId={gCfg.saborQuesoCremaId}
+                onSabor={() => {}} sabores={[]} />
+              {isClasica && (
+                <LiquidInput label="Tres Leches" litros={gCfg.litrosTresLeches} saborId=""
+                  onLitros={(v) => setGCfg((c) => ({ ...c, litrosTresLeches: v }))}
+                  onSabor={() => {}} sabores={[]} />
+              )}
+              <LiquidInput label="Queso Crema" litros={gCfg.litrosQuesoCrema} saborId=""
                 onLitros={(v) => setGCfg((c) => ({ ...c, litrosQuesoCrema: v }))}
-                onSabor={(v) => setGCfg((c) => ({ ...c, saborQuesoCremaId: v }))} sabores={saboresLiq} />
-              <LiquidInput label="Yogurt" litros={gCfg.litrosYogurt} saborId={gCfg.saborYogurtId}
+                onSabor={() => {}} sabores={[]} />
+              <LiquidInput label="Yogurt" litros={gCfg.litrosYogurt} saborId=""
                 onLitros={(v) => setGCfg((c) => ({ ...c, litrosYogurt: v }))}
-                onSabor={(v) => setGCfg((c) => ({ ...c, saborYogurtId: v }))} sabores={saboresLiq} />
+                onSabor={() => {}} sabores={[]} />
             </div>
             <NavButtons
               onBack={() => setStep(1)}
               onNext={() => setStep(3)}
-              nextDisabled={!gCfg.gelatinaId || gCfg.litrosAgua + gCfg.litrosLeche + gCfg.litrosQuesoCrema + gCfg.litrosYogurt <= 0}
+              nextDisabled={totalLitrosStep <= 0}
             />
           </div>
         );
@@ -1188,21 +1213,23 @@ export function CustomPipeline() {
 
       // Step 7 — Resumen gelatina
       if (step === 7) {
-        const gelatina = catalogo?.gelatinas.find((g) => g.id === gCfg.gelatinaId);
         const cobertura = catalogo?.coberturas.find((c) => c.id === gCfg.coberturaId);
         const saborCob = catalogo?.saboresCobertura.find((s) => s.id === gCfg.saborCoberturaId);
         const jarabe = catalogo?.jarabes.find((j) => j.id === gCfg.jarabeId);
         const saborJar = catalogo?.saboresJarabe.find((s) => s.id === gCfg.saborJarabeId);
         const toppingsSel = catalogo?.toppings.filter((t) => gCfg.toppingIds.includes(t.ingredienteId));
+        const catLabel = gCfg.categoria === "clasica" ? "Clásica" : gCfg.categoria === "healthy" ? "Healthy" : "Sin Azúcar";
 
-        const rows: { label: string; value: string }[] = [];
-        if (gelatina) rows.push({ label: "Gelatina", value: gelatina.nombre });
+        const rows: { label: string; value: string }[] = [
+          { label: "Tipo", value: `Gelatina ${catLabel}` },
+        ];
 
         const liquidosTexto: string[] = [];
-        if (gCfg.litrosAgua > 0) liquidosTexto.push(`${gCfg.litrosAgua}L agua`);
-        if (gCfg.litrosLeche > 0) liquidosTexto.push(`${gCfg.litrosLeche}L leche`);
+        if (gCfg.litrosAgua > 0)       liquidosTexto.push(`${gCfg.litrosAgua}L agua`);
+        if (gCfg.litrosLeche > 0)      liquidosTexto.push(`${gCfg.litrosLeche}L leche`);
+        if (gCfg.litrosTresLeches > 0) liquidosTexto.push(`${gCfg.litrosTresLeches}L tres leches`);
         if (gCfg.litrosQuesoCrema > 0) liquidosTexto.push(`${gCfg.litrosQuesoCrema}L queso crema`);
-        if (gCfg.litrosYogurt > 0) liquidosTexto.push(`${gCfg.litrosYogurt}L yogurt`);
+        if (gCfg.litrosYogurt > 0)     liquidosTexto.push(`${gCfg.litrosYogurt}L yogurt`);
         if (liquidosTexto.length) rows.push({ label: "Bases", value: liquidosTexto.join(", ") });
         if (cobertura) rows.push({ label: "Cobertura", value: `${cobertura.nombre}${saborCob ? ` · ${saborCob.nombre}` : ""}` });
         if (jarabe) rows.push({ label: "Jarabe", value: `${jarabe.nombre}${saborJar ? ` · ${saborJar.nombre}` : ""}` });

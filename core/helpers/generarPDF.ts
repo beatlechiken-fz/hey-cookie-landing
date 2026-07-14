@@ -27,6 +27,7 @@ export interface OrdenPdfData {
   subtotal: number;
   descuentoTotal: number;
   total: number;
+  costoEnvio?: number;
   cupones?: { codigo: string; montoDescontado: number }[];
   notas?: string | null;
 }
@@ -140,10 +141,12 @@ export function buildOrdenClienteHtml(data: OrdenPdfData): string {
     noticeHtml = `<div class="notice ok">✅ <strong>Orden confirmada.</strong> Cualquier modificación debe coordinarse con nuestro equipo. ¡Gracias por elegir Hey Cookie! 🍪</div>`;
   }
 
+  const totalFinal = data.total + (data.costoEnvio ?? 0);
   const totsHtml = `<div class="tots-wrap"><div class="tots">
     <div class="tot-r"><span>Subtotal</span><span>$${data.subtotal.toFixed(2)}</span></div>
     ${data.descuentoTotal > 0 ? `<div class="tot-r tot-d"><span>Descuento</span><span>−$${data.descuentoTotal.toFixed(2)}</span></div>` : ""}
-    <div class="tot-f"><span>Total</span><span>$${data.total.toFixed(2)}</span></div>
+    ${data.costoEnvio && data.costoEnvio > 0 ? `<div class="tot-r"><span>Envío</span><span>+$${data.costoEnvio.toFixed(2)}</span></div>` : ""}
+    <div class="tot-f"><span>Total</span><span>$${totalFinal.toFixed(2)}</span></div>
   </div></div>`;
 
   return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
@@ -390,7 +393,7 @@ function wrap(head: string, body: string, foot?: string): string {
 }
 
 // ── BUILD Cotización/Orden ────────────────────────────────────────────────────
-export async function buildCotizacionHtml(orden: Orden): Promise<string> {
+export async function buildCotizacionHtml(orden: Orden, costoEnvio?: number): Promise<string> {
   const esCot = orden.status === "cotizacion";
   const cn = await fetchCatNames();
 
@@ -460,6 +463,7 @@ export async function buildCotizacionHtml(orden: Orden): Promise<string> {
     subtotal: orden.subtotal,
     descuentoTotal: orden.descuentoTotal,
     total: orden.total,
+    costoEnvio,
     cupones: orden.cupones.map((c) => ({
       codigo: c.codigo,
       montoDescontado: c.montoDescontado,
@@ -629,9 +633,9 @@ export async function descargarPdf(
 }
 
 // ── Funciones públicas ────────────────────────────────────────────────────────
-export async function generarCotizacionPdf(orden: Orden): Promise<void> {
+export async function generarCotizacionPdf(orden: Orden, costoEnvio?: number): Promise<void> {
   const tipo = orden.status === "cotizacion" ? "cotizacion" : "orden";
-  const html = await buildCotizacionHtml(orden);
+  const html = await buildCotizacionHtml(orden, costoEnvio);
   await descargarPdf(
     html,
     `heycookie_${tipo}_${orden.numero}_${new Date().toISOString().slice(0, 10)}.pdf`,
