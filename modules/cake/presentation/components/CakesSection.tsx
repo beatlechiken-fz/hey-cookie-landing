@@ -6,9 +6,23 @@ import Image from "next/image";
 import Icons from "@/core/assets/Icons";
 import CakeCard from "./CakeCard";
 import ProductoModal from "./ProductoModal";
+import { WaveDivider } from "@/core/components/wave-divider/WaveDivider";
 import type { Producto, LineaProducto } from "@/modules/admin/store/domain/entities/Producto.entity";
 
 const LINE_ORDER: LineaProducto[] = ["sweet", "fitness", "healthy"];
+
+// Misma pareja de degradados que Cookies.tsx / CookiesFitness.tsx en la home —
+// se alternan por franja para que la firma visual del sitio sea una sola.
+const BAND_GRADIENTS = [
+  "bg-gradient-to-b from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]",
+  "bg-gradient-to-b from-[#FAF3E0] via-[#F1DCC9] to-[#E6C7A5]",
+];
+const BAND_START_COLORS = ["#F8EDE3", "#FAF3E0"];
+
+// Color con el que arranca lo que sigue después de la última franja de esta
+// sección (CakeInfoSection, que usa bg-[#FAF3E0]) — así la última onda
+// conecta con lo que realmente viene después, no con un valor inventado.
+const NEXT_SECTION_COLOR = "#FAF3E0";
 
 interface Props {
   pasteles: Producto[];
@@ -18,70 +32,57 @@ export default function CakesSection({ pasteles }: Props) {
   const t = useTranslations();
   const [selected, setSelected] = useState<Producto | null>(null);
 
-  // Agrupar por linea manteniendo el orden definido
   const grouped = LINE_ORDER.reduce<Record<string, Producto[]>>((acc, line) => {
     const items = pasteles.filter((p) => p.linea === line);
     if (items.length > 0) acc[line] = items;
     return acc;
   }, {});
+  const entries = Object.entries(grouped);
 
   return (
-    <main className="relative overflow-hidden">
-      {/* Manchas decorativas */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        {[
-          { side: "left",  top: "15%", size: 480, opacity: 0.18 },
-          { side: "right", top: "45%", size: 520, opacity: 0.2  },
-          { side: "left",  top: "75%", size: 440, opacity: 0.17 },
-          { side: "left",  top:  "6%", size: 260, opacity: 0.22 },
-          { side: "left",  top: "34%", size: 300, opacity: 0.2  },
-          { side: "right", top: "10%", size: 320, opacity: 0.21 },
-          { side: "right", top: "60%", size: 260, opacity: 0.18 },
-          { side: "right", top: "78%", size: 300, opacity: 0.2  },
-          { side: "left",  top: "20%", size: 180, opacity: 0.16 },
-          { side: "right", top: "28%", size: 180, opacity: 0.15 },
-        ].map((blob, i) => (
-          <svg
-            key={i}
-            className={`absolute ${blob.side === "left" ? "-translate-x-1/2 left-0" : "translate-x-1/2 right-0"}`}
-            style={{ top: blob.top, width: blob.size, height: blob.size, opacity: blob.opacity }}
-            viewBox="0 0 400 400"
-          >
-            <circle cx="200" cy="200" r="200" fill="#C9A97E" />
-          </svg>
-        ))}
-      </div>
-
-      {/* Contenido */}
-      <section className="relative z-[9] w-full max-w-6xl mx-auto px-6 py-16 space-y-20">
-        {Object.keys(grouped).length === 0 ? (
-          <p className="text-center text-[#AA6A42]/60 py-16 text-lg">
+    <div className="relative">
+      {entries.length === 0 ? (
+        <div className={`relative overflow-hidden ${BAND_GRADIENTS[0]}`}>
+          <p className="relative z-10 text-center text-[#AA6A42]/60 py-24 text-lg">
             Próximamente…
           </p>
-        ) : (
-          Object.entries(grouped).map(([lineKey, cakes]) => (
-            <div key={lineKey} className="space-y-12">
-              <h2 className="text-5xl text-center font-title text-[#DA6C94]">
-                {t(`cakes.lines.${lineKey}`)}
+          <WaveDivider fill={NEXT_SECTION_COLOR} />
+        </div>
+      ) : (
+        entries.map(([lineKey, cakes], i) => {
+          const isLast = i === entries.length - 1;
+          const waveFill = isLast ? NEXT_SECTION_COLOR : BAND_START_COLORS[(i + 1) % BAND_START_COLORS.length];
+          return (
+            <div
+              key={lineKey}
+              className={`relative overflow-hidden ${BAND_GRADIENTS[i % BAND_GRADIENTS.length]}`}
+            >
+              <div className="relative z-10 pt-16 px-6 md:px-12">
+                <h2 className="text-5xl text-center font-title text-[#DA6C94]">
+                  {t(`cakes.lines.${lineKey}`)}
+                </h2>
                 <div className="w-full flex justify-center pt-4">
                   <Image src={Icons.wavesPink} alt="" width={120} height={20} />
                 </div>
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                {cakes.map((cake) => (
-                  <CakeCard key={cake.id} producto={cake} onClick={setSelected} />
-                ))}
               </div>
-            </div>
-          ))
-        )}
-      </section>
 
-      {/* Modal configurador */}
+              <section className="relative z-10 max-w-6xl mx-auto px-6 pt-10 pb-36">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                  {cakes.map((cake) => (
+                    <CakeCard key={cake.id} producto={cake} onClick={setSelected} />
+                  ))}
+                </div>
+              </section>
+
+              <WaveDivider fill={waveFill} />
+            </div>
+          );
+        })
+      )}
+
       {selected && (
         <ProductoModal producto={selected} onClose={() => setSelected(null)} />
       )}
-    </main>
+    </div>
   );
 }

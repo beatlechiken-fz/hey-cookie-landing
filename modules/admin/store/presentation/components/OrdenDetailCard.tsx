@@ -117,11 +117,11 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-[#f5dce4] bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-[#f0e0d0] bg-white shadow-sm overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-[#fdf6f0]/60 transition"
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-[#FFF7F0]/60 transition"
       >
         <div className="flex items-center gap-3">
           <div className="flex flex-col">
@@ -129,7 +129,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
               {orden.status === "cotizacion" ? "Cotización" : "Orden"} #
               {orden.numero}
             </p>
-            <p className="text-[11px] text-[#b07a8a]">
+            <p className="text-[11px] text-[#6B3E26]">
               {formatDate(orden.createdAt)}
             </p>
             {orden.fechaEntrega && (
@@ -146,7 +146,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
           <svg
             viewBox="0 0 24 24"
             className={
-              "w-4 h-4 text-[#b07a8a] transition-transform " +
+              "w-4 h-4 text-[#6B3E26] transition-transform " +
               (expanded ? "rotate-180" : "")
             }
             fill="none"
@@ -176,9 +176,9 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
               </div>
 
               {/* Fecha de entrega */}
-              <div className="flex items-center justify-between rounded-xl bg-[#fdf6f0] border border-[#f5dce4] px-3 py-2.5">
+              <div className="flex items-center justify-between rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
                 <div>
-                  <p className="text-[10px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                  <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                     Fecha de entrega
                   </p>
                   {editingFecha ? (
@@ -187,7 +187,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                         type="date"
                         value={fechaInput}
                         onChange={(e) => setFechaInput(e.target.value)}
-                        className="text-sm border border-[#e8c4cd] rounded-lg px-2 py-1 text-[#3d1a24] focus:outline-none focus:border-[#c0607a]"
+                        className="text-sm border border-[#e8c4a0] rounded-lg px-2 py-1 text-[#3d1a24] focus:outline-none focus:border-[#c0607a]"
                       />
                       <button
                         onClick={handleSaveFecha}
@@ -201,7 +201,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                           setEditingFecha(false);
                           setFechaInput(orden.fechaEntrega?.slice(0, 10) ?? "");
                         }}
-                        className="px-2 py-1 rounded-lg border border-[#e8c4cd] text-[#b07a8a] text-[11px] hover:bg-[#f5dce4] transition"
+                        className="px-2 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-[#f0e0d0] transition"
                       >
                         Cancelar
                       </button>
@@ -211,7 +211,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                       {orden.fechaEntrega ? (
                         formatDate(orden.fechaEntrega)
                       ) : (
-                        <span className="text-[#c0a0a8] font-normal">
+                        <span className="text-[#AA6A42] font-normal">
                           Sin fecha asignada
                         </span>
                       )}
@@ -221,7 +221,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                 {!editingFecha && (
                   <button
                     onClick={() => setEditingFecha(true)}
-                    className="p-1.5 rounded-lg hover:bg-[#f5dce4] text-[#b07a8a] hover:text-[#c0607a] transition"
+                    className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -238,21 +238,33 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                 )}
               </div>
 
+              {/* Observaciones / alergias */}
+              {orden.notas && (
+                <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
+                  <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                    Observaciones
+                  </p>
+                  <p className="text-[13px] text-[#3d1a24] mt-0.5 whitespace-pre-wrap">
+                    {orden.notas}
+                  </p>
+                </div>
+              )}
+
               {/* Items */}
               <div className="flex flex-col gap-2">
-                <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                   Productos
                 </p>
                 {orden.items.map((item, i) => (
                   <div
                     key={item.id ?? i}
-                    className="flex items-center justify-between rounded-xl bg-[#fdf6f0] border border-[#f5dce4] px-3 py-2"
+                    className="flex items-center justify-between rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2"
                   >
                     <div>
                       <p className="text-[13px] font-semibold text-[#3d1a24]">
                         {item.nombre}
                       </p>
-                      <p className="text-[11px] text-[#b07a8a]">
+                      <p className="text-[11px] text-[#6B3E26]">
                         {item.cantidad} × ${item.precioUnitario.toFixed(2)}
                         {(item.configuracion as any)?.diametroCm
                           ? ` · ${(item.configuracion as any).diametroCm}cm`
@@ -269,7 +281,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
               {/* Cupones */}
               {orden.cupones.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Cupones aplicados
                   </p>
                   {orden.cupones.map((c, i) => (
@@ -289,9 +301,9 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
               )}
 
               {/* Totales */}
-              <div className="flex flex-col gap-1 pt-1 border-t border-[#f5dce4]">
+              <div className="flex flex-col gap-1 pt-1 border-t border-[#f0e0d0]">
                 <div className="flex items-center justify-between text-[13px]">
-                  <span className="text-[#b07a8a]">Subtotal</span>
+                  <span className="text-[#6B3E26]">Subtotal</span>
                   <span className="text-[#3d1a24]">
                     ${orden.subtotal.toFixed(2)}
                   </span>
@@ -305,7 +317,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                   </div>
                 )}
                 <div className="flex items-center justify-between pt-1">
-                  <span className="font-bold text-[#7b2d42]">Total</span>
+                  <span className="font-bold text-[#AA6A42]">Total</span>
                   <span className="font-bold text-[#c0607a] text-lg">
                     ${orden.total.toFixed(2)}
                   </span>
@@ -357,7 +369,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                   <button
                     onClick={handlePdfCotizacion}
                     disabled={generandoPdf}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e8c4cd] text-[#7b2d42] text-[12px] font-semibold hover:bg-[#fdf6f0] disabled:opacity-50 transition"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e8c4a0] text-[#AA6A42] text-[12px] font-semibold hover:bg-[#FFF7F0] disabled:opacity-50 transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -382,7 +394,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                 <button
                   onClick={handlePdfComanda}
                   disabled={generandoPdf}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e8c4cd] bg-[#fdf6f0] text-[#7b2d42] text-[12px] font-semibold hover:bg-[#f5dce4] disabled:opacity-50 transition"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e8c4a0] bg-[#FFF7F0] text-[#AA6A42] text-[12px] font-semibold hover:bg-[#f0e0d0] disabled:opacity-50 transition"
                 >
                   <svg
                     viewBox="0 0 24 24"

@@ -10,6 +10,8 @@ import {
   NINGUNO,
 } from "@/modules/admin/store/presentation/components/configurador/SelectField";
 import { MultiSelectField } from "./configurador/MultiselectField";
+import { MultiCoberturaField } from "./configurador/MultiCoberturaField";
+import { MultiSelectQuantityField } from "./configurador/MultiSelectQuantityField";
 import { QuantityStepper } from "@/modules/admin/store/presentation/components/configurador/QuantityStepper";
 import { CostoDesgloseTable } from "./configurador/CostoDesgloceTable";
 import { DiametroPersonasSelector } from "@/modules/admin/store/presentation/components/configurador/DiametroPersonasSelector";
@@ -60,7 +62,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
 
   const open = Boolean(producto);
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
 
   function handleClose() {
     reset();
@@ -128,22 +130,22 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-2xl max-h-[92vh] bg-white rounded-2xl shadow-2xl border border-[#f5dce4] flex flex-col overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-2xl max-h-[92vh] bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f5dce4] bg-[#fdf6f0] shrink-0">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
                 <div>
-                  <h2 className="font-bold text-[#7b2d42] text-lg">
+                  <h2 className="font-bold text-[#AA6A42] text-lg">
                     {producto.nombre}
                   </h2>
                   {producto.descripcion && (
-                    <p className="text-[12px] text-[#b07a8a] mt-0.5 line-clamp-1">
+                    <p className="text-[12px] text-[#6B3E26] mt-0.5 line-clamp-1">
                       {producto.descripcion}
                     </p>
                   )}
                 </div>
                 <button
                   onClick={handleClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f5dce4] transition text-[#b07a8a]"
+                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -161,7 +163,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
               {/* Body */}
               <div className="flex-1 overflow-y-auto px-6 py-5">
                 {loading && (
-                  <p className="text-center text-[#c0a0a8] text-sm py-8">
+                  <p className="text-center text-[#AA6A42] text-sm py-8">
                     Cargando…
                   </p>
                 )}
@@ -186,7 +188,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                     {!producto.permiteMedidaPersonalizada &&
                       producto.tamanosFijos.length > 0 && (
                         <div className="flex flex-col gap-2">
-                          <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                          <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                             Tamaño
                           </label>
                           <div className="flex flex-wrap gap-2">
@@ -199,7 +201,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                                   "px-4 py-2 rounded-xl text-[13px] font-semibold border transition " +
                                   (tamanoFijoId === t.id
                                     ? "bg-[#c0607a] text-white border-[#c0607a]"
-                                    : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]")
+                                    : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]")
                                 }
                               >
                                 {t.nombre}
@@ -212,8 +214,8 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                     {/* Tamaño único */}
                     {!producto.permiteMedidaPersonalizada &&
                       producto.tamanosFijos.length === 0 && (
-                        <div className="rounded-xl bg-[#fdf6f0] border border-[#f5dce4] px-3 py-2.5">
-                          <p className="text-[12px] text-[#7b2d42]">
+                        <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
+                          <p className="text-[12px] text-[#AA6A42]">
                             Este producto tiene un tamaño único
                             {producto.medidaBaseCm
                               ? ` (${producto.medidaBaseCm}cm)`
@@ -223,61 +225,73 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                         </div>
                       )}
 
-                    <div className="h-px bg-[#f5dce4]" />
+                    <div className="h-px bg-[#f0e0d0]" />
 
                     {/* Grid de selectores */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <SelectField
-                        label="Cobertura"
-                        value={opciones.coberturaId ?? NINGUNO}
-                        options={catalogo.coberturas.map((c) => ({
-                          value: c.id,
-                          label: c.nombre,
-                        }))}
-                        onChange={(v) =>
-                          update("coberturaId", v === NINGUNO ? null : v)
-                        }
-                      />
+                      <div className="sm:col-span-2">
+                        <MultiCoberturaField
+                          label="Coberturas"
+                          items={opciones.coberturas.map((c) => ({
+                            id: c.coberturaId,
+                            saborId: c.saborCoberturaId,
+                          }))}
+                          onChange={(items) =>
+                            update(
+                              "coberturas",
+                              items
+                                .filter((it) => it.id)
+                                .map((it) => ({
+                                  coberturaId: it.id,
+                                  saborCoberturaId: it.saborId,
+                                })),
+                            )
+                          }
+                          options={catalogo.coberturas.map((c) => ({
+                            value: c.id,
+                            label: c.nombre,
+                          }))}
+                          sabores={catalogo.saboresCobertura.map((s) => ({
+                            value: s.id,
+                            label: s.nombre,
+                            sublabel:
+                              s.precio != null ? `+$${s.precio}` : undefined,
+                          }))}
+                          addLabel="+ Agregar cobertura"
+                        />
+                      </div>
 
-                      <SelectField
-                        label="Sabor de cobertura"
-                        value={opciones.saborCoberturaId ?? NINGUNO}
-                        options={catalogo.saboresCobertura.map((s) => ({
-                          value: s.id,
-                          label: s.nombre,
-                          sublabel:
-                            s.precio != null ? `+$${s.precio}` : undefined,
-                        }))}
-                        onChange={(v) =>
-                          update("saborCoberturaId", v === NINGUNO ? null : v)
-                        }
-                      />
-
-                      <SelectField
-                        label="Relleno"
-                        value={opciones.rellenoId ?? NINGUNO}
-                        options={catalogo.coberturas.map((c) => ({
-                          value: c.id,
-                          label: c.nombre,
-                        }))}
-                        onChange={(v) =>
-                          update("rellenoId", v === NINGUNO ? null : v)
-                        }
-                      />
-
-                      <SelectField
-                        label="Sabor de relleno"
-                        value={opciones.saborRellenoId ?? NINGUNO}
-                        options={catalogo.saboresCobertura.map((s) => ({
-                          value: s.id,
-                          label: s.nombre,
-                          sublabel:
-                            s.precio != null ? `+$${s.precio}` : undefined,
-                        }))}
-                        onChange={(v) =>
-                          update("saborRellenoId", v === NINGUNO ? null : v)
-                        }
-                      />
+                      <div className="sm:col-span-2">
+                        <MultiCoberturaField
+                          label="Rellenos"
+                          items={opciones.rellenos.map((r) => ({
+                            id: r.rellenoId,
+                            saborId: r.saborRellenoId,
+                          }))}
+                          onChange={(items) =>
+                            update(
+                              "rellenos",
+                              items
+                                .filter((it) => it.id)
+                                .map((it) => ({
+                                  rellenoId: it.id,
+                                  saborRellenoId: it.saborId,
+                                })),
+                            )
+                          }
+                          options={catalogo.coberturas.map((c) => ({
+                            value: c.id,
+                            label: c.nombre,
+                          }))}
+                          sabores={catalogo.saboresCobertura.map((s) => ({
+                            value: s.id,
+                            label: s.nombre,
+                            sublabel:
+                              s.precio != null ? `+$${s.precio}` : undefined,
+                          }))}
+                          addLabel="+ Agregar relleno"
+                        />
+                      </div>
 
                       <SelectField
                         label="Jarabe"
@@ -321,7 +335,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                       />
                     </div>
 
-                    <div className="h-px bg-[#f5dce4]" />
+                    <div className="h-px bg-[#f0e0d0]" />
 
                     <MultiSelectField
                       label="Toppings"
@@ -347,15 +361,37 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                       onChange={(v) => update("empaqueIds", v)}
                     />
 
-                    <div className="h-px bg-[#f5dce4]" />
+                    <MultiSelectQuantityField
+                      label="Ornamentos"
+                      items={opciones.ornamentos.map((o) => ({
+                        id: o.ornamentoId,
+                        cantidad: o.cantidad,
+                      }))}
+                      options={catalogo.ornamentos.map((o) => ({
+                        value: o.id,
+                        label: o.nombre,
+                        sublabel: `$${o.precio}`,
+                      }))}
+                      onChange={(items) =>
+                        update(
+                          "ornamentos",
+                          items.map((it) => ({
+                            ornamentoId: it.id,
+                            cantidad: it.cantidad,
+                          })),
+                        )
+                      }
+                    />
+
+                    <div className="h-px bg-[#f0e0d0]" />
 
                     {/* Cantidad */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                        <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                           Cantidad
                         </p>
-                        <p className="text-[11px] text-[#b07a8a] mt-0.5">
+                        <p className="text-[11px] text-[#6B3E26] mt-0.5">
                           Número de unidades con esta configuración
                         </p>
                       </div>
@@ -365,7 +401,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                       />
                     </div>
 
-                    <div className="h-px bg-[#f5dce4]" />
+                    <div className="h-px bg-[#f0e0d0]" />
 
                     {/* Desglose de costos */}
                     {desglose && (
@@ -378,7 +414,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                     {/* ── Selector de precio ───────────────────────────── */}
                     {desglose && tieneEstablecido && (
                       <div className="flex flex-col gap-2">
-                        <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                        <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                           Precio a usar
                         </p>
                         <div className="flex gap-2">
@@ -388,21 +424,21 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                             onClick={() => setUsarPrecioEstablecido(false)}
                             className={`flex-1 flex flex-col items-center py-3 px-4 rounded-xl border-2 transition ${
                               !usarPrecioEstablecido
-                                ? "border-[#c0607a] bg-[#fdf6f0]"
-                                : "border-[#e8c4cd] bg-white hover:bg-[#fdf9fb]"
+                                ? "border-[#c0607a] bg-[#FFF7F0]"
+                                : "border-[#e8c4a0] bg-white hover:bg-[#fdf9fb]"
                             }`}
                           >
                             <span
-                              className={`text-[11px] font-semibold uppercase tracking-wide ${!usarPrecioEstablecido ? "text-[#c0607a]" : "text-[#b07a8a]"}`}
+                              className={`text-[11px] font-semibold uppercase tracking-wide ${!usarPrecioEstablecido ? "text-[#c0607a]" : "text-[#6B3E26]"}`}
                             >
                               Precio sugerido
                             </span>
                             <span
-                              className={`text-lg font-bold mt-0.5 ${!usarPrecioEstablecido ? "text-[#7b2d42]" : "text-[#b07a8a]"}`}
+                              className={`text-lg font-bold mt-0.5 ${!usarPrecioEstablecido ? "text-[#AA6A42]" : "text-[#6B3E26]"}`}
                             >
                               ${desglose.precioSugerido.toFixed(2)}
                             </span>
-                            <span className="text-[10px] text-[#c0a0a8] mt-0.5">
+                            <span className="text-[10px] text-[#AA6A42] mt-0.5">
                               Calculado del desglose
                             </span>
                           </button>
@@ -413,21 +449,21 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                             onClick={() => setUsarPrecioEstablecido(true)}
                             className={`flex-1 flex flex-col items-center py-3 px-4 rounded-xl border-2 transition ${
                               usarPrecioEstablecido
-                                ? "border-[#c0607a] bg-[#fdf6f0]"
-                                : "border-[#e8c4cd] bg-white hover:bg-[#fdf9fb]"
+                                ? "border-[#c0607a] bg-[#FFF7F0]"
+                                : "border-[#e8c4a0] bg-white hover:bg-[#fdf9fb]"
                             }`}
                           >
                             <span
-                              className={`text-[11px] font-semibold uppercase tracking-wide ${usarPrecioEstablecido ? "text-[#c0607a]" : "text-[#b07a8a]"}`}
+                              className={`text-[11px] font-semibold uppercase tracking-wide ${usarPrecioEstablecido ? "text-[#c0607a]" : "text-[#6B3E26]"}`}
                             >
                               Precio establecido
                             </span>
                             <span
-                              className={`text-lg font-bold mt-0.5 ${usarPrecioEstablecido ? "text-[#7b2d42]" : "text-[#b07a8a]"}`}
+                              className={`text-lg font-bold mt-0.5 ${usarPrecioEstablecido ? "text-[#AA6A42]" : "text-[#6B3E26]"}`}
                             >
                               ${producto.precioEstablecido!.toFixed(2)}
                             </span>
-                            <span className="text-[10px] text-[#c0a0a8] mt-0.5">
+                            <span className="text-[10px] text-[#AA6A42] mt-0.5">
                               Definido manualmente
                             </span>
                           </button>
@@ -436,7 +472,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                         {/* Total con el precio elegido */}
                         {cantidad > 1 && (
                           <div className="flex justify-between items-center px-1 text-[13px]">
-                            <span className="text-[#b07a8a]">
+                            <span className="text-[#6B3E26]">
                               Total ({cantidad} unidades)
                             </span>
                             <span className="font-bold text-[#c0607a]">
@@ -450,7 +486,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                     {/* Si no tiene precio establecido, mostrar solo el precio final */}
                     {desglose && !tieneEstablecido && cantidad > 1 && (
                       <div className="flex justify-between items-center px-1 text-[13px]">
-                        <span className="text-[#b07a8a]">
+                        <span className="text-[#6B3E26]">
                           Total ({cantidad} unidades)
                         </span>
                         <span className="font-bold text-[#c0607a]">
@@ -463,11 +499,11 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
               </div>
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f5dce4] bg-white shrink-0">
+              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
                 >
                   Cancelar
                 </button>

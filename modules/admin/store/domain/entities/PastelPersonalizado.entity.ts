@@ -93,6 +93,13 @@ export interface OpcionEmpaque {
   imagenUrl: string | null;
 }
 
+export interface OpcionOrnamento {
+  id: string;
+  nombre: string;
+  precio: number; // precio fijo, NO se escala por tamaño
+  imagenUrl: string | null;
+}
+
 /** Catálogo completo que el endpoint /api/admin/pastel-config devuelve para alimentar el configurador */
 export interface PastelConfigCatalogo {
   bizcochos: OpcionSimple[];
@@ -103,6 +110,7 @@ export interface PastelConfigCatalogo {
   toppings: OpcionToppingCantidad[];
   licores: OpcionLicorCantidad[];
   empaques: OpcionEmpaque[];
+  ornamentos: OpcionOrnamento[];
 }
 
 // ── Configuración elegida por el usuario ──────────────────────────────────────
@@ -114,37 +122,93 @@ export interface PastelConfigCatalogo {
  */
 export type HumedadJarabe = "semi_humedo" | "humedo";
 
+/** Una cobertura exterior seleccionada (puede haber varias, todas suman al precio) */
+export interface CoberturaSeleccionada {
+  coberturaId: string;
+  saborCoberturaId: string | null;
+}
+
+/** Un relleno (= otra cobertura usada como capa interna) seleccionado */
+export interface RellenoSeleccionado {
+  rellenoId: string; // referencia a coberturas
+  saborRellenoId: string | null;
+}
+
+/** Un ornamento seleccionado con cuántas piezas de ese ornamento lleva el pastel */
+export interface OrnamentoSeleccionado {
+  ornamentoId: string;
+  cantidad: number;
+}
+
 export interface PastelConfiguracion {
   diametroCm: number;
   bizcochoId: string | null;
-  coberturaId: string | null; // se usa también como "relleno" (misma tabla)
-  saborCoberturaId: string | null;
-  rellenoId: string | null; // referencia a coberturas (relleno = otra cobertura)
-  saborRellenoId: string | null;
+  coberturas: CoberturaSeleccionada[]; // varias coberturas exteriores, todas suman al precio
+  rellenos: RellenoSeleccionado[]; // varios rellenos (otras coberturas), todos suman al precio
   toppingIds: string[]; // ingrediente_id[] de topping_cantidades
   jarabeId: string | null;
   saborJarabeId: string | null;
   humedadJarabe: HumedadJarabe | null; // null = sin jarabe / no aplica
   licorId: string | null; // ingrediente_id de licor_cantidades
   empaqueIds: string[];
+  ornamentos: OrnamentoSeleccionado[];
   cantidad: number;
 }
 
 export const CONFIGURACION_VACIA: PastelConfiguracion = {
   diametroCm: DIAMETRO_BASE_CM,
   bizcochoId: null,
-  coberturaId: null,
-  saborCoberturaId: null,
-  rellenoId: null,
-  saborRellenoId: null,
+  coberturas: [],
+  rellenos: [],
   toppingIds: [],
   jarabeId: null,
   saborJarabeId: null,
   humedadJarabe: null,
   licorId: null,
   empaqueIds: [],
+  ornamentos: [],
   cantidad: 1,
 };
+
+/**
+ * Traductor de compatibilidad: hay órdenes/productos reales guardados con el
+ * formato viejo (coberturaId/rellenoId singulares, ornamentoIds sin cantidad).
+ * Convierte cualquier `opciones`/`configuracion` leído de BD al formato nuevo
+ * (arrays), sin tocar nada que ya venga en formato nuevo. Es el único lugar
+ * del código con lógica de compatibilidad — todo lo demás (usecases, UI)
+ * asume el shape nuevo.
+ */
+export function normalizeOpciones<T extends Record<string, any>>(
+  raw: T | null | undefined,
+): T {
+  const r: Record<string, any> = { ...(raw ?? {}) };
+
+  if (!Array.isArray(r.coberturas)) {
+    r.coberturas = r.coberturaId
+      ? [{ coberturaId: r.coberturaId, saborCoberturaId: r.saborCoberturaId ?? null }]
+      : [];
+  }
+  delete r.coberturaId;
+  delete r.saborCoberturaId;
+
+  if (!Array.isArray(r.rellenos)) {
+    r.rellenos = r.rellenoId
+      ? [{ rellenoId: r.rellenoId, saborRellenoId: r.saborRellenoId ?? null }]
+      : [];
+  }
+  delete r.rellenoId;
+  delete r.saborRellenoId;
+
+  if (!Array.isArray(r.ornamentos)) {
+    const legacyIds: string[] = Array.isArray(r.ornamentoIds) ? r.ornamentoIds : [];
+    r.ornamentos = legacyIds
+      .filter((id) => id && id !== "ninguno")
+      .map((ornamentoId) => ({ ornamentoId, cantidad: 1 }));
+  }
+  delete r.ornamentoIds;
+
+  return r as T;
+}
 
 // ── Desglose de costos calculado ──────────────────────────────────────────────
 

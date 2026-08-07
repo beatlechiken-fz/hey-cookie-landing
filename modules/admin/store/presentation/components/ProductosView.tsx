@@ -76,7 +76,7 @@ export function ProductosView() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar producto…"
-            className="w-full px-4 py-2.5 rounded-xl border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#c0a0a8]"
+            className="w-full px-4 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
           />
         </div>
         <div className="flex gap-2">
@@ -88,7 +88,7 @@ export function ProductosView() {
                 "px-3 py-1.5 rounded-lg text-[12px] font-semibold border transition " +
                 (linea === l.value
                   ? "bg-[#c0607a] text-white border-[#c0607a]"
-                  : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]")
+                  : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]")
               }
             >
               {l.label}
@@ -97,7 +97,7 @@ export function ProductosView() {
           {/* Botón crear */}
           <button
             onClick={() => setEditing("new")}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#7b2d42] text-white text-[12px] font-bold hover:bg-[#5a1e2e] transition"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#AA6A42] text-white text-[12px] font-bold hover:bg-[#5a1e2e] transition"
           >
             <svg
               viewBox="0 0 24 24"
@@ -116,12 +116,12 @@ export function ProductosView() {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
       {isLoading && (
-        <p className="text-center text-[#c0a0a8] text-sm py-8">Cargando…</p>
+        <p className="text-center text-[#AA6A42] text-sm py-8">Cargando…</p>
       )}
 
       {!isLoading && productos.length === 0 && (
-        <div className="rounded-2xl border border-[#f5dce4] bg-[#fdf6f0] py-12 text-center">
-          <p className="text-[#c0a0a8] text-sm mb-3">
+        <div className="rounded-2xl border border-[#f0e0d0] bg-[#FFF7F0] py-12 text-center">
+          <p className="text-[#AA6A42] text-sm mb-3">
             No hay productos en esta categoría
           </p>
           <button
@@ -176,7 +176,7 @@ export function ProductosView() {
             className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
             onClick={() => setDeleting(null)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f5dce4] p-6 max-w-sm w-full z-10">
+          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 max-w-sm w-full z-10">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                 <svg
@@ -192,10 +192,10 @@ export function ProductosView() {
               </div>
               <div>
                 <p className="font-bold text-[#3d1a24]">Eliminar producto</p>
-                <p className="text-[13px] text-[#b07a8a]">{deleting.nombre}</p>
+                <p className="text-[13px] text-[#6B3E26]">{deleting.nombre}</p>
               </div>
             </div>
-            <p className="text-[13px] text-[#7b2d42] mb-5">
+            <p className="text-[13px] text-[#AA6A42] mb-5">
               El producto se marcará como inactivo y dejará de aparecer en el
               catálogo. Esta acción se puede revertir.
             </p>
@@ -205,7 +205,7 @@ export function ProductosView() {
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleting(null)}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
               >
                 Cancelar
               </button>

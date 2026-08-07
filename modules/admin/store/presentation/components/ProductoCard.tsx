@@ -27,13 +27,13 @@ export function ProductoCard({ producto, onClick, onEdit, onDelete }: Props) {
   const linea = LINEA_LABELS[producto.linea] ?? LINEA_LABELS.sweet;
 
   return (
-    <div className="group relative flex flex-col bg-white rounded-2xl border border-[#f5dce4] shadow-sm hover:shadow-md hover:border-[#e8c4cd] transition overflow-hidden">
+    <div className="group relative flex flex-col bg-white rounded-2xl border border-[#f0e0d0] shadow-sm hover:shadow-md hover:border-[#e8c4a0] transition overflow-hidden">
       {/* Imagen / placeholder */}
       <button
         onClick={onClick}
         className="text-left flex flex-col flex-1 focus:outline-none"
       >
-        <div className="relative w-full aspect-[4/3] bg-[#fdf6f0]">
+        <div className="relative w-full aspect-[4/3] bg-[#FFF7F0]">
           {producto.imagenUrl ? (
             <Image
               src={producto.imagenUrl}
@@ -42,7 +42,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDelete }: Props) {
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[#e8c4cd]">
+            <div className="w-full h-full flex items-center justify-center text-[#e8c4a0]">
               <svg
                 viewBox="0 0 24 24"
                 className="w-12 h-12"
@@ -70,7 +70,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDelete }: Props) {
             <button
               onClick={onEdit}
               title="Editar"
-              className="p-1.5 rounded-lg bg-white/90 border border-[#e8c4cd] text-[#7b2d42] hover:bg-[#fdf6f0] hover:text-[#c0607a] shadow-sm transition backdrop-blur-sm"
+              className="p-1.5 rounded-lg bg-white/90 border border-[#e8c4a0] text-[#AA6A42] hover:bg-[#FFF7F0] hover:text-[#c0607a] shadow-sm transition backdrop-blur-sm"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -108,7 +108,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDelete }: Props) {
             {producto.nombre}
           </p>
           {producto.descripcion && (
-            <p className="text-[12px] text-[#b07a8a] line-clamp-2">
+            <p className="text-[12px] text-[#6B3E26] line-clamp-2">
               {producto.descripcion}
             </p>
           )}
@@ -122,7 +122,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDelete }: Props) {
                 {producto.tamanosFijos.length} tamaños
               </span>
             ) : (
-              <span className="text-[11px] text-[#b07a8a]">Tamaño único</span>
+              <span className="text-[11px] text-[#6B3E26]">Tamaño único</span>
             )}
           </div>
         </div>

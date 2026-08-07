@@ -80,6 +80,7 @@ export default function Contact() {
 
   const [comments, setComments] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const isFormValid = Object.values(ratings).every(Boolean);
 
@@ -88,25 +89,30 @@ export default function Contact() {
     if (!isFormValid) return;
 
     setLoading(true);
+    setError(null);
 
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ratings, comments }),
-    });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ratings, comments }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    setLoading(false);
+      if (!res.ok) {
+        setError(data.error || "No pudimos enviar tu evaluación. Intenta de nuevo.");
+        return;
+      }
 
-    if (!res.ok) {
-      setSended(false);
-      return;
+      setComments("");
+      setRatings({ taste: null, texture: null, visual: null, service: null });
+      setSended(true);
+    } catch {
+      setError("No pudimos conectar. Revisa tu conexión e intenta de nuevo.");
+    } finally {
+      setLoading(false);
     }
-
-    setComments("");
-    setRatings({ taste: null, texture: null, visual: null, service: null });
-    setSended(true);
   }
 
   return (
@@ -157,7 +163,8 @@ export default function Contact() {
                               [item.key]: face.value,
                             }))
                           }
-                          className="hover:scale-110 transition"
+                          aria-label={`${t(`ratings.${item.key}`)}: ${face.value}`}
+                          className="p-2.5 -m-2.5 hover:scale-110 transition"
                         >
                           <FaceIcon
                             active={
@@ -179,6 +186,12 @@ export default function Contact() {
                   className="w-full rounded-xl border border-[#6B3E26]/30 p-4 focus:ring-2 focus:ring-[#C68642]"
                   placeholder="Cuéntanos tu experiencia…"
                 />
+
+                {error && (
+                  <p role="alert" className="text-sm text-[#C0392B] text-center -mt-2">
+                    {error}
+                  </p>
+                )}
 
                 <button
                   type="submit"
@@ -237,7 +250,7 @@ export default function Contact() {
               breakpoint === "clg" || breakpoint === "cmd" ? "left" : "center",
           }}
         >
-          <h3 className="text-[clamp(3.5rem,4.5vw,5rem)] bg-gradient-to-r from-[#8A3414] via-[#C68642] to-[#D7B07A] bg-clip-text text-transparent leading-tight font-extrabold font-subtitle">
+          <h3 className="text-[clamp(3.5rem,4.5vw,5rem)] text-[#3A1F14] leading-tight font-extrabold font-subtitle">
             {t("title")}
           </h3>
 
@@ -252,7 +265,7 @@ export default function Contact() {
               rel="noopener noreferrer"
               className="w-1/2 rounded-xl text-lg font-semibold
             transition-all duration-300 shadow-md
-            bg-[#c87d87] text-white hover:bg-[#b36b75] px-8 py-4"
+            bg-[#A84D66] text-white hover:bg-[#8f3f54] px-8 py-4"
             >
               {t2("quoteButton")}
             </a>

@@ -287,7 +287,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, cupones, subtotal, descuentoTotal, total, fechaEntrega, direccionEntrega } = (await req.json()) as {
+    const { items, cupones, subtotal, descuentoTotal, total, fechaEntrega, direccionEntrega, notas } = (await req.json()) as {
       items: CartItem[];
       cupones: OrdenCuponAplicado[];
       subtotal: number;
@@ -295,6 +295,7 @@ export async function POST(req: NextRequest) {
       total: number;
       fechaEntrega?: string | null;
       direccionEntrega?: string | null;
+      notas?: string | null;
     };
 
     if (!items?.length) {
@@ -343,7 +344,7 @@ export async function POST(req: NextRequest) {
         subtotal: Math.round(subtotal * 100) / 100,
         descuento_total: Math.round(descuentoTotal * 100) / 100,
         total: Math.round(total * 100) / 100,
-        notas: `Orden generada por cliente: ${userEmail}`,
+        notas: notas?.trim() || null,
         ...(fechaEntrega ? { fecha_entrega: fechaEntrega } : {}),
         ...(direccionEntrega ? { direccion_entrega: direccionEntrega } : {}),
       })

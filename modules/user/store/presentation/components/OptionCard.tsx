@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type { KeyboardEvent } from "react";
 
 interface Props {
   id: string;
@@ -9,13 +10,36 @@ interface Props {
   image?: string | null;
   selected: boolean;
   onClick: () => void;
+  /** Con onQuantityChange, la tarjeta muestra un contador +/- (en vez del check) cuando está seleccionada — ej. cantidad de ornamentos. */
+  quantity?: number;
+  onQuantityChange?: (quantity: number) => void;
+  maxQuantity?: number;
 }
 
-export function OptionCard({ label, description, image, selected, onClick }: Props) {
+export function OptionCard({
+  label,
+  description,
+  image,
+  selected,
+  onClick,
+  quantity,
+  onQuantityChange,
+  maxQuantity = 99,
+}: Props) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      aria-pressed={selected}
       className={`relative w-full aspect-square rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 ${
         selected
           ? "border-2 border-[#AA6A42] shadow-[0_0_0_4px_rgba(170,106,66,0.22)]"
@@ -40,7 +64,7 @@ export function OptionCard({ label, description, image, selected, onClick }: Pro
               {label}
             </p>
             {description && (
-              <p className="text-white/70 text-[10px] mt-0.5 line-clamp-1">{description}</p>
+              <p className="text-white/70 text-[11px] mt-0.5 line-clamp-1">{description}</p>
             )}
           </div>
         </>
@@ -53,7 +77,7 @@ export function OptionCard({ label, description, image, selected, onClick }: Pro
         >
           <p
             className={`font-semibold text-sm leading-snug ${
-              selected ? "text-[#AA6A42]" : "text-[#3A1F14]"
+              selected ? "text-[#8A5535]" : "text-[#3A1F14]"
             }`}
           >
             {label}
@@ -65,7 +89,7 @@ export function OptionCard({ label, description, image, selected, onClick }: Pro
       )}
 
       {/* Selection checkmark */}
-      {selected && (
+      {selected && !onQuantityChange && (
         <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#AA6A42] flex items-center justify-center shadow-sm">
           <svg
             viewBox="0 0 24 24"
@@ -79,6 +103,34 @@ export function OptionCard({ label, description, image, selected, onClick }: Pro
           </svg>
         </div>
       )}
-    </button>
+
+      {/* Contador de cantidad — reemplaza el check cuando aplica */}
+      {selected && onQuantityChange && quantity != null && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="absolute top-2 right-2 flex items-center gap-0.5 bg-[#AA6A42] rounded-full px-1 py-0.5 shadow-sm"
+        >
+          <button
+            type="button"
+            onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
+            className="w-5 h-5 flex items-center justify-center text-white cursor-pointer"
+            aria-label={`Quitar una unidad de ${label}`}
+          >
+            −
+          </button>
+          <span className="w-4 text-center text-white text-[11px] font-bold">
+            {quantity}
+          </span>
+          <button
+            type="button"
+            onClick={() => onQuantityChange(Math.min(maxQuantity, quantity + 1))}
+            className="w-5 h-5 flex items-center justify-center text-white cursor-pointer"
+            aria-label={`Agregar una unidad de ${label}`}
+          >
+            +
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

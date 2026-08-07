@@ -7,7 +7,7 @@ import { useProductoConfigurador } from "@/modules/admin/store/presentation/hook
 import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import { personasDesdeDiametro } from "@/modules/admin/store/domain/entities/PastelMedida.entity";
 import { NINGUNO } from "@/modules/admin/store/presentation/components/configurador/SelectField";
-import { DiametroPersonasSelector } from "@/modules/admin/store/presentation/components/configurador/DiametroPersonasSelector";
+import { DiametroPersonasSelectorPublic as DiametroPersonasSelector } from "./DiametroPersonasSelectorPublic";
 import type { Producto } from "@/modules/admin/store/domain/entities/Producto.entity";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
 import type { Cupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
@@ -26,7 +26,7 @@ interface CuponAplicado {
 // ── Pequeños componentes de UI ────────────────────────────────────────────────
 
 const Label = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider mb-1.5">
+  <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider mb-1.5">
     {children}
   </p>
 );
@@ -55,6 +55,77 @@ const NativeSelect = ({
 );
 
 const SectionDivider = () => <hr className="border-[#f0e0d0]" />;
+
+interface CoberturaRow {
+  id: string;
+  saborId: string | null;
+}
+
+/** N coberturas/rellenos, cada una con su propio sabor opcional — todas suman al precio. */
+function MultiCoberturaSelect({
+  label,
+  items,
+  onChange,
+  options,
+  sabores,
+  addLabel,
+}: {
+  label: string;
+  items: CoberturaRow[];
+  onChange: (items: CoberturaRow[]) => void;
+  options: { value: string; label: string }[];
+  sabores: { value: string; label: string; sublabel?: string }[];
+  addLabel: string;
+}) {
+  const addRow = () => onChange([...items, { id: "", saborId: null }]);
+  const removeRow = (idx: number) => onChange(items.filter((_, i) => i !== idx));
+  const updateRow = (idx: number, patch: Partial<CoberturaRow>) =>
+    onChange(items.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
+
+  return (
+    <div className="sm:col-span-2">
+      <Label>{label}</Label>
+      <div className="flex flex-col gap-2">
+        {items.map((item, idx) => (
+          <div key={idx} className="flex items-start gap-2">
+            <div className="flex-1 flex flex-col gap-2">
+              <NativeSelect
+                value={item.id || NINGUNO}
+                onChange={(v) => updateRow(idx, { id: v === NINGUNO ? "" : v, saborId: null })}
+                options={options}
+              />
+              {item.id && sabores.length > 0 && (
+                <NativeSelect
+                  value={item.saborId ?? NINGUNO}
+                  onChange={(v) => updateRow(idx, { saborId: v === NINGUNO ? null : v })}
+                  options={sabores}
+                />
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => removeRow(idx)}
+              className="w-11 h-11 flex items-center justify-center rounded-lg text-[#AA6A42] hover:bg-[#FFF0E6] transition cursor-pointer shrink-0"
+              aria-label="Quitar"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <p className="text-xs text-[#AA6A42]/50">Ninguna</p>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={addRow}
+        className="mt-2 text-xs font-semibold text-[#A84D66] hover:text-[#8f3f54] transition cursor-pointer"
+      >
+        {addLabel}
+      </button>
+    </div>
+  );
+}
 
 // ── Visibilidad de opciones según tipo de producto ────────────────────────────
 // Los campos ocultos siguen activos en opcionesDefault y afectan el precio.
@@ -129,13 +200,16 @@ export default function ProductoModal({ producto, onClose }: Props) {
   const [validandoCupon, setValidandoCupon] = useState(false);
 
   const [justAdded, setJustAdded] = useState(false);
+  const [showExtras, setShowExtras] = useState(false);
 
   const overlayRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") { reset(); onClose(); } };
     document.addEventListener("keydown", handler);
     document.body.style.overflow = "hidden";
+    closeBtnRef.current?.focus();
     return () => {
       document.removeEventListener("keydown", handler);
       document.body.style.overflow = "";
@@ -242,24 +316,41 @@ export default function ProductoModal({ producto, onClose }: Props) {
     >
       <div className="flex min-h-full items-center justify-center p-4 md:p-6">
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="producto-modal-title"
           className="relative w-full max-w-2xl bg-[#FFFDF8] rounded-2xl shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
-            <div>
-              <h2 className="font-bold text-[#3A1F14] text-lg font-subtitle">
-                {producto.nombre}
-              </h2>
-              {producto.descripcion && (
-                <p className="text-xs text-[#AA6A42]/70 mt-0.5 line-clamp-1">
-                  {producto.descripcion}
-                </p>
+          <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
+            <div className="flex items-center gap-3 min-w-0">
+              {producto.imagenUrl && (
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-[#f0e0d0]">
+                  <Image
+                    src={producto.imagenUrl}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="56px"
+                  />
+                </div>
               )}
+              <div className="min-w-0">
+                <h2 id="producto-modal-title" className="font-bold text-[#3A1F14] text-lg font-subtitle">
+                  {producto.nombre}
+                </h2>
+                {producto.descripcion && (
+                  <p className="text-xs text-[#AA6A42]/70 mt-0.5 line-clamp-1">
+                    {producto.descripcion}
+                  </p>
+                )}
+              </div>
             </div>
             <button
+              ref={closeBtnRef}
               onClick={() => { reset(); onClose(); }}
-              className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#AA6A42] transition-colors cursor-pointer"
+              className="p-3 -m-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#AA6A42] transition-colors cursor-pointer shrink-0"
               aria-label="Cerrar"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -327,58 +418,58 @@ export default function ProductoModal({ producto, onClose }: Props) {
 
                 {/* ── Grid de opciones (controlado por vis) ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Cobertura */}
+                  {/* Coberturas (varias, todas suman al precio) */}
                   {vis.cobertura && (
-                    <div>
-                      <Label>Cobertura</Label>
-                      <NativeSelect
-                        value={opciones.coberturaId ?? NINGUNO}
-                        onChange={(v) => update("coberturaId", v === NINGUNO ? null : v)}
-                        options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
-                      />
-                    </div>
+                    <MultiCoberturaSelect
+                      label="Coberturas"
+                      items={opciones.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId }))}
+                      onChange={(items) =>
+                        update(
+                          "coberturas",
+                          items
+                            .filter((it) => it.id)
+                            .map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId })),
+                        )
+                      }
+                      options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
+                      sabores={
+                        vis.saborCobertura
+                          ? catalogo.saboresCobertura.map((s) => ({
+                              value: s.id,
+                              label: s.nombre,
+                              sublabel: s.precio != null ? `+$${s.precio}` : undefined,
+                            }))
+                          : []
+                      }
+                      addLabel="+ Agregar cobertura"
+                    />
                   )}
 
-                  {vis.saborCobertura && (
-                    <div>
-                      <Label>Sabor de cobertura</Label>
-                      <NativeSelect
-                        value={opciones.saborCoberturaId ?? NINGUNO}
-                        onChange={(v) => update("saborCoberturaId", v === NINGUNO ? null : v)}
-                        options={catalogo.saboresCobertura.map((s) => ({
-                          value: s.id,
-                          label: s.nombre,
-                          sublabel: s.precio != null ? `+$${s.precio}` : undefined,
-                        }))}
-                      />
-                    </div>
-                  )}
-
-                  {/* Relleno */}
+                  {/* Rellenos (varios, todos suman al precio) */}
                   {vis.relleno && (
-                    <div>
-                      <Label>Relleno</Label>
-                      <NativeSelect
-                        value={opciones.rellenoId ?? NINGUNO}
-                        onChange={(v) => update("rellenoId", v === NINGUNO ? null : v)}
-                        options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
-                      />
-                    </div>
-                  )}
-
-                  {vis.saborRelleno && (
-                    <div>
-                      <Label>Sabor de relleno</Label>
-                      <NativeSelect
-                        value={opciones.saborRellenoId ?? NINGUNO}
-                        onChange={(v) => update("saborRellenoId", v === NINGUNO ? null : v)}
-                        options={catalogo.saboresCobertura.map((s) => ({
-                          value: s.id,
-                          label: s.nombre,
-                          sublabel: s.precio != null ? `+$${s.precio}` : undefined,
-                        }))}
-                      />
-                    </div>
+                    <MultiCoberturaSelect
+                      label="Rellenos"
+                      items={opciones.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId }))}
+                      onChange={(items) =>
+                        update(
+                          "rellenos",
+                          items
+                            .filter((it) => it.id)
+                            .map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId })),
+                        )
+                      }
+                      options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
+                      sabores={
+                        vis.saborRelleno
+                          ? catalogo.saboresCobertura.map((s) => ({
+                              value: s.id,
+                              label: s.nombre,
+                              sublabel: s.precio != null ? `+$${s.precio}` : undefined,
+                            }))
+                          : []
+                      }
+                      addLabel="+ Agregar relleno"
+                    />
                   )}
 
                   {/* Licor */}
@@ -437,9 +528,9 @@ export default function ProductoModal({ producto, onClose }: Props) {
                         <button
                           type="button"
                           onClick={() => update("humedadJarabe", "semi_humedo")}
-                          className={`flex-1 py-2 text-sm font-medium transition cursor-pointer ${
+                          className={`flex-1 py-2 min-h-11 text-sm font-medium transition cursor-pointer ${
                             (opciones.humedadJarabe ?? "semi_humedo") === "semi_humedo"
-                              ? "bg-[#AA6A42] text-white"
+                              ? "bg-[#8A5535] text-white"
                               : "bg-white text-[#6B3E26] hover:bg-[#FFF0E6]"
                           }`}
                         >
@@ -448,9 +539,9 @@ export default function ProductoModal({ producto, onClose }: Props) {
                         <button
                           type="button"
                           onClick={() => update("humedadJarabe", "humedo")}
-                          className={`flex-1 py-2 text-sm font-medium transition border-l border-[#e8c4a0] cursor-pointer ${
+                          className={`flex-1 py-2 min-h-11 text-sm font-medium transition border-l border-[#e8c4a0] cursor-pointer ${
                             opciones.humedadJarabe === "humedo"
-                              ? "bg-[#AA6A42] text-white"
+                              ? "bg-[#8A5535] text-white"
                               : "bg-white text-[#6B3E26] hover:bg-[#FFF0E6]"
                           }`}
                         >
@@ -465,55 +556,180 @@ export default function ProductoModal({ producto, onClose }: Props) {
                 {/* Mostrar divisor solo si hay al menos una opción visible */}
                 {(vis.cobertura || vis.relleno || vis.licor || vis.jarabe) && <SectionDivider />}
 
-                {/* ── Toppings ── */}
-                {vis.toppings && (
-                  <div>
-                    <Label>Toppings</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {catalogo.toppings
-                        .filter((t) => t.cantidad != null)
-                        .map((t) => {
-                          const active = opciones.toppingIds.includes(t.ingredienteId);
-                          return (
-                            <button
-                              key={t.ingredienteId}
-                              type="button"
-                              onClick={() => {
-                                const next = active
-                                  ? opciones.toppingIds.filter((id) => id !== t.ingredienteId)
-                                  : [...opciones.toppingIds, t.ingredienteId];
-                                update("toppingIds", next);
-                              }}
-                              className={`flex items-center gap-2 rounded-xl text-xs font-semibold border transition cursor-pointer ${
-                                t.imagenUrl ? "pl-1.5 pr-3 py-1.5" : "px-3 py-1.5"
-                              } ${
-                                active
-                                  ? "bg-[#DA6C94] text-white border-[#DA6C94]"
-                                  : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
-                              }`}
-                            >
-                              {t.imagenUrl && (
-                                <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
-                                  <Image
-                                    src={t.imagenUrl}
-                                    alt={t.nombre}
-                                    fill
-                                    className="object-cover"
-                                    sizes="32px"
-                                  />
-                                </div>
-                              )}
-                              <span>{t.nombre}</span>
-                              <span className="opacity-60">{t.cantidad}{t.unidad}</span>
-                            </button>
-                          );
-                        })}
-                      {catalogo.toppings.filter((t) => t.cantidad != null).length === 0 && (
-                        <p className="text-xs text-[#AA6A42]/50">Sin toppings disponibles</p>
+                {/* ── Extras opcionales (Toppings + Ornamentos), colapsado por defecto ── */}
+                {(vis.toppings || catalogo.ornamentos.length > 0) && (() => {
+                  const extrasCount =
+                    opciones.toppingIds.length +
+                    opciones.ornamentos.reduce((sum, o) => sum + o.cantidad, 0);
+                  return (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setShowExtras((v) => !v)}
+                        className="w-full flex items-center justify-between py-1 min-h-11 cursor-pointer"
+                      >
+                        <span className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                          Extras opcionales
+                          {extrasCount > 0 && (
+                            <span className="ml-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#DA6C94] text-white text-[11px] font-bold normal-case tracking-normal">
+                              {extrasCount}
+                            </span>
+                          )}
+                        </span>
+                        <svg
+                          viewBox="0 0 24 24"
+                          className={`w-4 h-4 text-[#AA6A42] transition-transform ${showExtras ? "rotate-180" : ""}`}
+                          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </button>
+
+                      {showExtras && (
+                        <div className="flex flex-col gap-4 mt-3">
+                          {/* ── Toppings ── */}
+                          {vis.toppings && (
+                            <div>
+                              <Label>Toppings</Label>
+                              <div className="flex flex-wrap gap-2">
+                                {catalogo.toppings
+                                  .filter((t) => t.cantidad != null)
+                                  .map((t) => {
+                                    const active = opciones.toppingIds.includes(t.ingredienteId);
+                                    return (
+                                      <button
+                                        key={t.ingredienteId}
+                                        type="button"
+                                        onClick={() => {
+                                          const next = active
+                                            ? opciones.toppingIds.filter((id) => id !== t.ingredienteId)
+                                            : [...opciones.toppingIds, t.ingredienteId];
+                                          update("toppingIds", next);
+                                        }}
+                                        className={`flex items-center gap-2 rounded-xl text-xs font-semibold border transition cursor-pointer ${
+                                          t.imagenUrl ? "pl-1.5 pr-3 py-1.5" : "px-3 py-1.5"
+                                        } ${
+                                          active
+                                            ? "bg-[#DA6C94] text-white border-[#DA6C94]"
+                                            : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
+                                        }`}
+                                      >
+                                        {t.imagenUrl && (
+                                          <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                                            <Image
+                                              src={t.imagenUrl}
+                                              alt={t.nombre}
+                                              fill
+                                              className="object-cover"
+                                              sizes="32px"
+                                            />
+                                          </div>
+                                        )}
+                                        <span>{t.nombre}</span>
+                                        <span className="opacity-60">{t.cantidad}{t.unidad}</span>
+                                      </button>
+                                    );
+                                  })}
+                                {catalogo.toppings.filter((t) => t.cantidad != null).length === 0 && (
+                                  <p className="text-xs text-[#AA6A42]/50">Sin toppings disponibles</p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* ── Ornamentos ── */}
+                          {catalogo.ornamentos.length > 0 && (
+                            <div>
+                              <Label>Ornamentos</Label>
+                              <div className="flex flex-wrap gap-2">
+                                {catalogo.ornamentos.map((o) => {
+                                  const sel = opciones.ornamentos.find((x) => x.ornamentoId === o.id);
+                                  const active = !!sel;
+                                  return (
+                                    <div
+                                      key={o.id}
+                                      className={`flex items-center gap-1.5 rounded-xl text-xs font-semibold border transition ${
+                                        o.imagenUrl ? "pl-1.5 pr-2 py-1.5" : "px-3 py-1.5"
+                                      } ${
+                                        active
+                                          ? "bg-[#DA6C94] text-white border-[#DA6C94]"
+                                          : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
+                                      }`}
+                                    >
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          const next = active
+                                            ? opciones.ornamentos.filter((x) => x.ornamentoId !== o.id)
+                                            : [...opciones.ornamentos, { ornamentoId: o.id, cantidad: 1 }];
+                                          update("ornamentos", next);
+                                        }}
+                                        className="flex items-center gap-2 cursor-pointer"
+                                      >
+                                        {o.imagenUrl && (
+                                          <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                                            <Image
+                                              src={o.imagenUrl}
+                                              alt={o.nombre}
+                                              fill
+                                              className="object-cover"
+                                              sizes="32px"
+                                            />
+                                          </div>
+                                        )}
+                                        <span>{o.nombre}</span>
+                                        <span className="opacity-60">+${o.precio.toFixed(0)}</span>
+                                      </button>
+                                      {active && sel && (
+                                        <span className="flex items-center gap-0.5 bg-white/25 rounded-full">
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              update(
+                                                "ornamentos",
+                                                opciones.ornamentos.map((x) =>
+                                                  x.ornamentoId === o.id
+                                                    ? { ...x, cantidad: Math.max(1, x.cantidad - 1) }
+                                                    : x,
+                                                ),
+                                              )
+                                            }
+                                            className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                                            aria-label={`Quitar una unidad de ${o.nombre}`}
+                                          >
+                                            −
+                                          </button>
+                                          <span className="w-5 text-center">{sel.cantidad}</span>
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              update(
+                                                "ornamentos",
+                                                opciones.ornamentos.map((x) =>
+                                                  x.ornamentoId === o.id
+                                                    ? { ...x, cantidad: Math.min(99, x.cantidad + 1) }
+                                                    : x,
+                                                ),
+                                              )
+                                            }
+                                            className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                                            aria-label={`Agregar una unidad de ${o.nombre}`}
+                                          >
+                                            +
+                                          </button>
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 <SectionDivider />
 
@@ -536,7 +752,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
                     <button
                       onClick={aplicarCupon}
                       disabled={validandoCupon || !codigoCupon.trim()}
-                      className="px-3 py-2 rounded-xl bg-[#FFF0E6] border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold cursor-pointer hover:bg-[#fde8d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-3 py-2 min-h-11 rounded-xl bg-[#FFF0E6] border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold cursor-pointer hover:bg-[#fde8d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {validandoCupon ? "…" : "Aplicar"}
                     </button>
@@ -550,7 +766,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
                     </p>
                   )}
                   {!isUser && (
-                    <p className="mt-1 text-[10px] text-[#AA6A42]/50">
+                    <p className="mt-1 text-[11px] text-[#AA6A42]/50">
                       Inicia sesión para cupones personalizados
                     </p>
                   )}
@@ -563,12 +779,12 @@ export default function ProductoModal({ producto, onClose }: Props) {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                        className="w-8 h-8 rounded-lg border border-[#e8c4a0] bg-[#FFF0E6] text-[#AA6A42] font-bold cursor-pointer hover:bg-[#fde8d0] transition-colors flex items-center justify-center"
+                        className="w-11 h-11 rounded-lg border border-[#e8c4a0] bg-[#FFF0E6] text-[#AA6A42] font-bold cursor-pointer hover:bg-[#fde8d0] transition-colors flex items-center justify-center"
                       >−</button>
                       <span className="text-sm font-bold text-[#3A1F14] w-6 text-center">{cantidad}</span>
                       <button
                         onClick={() => setCantidad(cantidad + 1)}
-                        className="w-8 h-8 rounded-lg border border-[#e8c4a0] bg-[#FFF0E6] text-[#AA6A42] font-bold cursor-pointer hover:bg-[#fde8d0] transition-colors flex items-center justify-center"
+                        className="w-11 h-11 rounded-lg border border-[#e8c4a0] bg-[#FFF0E6] text-[#AA6A42] font-bold cursor-pointer hover:bg-[#fde8d0] transition-colors flex items-center justify-center"
                       >+</button>
                     </div>
                   </div>
@@ -583,7 +799,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
                           ${total.toFixed(0)}
                         </p>
                         {cantidad > 1 && (
-                          <p className="text-[10px] text-[#AA6A42]/60">${precioBase.toFixed(0)} c/u</p>
+                          <p className="text-[11px] text-[#AA6A42]/60">${precioBase.toFixed(0)} c/u</p>
                         )}
                       </>
                     )}
@@ -610,17 +826,17 @@ export default function ProductoModal({ producto, onClose }: Props) {
               <button
                 type="button"
                 onClick={() => { reset(); onClose(); }}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
+                className="flex-1 py-2.5 min-h-11 rounded-xl border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleAdd}
                 disabled={!desglose || loading || justAdded}
-                className={`flex-1 py-2.5 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
+                className={`flex-1 py-2.5 min-h-11 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
                   justAdded
-                    ? "bg-[#6ab04c]"
-                    : "bg-[#DA6C94] hover:bg-[#c0607a] disabled:opacity-50"
+                    ? "bg-[#1B7A43]"
+                    : "bg-[#A84D66] hover:bg-[#8f3f54] disabled:opacity-50"
                 }`}
               >
                 {justAdded ? (

@@ -50,10 +50,10 @@ function UserMenu() {
         className={`
           flex items-center justify-center
           w-9 h-9 rounded-full
-          bg-[#c0607a] hover:bg-[#a84d66]
+          bg-[#AA6A42] hover:bg-[#8A5535]
           text-white text-xs font-bold tracking-wide
           ring-2 transition-all duration-150
-          ${open ? "ring-[#f8c8d4]" : "ring-transparent hover:ring-[#f8c8d4]/50"}
+          ${open ? "ring-[#e8c4a0]" : "ring-transparent hover:ring-[#e8c4a0]/50"}
         `}
         aria-label="Menú de usuario"
         aria-expanded={open}
@@ -71,22 +71,22 @@ function UserMenu() {
             transition={{ duration: 0.15 }}
             className="
               absolute right-0 top-full mt-2 w-52
-              bg-white border border-[#f5dce4]
+              bg-white border border-[#f0e0d0]
               rounded-2xl shadow-xl overflow-hidden
               z-50
             "
           >
             {/* Info usuario */}
-            <div className="px-4 py-3 border-b border-[#f5dce4]">
+            <div className="px-4 py-3 border-b border-[#f0e0d0]">
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#c0607a] text-white text-xs font-bold shrink-0">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#AA6A42] text-white text-xs font-bold shrink-0">
                   {initials}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[13px] font-semibold text-[#7b2d42] truncate">
+                  <p className="text-[13px] font-semibold text-[#3A1F14] truncate">
                     {name}
                   </p>
-                  <p className="text-[11px] text-[#b07a8a] truncate">{email}</p>
+                  <p className="text-[11px] text-[#6B3E26] truncate">{email}</p>
                 </div>
               </div>
             </div>
@@ -101,8 +101,8 @@ function UserMenu() {
                 className="
                   w-full flex items-center gap-2.5
                   px-3 py-2 rounded-xl
-                  text-[13px] text-[#7b2d42]/80
-                  hover:text-[#c0607a] hover:bg-[#fdf6f0]
+                  text-[13px] text-[#6B3E26]
+                  hover:text-[#AA6A42] hover:bg-[#FFF7F0]
                   transition text-left
                 "
               >
@@ -134,7 +134,7 @@ export default function AppBarAdmin() {
       <motion.section
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="mx-auto flex h-[72px] items-center px-4 lg:px-8 bg-[#231512] border-b border-[#5a1f30] shadow-sm"
+        className="mx-auto flex h-[72px] items-center px-4 lg:px-8 bg-[#F1DCC9] border-b border-[#e0c9b0] shadow-sm"
       >
         {/* LEFT */}
         <div className="flex items-center gap-4 order-1">
@@ -151,13 +151,13 @@ export default function AppBarAdmin() {
           {/* Hamburger mobile */}
           <button
             onClick={() => setMobileOpen(true)}
-            className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 border border-white/15 hover:bg-white/20 transition"
+            className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-[#AA6A42]/10 border border-[#AA6A42]/20 hover:bg-[#AA6A42]/20 transition"
             aria-label="Abrir menú"
           >
             <svg viewBox="0 0 24 24" className="w-5 h-5">
               <path
                 d="M4 6h16M4 12h16M4 18h16"
-                stroke="#fce4ec"
+                stroke="#3A1F14"
                 strokeWidth="1.5"
                 strokeLinecap="round"
               />

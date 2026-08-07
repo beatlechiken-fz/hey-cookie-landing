@@ -12,7 +12,7 @@ export default function FinanzasPage() {
 
       <div className="px-6 lg:px-20">
         <div className="mb-6 pt-4 w-full max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-[#7b2d42]">Finanzas</h1>
+          <h1 className="text-2xl font-bold text-[#AA6A42]">Finanzas</h1>
         </div>
         <FinanzasView />
       </div>

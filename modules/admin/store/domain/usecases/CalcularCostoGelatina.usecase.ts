@@ -27,13 +27,17 @@ export function calcularCostoGelatina(
   const find = <T extends { id: string }>(arr: T[], id: string | null | undefined) =>
     !id || id === "ninguno" ? undefined : arr.find((x) => x.id === id);
 
-  const cob = find(catalogo.coberturas, config.coberturaId);
-  const rel = find(catalogo.coberturas, config.rellenoId);
-  const jar = find(catalogo.jarabes,    config.jarabeId);
+  const jar = find(catalogo.jarabes, config.jarabeId);
 
-  const costoCobertura = cob ? cob.costoTotal * factorOpciones : 0;
-  const costoRelleno   = rel ? rel.costoTotal * factorOpciones : 0;
-  const costoJarabe    = jar ? jar.costoTotal * factorOpciones : 0;
+  const costoCobertura = (config.coberturas ?? []).reduce((sum, sel) => {
+    const cob = find(catalogo.coberturas, sel.coberturaId);
+    return sum + (cob ? cob.costoTotal * factorOpciones : 0);
+  }, 0);
+  const costoRelleno = (config.rellenos ?? []).reduce((sum, sel) => {
+    const rel = find(catalogo.coberturas, sel.rellenoId);
+    return sum + (rel ? rel.costoTotal * factorOpciones : 0);
+  }, 0);
+  const costoJarabe = jar ? jar.costoTotal * factorOpciones : 0;
 
   const costoToppings = config.toppingIds
     .filter((t) => t && t !== "ninguno")
@@ -54,6 +58,13 @@ export function calcularCostoGelatina(
       return sum + (emp ? emp.precio : 0);
     }, 0);
 
+  const costoOrnamentos = (config.ornamentos ?? [])
+    .filter((sel) => sel.ornamentoId && sel.ornamentoId !== "ninguno")
+    .reduce((sum, sel) => {
+      const orn = catalogo.ornamentos?.find((o) => o.id === sel.ornamentoId);
+      return sum + (orn ? orn.precio * (sel.cantidad ?? 1) : 0);
+    }, 0);
+
   const transferItem = catalogo.toppings.find((t) => t.nombre?.toLowerCase().includes("transfer"));
   const blondaItem   = catalogo.empaques.find((e) => e.nombre?.toLowerCase().includes("blonda"));
   const costoTransfer = config.conTransfer && transferItem
@@ -62,7 +73,7 @@ export function calcularCostoGelatina(
 
   const costoInsumos =
     costoBaseTotal + costoCobertura + costoRelleno + costoJarabe +
-    costoToppings + costoLicor + costoEmpaques + costoTransfer + costoBlonda;
+    costoToppings + costoLicor + costoEmpaques + costoOrnamentos + costoTransfer + costoBlonda;
 
   const baseEstructural = costoBaseTotal + costoCobertura + costoRelleno;
   const baseConOpciones = baseEstructural + costoJarabe;
@@ -89,6 +100,7 @@ export function calcularCostoGelatina(
     costoToppings,
     costoLicor,
     costoEmpaques,
+    costoOrnamentos,
     costoTransfer,
     costoBlonda,
     costoInsumos,

@@ -26,6 +26,7 @@ export async function GET() {
       { data: licorCants,  error: e8 },
       { data: empaques,    error: e9 },
       { data: gelatinas,   error: e10 },
+      { data: ornamentos,  error: e11 },
     ] = await Promise.all([
       db.from("bizcochos").select("id, nombre, costo_total, imagen_url").eq("activo", true).order("nombre"),
       db.from("coberturas").select("id, nombre, costo_total, imagen_url").eq("activo", true).order("nombre"),
@@ -43,9 +44,10 @@ export async function GET() {
         .select("gelatina_id, nombre, cantidad, ingredientes(costo_unidad_minima)")
         .eq("activo", true)
         .order("nombre"),
+      db.from("ornamentos").select("id, nombre, precio, imagen_url").eq("activo", true).order("nombre"),
     ]);
 
-    const firstErr = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10].find(Boolean);
+    const firstErr = [e1,e2,e3,e4,e5,e6,e7,e8,e9,e10,e11].find(Boolean);
     if (firstErr) throw new Error(firstErr.message);
 
     const toppings = (toppingCants ?? [])
@@ -91,6 +93,9 @@ export async function GET() {
       licores,
       empaques: (empaques ?? []).map((e: any) => ({
         id: e.id, nombre: e.nombre, precio: Number(e.precio), imagenUrl: e.imagen_url ?? null,
+      })),
+      ornamentos: (ornamentos ?? []).map((o: any) => ({
+        id: o.id, nombre: o.nombre, precio: Number(o.precio), imagenUrl: o.imagen_url ?? null,
       })),
       gelatinas: (() => {
         const gMap = new Map<string, { nombre: string; costoTotal: number }>();

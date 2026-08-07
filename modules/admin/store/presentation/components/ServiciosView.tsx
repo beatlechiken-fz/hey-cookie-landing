@@ -6,63 +6,15 @@ import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal"
 import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
 import { ProductosView } from "./ProductosView";
 
-function SlidersIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-    >
-      <line x1="3" y1="6" x2="17" y2="6" />
-      <circle cx="7" cy="6" r="2" fill="currentColor" stroke="none" />
-      <line x1="3" y1="14" x2="17" y2="14" />
-      <circle cx="13" cy="14" r="2" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
 export function ServiciosView() {
-  const [search, setSearch] = useState("");
   const [configuradorOpen, setConfiguradorOpen] = useState(false);
   const [gelatinaOpen, setGelatinaOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Toolbar */}
-      <div className="flex items-center gap-3">
-        <button className="relative flex items-center justify-center w-10 h-10 rounded-xl border bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0] transition shrink-0">
-          <SlidersIcon className="w-4 h-4" />
-        </button>
-        <div className="relative flex-1">
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar productos o servicios…"
-            className="w-full pl-4 pr-4 py-2.5 rounded-xl border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#c0a0a8]"
-          />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c0a0a8] pointer-events-none">
-            <svg
-              viewBox="0 0 24 24"
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </div>
-        </div>
-      </div>
-
       {/* Sección: Productos personalizados */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-[#7b2d42]">
+        <h2 className="text-lg font-bold text-[#AA6A42]">
           Productos personalizados
         </h2>
 
@@ -70,12 +22,12 @@ export function ServiciosView() {
           {/* Tarjeta Pastel personalizado */}
           <button
             onClick={() => setConfiguradorOpen(true)}
-            className="group bg-white rounded-2xl border border-[#f5dce4] overflow-hidden shadow-sm hover:border-[#e8c4cd] hover:shadow-md transition text-left"
+            className="group bg-white rounded-2xl border border-[#f0e0d0] overflow-hidden shadow-sm hover:border-[#e8c4a0] hover:shadow-md transition text-left"
           >
-            <div className="aspect-square bg-[#fdf6f0] flex items-center justify-center">
+            <div className="aspect-square bg-[#FFF7F0] flex items-center justify-center">
               <svg
                 viewBox="0 0 24 24"
-                className="w-16 h-16 text-[#e8c4cd] group-hover:text-[#dba8b7] transition"
+                className="w-16 h-16 text-[#e8c4a0] group-hover:text-[#dba8b7] transition"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
@@ -100,7 +52,7 @@ export function ServiciosView() {
           {/* Tarjeta Gelatina personalizada */}
           <button
             onClick={() => setGelatinaOpen(true)}
-            className="group bg-white rounded-2xl border border-[#f5dce4] overflow-hidden shadow-sm hover:border-[#e8c4cd] hover:shadow-md transition text-left"
+            className="group bg-white rounded-2xl border border-[#f0e0d0] overflow-hidden shadow-sm hover:border-[#e8c4a0] hover:shadow-md transition text-left"
           >
             <div className="aspect-square bg-[#f0f9fd] flex items-center justify-center">
               <svg
@@ -146,7 +98,7 @@ export function ServiciosView() {
 
       {/* Sección: Productos */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-[#7b2d42]">Productos</h2>
+        <h2 className="text-lg font-bold text-[#AA6A42]">Productos</h2>
         <ProductosView />
       </div>
 

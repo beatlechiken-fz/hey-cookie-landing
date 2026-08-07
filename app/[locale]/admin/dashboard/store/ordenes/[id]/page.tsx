@@ -17,7 +17,7 @@ export default async function OrdenDetailPage({ params }: Props) {
 
       <div className="px-6 lg:px-20">
         <div className="mb-6 pt-4 w-full max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-[#7b2d42]">
+          <h1 className="text-2xl font-bold text-[#AA6A42]">
             Detalle de la orden
           </h1>
         </div>

@@ -66,7 +66,7 @@ export function OrdenDetailView({ ordenId }: Props) {
   return (
     <div className="flex flex-col gap-5">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-[#b07a8a]">
+      <div className="flex items-center gap-2 text-sm text-[#6B3E26]">
         <button
           onClick={() => router.push("/admin/dashboard/store/ordenes")}
           className="hover:text-[#c0607a] transition font-medium"
@@ -83,7 +83,7 @@ export function OrdenDetailView({ ordenId }: Props) {
         >
           <path d="m9 18 6-6-6-6" />
         </svg>
-        <span className="text-[#7b2d42] font-semibold">
+        <span className="text-[#AA6A42] font-semibold">
           {orden ? `#${orden.numero}` : "Cargando…"}
         </span>
         {orden?.clienteNombre && (
@@ -98,14 +98,14 @@ export function OrdenDetailView({ ordenId }: Props) {
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
-            <span className="text-[#b07a8a]">{orden.clienteNombre}</span>
+            <span className="text-[#6B3E26]">{orden.clienteNombre}</span>
           </>
         )}
       </div>
 
       {/* Estado de carga */}
       {isPending && (
-        <div className="rounded-2xl border border-[#f5dce4] bg-white p-8 text-center text-[#c0a0a8] text-sm">
+        <div className="rounded-2xl border border-[#f0e0d0] bg-white p-8 text-center text-[#AA6A42] text-sm">
           Cargando detalle…
         </div>
       )}

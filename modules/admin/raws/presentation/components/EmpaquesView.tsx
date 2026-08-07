@@ -41,7 +41,7 @@ function DeleteDialog({
             transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f5dce4] p-6 flex flex-col gap-4">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                   <svg
@@ -59,18 +59,18 @@ function DeleteDialog({
                   <h3 className="font-bold text-[#3d1a24] text-base">
                     Eliminar empaque
                   </h3>
-                  <p className="text-sm text-[#b07a8a]">
+                  <p className="text-sm text-[#6B3E26]">
                     Esta acción no se puede deshacer
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[#7b2d42]">
+              <p className="text-sm text-[#AA6A42]">
                 ¿Confirmas que deseas eliminar <strong>"{nombre}"</strong>?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
                 >
                   Cancelar
                 </button>
@@ -147,9 +147,9 @@ export function EmpaquesView() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar empaque…"
-          className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#c0a0a8]"
+          className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
         />
-        <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#c0a0a8] pointer-events-none">
+        <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
           <svg
             viewBox="0 0 24 24"
             className="w-4 h-4"
@@ -181,7 +181,7 @@ export function EmpaquesView() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#b07a8a]">
+        <p className="text-sm text-[#6B3E26]">
           {isLoading
             ? "Cargando…"
             : `${total} empaque${total !== 1 ? "s" : ""}`}
@@ -194,21 +194,21 @@ export function EmpaquesView() {
       {/* Grid de empaques */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {isLoading && (
-          <p className="col-span-full text-center text-[#c0a0a8] text-sm py-8">
+          <p className="col-span-full text-center text-[#AA6A42] text-sm py-8">
             Cargando…
           </p>
         )}
         {!isLoading && empaques.length === 0 && (
-          <p className="col-span-full text-center text-[#c0a0a8] text-sm py-8">
+          <p className="col-span-full text-center text-[#AA6A42] text-sm py-8">
             No se encontraron empaques
           </p>
         )}
         {empaques.map((emp) => (
           <div
             key={emp.id}
-            className="bg-white rounded-2xl border border-[#f5dce4] overflow-hidden shadow-sm group hover:border-[#e8c4cd] transition flex flex-col"
+            className="bg-white rounded-2xl border border-[#f0e0d0] overflow-hidden shadow-sm group hover:border-[#e8c4a0] transition flex flex-col"
           >
-            <div className="aspect-square bg-[#fdf6f0] overflow-hidden relative">
+            <div className="aspect-square bg-[#FFF7F0] overflow-hidden relative">
               {emp.imagenUrl ? (
                 <img
                   src={emp.imagenUrl}
@@ -219,7 +219,7 @@ export function EmpaquesView() {
                 <div className="w-full h-full flex items-center justify-center">
                   <svg
                     viewBox="0 0 24 24"
-                    className="w-10 h-10 text-[#e8c4cd]"
+                    className="w-10 h-10 text-[#e8c4a0]"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.5"
@@ -236,7 +236,7 @@ export function EmpaquesView() {
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition">
                 <button
                   onClick={() => openEdit(emp)}
-                  className="p-1.5 rounded-lg bg-white/90 hover:bg-white text-[#b07a8a] hover:text-[#c0607a] shadow-sm transition"
+                  className="p-1.5 rounded-lg bg-white/90 hover:bg-white text-[#6B3E26] hover:text-[#c0607a] shadow-sm transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -252,7 +252,7 @@ export function EmpaquesView() {
                 </button>
                 <button
                   onClick={() => setDeleteTarget(emp)}
-                  className="p-1.5 rounded-lg bg-white/90 hover:bg-white text-[#b07a8a] hover:text-red-600 shadow-sm transition"
+                  className="p-1.5 rounded-lg bg-white/90 hover:bg-white text-[#6B3E26] hover:text-red-600 shadow-sm transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -288,17 +288,17 @@ export function EmpaquesView() {
           <button
             onClick={() => setPage(page - 1)}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-sm hover:bg-[#fdf6f0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             ← Anterior
           </button>
-          <span className="text-sm text-[#b07a8a]">
+          <span className="text-sm text-[#6B3E26]">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => setPage(page + 1)}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-sm hover:bg-[#fdf6f0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             Siguiente →
           </button>

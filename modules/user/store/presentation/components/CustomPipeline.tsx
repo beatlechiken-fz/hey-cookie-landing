@@ -14,6 +14,8 @@ import {
   CONFIGURACION_VACIA,
   type PastelConfiguracion,
   type HumedadJarabe,
+  type CoberturaSeleccionada,
+  type OrnamentoSeleccionado,
 } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
 import {
   FACTOR_GELATINA_POR_LITRO,
@@ -47,6 +49,7 @@ interface DatosCliente {
   nombre: string;
   telefono: string;
   direccion: string;
+  alergias: string;
 }
 
 interface GelatinaCustomConfig {
@@ -56,11 +59,11 @@ interface GelatinaCustomConfig {
   litrosTresLeches: number;
   litrosQuesoCrema: number;
   litrosYogurt: number;
-  coberturaId: string | null;
-  saborCoberturaId: string | null;
+  coberturas: CoberturaSeleccionada[];
   jarabeId: string | null;
   saborJarabeId: string | null;
   toppingIds: string[];
+  ornamentos: OrnamentoSeleccionado[];
   notas: string;
 }
 
@@ -71,11 +74,11 @@ const GELATINA_VACIA: GelatinaCustomConfig = {
   litrosTresLeches: 0,
   litrosQuesoCrema: 0,
   litrosYogurt: 0,
-  coberturaId: null,
-  saborCoberturaId: null,
+  coberturas: [],
   jarabeId: null,
   saborJarabeId: null,
   toppingIds: [],
+  ornamentos: [],
   notas: "",
 };
 
@@ -99,13 +102,14 @@ function calcPrecioGelatina(
 
   const factor = totalLitros * FACTOR_GELATINA_POR_LITRO;
 
-  const cob = catalogo.coberturas.find((c) => c.id === gCfg.coberturaId);
-  const saborCob = catalogo.saboresCobertura.find((s) => s.id === gCfg.saborCoberturaId);
   const jar = catalogo.jarabes.find((j) => j.id === gCfg.jarabeId);
   const saborJar = catalogo.saboresJarabe.find((s) => s.id === gCfg.saborJarabeId);
 
-  const costoCobertura = cob ? cob.costoTotal * factor : 0;
-  const costoSaborCob = saborCob?.precio ?? 0;
+  const costoCoberturas = (gCfg.coberturas ?? []).reduce((sum, sel) => {
+    const cob = catalogo.coberturas.find((c) => c.id === sel.coberturaId);
+    const saborCob = catalogo.saboresCobertura.find((s) => s.id === sel.saborCoberturaId);
+    return sum + (cob ? cob.costoTotal * factor : 0) + (saborCob?.precio ?? 0);
+  }, 0);
   const costoJarabe = jar ? jar.costoTotal * factor : 0;
   const costoSaborJar = saborJar?.precio ?? 0;
 
@@ -115,10 +119,15 @@ function calcPrecioGelatina(
       ? t.cantidad * t.costoUnidadMinima * factor : 0);
   }, 0);
 
-  const costoInsumos =
-    costoBase + costoCobertura + costoSaborCob + costoJarabe + costoSaborJar + costoToppings;
+  const costoOrnamentos = (gCfg.ornamentos ?? []).reduce((sum, sel) => {
+    const orn = catalogo.ornamentos?.find((o) => o.id === sel.ornamentoId);
+    return sum + (orn ? orn.precio * (sel.cantidad ?? 1) : 0);
+  }, 0);
 
-  const baseEstructural = costoBase + costoCobertura + costoSaborCob;
+  const costoInsumos =
+    costoBase + costoCoberturas + costoJarabe + costoSaborJar + costoToppings + costoOrnamentos;
+
+  const baseEstructural = costoBase + costoCoberturas;
   const baseConJarabe = baseEstructural + costoJarabe + costoSaborJar;
 
   return (
@@ -149,7 +158,7 @@ function Timeline({ steps, current }: { steps: string[]; current: number }) {
                 <div className="w-2 h-2 rounded-full bg-[#AA6A42]" />
               </div>
             )}
-            <span className={`text-sm font-semibold ${isCenter ? "text-[#AA6A42]" : "text-[#6B3E26]/60"}`}>
+            <span className={`text-sm font-semibold ${isCenter ? "text-[#8A5535]" : "text-[#6B3E26]/60"}`}>
               {label}
             </span>
           </div>
@@ -180,7 +189,7 @@ function NavButtons({
         type="button"
         onClick={onBack}
         disabled={backDisabled}
-        className="flex-1 py-3 rounded-2xl border-2 border-[#AA6A42] text-[#AA6A42] font-semibold hover:bg-[#AA6A42]/10 transition disabled:opacity-40"
+        className="flex-1 py-3 min-h-11 rounded-2xl border-2 border-[#8A5535] text-[#8A5535] font-semibold hover:bg-[#AA6A42]/10 transition disabled:opacity-40"
       >
         Atrás
       </button>
@@ -188,7 +197,7 @@ function NavButtons({
         type="button"
         onClick={onNext}
         disabled={nextDisabled || loading}
-        className="flex-1 py-3 rounded-2xl bg-[#AA6A42] text-white font-semibold hover:bg-[#8B5635] transition disabled:opacity-40"
+        className="flex-1 py-3 min-h-11 rounded-2xl bg-[#8A5535] text-white font-semibold hover:bg-[#6B3E26] transition disabled:opacity-40"
       >
         {loading ? "Cargando..." : nextLabel}
       </button>
@@ -257,12 +266,33 @@ function CardGrid({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Sabor grid (no images, more compact)
+// Sabores — chips simples, sin imágenes ni cards
 function SaborGrid({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-wrap gap-2">{children}</div>;
+}
+
+function SaborChip({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-      {children}
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-150 cursor-pointer ${
+        selected
+          ? "bg-[#3A1F14] border-[#3A1F14] text-white"
+          : "bg-white border-[#e0c9b0] text-[#6B3E26] hover:border-[#AA6A42] hover:text-[#3A1F14]"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
 
@@ -358,7 +388,7 @@ function ResumenStep({
             <span className="text-green-700 text-sm font-medium flex-1">
               Cupón &quot;{cuponAplicado.codigo}&quot; aplicado
             </span>
-            <button type="button" onClick={onQuitarCupon} className="text-green-600 hover:text-red-500 text-xs">
+            <button type="button" onClick={onQuitarCupon} className="text-[#27ae60] hover:text-[#C0392B] text-xs">
               Quitar
             </button>
           </div>
@@ -369,19 +399,19 @@ function ResumenStep({
               value={cuponInput}
               onChange={(e) => onCuponInput(e.target.value.toUpperCase())}
               placeholder="Código de cupón"
-              className="flex-1 border border-[#e0c9b0] rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#AA6A42]"
+              className="flex-1 border border-[#e0c9b0] rounded-2xl px-4 py-2.5 min-h-11 text-sm focus:outline-none focus:border-[#AA6A42]"
             />
             <button
               type="button"
               onClick={onValidarCupon}
               disabled={validandoCupon || !cuponInput.trim()}
-              className="px-4 py-2.5 rounded-2xl bg-[#AA6A42]/10 text-[#AA6A42] text-sm font-medium hover:bg-[#AA6A42]/20 transition disabled:opacity-40"
+              className="px-4 py-2.5 min-h-11 rounded-2xl bg-[#AA6A42]/10 text-[#8A5535] text-sm font-medium hover:bg-[#AA6A42]/20 transition disabled:opacity-40"
             >
               {validandoCupon ? "..." : "Aplicar"}
             </button>
           </div>
         )}
-        {cuponError && <p className="text-red-500 text-xs mt-1 ml-1">{cuponError}</p>}
+        {cuponError && <p className="text-[#C0392B] text-xs mt-1 ml-1">{cuponError}</p>}
       </div>
 
       {/* Totals */}
@@ -391,7 +421,7 @@ function ResumenStep({
           <span>${precioBase.toFixed(2)}</span>
         </div>
         {descuento > 0 && (
-          <div className="flex justify-between text-sm text-green-600">
+          <div className="flex justify-between text-sm text-[#27ae60]">
             <span>Descuento</span>
             <span>−${descuento.toFixed(2)}</span>
           </div>
@@ -414,14 +444,14 @@ function ResumenStep({
         <button
           type="button"
           onClick={onBack}
-          className="flex-1 py-3 rounded-2xl border-2 border-[#AA6A42] text-[#AA6A42] font-semibold hover:bg-[#AA6A42]/10 transition"
+          className="flex-1 py-3 min-h-11 rounded-2xl border-2 border-[#8A5535] text-[#8A5535] font-semibold hover:bg-[#AA6A42]/10 transition"
         >
           Atrás
         </button>
         <button
           type="button"
           onClick={onAddToCart}
-          className="flex-[2] py-3 rounded-2xl bg-[#AA6A42] text-white font-semibold hover:bg-[#8B5635] transition flex items-center justify-center gap-2"
+          className="flex-[2] py-3 min-h-11 rounded-2xl bg-[#8A5535] text-white font-semibold hover:bg-[#6B3E26] transition flex items-center justify-center gap-2"
         >
           <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
@@ -449,11 +479,12 @@ export function CustomPipeline() {
   const [added, setAdded] = useState(false);
   const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [datos, setDatos] = useState<DatosCliente>({ nombre: "", telefono: "", direccion: "" });
+  const [datos, setDatos] = useState<DatosCliente>({ nombre: "", telefono: "", direccion: "", alergias: "" });
   const [personas, setPersonas] = useState(18);
   const [config, setConfig] = useState<PastelConfiguracion>({ ...CONFIGURACION_VACIA });
   const [gCfg, setGCfg] = useState<GelatinaCustomConfig>({ ...GELATINA_VACIA });
   const [notasPastel, setNotasPastel] = useState("");
+  const [toppingSearch, setToppingSearch] = useState("");
 
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
   const [fotoRef, setFotoRef] = useState<string | null>(null);
@@ -515,6 +546,38 @@ export function CustomPipeline() {
       toppingIds: c.toppingIds.includes(id)
         ? c.toppingIds.filter((t) => t !== id)
         : [...c.toppingIds, id],
+    }));
+
+  const toggleOrnamentoPastel = (id: string) =>
+    setConfig((c) => ({
+      ...c,
+      ornamentos: (c.ornamentos ?? []).some((o) => o.ornamentoId === id)
+        ? (c.ornamentos ?? []).filter((o) => o.ornamentoId !== id)
+        : [...(c.ornamentos ?? []), { ornamentoId: id, cantidad: 1 }],
+    }));
+
+  const setOrnamentoCantidadPastel = (id: string, cantidad: number) =>
+    setConfig((c) => ({
+      ...c,
+      ornamentos: (c.ornamentos ?? []).map((o) =>
+        o.ornamentoId === id ? { ...o, cantidad } : o,
+      ),
+    }));
+
+  const toggleOrnamentoG = (id: string) =>
+    setGCfg((c) => ({
+      ...c,
+      ornamentos: (c.ornamentos ?? []).some((o) => o.ornamentoId === id)
+        ? (c.ornamentos ?? []).filter((o) => o.ornamentoId !== id)
+        : [...(c.ornamentos ?? []), { ornamentoId: id, cantidad: 1 }],
+    }));
+
+  const setOrnamentoCantidadG = (id: string, cantidad: number) =>
+    setGCfg((c) => ({
+      ...c,
+      ornamentos: (c.ornamentos ?? []).map((o) =>
+        o.ornamentoId === id ? { ...o, cantidad } : o,
+      ),
     }));
 
   const handleFotoRef = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -646,7 +709,7 @@ export function CustomPipeline() {
           Subiendo imagen...
         </p>
       )}
-      {fotoError && <p className="text-red-500 text-xs mt-1">{fotoError}</p>}
+      {fotoError && <p className="text-[#C0392B] text-xs mt-1">{fotoError}</p>}
       {fotoPreview && !fotoUploading && (
         <div className="mt-3 relative rounded-2xl overflow-hidden h-40 border border-[#f0e0d0]">
           <Image src={fotoPreview} alt="Vista previa" fill className="object-cover" unoptimized />
@@ -707,6 +770,18 @@ export function CustomPipeline() {
                 placeholder="Calle, número, colonia, ciudad"
               />
             </div>
+            <div>
+              <label className="text-xs text-[#6B3E26]/60 mb-1 block">
+                ¿Alguna alergia o restricción alimentaria? (opcional)
+              </label>
+              <textarea
+                value={datos.alergias}
+                onChange={(e) => setDatos((d) => ({ ...d, alergias: e.target.value }))}
+                rows={2}
+                className="w-full border border-[#e0c9b0] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#AA6A42] resize-none"
+                placeholder="Ej: alergia a nueces, intolerancia a la lactosa..."
+              />
+            </div>
           </div>
           <NavButtons
             onBack={() => {}}
@@ -720,25 +795,35 @@ export function CustomPipeline() {
 
     // Step 1 — Tipo
     if (step === 1) {
+      const TIPOS: { id: TipoProducto; label: string; description: string }[] = [
+        { id: "pastel", label: "Pastel personalizado", description: "Elige bizcocho, cobertura, relleno y más" },
+        { id: "gelatina", label: "Gelatina personalizada", description: "Escoge tus bases líquidas y sabores" },
+      ];
       return (
         <div>
           <SectionTitle>¿Qué deseas ordenar?</SectionTitle>
-          <div className="grid grid-cols-2 gap-4">
-            <OptionCard
-              id="pastel"
-              label="Pastel personalizado"
-              description="Elige bizcocho, cobertura, relleno y más"
-              selected={tipo === "pastel"}
-              onClick={() => setTipo("pastel")}
-            />
-            <OptionCard
-              id="gelatina"
-              label="Gelatina personalizada"
-              description="Escoge tus bases líquidas y sabores"
-              selected={tipo === "gelatina"}
-              onClick={() => setTipo("gelatina")}
-            />
+          <div className="flex justify-center">
+            <div className="inline-flex rounded-2xl border border-[#e0c9b0] bg-white p-1 gap-1">
+              {TIPOS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setTipo(t.id)}
+                  aria-pressed={tipo === t.id}
+                  className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-150 cursor-pointer ${
+                    tipo === t.id
+                      ? "bg-[#3A1F14] text-white"
+                      : "text-[#6B3E26] hover:bg-[#FFF7F0]"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
+          <p className="text-xs text-[#6B3E26]/60 text-center mt-3">
+            {TIPOS.find((t) => t.id === tipo)?.description}
+          </p>
           <NavButtons onBack={() => setStep(0)} onNext={() => setStep(2)} />
         </div>
       );
@@ -761,9 +846,14 @@ export function CustomPipeline() {
                 min={1}
                 max={300}
                 value={personas}
-                onChange={(e) => setPersonas(Math.max(1, parseInt(e.target.value) || 1))}
+                onChange={(e) => setPersonas(Math.min(300, Math.max(1, parseInt(e.target.value) || 1)))}
                 className="w-full border border-[#e0c9b0] rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-[#AA6A42]"
               />
+              {personas >= 300 && (
+                <p className="text-xs text-[#AA6A42]/70 mt-1">
+                  Para pedidos de más de 300 personas, contáctanos directamente.
+                </p>
+              )}
             </div>
             <p className="text-sm font-semibold text-[#3A1F14] mb-3">Elige tu bizcocho</p>
             <CardGrid>
@@ -787,11 +877,28 @@ export function CustomPipeline() {
         );
       }
 
-      // Step 3 — Cobertura + Sabor
+      // Step 3 — Coberturas (varias) + Sabor de cada una
       if (step === 3) {
+        const toggleCobertura = (id: string) =>
+          setConfig((cfg) => ({
+            ...cfg,
+            coberturas: cfg.coberturas.some((c) => c.coberturaId === id)
+              ? cfg.coberturas.filter((c) => c.coberturaId !== id)
+              : [...cfg.coberturas, { coberturaId: id, saborCoberturaId: null }],
+          }));
+        const setSaborCobertura = (coberturaId: string, saborId: string) =>
+          setConfig((cfg) => ({
+            ...cfg,
+            coberturas: cfg.coberturas.map((c) =>
+              c.coberturaId === coberturaId ? { ...c, saborCoberturaId: saborId } : c,
+            ),
+          }));
         return (
           <div>
             <SectionTitle>Cobertura</SectionTitle>
+            <p className="text-xs text-[#6B3E26]/60 -mt-3 mb-4">
+              Puedes elegir más de una — todas se suman al precio.
+            </p>
             <CardGrid>
               {catalogo?.coberturas.map((c) => (
                 <OptionCard
@@ -799,37 +906,58 @@ export function CustomPipeline() {
                   id={c.id}
                   label={c.nombre}
                   image={c.imagenUrl ?? null}
-                  selected={config.coberturaId === c.id}
-                  onClick={() => setConfig((cfg) => ({ ...cfg, coberturaId: c.id, saborCoberturaId: null }))}
+                  selected={config.coberturas.some((sel) => sel.coberturaId === c.id)}
+                  onClick={() => toggleCobertura(c.id)}
                 />
               ))}
             </CardGrid>
-            {config.coberturaId && (
-              <div className="mt-5">
-                <p className="text-sm font-semibold text-[#3A1F14] mb-3">Sabor de cobertura</p>
-                <SaborGrid>
-                  {catalogo?.saboresCobertura.map((s) => (
-                    <OptionCard
-                      key={s.id}
-                      id={s.id}
-                      label={s.nombre}
-                      selected={config.saborCoberturaId === s.id}
-                      onClick={() => setConfig((c) => ({ ...c, saborCoberturaId: s.id }))}
-                    />
-                  ))}
-                </SaborGrid>
-              </div>
-            )}
+            {config.coberturas.map((sel) => {
+              const cob = catalogo?.coberturas.find((c) => c.id === sel.coberturaId);
+              return (
+                <div key={sel.coberturaId} className="mt-5">
+                  <p className="text-sm font-semibold text-[#3A1F14] mb-3">
+                    Sabor de {cob?.nombre ?? "cobertura"}
+                  </p>
+                  <SaborGrid>
+                    {catalogo?.saboresCobertura.map((s) => (
+                      <SaborChip
+                        key={s.id}
+                        label={s.nombre}
+                        selected={sel.saborCoberturaId === s.id}
+                        onClick={() => setSaborCobertura(sel.coberturaId, s.id)}
+                      />
+                    ))}
+                  </SaborGrid>
+                </div>
+              );
+            })}
             <NavButtons onBack={() => setStep(2)} onNext={() => setStep(4)} />
           </div>
         );
       }
 
-      // Step 4 — Relleno + Sabor
+      // Step 4 — Rellenos (varios) + Sabor de cada uno
       if (step === 4) {
+        const toggleRelleno = (id: string) =>
+          setConfig((cfg) => ({
+            ...cfg,
+            rellenos: cfg.rellenos.some((r) => r.rellenoId === id)
+              ? cfg.rellenos.filter((r) => r.rellenoId !== id)
+              : [...cfg.rellenos, { rellenoId: id, saborRellenoId: null }],
+          }));
+        const setSaborRelleno = (rellenoId: string, saborId: string) =>
+          setConfig((cfg) => ({
+            ...cfg,
+            rellenos: cfg.rellenos.map((r) =>
+              r.rellenoId === rellenoId ? { ...r, saborRellenoId: saborId } : r,
+            ),
+          }));
         return (
           <div>
             <SectionTitle>Relleno</SectionTitle>
+            <p className="text-xs text-[#6B3E26]/60 -mt-3 mb-4">
+              Puedes elegir más de uno — todos se suman al precio.
+            </p>
             <CardGrid>
               {catalogo?.coberturas.map((c) => (
                 <OptionCard
@@ -837,27 +965,31 @@ export function CustomPipeline() {
                   id={c.id}
                   label={c.nombre}
                   image={c.imagenUrl ?? null}
-                  selected={config.rellenoId === c.id}
-                  onClick={() => setConfig((cfg) => ({ ...cfg, rellenoId: c.id, saborRellenoId: null }))}
+                  selected={config.rellenos.some((sel) => sel.rellenoId === c.id)}
+                  onClick={() => toggleRelleno(c.id)}
                 />
               ))}
             </CardGrid>
-            {config.rellenoId && (
-              <div className="mt-5">
-                <p className="text-sm font-semibold text-[#3A1F14] mb-3">Sabor de relleno</p>
-                <SaborGrid>
-                  {catalogo?.saboresCobertura.map((s) => (
-                    <OptionCard
-                      key={s.id}
-                      id={s.id}
-                      label={s.nombre}
-                      selected={config.saborRellenoId === s.id}
-                      onClick={() => setConfig((c) => ({ ...c, saborRellenoId: s.id }))}
-                    />
-                  ))}
-                </SaborGrid>
-              </div>
-            )}
+            {config.rellenos.map((sel) => {
+              const rel = catalogo?.coberturas.find((c) => c.id === sel.rellenoId);
+              return (
+                <div key={sel.rellenoId} className="mt-5">
+                  <p className="text-sm font-semibold text-[#3A1F14] mb-3">
+                    Sabor de {rel?.nombre ?? "relleno"}
+                  </p>
+                  <SaborGrid>
+                    {catalogo?.saboresCobertura.map((s) => (
+                      <SaborChip
+                        key={s.id}
+                        label={s.nombre}
+                        selected={sel.saborRellenoId === s.id}
+                        onClick={() => setSaborRelleno(sel.rellenoId, s.id)}
+                      />
+                    ))}
+                  </SaborGrid>
+                </div>
+              );
+            })}
             <NavButtons onBack={() => setStep(3)} onNext={() => setStep(5)} />
           </div>
         );
@@ -893,9 +1025,8 @@ export function CustomPipeline() {
                   <p className="text-sm font-semibold text-[#3A1F14] mb-3">Sabor de jarabe</p>
                   <SaborGrid>
                     {catalogo?.saboresJarabe.map((s) => (
-                      <OptionCard
+                      <SaborChip
                         key={s.id}
-                        id={s.id}
                         label={s.nombre}
                         selected={config.saborJarabeId === s.id}
                         onClick={() => setConfig((c) => ({ ...c, saborJarabeId: s.id }))}
@@ -913,7 +1044,7 @@ export function CustomPipeline() {
                         onClick={() => setConfig((c) => ({ ...c, humedadJarabe: h }))}
                         className={`flex-1 py-2.5 rounded-xl border-2 text-sm font-medium transition ${
                           config.humedadJarabe === h
-                            ? "border-[#AA6A42] bg-[#AA6A42]/10 text-[#AA6A42]"
+                            ? "border-[#8A5535] bg-[#AA6A42]/10 text-[#8A5535]"
                             : "border-[#f0e0d0] text-[#6B3E26]"
                         }`}
                       >
@@ -929,13 +1060,22 @@ export function CustomPipeline() {
         );
       }
 
-      // Step 6 — Toppings
+      // Step 6 — Toppings + Ornamentos
       if (step === 6) {
         return (
           <div>
             <SectionTitle>Toppings (opcional)</SectionTitle>
+            <input
+              type="text"
+              value={toppingSearch}
+              onChange={(e) => setToppingSearch(e.target.value)}
+              placeholder="Buscar topping…"
+              className="w-full border border-[#e0c9b0] rounded-2xl px-4 py-2.5 min-h-11 text-sm mb-4 focus:outline-none focus:border-[#AA6A42]"
+            />
             <CardGrid>
-              {catalogo?.toppings.map((t) => (
+              {catalogo?.toppings
+                .filter((t) => t.nombre.toLowerCase().includes(toppingSearch.toLowerCase()))
+                .map((t) => (
                 <OptionCard
                   key={t.ingredienteId}
                   id={t.ingredienteId}
@@ -946,6 +1086,34 @@ export function CustomPipeline() {
                 />
               ))}
             </CardGrid>
+            {catalogo?.toppings.length && catalogo.toppings.filter((t) => t.nombre.toLowerCase().includes(toppingSearch.toLowerCase())).length === 0 && (
+              <p className="text-xs text-[#AA6A42]/60 text-center py-4">Sin resultados para &quot;{toppingSearch}&quot;</p>
+            )}
+            {(catalogo?.ornamentos?.length ?? 0) > 0 && (
+              <div className="mt-12">
+                <SectionTitle>Ornamentos (opcional)</SectionTitle>
+                <p className="text-xs text-[#6B3E26]/60 -mt-3 mb-4">
+                  Selecciona y ajusta la cantidad de cada uno.
+                </p>
+                <CardGrid>
+                  {catalogo!.ornamentos!.map((o) => {
+                    const sel = (config.ornamentos ?? []).find((x) => x.ornamentoId === o.id);
+                    return (
+                      <OptionCard
+                        key={o.id}
+                        id={o.id}
+                        label={o.nombre}
+                        image={o.imagenUrl ?? null}
+                        selected={!!sel}
+                        onClick={() => toggleOrnamentoPastel(o.id)}
+                        quantity={sel?.cantidad}
+                        onQuantityChange={(q) => setOrnamentoCantidadPastel(o.id, q)}
+                      />
+                    );
+                  })}
+                </CardGrid>
+              </div>
+            )}
             <NavButtons onBack={() => setStep(5)} onNext={() => setStep(7)} />
           </div>
         );
@@ -1006,25 +1174,43 @@ export function CustomPipeline() {
       // Step 9 — Resumen pastel
       if (step === 9) {
         const bizcocho = catalogo?.bizcochos.find((b) => b.id === config.bizcochoId);
-        const cobertura = catalogo?.coberturas.find((c) => c.id === config.coberturaId);
-        const saborCob = catalogo?.saboresCobertura.find((s) => s.id === config.saborCoberturaId);
-        const relleno = catalogo?.coberturas.find((c) => c.id === config.rellenoId);
-        const saborRel = catalogo?.saboresCobertura.find((s) => s.id === config.saborRellenoId);
+        const coberturasSel = config.coberturas
+          .map((sel) => {
+            const cob = catalogo?.coberturas.find((c) => c.id === sel.coberturaId);
+            const sabor = catalogo?.saboresCobertura.find((s) => s.id === sel.saborCoberturaId);
+            return cob ? `${cob.nombre}${sabor ? ` · ${sabor.nombre}` : ""}` : null;
+          })
+          .filter(Boolean) as string[];
+        const rellenosSel = config.rellenos
+          .map((sel) => {
+            const rel = catalogo?.coberturas.find((c) => c.id === sel.rellenoId);
+            const sabor = catalogo?.saboresCobertura.find((s) => s.id === sel.saborRellenoId);
+            return rel ? `${rel.nombre}${sabor ? ` · ${sabor.nombre}` : ""}` : null;
+          })
+          .filter(Boolean) as string[];
         const jarabe = catalogo?.jarabes.find((j) => j.id === config.jarabeId);
         const saborJar = catalogo?.saboresJarabe.find((s) => s.id === config.saborJarabeId);
         const licor = catalogo?.licores.find((l) => l.ingredienteId === config.licorId);
         const toppingsSel = catalogo?.toppings.filter((t) => config.toppingIds.includes(t.ingredienteId));
+        const ornamentosSel = (config.ornamentos ?? [])
+          .map((sel) => {
+            const orn = catalogo?.ornamentos?.find((o) => o.id === sel.ornamentoId);
+            return orn ? `${orn.nombre} ×${sel.cantidad}` : null;
+          })
+          .filter(Boolean) as string[];
 
         const rows: { label: string; value: string }[] = [
           { label: "Personas", value: `${personasDesdeDiametro(config.diametroCm)} (≈ ${config.diametroCm} cm)` },
         ];
         if (bizcocho) rows.push({ label: "Bizcocho", value: bizcocho.nombre });
-        if (cobertura) rows.push({ label: "Cobertura", value: `${cobertura.nombre}${saborCob ? ` · ${saborCob.nombre}` : ""}` });
-        if (relleno) rows.push({ label: "Relleno", value: `${relleno.nombre}${saborRel ? ` · ${saborRel.nombre}` : ""}` });
+        if (coberturasSel.length) rows.push({ label: "Cobertura", value: coberturasSel.join(" + ") });
+        if (rellenosSel.length) rows.push({ label: "Relleno", value: rellenosSel.join(" + ") });
         if (jarabe) rows.push({ label: "Jarabe", value: `${jarabe.nombre}${saborJar ? ` · ${saborJar.nombre}` : ""} — ${config.humedadJarabe === "humedo" ? "Húmedo" : "Semi húmedo"}` });
         if (toppingsSel?.length) rows.push({ label: "Toppings", value: toppingsSel.map((t) => t.nombre).join(", ") });
         if (licor) rows.push({ label: "Licor", value: licor.nombre });
+        if (ornamentosSel.length) rows.push({ label: "Ornamentos", value: ornamentosSel.join(", ") });
         if (notasPastel) rows.push({ label: "Notas", value: notasPastel });
+        if (datos.alergias.trim()) rows.push({ label: "Alergias", value: datos.alergias.trim() });
 
         return (
           <ResumenStep
@@ -1108,31 +1294,53 @@ export function CustomPipeline() {
         );
       }
 
-      // Step 3 — Cobertura + Sabor
+      // Step 3 — Coberturas (varias) + Sabor de cada una
       if (step === 3) {
+        const toggleCoberturaG = (id: string) =>
+          setGCfg((cfg) => ({
+            ...cfg,
+            coberturas: cfg.coberturas.some((c) => c.coberturaId === id)
+              ? cfg.coberturas.filter((c) => c.coberturaId !== id)
+              : [...cfg.coberturas, { coberturaId: id, saborCoberturaId: null }],
+          }));
+        const setSaborCoberturaG = (coberturaId: string, saborId: string) =>
+          setGCfg((cfg) => ({
+            ...cfg,
+            coberturas: cfg.coberturas.map((c) =>
+              c.coberturaId === coberturaId ? { ...c, saborCoberturaId: saborId } : c,
+            ),
+          }));
         return (
           <div>
             <SectionTitle>Cobertura (opcional)</SectionTitle>
+            <p className="text-xs text-[#6B3E26]/60 -mt-3 mb-4">
+              Puedes elegir más de una — todas se suman al precio.
+            </p>
             <CardGrid>
               {catalogo?.coberturas.map((c) => (
                 <OptionCard key={c.id} id={c.id} label={c.nombre} image={c.imagenUrl ?? null}
-                  selected={gCfg.coberturaId === c.id}
-                  onClick={() => setGCfg((cfg) => ({ ...cfg, coberturaId: cfg.coberturaId === c.id ? null : c.id, saborCoberturaId: null }))}
+                  selected={gCfg.coberturas.some((sel) => sel.coberturaId === c.id)}
+                  onClick={() => toggleCoberturaG(c.id)}
                 />
               ))}
             </CardGrid>
-            {gCfg.coberturaId && (
-              <div className="mt-5">
-                <p className="text-sm font-semibold text-[#3A1F14] mb-3">Sabor de cobertura</p>
-                <SaborGrid>
-                  {catalogo?.saboresCobertura.map((s) => (
-                    <OptionCard key={s.id} id={s.id} label={s.nombre}
-                      selected={gCfg.saborCoberturaId === s.id}
-                      onClick={() => setGCfg((c) => ({ ...c, saborCoberturaId: s.id }))} />
-                  ))}
-                </SaborGrid>
-              </div>
-            )}
+            {gCfg.coberturas.map((sel) => {
+              const cob = catalogo?.coberturas.find((c) => c.id === sel.coberturaId);
+              return (
+                <div key={sel.coberturaId} className="mt-5">
+                  <p className="text-sm font-semibold text-[#3A1F14] mb-3">
+                    Sabor de {cob?.nombre ?? "cobertura"}
+                  </p>
+                  <SaborGrid>
+                    {catalogo?.saboresCobertura.map((s) => (
+                      <SaborChip key={s.id} label={s.nombre}
+                        selected={sel.saborCoberturaId === s.id}
+                        onClick={() => setSaborCoberturaG(sel.coberturaId, s.id)} />
+                    ))}
+                  </SaborGrid>
+                </div>
+              );
+            })}
             <NavButtons onBack={() => setStep(2)} onNext={() => setStep(4)} />
           </div>
         );
@@ -1156,7 +1364,7 @@ export function CustomPipeline() {
                 <p className="text-sm font-semibold text-[#3A1F14] mb-3">Sabor de jarabe</p>
                 <SaborGrid>
                   {catalogo?.saboresJarabe.map((s) => (
-                    <OptionCard key={s.id} id={s.id} label={s.nombre}
+                    <SaborChip key={s.id} label={s.nombre}
                       selected={gCfg.saborJarabeId === s.id}
                       onClick={() => setGCfg((c) => ({ ...c, saborJarabeId: s.id }))} />
                   ))}
@@ -1168,19 +1376,52 @@ export function CustomPipeline() {
         );
       }
 
-      // Step 5 — Toppings
+      // Step 5 — Toppings + Ornamentos
       if (step === 5) {
         return (
           <div>
             <SectionTitle>Toppings (opcional)</SectionTitle>
+            <input
+              type="text"
+              value={toppingSearch}
+              onChange={(e) => setToppingSearch(e.target.value)}
+              placeholder="Buscar topping…"
+              className="w-full border border-[#e0c9b0] rounded-2xl px-4 py-2.5 min-h-11 text-sm mb-4 focus:outline-none focus:border-[#AA6A42]"
+            />
             <CardGrid>
-              {catalogo?.toppings.map((t) => (
+              {catalogo?.toppings
+                .filter((t) => t.nombre.toLowerCase().includes(toppingSearch.toLowerCase()))
+                .map((t) => (
                 <OptionCard key={t.ingredienteId} id={t.ingredienteId} label={t.nombre}
                   image={t.imagenUrl ?? null}
                   selected={gCfg.toppingIds.includes(t.ingredienteId)}
                   onClick={() => toggleToppingG(t.ingredienteId)} />
               ))}
             </CardGrid>
+            {catalogo?.toppings.length && catalogo.toppings.filter((t) => t.nombre.toLowerCase().includes(toppingSearch.toLowerCase())).length === 0 && (
+              <p className="text-xs text-[#AA6A42]/60 text-center py-4">Sin resultados para &quot;{toppingSearch}&quot;</p>
+            )}
+            {(catalogo?.ornamentos?.length ?? 0) > 0 && (
+              <div className="mt-12">
+                <SectionTitle>Ornamentos (opcional)</SectionTitle>
+                <p className="text-xs text-[#6B3E26]/60 -mt-3 mb-4">
+                  Selecciona y ajusta la cantidad de cada uno.
+                </p>
+                <CardGrid>
+                  {catalogo!.ornamentos!.map((o) => {
+                    const sel = (gCfg.ornamentos ?? []).find((x) => x.ornamentoId === o.id);
+                    return (
+                      <OptionCard key={o.id} id={o.id} label={o.nombre}
+                        image={o.imagenUrl ?? null}
+                        selected={!!sel}
+                        onClick={() => toggleOrnamentoG(o.id)}
+                        quantity={sel?.cantidad}
+                        onQuantityChange={(q) => setOrnamentoCantidadG(o.id, q)} />
+                    );
+                  })}
+                </CardGrid>
+              </div>
+            )}
             <NavButtons onBack={() => setStep(4)} onNext={() => setStep(6)} />
           </div>
         );
@@ -1213,11 +1454,22 @@ export function CustomPipeline() {
 
       // Step 7 — Resumen gelatina
       if (step === 7) {
-        const cobertura = catalogo?.coberturas.find((c) => c.id === gCfg.coberturaId);
-        const saborCob = catalogo?.saboresCobertura.find((s) => s.id === gCfg.saborCoberturaId);
+        const coberturasSel = gCfg.coberturas
+          .map((sel) => {
+            const cob = catalogo?.coberturas.find((c) => c.id === sel.coberturaId);
+            const sabor = catalogo?.saboresCobertura.find((s) => s.id === sel.saborCoberturaId);
+            return cob ? `${cob.nombre}${sabor ? ` · ${sabor.nombre}` : ""}` : null;
+          })
+          .filter(Boolean) as string[];
         const jarabe = catalogo?.jarabes.find((j) => j.id === gCfg.jarabeId);
         const saborJar = catalogo?.saboresJarabe.find((s) => s.id === gCfg.saborJarabeId);
         const toppingsSel = catalogo?.toppings.filter((t) => gCfg.toppingIds.includes(t.ingredienteId));
+        const ornamentosSel = (gCfg.ornamentos ?? [])
+          .map((sel) => {
+            const orn = catalogo?.ornamentos?.find((o) => o.id === sel.ornamentoId);
+            return orn ? `${orn.nombre} ×${sel.cantidad}` : null;
+          })
+          .filter(Boolean) as string[];
         const catLabel = gCfg.categoria === "clasica" ? "Clásica" : gCfg.categoria === "healthy" ? "Healthy" : "Sin Azúcar";
 
         const rows: { label: string; value: string }[] = [
@@ -1231,10 +1483,12 @@ export function CustomPipeline() {
         if (gCfg.litrosQuesoCrema > 0) liquidosTexto.push(`${gCfg.litrosQuesoCrema}L queso crema`);
         if (gCfg.litrosYogurt > 0)     liquidosTexto.push(`${gCfg.litrosYogurt}L yogurt`);
         if (liquidosTexto.length) rows.push({ label: "Bases", value: liquidosTexto.join(", ") });
-        if (cobertura) rows.push({ label: "Cobertura", value: `${cobertura.nombre}${saborCob ? ` · ${saborCob.nombre}` : ""}` });
+        if (coberturasSel.length) rows.push({ label: "Cobertura", value: coberturasSel.join(" + ") });
         if (jarabe) rows.push({ label: "Jarabe", value: `${jarabe.nombre}${saborJar ? ` · ${saborJar.nombre}` : ""}` });
         if (toppingsSel?.length) rows.push({ label: "Toppings", value: toppingsSel.map((t) => t.nombre).join(", ") });
+        if (ornamentosSel.length) rows.push({ label: "Ornamentos", value: ornamentosSel.join(", ") });
         if (gCfg.notas) rows.push({ label: "Notas", value: gCfg.notas });
+        if (datos.alergias.trim()) rows.push({ label: "Alergias", value: datos.alergias.trim() });
 
         return (
           <ResumenStep
@@ -1270,6 +1524,13 @@ export function CustomPipeline() {
       {added && <SuccessBanner onDismiss={() => setAdded(false)} />}
 
       <Timeline steps={steps} current={step} />
+
+      {step >= 1 && step < steps.length - 1 && precioBase > 0 && (
+        <div className="flex items-center justify-between bg-[#FFF0E6] border border-[#e8c4a0] rounded-2xl px-4 py-2.5 mb-4 sticky top-2 z-10">
+          <span className="text-xs font-semibold text-[#6B3E26] uppercase tracking-wider">Precio estimado</span>
+          <span className="text-base font-bold text-[#3A1F14]">${precioBase.toFixed(0)}</span>
+        </div>
+      )}
 
       <div className="bg-[#FFFAF5] rounded-3xl p-6 shadow-sm border border-[#f0e0d0]">
         {renderStep()}

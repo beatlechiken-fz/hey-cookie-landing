@@ -24,8 +24,8 @@ export default function AdminMobileMenu({ onClose }: { onClose: () => void }) {
         transition={{ type: "spring", stiffness: 260, damping: 30 }}
         className="
           absolute right-0 top-0 h-full w-[85%] max-w-sm
-          bg-[#fdf6f0]
-          border-l border-[#f5dce4]
+          bg-[#FFF7F0]
+          border-l border-[#f0e0d0]
           rounded-l-3xl p-6 shadow-2xl overflow-hidden
         "
       >
@@ -62,17 +62,17 @@ export default function AdminMobileMenu({ onClose }: { onClose: () => void }) {
           <div>
             {/* Header */}
             <div className="flex justify-between items-center mb-6">
-              <span className="text-[#7b2d42] font-bold text-lg">
+              <span className="text-[#AA6A42] font-bold text-lg">
                 🎂 Panel Admin
               </span>
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-[#f5dce4] transition"
+                className="p-2 rounded-full hover:bg-[#f0e0d0] transition"
               >
                 <svg viewBox="0 0 24 24" className="w-5 h-5">
                   <path
                     d="M6 6l12 12M18 6L6 18"
-                    stroke="#7b2d42"
+                    stroke="#AA6A42"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                   />
@@ -89,8 +89,8 @@ export default function AdminMobileMenu({ onClose }: { onClose: () => void }) {
             onClick={() => signOut({ callbackUrl: "/admin" })}
             className="
               flex items-center gap-2 px-4 py-3
-              text-[#7b2d42]/70 hover:text-[#C0607A]
-              hover:bg-[#f5dce4]/60
+              text-[#AA6A42]/70 hover:text-[#C0607A]
+              hover:bg-[#f0e0d0]/60
               rounded-xl transition text-[15px]
             "
           >

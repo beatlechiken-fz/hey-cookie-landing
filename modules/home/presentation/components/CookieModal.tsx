@@ -216,7 +216,7 @@ export default function CookieModal({ producto, onClose }: Props) {
                 </p>
               )}
               {!isUser && (
-                <p className="mt-1 text-[10px] text-[#AA6A42]/60">
+                <p className="mt-1 text-[11px] text-[#AA6A42]/60">
                   Inicia sesión para usar cupones personalizados
                 </p>
               )}

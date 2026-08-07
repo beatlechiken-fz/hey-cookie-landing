@@ -4,11 +4,12 @@ import { CustomPipeline } from "@/modules/user/store/presentation/components/Cus
 import Link from "next/link";
 import Image from "next/image";
 import Images from "@/core/assets/Images";
+import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 
 export default function CustomPage() {
   return (
     <main className="min-h-screen flex flex-col bg-[#FAF3E0]">
-      <div className="relative z-50">
+      <div className="relative z-50 bg-[#F1DCC9]">
         <div className="flex h-[60px] md:h-[70px]">
           <div className="relative w-[100px] h-[86px] ml-3 lg:ml-8 md:-mt-1 overflow-visible">
             <Link href="/es">
@@ -24,6 +25,8 @@ export default function CustomPage() {
           <AppBar />
         </div>
       </div>
+
+      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#FAF3E0" />
 
       <section className="flex-1 overflow-y-auto">
         <CustomPipeline />

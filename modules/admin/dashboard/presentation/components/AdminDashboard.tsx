@@ -68,7 +68,7 @@ function KPICard({
           <p className="text-[11px] font-semibold text-[#6B3E26]/55 uppercase tracking-wider truncate">
             {title}
           </p>
-          <p className="text-2xl sm:text-3xl font-bold text-[#231512] mt-1 leading-none tabular-nums">
+          <p className="text-2xl sm:text-3xl font-bold text-[#3A1F14] mt-1 leading-none tabular-nums">
             {value}
           </p>
           {hasDelta && (
@@ -122,7 +122,7 @@ function ChartTooltip({ active, payload, label }: any) {
             style={{ background: p.stroke }}
           />
           <span className="text-[#6B3E26]/70">{p.name}:</span>
-          <span className="font-semibold text-[#231512]">{fmtMXN(p.value)}</span>
+          <span className="font-semibold text-[#3A1F14]">{fmtMXN(p.value)}</span>
         </div>
       ))}
     </div>
@@ -210,7 +210,7 @@ export function AdminDashboard() {
         {/* ── Header ── */}
         <div className="flex items-end justify-between mb-7">
           <div>
-            <h1 className="text-2xl font-bold text-[#7b2d42]">Panel de control</h1>
+            <h1 className="text-2xl font-bold text-[#AA6A42]">Panel de control</h1>
             <p className="text-sm text-[#6B3E26]/55 mt-0.5 capitalize">{mesLabel}</p>
           </div>
           <a
@@ -279,7 +279,7 @@ export function AdminDashboard() {
           {/* Area chart: ventas 30 días */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-bold text-[#231512]">Ventas — últimos 30 días</h2>
+              <h2 className="text-sm font-bold text-[#3A1F14]">Ventas — últimos 30 días</h2>
               <div className="flex items-center gap-4">
                 <span className="flex items-center gap-1.5 text-[10px] font-semibold text-[#6B3E26]/60">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#DA6C94]" />
@@ -346,7 +346,7 @@ export function AdminDashboard() {
 
           {/* Pipeline donut */}
           <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 flex flex-col">
-            <h2 className="text-sm font-bold text-[#231512] mb-4">Pipeline de órdenes</h2>
+            <h2 className="text-sm font-bold text-[#3A1F14] mb-4">Pipeline de órdenes</h2>
             {ordenesPorEstado.length === 0 ? (
               <div className="flex-1 flex items-center justify-center text-[#AA6A42]/40 text-sm">
                 Sin órdenes registradas
@@ -378,7 +378,7 @@ export function AdminDashboard() {
                   </ResponsiveContainer>
                   {/* Center label */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-2xl font-bold text-[#231512]">{totalOrdenes}</span>
+                    <span className="text-2xl font-bold text-[#3A1F14]">{totalOrdenes}</span>
                     <span className="text-[10px] text-[#6B3E26]/50 font-medium">órdenes</span>
                   </div>
                 </div>
@@ -395,7 +395,7 @@ export function AdminDashboard() {
                         </span>
                       </span>
                       <div className="flex items-center gap-2 shrink-0 ml-2">
-                        <span className="font-bold text-[#231512]">{o.count}</span>
+                        <span className="font-bold text-[#3A1F14]">{o.count}</span>
                         <span className="text-[#6B3E26]/40 text-[10px]">{fmtMXN(o.total)}</span>
                       </div>
                     </div>
@@ -412,7 +412,7 @@ export function AdminDashboard() {
           {/* Tabla órdenes recientes */}
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-[#231512]">Órdenes recientes</h2>
+              <h2 className="text-sm font-bold text-[#3A1F14]">Órdenes recientes</h2>
               <a
                 href={goto("/admin/dashboard/store/ordenes")}
                 className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
@@ -448,13 +448,13 @@ export function AdminDashboard() {
                         <td className="py-3 pr-3 font-mono text-[#AA6A42] font-bold">
                           #{o.numero}
                         </td>
-                        <td className="py-3 pr-3 text-[#231512] max-w-[130px] truncate">
+                        <td className="py-3 pr-3 text-[#3A1F14] max-w-[130px] truncate">
                           {o.clienteNombre ?? <span className="text-[#6B3E26]/40">—</span>}
                         </td>
                         <td className="py-3 pr-3">
                           <StatusBadge status={o.status} />
                         </td>
-                        <td className="py-3 pr-4 text-right font-semibold text-[#231512] tabular-nums">
+                        <td className="py-3 pr-4 text-right font-semibold text-[#3A1F14] tabular-nums">
                           {fmtMXN(o.total)}
                         </td>
                         <td className="py-3 text-[#6B3E26]/55">
@@ -479,7 +479,7 @@ export function AdminDashboard() {
             {/* Desglose */}
             <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-[#231512]">Desglose del mes</h2>
+                <h2 className="text-sm font-bold text-[#3A1F14]">Desglose del mes</h2>
                 <a
                   href={goto("/admin/dashboard/store/finanzas")}
                   className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
@@ -507,7 +507,7 @@ export function AdminDashboard() {
                             />
                             {label}
                           </span>
-                          <span className="font-semibold text-[#231512] tabular-nums">
+                          <span className="font-semibold text-[#3A1F14] tabular-nums">
                             {fmtMXN(value)}
                           </span>
                         </div>
@@ -522,7 +522,7 @@ export function AdminDashboard() {
                   })}
                   <div className="pt-1 border-t border-[#f5e8db] flex items-center justify-between text-xs">
                     <span className="text-[#6B3E26]/50 font-medium">Total registrado</span>
-                    <span className="font-bold text-[#231512] tabular-nums">
+                    <span className="font-bold text-[#3A1F14] tabular-nums">
                       {fmtMXN(kpi.ventasMes)}
                     </span>
                   </div>
@@ -532,7 +532,7 @@ export function AdminDashboard() {
 
             {/* Accesos rápidos */}
             <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
-              <h2 className="text-sm font-bold text-[#231512] mb-3">Accesos rápidos</h2>
+              <h2 className="text-sm font-bold text-[#3A1F14] mb-3">Accesos rápidos</h2>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   {

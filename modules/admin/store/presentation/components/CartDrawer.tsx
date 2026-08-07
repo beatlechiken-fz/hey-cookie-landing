@@ -42,6 +42,7 @@ export function CartDrawer({ open, onClose }: Props) {
   const [localCuponError, setLocalCuponError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [fechaEntrega, setFechaEntrega] = useState<string>("");
+  const [notas, setNotas] = useState<string>("");
   const [incluirEnvio, setIncluirEnvio] = useState(false);
 
   // Buscador de cliente
@@ -60,6 +61,7 @@ export function CartDrawer({ open, onClose }: Props) {
       setClienteSearchOpen(false);
       setClienteSearch("");
       setFechaEntrega("");
+      setNotas("");
       setIncluirEnvio(false);
     }
   }, [open]);
@@ -133,6 +135,7 @@ export function CartDrawer({ open, onClose }: Props) {
         clienteId,
         status,
         fechaEntrega: fechaEntrega || null,
+        notas: notas.trim() || null,
         items: buildOrdenItems(),
         cupones: cupones.map((c) => ({
           cuponId: c.cuponId,
@@ -202,12 +205,12 @@ export function CartDrawer({ open, onClose }: Props) {
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
             className="fixed right-0 top-0 h-full w-full sm:w-[420px] z-50 flex flex-col bg-white"
             style={{
-              borderLeft: "1px solid #f5dce4",
+              borderLeft: "1px solid #f0e0d0",
               boxShadow: "-4px 0 32px rgba(123,45,66,0.10)",
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[#f5dce4] bg-[#fdf6f0] shrink-0">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
               <div className="flex items-center gap-2.5">
                 <svg
                   viewBox="0 0 24 24"
@@ -222,13 +225,13 @@ export function CartDrawer({ open, onClose }: Props) {
                   <path d="M3 6h18" />
                   <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
-                <h2 className="font-bold text-[#7b2d42] text-base">
+                <h2 className="font-bold text-[#AA6A42] text-base">
                   Carrito de compras
                 </h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-[#f5dce4] transition text-[#b07a8a]"
+                className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -244,12 +247,12 @@ export function CartDrawer({ open, onClose }: Props) {
             </div>
 
             {/* Selector de cliente */}
-            <div className="px-6 py-4 border-b border-[#f5dce4] shrink-0 relative">
-              <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+            <div className="px-6 py-4 border-b border-[#f0e0d0] shrink-0 relative">
+              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                 Cliente
               </label>
               {clienteId ? (
-                <div className="mt-1.5 flex items-center justify-between rounded-lg bg-[#fdf6f0] border border-[#f5dce4] px-3 py-2">
+                <div className="mt-1.5 flex items-center justify-between rounded-lg bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-7 h-7 rounded-full bg-[#c0607a] text-white flex items-center justify-center text-[11px] font-bold shrink-0">
                       {(clienteNombre ?? "?").slice(0, 2).toUpperCase()}
@@ -260,7 +263,7 @@ export function CartDrawer({ open, onClose }: Props) {
                   </div>
                   <button
                     onClick={() => setCliente(null)}
-                    className="p-1 rounded-lg hover:bg-[#f5dce4] text-[#b07a8a] hover:text-red-500 transition shrink-0"
+                    className="p-1 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-red-500 transition shrink-0"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -284,17 +287,17 @@ export function CartDrawer({ open, onClose }: Props) {
                     }}
                     onFocus={() => setClienteSearchOpen(true)}
                     placeholder="Buscar cliente por nombre, teléfono o email…"
-                    className="w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#c0a0a8]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]"
                   />
                   {clienteSearchOpen && (
-                    <div className="absolute left-6 right-6 mt-1 rounded-xl border border-[#f5dce4] bg-white shadow-lg z-10 overflow-hidden max-h-52 overflow-y-auto">
+                    <div className="absolute left-6 right-6 mt-1 rounded-xl border border-[#f0e0d0] bg-white shadow-lg z-10 overflow-hidden max-h-52 overflow-y-auto">
                       {clienteLoading && (
-                        <p className="px-3 py-2.5 text-[12px] text-[#c0a0a8]">
+                        <p className="px-3 py-2.5 text-[12px] text-[#AA6A42]">
                           Buscando…
                         </p>
                       )}
                       {!clienteLoading && clienteResults.length === 0 && (
-                        <p className="px-3 py-2.5 text-[12px] text-[#c0a0a8]">
+                        <p className="px-3 py-2.5 text-[12px] text-[#AA6A42]">
                           {clienteSearch.trim()
                             ? "Sin resultados"
                             : "Escribe para buscar un cliente"}
@@ -310,13 +313,13 @@ export function CartDrawer({ open, onClose }: Props) {
                               setClienteSearchOpen(false);
                               setClienteSearch("");
                             }}
-                            className="w-full text-left px-3 py-2.5 hover:bg-[#fdf6f0] transition border-b border-[#f9eef2] last:border-b-0"
+                            className="w-full text-left px-3 py-2.5 hover:bg-[#FFF7F0] transition border-b border-[#f9eef2] last:border-b-0"
                           >
                             <p className="text-[13px] font-semibold text-[#3d1a24]">
                               {c.nombre}
                             </p>
                             {(c.telefono || c.email) && (
-                              <p className="text-[11px] text-[#b07a8a]">
+                              <p className="text-[11px] text-[#6B3E26]">
                                 {[c.telefono, c.email]
                                   .filter(Boolean)
                                   .join(" · ")}
@@ -327,13 +330,13 @@ export function CartDrawer({ open, onClose }: Props) {
                       <button
                         type="button"
                         onClick={() => setClienteSearchOpen(false)}
-                        className="w-full text-center px-3 py-2 text-[12px] text-[#b07a8a] hover:bg-[#fdf6f0] transition border-t border-[#f5dce4]"
+                        className="w-full text-center px-3 py-2 text-[12px] text-[#6B3E26] hover:bg-[#FFF7F0] transition border-t border-[#f0e0d0]"
                       >
                         Cerrar
                       </button>
                     </div>
                   )}
-                  <p className="text-[11px] text-[#c0a0a8] mt-1">
+                  <p className="text-[11px] text-[#AA6A42] mt-1">
                     Opcional. Permite usar cupones individuales del cliente.
                   </p>
                 </div>
@@ -341,9 +344,9 @@ export function CartDrawer({ open, onClose }: Props) {
 
               {/* Fecha de entrega — siempre visible */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                   Fecha de entrega{" "}
-                  <span className="text-[#c0a0a8] normal-case font-normal">
+                  <span className="text-[#AA6A42] normal-case font-normal">
                     (opcional)
                   </span>
                 </label>
@@ -352,7 +355,24 @@ export function CartDrawer({ open, onClose }: Props) {
                   value={fechaEntrega}
                   onChange={(e) => setFechaEntrega(e.target.value)}
                   min={new Date().toISOString().slice(0, 10)}
-                  className="w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
+                  className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
+                />
+              </div>
+
+              {/* Observaciones / alergias — siempre visible */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  Observaciones{" "}
+                  <span className="text-[#AA6A42] normal-case font-normal">
+                    (opcional)
+                  </span>
+                </label>
+                <textarea
+                  value={notas}
+                  onChange={(e) => setNotas(e.target.value)}
+                  rows={2}
+                  placeholder="Alergias, preferencias, indicaciones especiales…"
+                  className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] resize-none focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
                 />
               </div>
             </div>
@@ -363,7 +383,7 @@ export function CartDrawer({ open, onClose }: Props) {
                 <div className="flex-1 flex flex-col items-center justify-center gap-2 py-12 text-center">
                   <svg
                     viewBox="0 0 24 24"
-                    className="w-12 h-12 text-[#e8c4cd]"
+                    className="w-12 h-12 text-[#e8c4a0]"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.5"
@@ -374,7 +394,7 @@ export function CartDrawer({ open, onClose }: Props) {
                     <path d="M3 6h18" />
                     <path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
-                  <p className="text-[#c0a0a8] text-sm">
+                  <p className="text-[#AA6A42] text-sm">
                     El carrito está vacío
                   </p>
                 </div>
@@ -385,20 +405,20 @@ export function CartDrawer({ open, onClose }: Props) {
                     {items.map((item) => (
                       <div
                         key={item.id}
-                        className="rounded-xl border border-[#f5dce4] p-3 flex flex-col gap-2"
+                        className="rounded-xl border border-[#f0e0d0] p-3 flex flex-col gap-2"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <p className="font-semibold text-[#3d1a24] text-sm">
                               {item.nombre}
                             </p>
-                            <p className="text-[11px] text-[#b07a8a]">
+                            <p className="text-[11px] text-[#6B3E26]">
                               ${item.precioUnitario.toFixed(2)} c/u
                             </p>
                           </div>
                           <button
                             onClick={() => removeItem(item.id)}
-                            className="p-1 rounded-lg hover:bg-red-50 text-[#c0a0a8] hover:text-red-500 transition shrink-0"
+                            className="p-1 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition shrink-0"
                           >
                             <svg
                               viewBox="0 0 24 24"
@@ -416,13 +436,13 @@ export function CartDrawer({ open, onClose }: Props) {
                           </button>
                         </div>
                         <div className="flex items-center justify-between">
-                          <div className="inline-flex items-center rounded-lg border border-[#e8c4cd] overflow-hidden">
+                          <div className="inline-flex items-center rounded-lg border border-[#e8c4a0] overflow-hidden">
                             <button
                               onClick={() =>
                                 updateCantidad(item.id, item.cantidad - 1)
                               }
                               disabled={item.cantidad <= 1}
-                              className="w-7 h-7 flex items-center justify-center text-[#c0607a] hover:bg-[#fdf6f0] disabled:opacity-30 transition text-sm font-bold"
+                              className="w-7 h-7 flex items-center justify-center text-[#c0607a] hover:bg-[#FFF7F0] disabled:opacity-30 transition text-sm font-bold"
                             >
                               −
                             </button>
@@ -433,7 +453,7 @@ export function CartDrawer({ open, onClose }: Props) {
                               onClick={() =>
                                 updateCantidad(item.id, item.cantidad + 1)
                               }
-                              className="w-7 h-7 flex items-center justify-center text-[#c0607a] hover:bg-[#fdf6f0] transition text-sm font-bold"
+                              className="w-7 h-7 flex items-center justify-center text-[#c0607a] hover:bg-[#FFF7F0] transition text-sm font-bold"
                             >
                               +
                             </button>
@@ -446,12 +466,12 @@ export function CartDrawer({ open, onClose }: Props) {
                     ))}
                   </div>
 
-                  <div className="h-px bg-[#f5dce4]" />
+                  <div className="h-px bg-[#f0e0d0]" />
 
                   {/* Cupones aplicados */}
                   {cupones.length > 0 && (
                     <div className="flex flex-col gap-2">
-                      <p className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                      <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                         Cupones aplicados
                       </p>
                       {cupones.map((c) => (
@@ -486,7 +506,7 @@ export function CartDrawer({ open, onClose }: Props) {
                     onSubmit={handleAplicarCupon}
                     className="flex flex-col gap-2"
                   >
-                    <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                       Código de cupón
                     </label>
                     <div className="flex gap-2">
@@ -496,12 +516,12 @@ export function CartDrawer({ open, onClose }: Props) {
                           setCuponInput(e.target.value.toUpperCase())
                         }
                         placeholder="Ej: VERANO2026"
-                        className="flex-1 px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition uppercase placeholder:normal-case placeholder:text-[#c0a0a8]"
+                        className="flex-1 px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition uppercase placeholder:normal-case placeholder:text-[#AA6A42]"
                       />
                       <button
                         type="submit"
                         disabled={validating || !cuponInput.trim()}
-                        className="px-4 py-2 rounded-lg bg-[#fdf6f0] border border-[#e8c4cd] text-[#7b2d42] text-sm font-semibold hover:bg-[#f5dce4] disabled:opacity-50 transition"
+                        className="px-4 py-2 rounded-lg bg-[#FFF7F0] border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold hover:bg-[#f0e0d0] disabled:opacity-50 transition"
                       >
                         {validating ? "..." : "Aplicar"}
                       </button>
@@ -513,15 +533,15 @@ export function CartDrawer({ open, onClose }: Props) {
                     )}
                   </form>
 
-                  <div className="h-px bg-[#f5dce4]" />
+                  <div className="h-px bg-[#f0e0d0]" />
 
                   {/* Toggle envío */}
-                  <div className="flex items-center justify-between rounded-xl border border-[#e8c4cd] bg-[#fdf6f0] px-4 py-3">
+                  <div className="flex items-center justify-between rounded-xl border border-[#e8c4a0] bg-[#FFF7F0] px-4 py-3">
                     <div>
                       <p className="text-[13px] font-semibold text-[#3d1a24]">
                         Envío a domicilio
                       </p>
-                      <p className="text-[11px] text-[#b07a8a]">
+                      <p className="text-[11px] text-[#6B3E26]">
                         +$30.00 si aplica
                       </p>
                     </div>
@@ -529,7 +549,7 @@ export function CartDrawer({ open, onClose }: Props) {
                       type="button"
                       onClick={() => setIncluirEnvio((v) => !v)}
                       className={`relative w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none ${
-                        incluirEnvio ? "bg-[#c0607a]" : "bg-[#e8c4cd]"
+                        incluirEnvio ? "bg-[#c0607a]" : "bg-[#e8c4a0]"
                       }`}
                     >
                       <span
@@ -543,7 +563,7 @@ export function CartDrawer({ open, onClose }: Props) {
                   {/* Totales */}
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-[#b07a8a]">Subtotal</span>
+                      <span className="text-[#6B3E26]">Subtotal</span>
                       <span className="text-[#3d1a24] font-medium">
                         ${subtotal.toFixed(2)}
                       </span>
@@ -558,14 +578,14 @@ export function CartDrawer({ open, onClose }: Props) {
                     )}
                     {incluirEnvio && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-[#b07a8a]">Envío</span>
+                        <span className="text-[#6B3E26]">Envío</span>
                         <span className="text-[#3d1a24] font-medium">
                           +${COSTO_ENVIO.toFixed(2)}
                         </span>
                       </div>
                     )}
-                    <div className="flex items-center justify-between pt-1.5 border-t border-[#f5dce4]">
-                      <span className="text-[#7b2d42] font-bold">Total</span>
+                    <div className="flex items-center justify-between pt-1.5 border-t border-[#f0e0d0]">
+                      <span className="text-[#AA6A42] font-bold">Total</span>
                       <span className="text-[#c0607a] font-bold text-xl">
                         ${(total + (incluirEnvio ? COSTO_ENVIO : 0)).toFixed(2)}
                       </span>
@@ -577,7 +597,7 @@ export function CartDrawer({ open, onClose }: Props) {
 
             {/* Footer */}
             {items.length > 0 && (
-              <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f5dce4] bg-white shrink-0">
+              <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
                 {successMsg && (
                   <div className="rounded-lg bg-green-50 border border-green-200 px-3 py-2 text-center text-[13px] font-semibold text-green-700">
                     {successMsg}
@@ -587,7 +607,7 @@ export function CartDrawer({ open, onClose }: Props) {
                   <button
                     onClick={() => handleGenerar("cotizacion")}
                     disabled={creating}
-                    className="flex-1 py-2.5 rounded-xl border border-[#c0607a] text-[#c0607a] text-sm font-bold hover:bg-[#fdf6f0] disabled:opacity-50 transition"
+                    className="flex-1 py-2.5 rounded-xl border border-[#c0607a] text-[#c0607a] text-sm font-bold hover:bg-[#FFF7F0] disabled:opacity-50 transition"
                   >
                     {creating ? "Generando…" : "Generar cotización"}
                   </button>

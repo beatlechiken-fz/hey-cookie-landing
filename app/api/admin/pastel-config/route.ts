@@ -24,6 +24,7 @@ export async function GET() {
       { data: licorIngs, error: e7 },
       { data: licorCants, error: e8 },
       { data: empaques, error: e9 },
+      { data: ornamentos, error: e10 },
     ] = await Promise.all([
       db
         .from("bizcochos")
@@ -67,9 +68,14 @@ export async function GET() {
         .select("id, nombre, precio, imagen_url")
         .eq("activo", true)
         .order("nombre"),
+      db
+        .from("ornamentos")
+        .select("id, nombre, precio, imagen_url")
+        .eq("activo", true)
+        .order("nombre"),
     ]);
 
-    const firstError = [e1, e2, e3, e4, e5, e6, e7, e8, e9].find(Boolean);
+    const firstError = [e1, e2, e3, e4, e5, e6, e7, e8, e9, e10].find(Boolean);
     if (firstError) throw new Error(firstError.message);
 
     // Toppings: join manual entre topping_cantidades + ingredientes (solo activos)
@@ -134,6 +140,12 @@ export async function GET() {
         nombre: e.nombre,
         precio: Number(e.precio),
         imagenUrl: e.imagen_url ?? null,
+      })),
+      ornamentos: (ornamentos ?? []).map((o: any) => ({
+        id: o.id,
+        nombre: o.nombre,
+        precio: Number(o.precio),
+        imagenUrl: o.imagen_url ?? null,
       })),
     };
 

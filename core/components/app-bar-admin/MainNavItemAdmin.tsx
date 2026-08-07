@@ -54,7 +54,7 @@ export default function AdminNavItem({
             px-4 py-2 rounded-xl transition
             flex justify-between items-center
             text-left text-[18px]
-            ${active ? "text-[#C0607A]" : "text-[#7b2d42] hover:text-[#C0607A]"}
+            ${active ? "text-[#C0607A]" : "text-[#3A1F14] hover:text-[#C0607A]"}
           `}
         >
           <span>{label}</span>
@@ -70,9 +70,9 @@ export default function AdminNavItem({
                 onClick={onSelect}
                 className="
                   px-3 py-2 text-[15px]
-                  text-[#7b2d42]/70
+                  text-[#6B3E26]
                   hover:text-[#C0607A]
-                  hover:bg-[#f5dce4]/60
+                  hover:bg-[#f0e0d0]/60
                   rounded-lg transition
                 "
               >
@@ -95,7 +95,7 @@ export default function AdminNavItem({
           px-3 py-1 rounded-xl transition text-[15px]
           flex items-center gap-1
           font-semibold
-          ${active ? "text-[#f8c8d4]" : "text-white hover:text-[#fce4ec]"}
+          ${active ? "text-[#AA6A42]" : "text-[#3A1F14] hover:text-[#AA6A42]"}
         `}
       >
         <div className="flex flex-col items-start">
@@ -115,7 +115,7 @@ export default function AdminNavItem({
           className="
             absolute top-full left-0 mt-2 w-44
             bg-[#ffffff]
-            border border-[#f5dce4]
+            border border-[#f0e0d0]
             rounded-xl p-2 shadow-lg
             opacity-0 invisible
             group-hover:opacity-100 group-hover:visible
@@ -129,11 +129,11 @@ export default function AdminNavItem({
               href={s.url}
               onClick={onSelect}
               className="
-                block px-3 py-2 
+                block px-3 py-2
                 text-[15px] font-semibold
-                text-[#7b2d42]/80
+                text-[#6B3E26]
                 hover:text-[#C0607A]
-                hover:bg-[#fdf6f0]
+                hover:bg-[#FFF7F0]
                 rounded-lg transition
               "
             >

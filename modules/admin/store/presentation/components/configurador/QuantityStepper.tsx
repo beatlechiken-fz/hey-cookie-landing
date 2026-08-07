@@ -13,12 +13,12 @@ export function QuantityStepper({ value, onChange, min = 1, max = 99 }: Props) {
   const inc = () => onChange(Math.min(max, value + 1));
 
   return (
-    <div className="inline-flex items-center rounded-xl border border-[#e8c4cd] bg-white overflow-hidden">
+    <div className="inline-flex items-center rounded-xl border border-[#e8c4a0] bg-white overflow-hidden">
       <button
         type="button"
         onClick={dec}
         disabled={value <= min}
-        className="w-9 h-9 flex items-center justify-center text-[#c0607a] hover:bg-[#fdf6f0] disabled:opacity-30 disabled:cursor-not-allowed transition text-lg font-bold"
+        className="w-9 h-9 flex items-center justify-center text-[#c0607a] hover:bg-[#FFF7F0] disabled:opacity-30 disabled:cursor-not-allowed transition text-lg font-bold"
       >
         −
       </button>
@@ -31,13 +31,13 @@ export function QuantityStepper({ value, onChange, min = 1, max = 99 }: Props) {
           const v = Number(e.target.value);
           if (!isNaN(v)) onChange(Math.min(max, Math.max(min, v)));
         }}
-        className="w-12 h-9 text-center text-sm font-semibold text-[#3d1a24] border-x border-[#e8c4cd] focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        className="w-12 h-9 text-center text-sm font-semibold text-[#3d1a24] border-x border-[#e8c4a0] focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
       />
       <button
         type="button"
         onClick={inc}
         disabled={value >= max}
-        className="w-9 h-9 flex items-center justify-center text-[#c0607a] hover:bg-[#fdf6f0] disabled:opacity-30 disabled:cursor-not-allowed transition text-lg font-bold"
+        className="w-9 h-9 flex items-center justify-center text-[#c0607a] hover:bg-[#FFF7F0] disabled:opacity-30 disabled:cursor-not-allowed transition text-lg font-bold"
       >
         +
       </button>

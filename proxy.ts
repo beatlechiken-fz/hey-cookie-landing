@@ -9,6 +9,7 @@ const LOCALES = ["es", "en"];
 
 const PUBLIC_API_PATHS: string[] = [
   "/api/public/",
+  "/api/contact",
 ];
 
 function stripLocale(pathname: string): string {

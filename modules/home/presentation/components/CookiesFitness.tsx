@@ -36,9 +36,14 @@ export default function CookiesFitness({ productos }: Props) {
             Próximamente…
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-5">
             {productos.map((p) => (
-              <FitnessCard key={p.id} producto={p} onOpen={() => setSelected(p)} />
+              <div
+                key={p.id}
+                className="w-[calc(50%-8px)] sm:w-[calc(33.333%-12px)] lg:w-[calc(25%-14px)] xl:w-[calc(20%-15px)]"
+              >
+                <FitnessCard producto={p} onOpen={() => setSelected(p)} />
+              </div>
             ))}
           </div>
         )}
@@ -65,9 +70,9 @@ export default function CookiesFitness({ productos }: Props) {
 }
 
 const LINE_TAG: Record<string, { label: string; cls: string }> = {
-  sweet:   { label: "Sweet",   cls: "bg-[#DA6C94] text-white" },
-  fitness: { label: "Fitness", cls: "bg-[#6ab04c] text-white" },
-  healthy: { label: "Healthy", cls: "bg-[#27ae60] text-white" },
+  sweet:   { label: "Sweet",   cls: "bg-[#A84D66] text-white" },
+  fitness: { label: "Fitness", cls: "bg-[#4A7B35] text-white" },
+  healthy: { label: "Healthy", cls: "bg-[#1B7A43] text-white" },
 };
 
 interface CardProps {
@@ -85,34 +90,33 @@ function FitnessCard({ producto, onOpen }: CardProps) {
       onClick={onOpen}
       className="cursor-pointer group rounded-3xl bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 p-4"
     >
-      <div className="overflow-hidden rounded-2xl relative">
+      <div className="overflow-hidden rounded-2xl relative aspect-[4/3]">
         <Image
           src={imageSrc}
           alt={producto.nombre}
-          width={400}
-          height={300}
-          className="w-full h-56 object-contain bg-[#FFF7F0] transition-transform duration-300 group-hover:scale-105"
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
         />
         {tag && (
-          <span className={`absolute top-3 left-3 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${tag.cls}`}>
+          <span className={`absolute top-3 left-3 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${tag.cls}`}>
             {tag.label}
           </span>
         )}
       </div>
 
-      <h3 className="text-xl font-semibold mt-4 text-[#DA6C94] group-hover:text-[#c15981] transition-colors line-clamp-2">
+      <h3 className="text-xl font-semibold mt-4 text-[#A8386A] group-hover:text-[#8f2f56] transition-colors line-clamp-2">
         {producto.nombre}
       </h3>
 
       {producto.descripcion && (
-        <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+        <p className="text-[#6B3E26] text-sm mt-1 line-clamp-2">
           {producto.descripcion}
         </p>
       )}
 
       {precio != null && (
-        <span className="inline-block mt-2 text-xs font-semibold text-[#AA6A42] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
+        <span className="inline-block mt-2 text-xs font-semibold text-[#8A5535] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
           ${precio.toFixed(0)} / pz
         </span>
       )}

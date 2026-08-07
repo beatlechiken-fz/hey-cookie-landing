@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import Images from "@/core/assets/Images";
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
+import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 import type { Producto, LineaProducto } from "@/modules/admin/store/domain/entities/Producto.entity";
 
 async function fetchGelatinas(): Promise<Producto[]> {
@@ -55,7 +56,8 @@ export default async function JellyPage() {
 
   return (
     <main className="bg-[#FAF3E0]">
-      <div className="relative z-9">
+      <h1 className="sr-only">Gelatinas — Hey Cookie</h1>
+      <div className="relative z-9 bg-[#F1DCC9]">
         <div className="flex h-[60px] md:h-[70px]">
           <div className="relative w-[100px] h-[86px] ml-3 lg:ml-8 md:-mt-1 overflow-visible">
             <Link href="/">
@@ -71,6 +73,8 @@ export default async function JellyPage() {
           <AppBar />
         </div>
       </div>
+
+      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8EDE3" />
 
       <section>
         <JelliesSection productos={gelatinas} />

@@ -10,7 +10,7 @@ export default function GelatinasPage() {
 
       <div className="px-6 lg:px-20">
         <div className="mb-6 pt-4 w-full max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-[#7b2d42]">Gelatinas</h1>
+          <h1 className="text-2xl font-bold text-[#AA6A42]">Gelatinas</h1>
         </div>
         <GelatinasView />
       </div>

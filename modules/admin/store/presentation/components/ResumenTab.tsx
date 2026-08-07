@@ -56,9 +56,9 @@ const CUENTA_COLORS: Record<
     badge: "bg-orange-100 text-orange-700",
   },
   insumos: {
-    bg: "#fdf6f0",
-    border: "#f5dce4",
-    text: "#7b2d42",
+    bg: "#FFF7F0",
+    border: "#f0e0d0",
+    text: "#AA6A42",
     badge: "bg-pink-100 text-pink-700",
   },
 };
@@ -123,12 +123,12 @@ export function ResumenTab({ desde, hasta }: Props) {
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
 
   return (
     <div className="flex flex-col gap-6">
       {isLoading && (
-        <p className="text-center text-[#c0a0a8] text-sm py-8">
+        <p className="text-center text-[#AA6A42] text-sm py-8">
           Calculando resumen…
         </p>
       )}
@@ -143,7 +143,7 @@ export function ResumenTab({ desde, hasta }: Props) {
                 label: "Total ventas",
                 value: resumen.totalVentas,
                 icon: "🏷️",
-                color: "text-[#7b2d42]",
+                color: "text-[#AA6A42]",
               },
               {
                 label: "Total compras",
@@ -155,7 +155,7 @@ export function ResumenTab({ desde, hasta }: Props) {
                 label: "Nro. de ventas",
                 value: null,
                 icon: "📋",
-                color: "text-[#7b2d42]",
+                color: "text-[#AA6A42]",
               },
               {
                 label: "Utilidad neta",
@@ -166,9 +166,9 @@ export function ResumenTab({ desde, hasta }: Props) {
             ].map((kpi, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl border border-[#f5dce4] p-4 flex flex-col gap-1"
+                className="bg-white rounded-2xl border border-[#f0e0d0] p-4 flex flex-col gap-1"
               >
-                <span className="text-[11px] text-[#b07a8a] font-semibold uppercase tracking-wider">
+                <span className="text-[11px] text-[#6B3E26] font-semibold uppercase tracking-wider">
                   {kpi.icon} {kpi.label}
                 </span>
                 <span className={`text-xl font-bold ${kpi.color}`}>
@@ -183,12 +183,12 @@ export function ResumenTab({ desde, hasta }: Props) {
           {/* Cuentas */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[13px] font-bold text-[#7b2d42] uppercase tracking-wider">
+              <h3 className="text-[13px] font-bold text-[#AA6A42] uppercase tracking-wider">
                 Cuentas
               </h3>
               <button
                 onClick={() => setShowMov(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#7b2d42] text-white text-[12px] font-bold hover:bg-[#5a1e2e] transition"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#AA6A42] text-white text-[12px] font-bold hover:bg-[#5a1e2e] transition"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -316,13 +316,13 @@ export function ResumenTab({ desde, hasta }: Props) {
 
           {/* Últimas ventas */}
           <div>
-            <h3 className="text-[13px] font-bold text-[#7b2d42] uppercase tracking-wider mb-3">
+            <h3 className="text-[13px] font-bold text-[#AA6A42] uppercase tracking-wider mb-3">
               Últimas ventas registradas
             </h3>
             {resumen.cuentas.length === 0 ? (
-              <p className="text-sm text-[#c0a0a8]">Sin ventas en el período</p>
+              <p className="text-sm text-[#AA6A42]">Sin ventas en el período</p>
             ) : (
-              <p className="text-sm text-[#b07a8a]">
+              <p className="text-sm text-[#6B3E26]">
                 Ve a la pestaña Ingresos para el detalle completo.
               </p>
             )}
@@ -337,14 +337,14 @@ export function ResumenTab({ desde, hasta }: Props) {
             className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
             onClick={() => setShowMov(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f5dce4] p-6 max-w-md w-full z-10 flex flex-col gap-4">
+          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 max-w-md w-full z-10 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-[#7b2d42] text-lg">
+              <h3 className="font-bold text-[#AA6A42] text-lg">
                 Nuevo movimiento
               </h3>
               <button
                 onClick={() => setShowMov(false)}
-                className="p-1.5 rounded-lg hover:bg-[#f5dce4] transition text-[#b07a8a]"
+                className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -361,7 +361,7 @@ export function ResumenTab({ desde, hasta }: Props) {
 
             {/* Tipo */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                 Tipo
               </label>
               <div className="flex gap-2">
@@ -375,7 +375,7 @@ export function ResumenTab({ desde, hasta }: Props) {
                         ? t === "egreso"
                           ? "bg-red-500 text-white border-red-500"
                           : "bg-green-600 text-white border-green-600"
-                        : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]"
+                        : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"
                     }`}
                   >
                     {t === "egreso" ? "↓ Egreso (pago)" : "↑ Ingreso (entrada)"}
@@ -386,7 +386,7 @@ export function ResumenTab({ desde, hasta }: Props) {
 
             {/* Cuenta */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                 Cuenta
               </label>
               <select
@@ -409,7 +409,7 @@ export function ResumenTab({ desde, hasta }: Props) {
 
             {/* Concepto */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                 Concepto *
               </label>
               <input
@@ -424,11 +424,11 @@ export function ResumenTab({ desde, hasta }: Props) {
 
             {/* Monto */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                 Monto *
               </label>
               <div className="flex items-center gap-2">
-                <span className="text-[#b07a8a]">$</span>
+                <span className="text-[#6B3E26]">$</span>
                 <input
                   type="number"
                   min="0.01"
@@ -445,7 +445,7 @@ export function ResumenTab({ desde, hasta }: Props) {
 
             {/* Fecha */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                 Fecha
               </label>
               <input
@@ -460,7 +460,7 @@ export function ResumenTab({ desde, hasta }: Props) {
 
             {/* Notas */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                 Notas (opcional)
               </label>
               <textarea
@@ -478,7 +478,7 @@ export function ResumenTab({ desde, hasta }: Props) {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowMov(false)}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
               >
                 Cancelar
               </button>

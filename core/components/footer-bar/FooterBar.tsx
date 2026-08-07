@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 
 interface FooterBarProps {
   appearance?: "dark" | "light";
@@ -12,8 +13,8 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
   // Redes sociales
   const socialLinks = [
     {
-      id: "wahtsapp",
-      href: `href="https://wa.me/5214433853472?text=Hola%20me%20gustaría%20cotizar%20galletas"`,
+      id: "whatsapp",
+      href: "https://wa.me/5214433853472?text=Hola%20me%20gustaría%20cotizar%20galletas",
       icon: (
         <svg
           width="26"
@@ -31,7 +32,7 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
     },
     {
       id: "instagram",
-      href: "#",
+      href: "https://instagram.com/heycookie.mrl",
       icon: (
         <svg
           width="26"
@@ -43,49 +44,24 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
         </svg>
       ),
     },
-    {
-      id: "tiktok",
-      href: "#",
-      icon: (
-        <svg
-          width="26"
-          height="26"
-          viewBox="0 0 24 24"
-          fill={`${appearance === "dark" ? "white" : "#261102"}`}
-        >
-          <path
-            d="
-    M14 2
-    h2
-    c.3 1.7 1.5 3.1 3.1 3.5
-    v2
-    c-1.3 0-2.5-.4-3.6-1.1
-    v6.3
-    c0 3-2.4 5.3-5.3 5.3
-    S4.9 15.9 4.9 13
-    c0-2.9 2.4-5.3 5.3-5.3
-    .4 0 .8.1 1.1.1
-    v2.9
-    c-.3-.2-.7-.3-1.1-.3
-    -1.3 0-2.3 1.1-2.3 2.5
-    0 1.3 1 2.4 2.3 2.4
-    1.3 0 2.4-1.1 2.4-2.4
-    V2
-    Z
-  "
-          />
-        </svg>
-      ),
-    },
   ];
 
   return (
-    <footer
-      className="w-full text-white px-6 py-6"
-      style={{
-        backgroundColor: appearance === "dark" ? "#261102" : "transparent",
-      }}
-    >
+    <>
+      {/* Onda de firma del sitio — separa lo que venga antes del footer
+          oscuro, siempre, en cualquier página que use este componente.
+          topFill = fondo base de página (#FAF3E0), lo que hay justo antes
+          del footer en todas las páginas que lo usan. */}
+      {appearance === "dark" && (
+        <HeaderWaveRibbon topFill="#FAF3E0" bottomFill="#261102" />
+      )}
+
+      <footer
+        className="w-full text-white px-6 py-6"
+        style={{
+          backgroundColor: appearance === "dark" ? "#261102" : "transparent",
+        }}
+      >
       <div className="w-[80%] mx-auto flex flex-col gap-4">
         {/* ROW 2 — Redes sociales */}
         <div className="flex items-center gap-6 justify-center">
@@ -96,7 +72,7 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
               target="_blank"
               aria-label={s.id}
               rel="noopener noreferrer"
-              className="hover:scale-110 transition"
+              className="p-2.5 -m-2.5 hover:scale-110 transition"
             >
               {s.icon}
             </a>
@@ -111,6 +87,7 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
           {t("rights")}
         </div>
       </div>
-    </footer>
+      </footer>
+    </>
   );
 }

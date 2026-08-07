@@ -73,9 +73,9 @@ export default function Cookies({ productos }: Props) {
 }
 
 const LINE_TAG: Record<string, { label: string; cls: string }> = {
-  sweet:   { label: "Sweet",   cls: "bg-[#DA6C94] text-white" },
-  fitness: { label: "Fitness", cls: "bg-[#6ab04c] text-white" },
-  healthy: { label: "Healthy", cls: "bg-[#27ae60] text-white" },
+  sweet:   { label: "Sweet",   cls: "bg-[#A84D66] text-white" },
+  fitness: { label: "Fitness", cls: "bg-[#4A7B35] text-white" },
+  healthy: { label: "Healthy", cls: "bg-[#1B7A43] text-white" },
 };
 
 interface CardProps {
@@ -103,27 +103,27 @@ function CookieCard({ producto, onOpen }: CardProps) {
           sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
         />
         {tag && (
-          <span className={`absolute top-3 left-3 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${tag.cls}`}>
+          <span className={`absolute top-3 left-3 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${tag.cls}`}>
             {tag.label}
           </span>
         )}
       </div>
 
       {/* NAME */}
-      <h3 className="text-xl font-semibold mt-4 text-[#DA6C94] group-hover:text-[#c15981] transition-colors line-clamp-2">
+      <h3 className="text-xl font-semibold mt-4 text-[#A8386A] group-hover:text-[#8f2f56] transition-colors line-clamp-2">
         {producto.nombre}
       </h3>
 
       {/* DESCRIPTION */}
       {producto.descripcion && (
-        <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+        <p className="text-[#6B3E26] text-sm mt-1 line-clamp-2">
           {producto.descripcion}
         </p>
       )}
 
       {/* PRICE */}
       {precio != null && (
-        <span className="inline-block mt-2 text-xs font-semibold text-[#AA6A42] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
+        <span className="inline-block mt-2 text-xs font-semibold text-[#8A5535] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
           ${precio.toFixed(0)} / pz
         </span>
       )}

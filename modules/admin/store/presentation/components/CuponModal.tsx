@@ -86,7 +86,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#c0a0a8]";
+    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
 
   return (
     <AnimatePresence>
@@ -108,14 +108,14 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#f5dce4] overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f5dce4] bg-[#fdf6f0]">
-                <h2 className="font-bold text-[#7b2d42] text-lg">
+            <div className="pointer-events-auto w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
+                <h2 className="font-bold text-[#AA6A42] text-lg">
                   {isEdit ? "Editar cupón" : "Nuevo cupón"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f5dce4] transition text-[#b07a8a]"
+                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -136,7 +136,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
               >
                 {/* Código */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Código
                   </label>
                   <input
@@ -155,7 +155,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
 
                 {/* Tipo de cupón */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Tipo de cupón
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -180,8 +180,8 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                         className={
                           "text-left px-3 py-2.5 rounded-xl border transition " +
                           (form.tipo === opt.value
-                            ? "border-[#c0607a] bg-[#fdf6f0]"
-                            : "border-[#e8c4cd] hover:bg-[#fdf6f0]")
+                            ? "border-[#c0607a] bg-[#FFF7F0]"
+                            : "border-[#e8c4a0] hover:bg-[#FFF7F0]")
                         }
                       >
                         <p
@@ -189,19 +189,19 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                             "text-sm font-semibold " +
                             (form.tipo === opt.value
                               ? "text-[#c0607a]"
-                              : "text-[#7b2d42]")
+                              : "text-[#AA6A42]")
                           }
                         >
                           {opt.label}
                         </p>
-                        <p className="text-[11px] text-[#b07a8a] mt-0.5">
+                        <p className="text-[11px] text-[#6B3E26] mt-0.5">
                           {opt.desc}
                         </p>
                       </button>
                     ))}
                   </div>
                   {form.tipo === "individual" && (
-                    <p className="text-[11px] text-[#b07a8a] mt-1">
+                    <p className="text-[11px] text-[#6B3E26] mt-1">
                       Este cupón podrá asignarse a un cliente específico desde
                       el módulo de clientes.
                     </p>
@@ -210,9 +210,9 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
 
                 {/* Descripción */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Descripción{" "}
-                    <span className="text-[#c0a0a8] normal-case font-normal">
+                    <span className="text-[#AA6A42] normal-case font-normal">
                       (opcional)
                     </span>
                   </label>
@@ -229,7 +229,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                 {/* Tipo + valor */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                       Tipo de descuento
                     </label>
                     <select
@@ -247,11 +247,11 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                     </select>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                       Valor
                     </label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#b07a8a] text-sm">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B3E26] text-sm">
                         {form.tipoDescuento === "porcentaje" ? "%" : "$"}
                       </span>
                       <input
@@ -277,9 +277,9 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
 
                 {/* Usos máximos */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Usos máximos{" "}
-                    <span className="text-[#c0a0a8] normal-case font-normal">
+                    <span className="text-[#AA6A42] normal-case font-normal">
                       (vacío = ilimitado)
                     </span>
                   </label>
@@ -304,7 +304,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                 {/* Vigencia */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                       Desde
                     </label>
                     <input
@@ -322,7 +322,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                       Hasta
                     </label>
                     <input
@@ -351,7 +351,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
                   >
                     Cancelar
                   </button>

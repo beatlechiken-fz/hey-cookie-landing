@@ -49,7 +49,7 @@ export function ClienteDetailView({ clienteId }: Props) {
 
   if (loading)
     return (
-      <p className="text-center text-[#c0a0a8] text-sm py-12">Cargando…</p>
+      <p className="text-center text-[#AA6A42] text-sm py-12">Cargando…</p>
     );
   if (error || !cliente)
     return (
@@ -70,7 +70,7 @@ export function ClienteDetailView({ clienteId }: Props) {
       {/* Back */}
       <button
         onClick={() => router.push("/admin/dashboard/store/clientes")}
-        className="flex items-center gap-1.5 text-[13px] text-[#b07a8a] hover:text-[#c0607a] transition self-start"
+        className="flex items-center gap-1.5 text-[13px] text-[#6B3E26] hover:text-[#c0607a] transition self-start"
       >
         <svg
           viewBox="0 0 24 24"
@@ -87,7 +87,7 @@ export function ClienteDetailView({ clienteId }: Props) {
       </button>
 
       {/* Cliente info card */}
-      <div className="rounded-2xl border border-[#f5dce4] bg-white shadow-sm p-5 flex flex-col gap-4">
+      <div className="rounded-2xl border border-[#f0e0d0] bg-white shadow-sm p-5 flex flex-col gap-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-[#c0607a] text-white flex items-center justify-center text-lg font-bold shrink-0">
@@ -110,7 +110,7 @@ export function ClienteDetailView({ clienteId }: Props) {
           </div>
           <button
             onClick={() => setEditOpen(true)}
-            className="p-2 rounded-lg hover:bg-[#fdf6f0] text-[#b07a8a] hover:text-[#c0607a] transition shrink-0"
+            className="p-2 rounded-lg hover:bg-[#FFF7F0] text-[#6B3E26] hover:text-[#c0607a] transition shrink-0"
           >
             <svg
               viewBox="0 0 24 24"
@@ -130,7 +130,7 @@ export function ClienteDetailView({ clienteId }: Props) {
           <div className="flex items-center gap-2 text-sm">
             <svg
               viewBox="0 0 24 24"
-              className="w-4 h-4 text-[#c0a0a8] shrink-0"
+              className="w-4 h-4 text-[#AA6A42] shrink-0"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -141,14 +141,14 @@ export function ClienteDetailView({ clienteId }: Props) {
             </svg>
             <span className="text-[#3d1a24]">
               {cliente.telefono ?? (
-                <span className="text-[#c0a0a8]">Sin teléfono</span>
+                <span className="text-[#AA6A42]">Sin teléfono</span>
               )}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <svg
               viewBox="0 0 24 24"
-              className="w-4 h-4 text-[#c0a0a8] shrink-0"
+              className="w-4 h-4 text-[#AA6A42] shrink-0"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -160,14 +160,14 @@ export function ClienteDetailView({ clienteId }: Props) {
             </svg>
             <span className="text-[#3d1a24]">
               {cliente.email ?? (
-                <span className="text-[#c0a0a8]">Sin email</span>
+                <span className="text-[#AA6A42]">Sin email</span>
               )}
             </span>
           </div>
           <div className="flex items-center gap-2 text-sm sm:col-span-2">
             <svg
               viewBox="0 0 24 24"
-              className="w-4 h-4 text-[#c0a0a8] shrink-0"
+              className="w-4 h-4 text-[#AA6A42] shrink-0"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -179,18 +179,18 @@ export function ClienteDetailView({ clienteId }: Props) {
             </svg>
             <span className="text-[#3d1a24]">
               {cliente.direccion ?? (
-                <span className="text-[#c0a0a8]">Sin dirección</span>
+                <span className="text-[#AA6A42]">Sin dirección</span>
               )}
             </span>
           </div>
         </div>
 
         {cliente.notas && (
-          <div className="rounded-xl bg-[#fdf6f0] border border-[#f5dce4] px-3 py-2.5">
-            <p className="text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider mb-1">
+          <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
+            <p className="text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider mb-1">
               Notas
             </p>
-            <p className="text-[13px] text-[#7b2d42] whitespace-pre-wrap">
+            <p className="text-[13px] text-[#AA6A42] whitespace-pre-wrap">
               {cliente.notas}
             </p>
           </div>
@@ -203,8 +203,8 @@ export function ClienteDetailView({ clienteId }: Props) {
       {/* Pedidos */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-[#7b2d42]">Pedidos</h2>
-          <p className="text-sm text-[#b07a8a]">
+          <h2 className="text-lg font-bold text-[#AA6A42]">Pedidos</h2>
+          <p className="text-sm text-[#6B3E26]">
             {ordenesLoading
               ? "Cargando…"
               : `${ordenes.length} total${ordenes.length !== 1 ? "es" : ""}`}
@@ -212,7 +212,7 @@ export function ClienteDetailView({ clienteId }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-[#f5dce4]">
+        <div className="flex border-b border-[#f0e0d0]">
           {[
             { value: "todas" as const, label: `Todas (${ordenes.length})` },
             {
@@ -231,7 +231,7 @@ export function ClienteDetailView({ clienteId }: Props) {
                 "relative px-4 py-2.5 text-sm font-semibold transition " +
                 (tab === t.value
                   ? "text-[#c0607a]"
-                  : "text-[#b07a8a] hover:text-[#7b2d42]")
+                  : "text-[#6B3E26] hover:text-[#AA6A42]")
               }
             >
               {t.label}
@@ -245,7 +245,7 @@ export function ClienteDetailView({ clienteId }: Props) {
         {ordenesError && <p className="text-sm text-red-600">{ordenesError}</p>}
 
         {!ordenesLoading && visibleOrdenes.length === 0 && (
-          <div className="rounded-2xl border border-[#f5dce4] bg-[#fdf6f0] py-10 text-center text-[#c0a0a8] text-sm">
+          <div className="rounded-2xl border border-[#f0e0d0] bg-[#FFF7F0] py-10 text-center text-[#AA6A42] text-sm">
             Sin pedidos en esta categoría
           </div>
         )}

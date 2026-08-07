@@ -12,6 +12,7 @@ import {
   type Producto,
   type ProductoOpciones,
 } from "../../domain/entities/Producto.entity";
+import { normalizeOpciones } from "../../domain/entities/PastelPersonalizado.entity";
 
 export function useProductoConfigurador(
   producto: Producto | null,
@@ -33,7 +34,7 @@ export function useProductoConfigurador(
   // Inicializa con las opciones por defecto del producto cuando cambia
   useEffect(() => {
     if (!producto) return;
-    setOpciones({ ...OPCIONES_VACIAS, ...producto.opcionesDefault });
+    setOpciones(normalizeOpciones({ ...OPCIONES_VACIAS, ...producto.opcionesDefault }));
     setDiametroCm(producto.medidaBaseCm ?? 0);
     setTamanoFijoId(producto.tamanosFijos[0]?.id ?? null);
     setCantidad(1);
@@ -48,7 +49,7 @@ export function useProductoConfigurador(
 
   const reset = () => {
     if (!producto) return;
-    setOpciones({ ...OPCIONES_VACIAS, ...producto.opcionesDefault });
+    setOpciones(normalizeOpciones({ ...OPCIONES_VACIAS, ...producto.opcionesDefault }));
     setDiametroCm(producto.medidaBaseCm ?? 0);
     setTamanoFijoId(producto.tamanosFijos[0]?.id ?? null);
     setCantidad(1);

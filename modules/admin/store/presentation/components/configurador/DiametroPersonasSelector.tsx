@@ -61,12 +61,12 @@ export function DiametroPersonasSelector({
   }
 
   const inputCls =
-    "w-24 px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm font-semibold text-center focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+    "w-24 px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm font-semibold text-center focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
 
   return (
     <div className="flex flex-col gap-2">
       {label && (
-        <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+        <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
           {label}
         </label>
       )}
@@ -74,7 +74,7 @@ export function DiametroPersonasSelector({
       <div className="flex items-end gap-4 flex-wrap">
         {/* Diámetro */}
         <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+          <span className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
             Diámetro
           </span>
           <div className="flex items-center gap-1.5">
@@ -86,15 +86,15 @@ export function DiametroPersonasSelector({
               onChange={(e) => handleDiametroChange(e.target.value)}
               className={inputCls}
             />
-            <span className="text-[12px] text-[#b07a8a] font-medium">cm</span>
+            <span className="text-[12px] text-[#6B3E26] font-medium">cm</span>
           </div>
         </div>
 
-        <span className="text-[16px] text-[#e8c4cd] mb-2">⇄</span>
+        <span className="text-[16px] text-[#e8c4a0] mb-2">⇄</span>
 
         {/* Personas */}
         <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+          <span className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
             Personas
           </span>
           <div className="flex items-center gap-1.5">
@@ -107,14 +107,14 @@ export function DiametroPersonasSelector({
               onBlur={handlePersonasBlur}
               className={inputCls}
             />
-            <span className="text-[12px] text-[#b07a8a] font-medium">pax</span>
+            <span className="text-[12px] text-[#6B3E26] font-medium">pax</span>
           </div>
         </div>
       </div>
 
-      <p className="text-[11px] text-[#b07a8a]">
+      <p className="text-[11px] text-[#6B3E26]">
         {diametroCm}cm →{" "}
-        <strong className="text-[#7b2d42]">
+        <strong className="text-[#AA6A42]">
           {personasDesdeDiametro(diametroCm, medidaBaseCm)} personas
         </strong>
         {medidaBaseCm !== 24 && <span> · base {medidaBaseCm}cm</span>}

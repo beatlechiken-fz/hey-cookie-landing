@@ -174,7 +174,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#c0a0a8]";
+    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
 
   return (
     <AnimatePresence>
@@ -197,15 +197,15 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-[#f5dce4] flex flex-col overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f5dce4] bg-[#fdf6f0] shrink-0">
-                <h2 className="font-bold text-[#7b2d42] text-lg">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
+                <h2 className="font-bold text-[#AA6A42] text-lg">
                   {isEdit ? "Editar jarabe" : "Nuevo jarabe"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f5dce4] transition text-[#b07a8a]"
+                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -227,11 +227,11 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
               >
                 {/* Imagen */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Imagen
                   </label>
                   <div className="flex items-center gap-4">
-                    <div className="w-24 h-24 rounded-xl border border-[#f5dce4] bg-[#fdf6f0] overflow-hidden flex items-center justify-center shrink-0">
+                    <div className="w-24 h-24 rounded-xl border border-[#f0e0d0] bg-[#FFF7F0] overflow-hidden flex items-center justify-center shrink-0">
                       {imagenUrl ? (
                         <img
                           src={imagenUrl}
@@ -241,7 +241,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                       ) : (
                         <svg
                           viewBox="0 0 24 24"
-                          className="w-8 h-8 text-[#e8c4cd]"
+                          className="w-8 h-8 text-[#e8c4a0]"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="1.5"
@@ -266,7 +266,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                       <label
                         htmlFor="jarabe-image-upload"
                         className={
-                          "cursor-pointer text-center py-2 px-3 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-[13px] font-semibold hover:bg-[#fdf6f0] transition " +
+                          "cursor-pointer text-center py-2 px-3 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-[13px] font-semibold hover:bg-[#FFF7F0] transition " +
                           (uploading ? "opacity-50 cursor-not-allowed" : "")
                         }
                       >
@@ -276,7 +276,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                             ? "Cambiar imagen"
                             : "Subir imagen"}
                       </label>
-                      <p className="text-[11px] text-[#b07a8a]">
+                      <p className="text-[11px] text-[#6B3E26]">
                         JPG, PNG, WEBP o GIF · máx. 5MB
                       </p>
                     </div>
@@ -284,7 +284,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Nombre
                   </label>
                   <input
@@ -297,9 +297,9 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Descripción{" "}
-                    <span className="text-[#c0a0a8] normal-case font-normal">
+                    <span className="text-[#AA6A42] normal-case font-normal">
                       (visible para clientes)
                     </span>
                   </label>
@@ -313,9 +313,9 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Elaboración{" "}
-                    <span className="text-[#c0a0a8] normal-case font-normal">
+                    <span className="text-[#AA6A42] normal-case font-normal">
                       (procedimiento interno)
                     </span>
                   </label>
@@ -350,10 +350,10 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                 {/* Ingredientes */}
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                       Ingredientes
                     </label>
-                    <span className="text-[11px] text-[#b07a8a]">
+                    <span className="text-[11px] text-[#6B3E26]">
                       {lineas.length} agregado{lineas.length !== 1 ? "s" : ""}
                     </span>
                   </div>
@@ -370,7 +370,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                     ) : (
                       <svg
                         viewBox="0 0 24 24"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c0a0a8] pointer-events-none"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#AA6A42] pointer-events-none"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -381,7 +381,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                       </svg>
                     )}
                     {showDropdown && ingResults.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#f5dce4] rounded-xl shadow-lg z-10 overflow-hidden">
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#f0e0d0] rounded-xl shadow-lg z-10 overflow-hidden">
                         {ingResults.map((ing) => (
                           <button
                             key={ing.id}
@@ -390,12 +390,12 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                             disabled={lineas.some(
                               (l) => l.ingredienteId === ing.id,
                             )}
-                            className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-[#fdf6f0] disabled:opacity-40 disabled:cursor-not-allowed transition border-b border-[#f9eef2] last:border-0"
+                            className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition border-b border-[#f9eef2] last:border-0"
                           >
                             <span className="text-[#3d1a24] font-medium">
                               {ing.nombre}
                             </span>
-                            <span className="text-[11px] text-[#b07a8a]">
+                            <span className="text-[11px] text-[#6B3E26]">
                               ${ing.costoUnidadMinima?.toFixed(4)} /{" "}
                               {ing.unidadBase}
                             </span>
@@ -406,17 +406,17 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                   </div>
 
                   {lineas.length > 0 && (
-                    <div className="rounded-xl border border-[#f5dce4] overflow-hidden">
+                    <div className="rounded-xl border border-[#f0e0d0] overflow-hidden">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-[#fdf6f0] border-b border-[#f5dce4]">
-                            <th className="px-3 py-2 text-left   text-[10px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                          <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
+                            <th className="px-3 py-2 text-left   text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                               Ingrediente
                             </th>
-                            <th className="px-3 py-2 text-center text-[10px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                            <th className="px-3 py-2 text-center text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                               Cantidad
                             </th>
-                            <th className="px-3 py-2 text-right  text-[10px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                            <th className="px-3 py-2 text-right  text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                               Costo
                             </th>
                             <th className="px-3 py-2 w-8" />
@@ -429,7 +429,7 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                                 <p className="font-medium text-[#3d1a24] text-[13px]">
                                   {l._nombre}
                                 </p>
-                                <p className="text-[11px] text-[#b07a8a]">
+                                <p className="text-[11px] text-[#6B3E26]">
                                   ${l._costoUnidad.toFixed(4)}/{l._unidad}
                                 </p>
                               </td>
@@ -446,21 +446,21 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                                         Number(e.target.value),
                                       )
                                     }
-                                    className="w-20 text-center px-2 py-1 rounded-lg border border-[#e8c4cd] text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] transition"
+                                    className="w-20 text-center px-2 py-1 rounded-lg border border-[#e8c4a0] text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] transition"
                                   />
-                                  <span className="text-[11px] text-[#b07a8a]">
+                                  <span className="text-[11px] text-[#6B3E26]">
                                     {l._unidad}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-3 py-2 text-right font-medium text-[#7b2d42] text-[13px]">
+                              <td className="px-3 py-2 text-right font-medium text-[#AA6A42] text-[13px]">
                                 ${(l.cantidad * l._costoUnidad).toFixed(2)}
                               </td>
                               <td className="px-3 py-2">
                                 <button
                                   type="button"
                                   onClick={() => removeLinea(l.ingredienteId)}
-                                  className="p-1 rounded-lg hover:bg-red-50 text-[#c0a0a8] hover:text-red-500 transition"
+                                  className="p-1 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
                                 >
                                   <svg
                                     viewBox="0 0 24 24"
@@ -478,10 +478,10 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
                           ))}
                         </tbody>
                         <tfoot>
-                          <tr className="bg-[#fdf6f0] border-t border-[#f5dce4]">
+                          <tr className="bg-[#FFF7F0] border-t border-[#f0e0d0]">
                             <td
                               colSpan={2}
-                              className="px-3 py-2 text-right text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider"
+                              className="px-3 py-2 text-right text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider"
                             >
                               Total
                             </td>
@@ -504,11 +504,11 @@ export function JarabeModal({ open, jarabe, onClose, onSave, onUploadImage }: Pr
               </form>
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f5dce4] bg-white shrink-0">
+              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
                 >
                   Cancelar
                 </button>

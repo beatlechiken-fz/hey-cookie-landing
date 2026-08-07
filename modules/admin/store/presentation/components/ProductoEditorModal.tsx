@@ -12,6 +12,11 @@ import type {
 } from "../../domain/entities/Producto.entity";
 import type { Ingrediente } from "@/modules/admin/raws/domain/entities/Ingrediente.entity";
 import { usePastelConfigCatalogo } from "@/modules/admin/store/presentation/hooks/usePastelConfig";
+import { normalizeOpciones } from "../../domain/entities/PastelPersonalizado.entity";
+import {
+  MultiCoberturaField,
+  type CoberturaFieldItem,
+} from "./configurador/MultiCoberturaField";
 
 // ── Internal types ────────────────────────────────────────────────────────────
 
@@ -101,14 +106,8 @@ export function ProductoEditorModal({
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Opciones default
-  const [defCoberturaId, setDefCoberturaId] = useState<string | null>(null);
-  const [defSaborCoberturaId, setDefSaborCoberturaId] = useState<string | null>(
-    null,
-  );
-  const [defRellenoId, setDefRellenoId] = useState<string | null>(null);
-  const [defSaborRellenoId, setDefSaborRellenoId] = useState<string | null>(
-    null,
-  );
+  const [defCoberturas, setDefCoberturas] = useState<CoberturaFieldItem[]>([]);
+  const [defRellenos, setDefRellenos] = useState<CoberturaFieldItem[]>([]);
   const [defJarabeId, setDefJarabeId] = useState<string | null>(null);
   const [defSaborJarabeId, setDefSaborJarabeId] = useState<string | null>(null);
   const [defLicorId, setDefLicorId] = useState<string | null>(null);
@@ -162,12 +161,14 @@ export function ProductoEditorModal({
         setTipoTamano("unico");
         setTamanos([]);
       }
-      // Opciones default
-      const od = producto.opcionesDefault;
-      setDefCoberturaId(od.coberturaId ?? null);
-      setDefSaborCoberturaId(od.saborCoberturaId ?? null);
-      setDefRellenoId(od.rellenoId ?? null);
-      setDefSaborRellenoId(od.saborRellenoId ?? null);
+      // Opciones default (normaliza formato viejo — singular — a arrays)
+      const od = normalizeOpciones(producto.opcionesDefault);
+      setDefCoberturas(
+        od.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId })),
+      );
+      setDefRellenos(
+        od.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId })),
+      );
       setDefJarabeId(od.jarabeId ?? null);
       setDefSaborJarabeId(od.saborJarabeId ?? null);
       setDefLicorId(od.licorId ?? null);
@@ -187,10 +188,8 @@ export function ProductoEditorModal({
       setManoDeObraMinimo("");
       setPrecioEstablecido("");
       setLineas([]);
-      setDefCoberturaId(null);
-      setDefSaborCoberturaId(null);
-      setDefRellenoId(null);
-      setDefSaborRellenoId(null);
+      setDefCoberturas([]);
+      setDefRellenos([]);
       setDefJarabeId(null);
       setDefSaborJarabeId(null);
       setDefLicorId(null);
@@ -330,15 +329,18 @@ export function ProductoEditorModal({
               }) as IngredienteBaseItem,
           ),
         opcionesDefault: {
-          coberturaId: defCoberturaId,
-          saborCoberturaId: defSaborCoberturaId,
-          rellenoId: defRellenoId,
-          saborRellenoId: defSaborRellenoId,
+          coberturas: defCoberturas
+            .filter((c) => c.id)
+            .map((c) => ({ coberturaId: c.id, saborCoberturaId: c.saborId })),
+          rellenos: defRellenos
+            .filter((r) => r.id)
+            .map((r) => ({ rellenoId: r.id, saborRellenoId: r.saborId })),
           jarabeId: defJarabeId,
           saborJarabeId: defSaborJarabeId,
           licorId: defLicorId,
           toppingIds: defToppingIds,
           empaqueIds: defEmpaqueIds,
+          ornamentos: [],
           humedadJarabe: null,
         },
         medidaBaseCm: permiteMedida ? Number(medidaBaseCm) || 24 : null,
@@ -374,16 +376,16 @@ export function ProductoEditorModal({
 
   // ── Styles ────────────────────────────────────────────────────────────────
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#c0a0a8]";
+    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
   const labelCls =
-    "text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider";
+    "text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider";
   const sectionCls =
-    "flex flex-col gap-3 p-4 rounded-xl bg-[#fdf6f0] border border-[#f5dce4]";
+    "flex flex-col gap-3 p-4 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0]";
   const tabCls = (active: boolean) =>
     `px-3 py-3 text-[12px] font-semibold border-b-2 transition -mb-px ${
       active
         ? "border-[#c0607a] text-[#c0607a]"
-        : "border-transparent text-[#b07a8a] hover:text-[#7b2d42]"
+        : "border-transparent text-[#6B3E26] hover:text-[#AA6A42]"
     }`;
 
   const tabs = [
@@ -455,13 +457,13 @@ export function ProductoEditorModal({
               className={`px-3 py-1.5 rounded-xl text-[12px] font-semibold border transition ${
                 active
                   ? "bg-[#c0607a] text-white border-[#c0607a]"
-                  : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]"
+                  : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"
               }`}
             >
               {o.label}
               {o.sublabel && (
                 <span
-                  className={`ml-1 text-[10px] ${active ? "opacity-80" : "text-[#b07a8a]"}`}
+                  className={`ml-1 text-[10px] ${active ? "opacity-80" : "text-[#6B3E26]"}`}
                 >
                   {o.sublabel}
                 </span>
@@ -470,7 +472,7 @@ export function ProductoEditorModal({
           );
         })}
         {options.length === 0 && (
-          <p className="text-[12px] text-[#c0a0a8]">
+          <p className="text-[12px] text-[#AA6A42]">
             No hay opciones disponibles
           </p>
         )}
@@ -499,22 +501,22 @@ export function ProductoEditorModal({
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-2xl max-h-[92vh] bg-white rounded-2xl shadow-2xl border border-[#f5dce4] flex flex-col overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-2xl max-h-[92vh] bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f5dce4] bg-[#fdf6f0] shrink-0">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
                 <div>
-                  <h2 className="font-bold text-[#7b2d42] text-lg">
+                  <h2 className="font-bold text-[#AA6A42] text-lg">
                     {producto ? "Editar producto" : "Nuevo producto"}
                   </h2>
                   {nombre && (
-                    <p className="text-[12px] text-[#b07a8a] mt-0.5">
+                    <p className="text-[12px] text-[#6B3E26] mt-0.5">
                       {nombre}
                     </p>
                   )}
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f5dce4] transition text-[#b07a8a]"
+                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -530,7 +532,7 @@ export function ProductoEditorModal({
               </div>
 
               {/* Tabs */}
-              <div className="flex border-b border-[#f5dce4] shrink-0 bg-white px-6 overflow-x-auto">
+              <div className="flex border-b border-[#f0e0d0] shrink-0 bg-white px-6 overflow-x-auto">
                 {tabs.map((t) => (
                   <button
                     key={t.key}
@@ -564,7 +566,7 @@ export function ProductoEditorModal({
                             key={l.value}
                             type="button"
                             onClick={() => setLinea(l.value)}
-                            className={`flex-1 py-2 rounded-xl text-[13px] font-semibold border transition ${linea === l.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]"}`}
+                            className={`flex-1 py-2 rounded-xl text-[13px] font-semibold border transition ${linea === l.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
                           >
                             {l.label}
                           </button>
@@ -597,7 +599,7 @@ export function ProductoEditorModal({
                       <label className={labelCls}>Imagen del producto</label>
                       <div className="flex items-center gap-3">
                         {imagenUrl ? (
-                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#e8c4cd] shrink-0">
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#e8c4a0] shrink-0">
                             <img
                               src={imagenUrl}
                               alt="Preview"
@@ -605,8 +607,8 @@ export function ProductoEditorModal({
                             />
                           </div>
                         ) : (
-                          <div className="w-16 h-16 rounded-xl border-2 border-dashed border-[#e8c4cd] bg-[#fdf6f0] flex items-center justify-center shrink-0">
-                            <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#c0a0a8]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <div className="w-16 h-16 rounded-xl border-2 border-dashed border-[#e8c4a0] bg-[#FFF7F0] flex items-center justify-center shrink-0">
+                            <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#AA6A42]" fill="none" stroke="currentColor" strokeWidth="1.5">
                               <rect x="3" y="3" width="18" height="18" rx="3" />
                               <circle cx="8.5" cy="8.5" r="1.5" />
                               <path d="m21 15-5-5L5 21" />
@@ -614,7 +616,7 @@ export function ProductoEditorModal({
                           </div>
                         )}
                         <div className="flex flex-col gap-1.5">
-                          <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#fdf6f0] border border-[#e8c4cd] text-[12px] font-semibold text-[#7b2d42] hover:bg-[#f5dce4] transition">
+                          <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFF7F0] border border-[#e8c4a0] text-[12px] font-semibold text-[#AA6A42] hover:bg-[#f0e0d0] transition">
                             {imgUploading ? (
                               <>
                                 <span className="w-3 h-3 border-2 border-[#c0607a] border-t-transparent rounded-full animate-spin" />
@@ -642,7 +644,7 @@ export function ProductoEditorModal({
                             <button
                               type="button"
                               onClick={() => setImagenUrl(null)}
-                              className="text-[11px] text-[#b07a8a] hover:text-[#c0607a] text-left transition"
+                              className="text-[11px] text-[#6B3E26] hover:text-[#c0607a] text-left transition"
                             >
                               Quitar imagen
                             </button>
@@ -658,7 +660,7 @@ export function ProductoEditorModal({
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <label className={labelCls}>Ingredientes</label>
-                      <span className="text-[11px] text-[#b07a8a]">
+                      <span className="text-[11px] text-[#6B3E26]">
                         {lineas.length} agregado{lineas.length !== 1 ? "s" : ""}{" "}
                         · costo ${costoTotal.toFixed(2)}
                       </span>
@@ -675,7 +677,7 @@ export function ProductoEditorModal({
                       ) : (
                         <svg
                           viewBox="0 0 24 24"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#c0a0a8] pointer-events-none"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#AA6A42] pointer-events-none"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2"
@@ -686,7 +688,7 @@ export function ProductoEditorModal({
                         </svg>
                       )}
                       {showDropdown && ingResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#f5dce4] rounded-xl shadow-lg z-10 overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#f0e0d0] rounded-xl shadow-lg z-10 overflow-hidden">
                           {ingResults.map((ing) => (
                             <button
                               key={ing.id}
@@ -695,12 +697,12 @@ export function ProductoEditorModal({
                               disabled={lineas.some(
                                 (l) => l.ingredienteId === ing.id,
                               )}
-                              className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-[#fdf6f0] disabled:opacity-40 transition border-b border-[#f9eef2] last:border-0"
+                              className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-[#FFF7F0] disabled:opacity-40 transition border-b border-[#f9eef2] last:border-0"
                             >
                               <span className="text-[#3d1a24] font-medium">
                                 {ing.nombre}
                               </span>
-                              <span className="text-[11px] text-[#b07a8a]">
+                              <span className="text-[11px] text-[#6B3E26]">
                                 ${ing.costoUnidadMinima?.toFixed(4)} /{" "}
                                 {ing.unidadBase}
                               </span>
@@ -710,17 +712,17 @@ export function ProductoEditorModal({
                       )}
                     </div>
                     {lineas.length > 0 && (
-                      <div className="rounded-xl border border-[#f5dce4] overflow-hidden">
+                      <div className="rounded-xl border border-[#f0e0d0] overflow-hidden">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="bg-[#fdf6f0] border-b border-[#f5dce4]">
-                              <th className="px-3 py-2 text-left text-[10px] font-semibold text-[#b07a8a] uppercase">
+                            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
+                              <th className="px-3 py-2 text-left text-[10px] font-semibold text-[#6B3E26] uppercase">
                                 Ingrediente
                               </th>
-                              <th className="px-3 py-2 text-center text-[10px] font-semibold text-[#b07a8a] uppercase">
+                              <th className="px-3 py-2 text-center text-[10px] font-semibold text-[#6B3E26] uppercase">
                                 Cantidad
                               </th>
-                              <th className="px-3 py-2 text-right text-[10px] font-semibold text-[#b07a8a] uppercase">
+                              <th className="px-3 py-2 text-right text-[10px] font-semibold text-[#6B3E26] uppercase">
                                 Costo
                               </th>
                               <th className="px-3 py-2 w-8" />
@@ -733,7 +735,7 @@ export function ProductoEditorModal({
                                   <p className="font-medium text-[#3d1a24] text-[13px]">
                                     {l._nombre}
                                   </p>
-                                  <p className="text-[11px] text-[#b07a8a]">
+                                  <p className="text-[11px] text-[#6B3E26]">
                                     ${l._costoUnidad.toFixed(4)}/{l._unidad}
                                   </p>
                                 </td>
@@ -750,21 +752,21 @@ export function ProductoEditorModal({
                                           Number(e.target.value),
                                         )
                                       }
-                                      className="w-20 text-center px-2 py-1 rounded-lg border border-[#e8c4cd] text-sm focus:outline-none focus:border-[#c0607a] transition"
+                                      className="w-20 text-center px-2 py-1 rounded-lg border border-[#e8c4a0] text-sm focus:outline-none focus:border-[#c0607a] transition"
                                     />
-                                    <span className="text-[11px] text-[#b07a8a]">
+                                    <span className="text-[11px] text-[#6B3E26]">
                                       {l._unidad}
                                     </span>
                                   </div>
                                 </td>
-                                <td className="px-3 py-2 text-right font-medium text-[#7b2d42] text-[13px]">
+                                <td className="px-3 py-2 text-right font-medium text-[#AA6A42] text-[13px]">
                                   ${(l.cantidad * l._costoUnidad).toFixed(2)}
                                 </td>
                                 <td className="px-3 py-2">
                                   <button
                                     type="button"
                                     onClick={() => removeLinea(l.ingredienteId)}
-                                    className="p-1 rounded-lg hover:bg-red-50 text-[#c0a0a8] hover:text-red-500 transition"
+                                    className="p-1 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
                                   >
                                     <svg
                                       viewBox="0 0 24 24"
@@ -782,10 +784,10 @@ export function ProductoEditorModal({
                             ))}
                           </tbody>
                           <tfoot>
-                            <tr className="bg-[#fdf6f0] border-t border-[#f5dce4]">
+                            <tr className="bg-[#FFF7F0] border-t border-[#f0e0d0]">
                               <td
                                 colSpan={2}
-                                className="px-3 py-2 text-right text-[11px] font-semibold text-[#b07a8a] uppercase"
+                                className="px-3 py-2 text-right text-[11px] font-semibold text-[#6B3E26] uppercase"
                               >
                                 Total
                               </td>
@@ -799,7 +801,7 @@ export function ProductoEditorModal({
                       </div>
                     )}
                     {lineas.length === 0 && (
-                      <div className="rounded-xl border border-dashed border-[#e8c4cd] py-8 text-center text-[#c0a0a8] text-sm">
+                      <div className="rounded-xl border border-dashed border-[#e8c4a0] py-8 text-center text-[#AA6A42] text-sm">
                         Escribe en el buscador para agregar ingredientes
                       </div>
                     )}
@@ -822,7 +824,7 @@ export function ProductoEditorModal({
                             key={String(opt.v)}
                             type="button"
                             onClick={() => setPermiteMedida(opt.v)}
-                            className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${permiteMedida === opt.v ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]"}`}
+                            className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${permiteMedida === opt.v ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
                           >
                             {opt.label}
                           </button>
@@ -830,7 +832,7 @@ export function ProductoEditorModal({
                       </div>
                       {permiteMedida && (
                         <div className="flex items-center gap-2 mt-1">
-                          <label className="text-[11px] text-[#b07a8a] shrink-0">
+                          <label className="text-[11px] text-[#6B3E26] shrink-0">
                             Medida base:
                           </label>
                           <input
@@ -843,7 +845,7 @@ export function ProductoEditorModal({
                             }
                             className={inputCls + " max-w-[80px] text-center"}
                           />
-                          <span className="text-[11px] text-[#b07a8a]">cm</span>
+                          <span className="text-[11px] text-[#6B3E26]">cm</span>
                         </div>
                       )}
                     </div>
@@ -859,7 +861,7 @@ export function ProductoEditorModal({
                               key={opt.v}
                               type="button"
                               onClick={() => setTipoTamano(opt.v as any)}
-                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${tipoTamano === opt.v ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]"}`}
+                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${tipoTamano === opt.v ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
                             >
                               {opt.label}
                             </button>
@@ -870,7 +872,7 @@ export function ProductoEditorModal({
                             {tamanos.map((t, i) => (
                               <div
                                 key={t.id}
-                                className="flex flex-col gap-2 p-3 rounded-xl bg-white border border-[#e8c4cd]"
+                                className="flex flex-col gap-2 p-3 rounded-xl bg-white border border-[#e8c4a0]"
                               >
                                 <div className="flex items-center gap-2">
                                   <input
@@ -887,7 +889,7 @@ export function ProductoEditorModal({
                                   />
                                   <button
                                     onClick={() => removeTamano(t.id)}
-                                    className="p-1.5 rounded-lg hover:bg-red-50 text-[#c0a0a8] hover:text-red-500 transition"
+                                    className="p-1.5 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
                                   >
                                     <svg
                                       viewBox="0 0 24 24"
@@ -903,7 +905,7 @@ export function ProductoEditorModal({
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                   <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] text-[#b07a8a] font-semibold uppercase">
+                                    <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
                                       Factor receta
                                     </span>
                                     <input
@@ -922,7 +924,7 @@ export function ProductoEditorModal({
                                     />
                                   </div>
                                   <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] text-[#b07a8a] font-semibold uppercase">
+                                    <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
                                       Factor opciones
                                     </span>
                                     <input
@@ -948,7 +950,7 @@ export function ProductoEditorModal({
                             ))}
                             <button
                               onClick={addTamano}
-                              className="flex items-center justify-center gap-1.5 py-2 rounded-xl border border-dashed border-[#c0607a] text-[#c0607a] text-[12px] font-semibold hover:bg-[#fdf6f0] transition"
+                              className="flex items-center justify-center gap-1.5 py-2 rounded-xl border border-dashed border-[#c0607a] text-[#c0607a] text-[12px] font-semibold hover:bg-[#FFF7F0] transition"
                             >
                               <svg
                                 viewBox="0 0 24 24"
@@ -984,54 +986,44 @@ export function ProductoEditorModal({
                     </div>
 
                     {catLoading && (
-                      <p className="text-center text-[#c0a0a8] text-sm py-4">
+                      <p className="text-center text-[#AA6A42] text-sm py-4">
                         Cargando catálogo…
                       </p>
                     )}
 
                     {catalogo && (
                       <>
+                        <MultiCoberturaField
+                          label="Coberturas preseleccionadas"
+                          items={defCoberturas}
+                          onChange={setDefCoberturas}
+                          options={catalogo.coberturas.map((c) => ({
+                            value: c.id,
+                            label: c.nombre,
+                          }))}
+                          sabores={catalogo.saboresCobertura.map((s) => ({
+                            value: s.id,
+                            label: s.nombre,
+                          }))}
+                          addLabel="+ Agregar cobertura"
+                        />
+
+                        <MultiCoberturaField
+                          label="Rellenos preseleccionados"
+                          items={defRellenos}
+                          onChange={setDefRellenos}
+                          options={catalogo.coberturas.map((c) => ({
+                            value: c.id,
+                            label: c.nombre,
+                          }))}
+                          sabores={catalogo.saboresCobertura.map((s) => ({
+                            value: s.id,
+                            label: s.nombre,
+                          }))}
+                          addLabel="+ Agregar relleno"
+                        />
+
                         <div className="grid grid-cols-2 gap-3">
-                          <SelectOpc
-                            label="Cobertura"
-                            value={defCoberturaId}
-                            onChange={setDefCoberturaId}
-                            options={catalogo.coberturas.map((c) => ({
-                              value: c.id,
-                              label: c.nombre,
-                            }))}
-                          />
-
-                          <SelectOpc
-                            label="Sabor de cobertura"
-                            value={defSaborCoberturaId}
-                            onChange={setDefSaborCoberturaId}
-                            options={catalogo.saboresCobertura.map((s) => ({
-                              value: s.id,
-                              label: s.nombre,
-                            }))}
-                          />
-
-                          <SelectOpc
-                            label="Relleno"
-                            value={defRellenoId}
-                            onChange={setDefRellenoId}
-                            options={catalogo.coberturas.map((c) => ({
-                              value: c.id,
-                              label: c.nombre,
-                            }))}
-                          />
-
-                          <SelectOpc
-                            label="Sabor de relleno"
-                            value={defSaborRellenoId}
-                            onChange={setDefSaborRellenoId}
-                            options={catalogo.saboresCobertura.map((s) => ({
-                              value: s.id,
-                              label: s.nombre,
-                            }))}
-                          />
-
                           <SelectOpc
                             label="Jarabe"
                             value={defJarabeId}
@@ -1090,56 +1082,14 @@ export function ProductoEditorModal({
                         />
 
                         {/* Resumen */}
-                        {(defCoberturaId ||
-                          defRellenoId ||
-                          defToppingIds.length > 0 ||
+                        {(defToppingIds.length > 0 ||
                           defEmpaqueIds.length > 0) && (
                           <div className={sectionCls}>
                             <p className={labelCls}>Resumen de defaults</p>
                             <div className="flex flex-col gap-1 text-[12px]">
-                              {defCoberturaId && (
-                                <div className="flex gap-2">
-                                  <span className="text-[#b07a8a]">
-                                    Cobertura:
-                                  </span>
-                                  <span className="text-[#3d1a24] font-medium">
-                                    {
-                                      catalogo.coberturas.find(
-                                        (c) => c.id === defCoberturaId,
-                                      )?.nombre
-                                    }
-                                  </span>
-                                  <button
-                                    onClick={() => setDefCoberturaId(null)}
-                                    className="text-red-400 hover:text-red-600 ml-auto"
-                                  >
-                                    ✕
-                                  </button>
-                                </div>
-                              )}
-                              {defRellenoId && (
-                                <div className="flex gap-2">
-                                  <span className="text-[#b07a8a]">
-                                    Relleno:
-                                  </span>
-                                  <span className="text-[#3d1a24] font-medium">
-                                    {
-                                      catalogo.coberturas.find(
-                                        (c) => c.id === defRellenoId,
-                                      )?.nombre
-                                    }
-                                  </span>
-                                  <button
-                                    onClick={() => setDefRellenoId(null)}
-                                    className="text-red-400 hover:text-red-600 ml-auto"
-                                  >
-                                    ✕
-                                  </button>
-                                </div>
-                              )}
                               {defToppingIds.length > 0 && (
                                 <div className="flex gap-2 flex-wrap">
-                                  <span className="text-[#b07a8a] shrink-0">
+                                  <span className="text-[#6B3E26] shrink-0">
                                     Toppings:
                                   </span>
                                   {defToppingIds.map((tid) => {
@@ -1149,7 +1099,7 @@ export function ProductoEditorModal({
                                     return t ? (
                                       <span
                                         key={tid}
-                                        className="flex items-center gap-1 bg-[#f5dce4] text-[#7b2d42] px-2 py-0.5 rounded-full"
+                                        className="flex items-center gap-1 bg-[#f0e0d0] text-[#AA6A42] px-2 py-0.5 rounded-full"
                                       >
                                         {t.nombre}
                                         <button
@@ -1171,7 +1121,7 @@ export function ProductoEditorModal({
                               )}
                               {defEmpaqueIds.length > 0 && (
                                 <div className="flex gap-2 flex-wrap">
-                                  <span className="text-[#b07a8a] shrink-0">
+                                  <span className="text-[#6B3E26] shrink-0">
                                     Empaques:
                                   </span>
                                   {defEmpaqueIds.map((eid) => {
@@ -1181,7 +1131,7 @@ export function ProductoEditorModal({
                                     return e ? (
                                       <span
                                         key={eid}
-                                        className="flex items-center gap-1 bg-[#f5dce4] text-[#7b2d42] px-2 py-0.5 rounded-full"
+                                        className="flex items-center gap-1 bg-[#f0e0d0] text-[#AA6A42] px-2 py-0.5 rounded-full"
                                       >
                                         {e.nombre}
                                         <button
@@ -1199,11 +1149,11 @@ export function ProductoEditorModal({
                           </div>
                         )}
 
-                        {!defCoberturaId &&
-                          !defRellenoId &&
+                        {defCoberturas.length === 0 &&
+                          defRellenos.length === 0 &&
                           defToppingIds.length === 0 &&
                           defEmpaqueIds.length === 0 && (
-                            <p className="text-[12px] text-[#c0a0a8] text-center py-2">
+                            <p className="text-[12px] text-[#AA6A42] text-center py-2">
                               Sin opciones predeterminadas — el configurador
                               abrirá con todo en blanco.
                             </p>
@@ -1219,7 +1169,7 @@ export function ProductoEditorModal({
                     <div className={sectionCls}>
                       <div>
                         <label className={labelCls}>Precio establecido</label>
-                        <p className="text-[11px] text-[#b07a8a] mt-1">
+                        <p className="text-[11px] text-[#6B3E26] mt-1">
                           Precio de venta fijo definido manualmente. Si se
                           define, el configurador mostrará ambas opciones
                           (sugerido vs establecido) para que elijas al cotizar.
@@ -1227,7 +1177,7 @@ export function ProductoEditorModal({
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[#b07a8a] text-sm">$</span>
+                        <span className="text-[#6B3E26] text-sm">$</span>
                         <input
                           type="number"
                           min="0"
@@ -1247,7 +1197,7 @@ export function ProductoEditorModal({
                           <button
                             type="button"
                             onClick={() => setPrecioEstablecido("")}
-                            className="text-[11px] text-[#c0a0a8] hover:text-red-500 transition"
+                            className="text-[11px] text-[#AA6A42] hover:text-red-500 transition"
                           >
                             Quitar precio establecido
                           </button>
@@ -1264,13 +1214,13 @@ export function ProductoEditorModal({
                     <div className={sectionCls}>
                       <div>
                         <label className={labelCls}>Mano de obra mínima</label>
-                        <p className="text-[11px] text-[#b07a8a] mt-1">
+                        <p className="text-[11px] text-[#6B3E26] mt-1">
                           Cargo 2 = max(mínimo, 25% base estructural). Vacío =
                           $60.
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[#b07a8a] text-sm">$</span>
+                        <span className="text-[#6B3E26] text-sm">$</span>
                         <input
                           type="number"
                           min="0"
@@ -1293,7 +1243,7 @@ export function ProductoEditorModal({
                             key={r.label}
                             type="button"
                             onClick={() => setManoDeObraMinimo(r.value)}
-                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${manoDeObraMinimo === r.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]"}`}
+                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${manoDeObraMinimo === r.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
                           >
                             {r.label}{" "}
                             <span className="opacity-60">${r.value}</span>
@@ -1307,7 +1257,7 @@ export function ProductoEditorModal({
                         <label className={labelCls}>
                           Factor de opciones del catálogo
                         </label>
-                        <p className="text-[11px] text-[#b07a8a] mt-1">
+                        <p className="text-[11px] text-[#6B3E26] mt-1">
                           Las opciones están costeadas para 24cm. Para productos
                           individuales define el factor de escala. Vacío = mismo
                           que receta base.
@@ -1336,7 +1286,7 @@ export function ProductoEditorModal({
                             key={r.label}
                             type="button"
                             onClick={() => setFactorOpciones(r.value)}
-                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${factorOpciones === r.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#7b2d42] border-[#e8c4cd] hover:bg-[#fdf6f0]"}`}
+                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${factorOpciones === r.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
                           >
                             {r.label}{" "}
                             <span className="opacity-60">{r.value}</span>
@@ -1355,10 +1305,10 @@ export function ProductoEditorModal({
               )}
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f5dce4] bg-white shrink-0">
+              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
                 >
                   Cancelar
                 </button>

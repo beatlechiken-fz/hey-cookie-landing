@@ -59,6 +59,11 @@ export function createAdminMenuNavElement(): AdminMenuNavElement {
           label: "Gelatinas",
           url: "/admin/dashboard/raws/gelatinas",
         },
+        {
+          id: "ornamentos",
+          label: "Ornamentos",
+          url: "/admin/dashboard/raws/ornamentos",
+        },
       ],
     },
     store: {

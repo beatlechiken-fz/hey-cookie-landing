@@ -42,7 +42,7 @@ function DeleteDialog({
             transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f5dce4] p-6 flex flex-col gap-4">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                   <svg
@@ -60,18 +60,18 @@ function DeleteDialog({
                   <h3 className="font-bold text-[#3d1a24] text-base">
                     Eliminar cliente
                   </h3>
-                  <p className="text-sm text-[#b07a8a]">
+                  <p className="text-sm text-[#6B3E26]">
                     Esta acción no se puede deshacer
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[#7b2d42]">
+              <p className="text-sm text-[#AA6A42]">
                 ¿Confirmas que deseas eliminar <strong>"{nombre}"</strong>?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
                 >
                   Cancelar
                 </button>
@@ -149,9 +149,9 @@ export function ClientesView() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por nombre, teléfono o email…"
-          className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#c0a0a8]"
+          className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
         />
-        <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#c0a0a8] pointer-events-none">
+        <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
           <svg
             viewBox="0 0 24 24"
             className="w-4 h-4"
@@ -183,7 +183,7 @@ export function ClientesView() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#b07a8a]">
+        <p className="text-sm text-[#6B3E26]">
           {isLoading
             ? "Cargando…"
             : `${total} cliente${total !== 1 ? "s" : ""}`}
@@ -194,20 +194,20 @@ export function ClientesView() {
       </div>
 
       {/* Tabla desktop */}
-      <div className="hidden md:block rounded-2xl border border-[#f5dce4] overflow-hidden bg-white shadow-sm">
+      <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#fdf6f0] border-b border-[#f5dce4]">
-              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                 Nombre
               </th>
-              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                 Teléfono
               </th>
-              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                 Email
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                 Cuenta
               </th>
               <th className="px-4 py-3" />
@@ -218,7 +218,7 @@ export function ClientesView() {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#c0a0a8] text-sm"
+                  className="py-12 text-center text-[#AA6A42] text-sm"
                 >
                   Cargando…
                 </td>
@@ -228,7 +228,7 @@ export function ClientesView() {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#c0a0a8] text-sm"
+                  className="py-12 text-center text-[#AA6A42] text-sm"
                 >
                   No se encontraron clientes
                 </td>
@@ -240,15 +240,15 @@ export function ClientesView() {
                 onClick={() =>
                   router.push(`/admin/dashboard/store/clientes/${c.id}`)
                 }
-                className="hover:bg-[#fdf6f0]/60 transition group cursor-pointer"
+                className="hover:bg-[#FFF7F0]/60 transition group cursor-pointer"
               >
                 <td className="px-4 py-3 font-medium text-[#3d1a24]">
                   {c.nombre}
                 </td>
-                <td className="px-4 py-3 text-[#7b2d42]/70">
+                <td className="px-4 py-3 text-[#AA6A42]/70">
                   {c.telefono ?? "—"}
                 </td>
-                <td className="px-4 py-3 text-[#7b2d42]/70">
+                <td className="px-4 py-3 text-[#AA6A42]/70">
                   {c.email ?? "—"}
                 </td>
                 <td className="px-4 py-3 text-center">
@@ -266,7 +266,7 @@ export function ClientesView() {
                   <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition">
                     <button
                       onClick={(e) => openEdit(c, e)}
-                      className="p-1.5 rounded-lg hover:bg-[#f5dce4] text-[#b07a8a] hover:text-[#c0607a] transition"
+                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -285,7 +285,7 @@ export function ClientesView() {
                         e.stopPropagation();
                         setDeleteTarget(c);
                       }}
-                      className="p-1.5 rounded-lg hover:bg-red-50 text-[#b07a8a] hover:text-red-600 transition"
+                      className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -317,19 +317,19 @@ export function ClientesView() {
             onClick={() =>
               router.push(`/admin/dashboard/store/clientes/${c.id}`)
             }
-            className="bg-white rounded-2xl border border-[#f5dce4] p-4 shadow-sm cursor-pointer active:bg-[#fdf6f0]/60 transition"
+            className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm cursor-pointer active:bg-[#FFF7F0]/60 transition"
           >
             <div className="flex items-start justify-between gap-2">
               <div>
                 <p className="font-semibold text-[#3d1a24]">{c.nombre}</p>
-                <p className="text-[12px] text-[#b07a8a] mt-0.5">
+                <p className="text-[12px] text-[#6B3E26] mt-0.5">
                   {c.telefono ?? c.email ?? "Sin contacto"}
                 </p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <button
                   onClick={(e) => openEdit(c, e)}
-                  className="p-2 rounded-lg hover:bg-[#f5dce4] text-[#b07a8a] transition"
+                  className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -348,7 +348,7 @@ export function ClientesView() {
                     e.stopPropagation();
                     setDeleteTarget(c);
                   }}
-                  className="p-2 rounded-lg hover:bg-red-50 text-[#b07a8a] hover:text-red-600 transition"
+                  className="p-2 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -375,17 +375,17 @@ export function ClientesView() {
           <button
             onClick={() => setPage(page - 1)}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-sm hover:bg-[#fdf6f0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             ← Anterior
           </button>
-          <span className="text-sm text-[#b07a8a]">
+          <span className="text-sm text-[#6B3E26]">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => setPage(page + 1)}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-sm hover:bg-[#fdf6f0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             Siguiente →
           </button>

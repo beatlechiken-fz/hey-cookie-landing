@@ -83,7 +83,7 @@ export function LoginForm() {
               onBlur={(e) =>
                 Object.assign(e.target.style, {
                   outline: "none",
-                  borderColor: "#e8c4cd",
+                  borderColor: "#e8c4a0",
                 })
               }
             />
@@ -106,7 +106,7 @@ export function LoginForm() {
               onBlur={(e) =>
                 Object.assign(e.target.style, {
                   outline: "none",
-                  borderColor: "#e8c4cd",
+                  borderColor: "#e8c4a0",
                 })
               }
             />
@@ -137,7 +137,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fdf6f0",
+    backgroundColor: "#FFF7F0",
     fontFamily: "'Georgia', serif",
     padding: "1rem",
     position: "relative" as const,
@@ -162,7 +162,7 @@ const styles = {
     maxWidth: "400px",
     boxShadow:
       "0 8px 40px rgba(200, 100, 130, 0.12), 0 2px 8px rgba(0,0,0,0.06)",
-    border: "1px solid #f5dce4",
+    border: "1px solid #f0e0d0",
     textAlign: "center" as const,
   },
   iconWrap: { display: "inline-flex", marginBottom: "1rem" },
@@ -170,10 +170,10 @@ const styles = {
     margin: "0 0 0.25rem",
     fontSize: "1.4rem",
     fontWeight: 700,
-    color: "#7b2d42",
+    color: "#AA6A42",
     letterSpacing: "-0.02em",
   },
-  subtitle: { margin: "0 0 1.75rem", fontSize: "0.875rem", color: "#b07a8a" },
+  subtitle: { margin: "0 0 1.75rem", fontSize: "0.875rem", color: "#6B3E26" },
   form: {
     display: "flex",
     flexDirection: "column" as const,
@@ -184,14 +184,14 @@ const styles = {
   label: {
     fontSize: "0.8rem",
     fontWeight: 600,
-    color: "#7b2d42",
+    color: "#AA6A42",
     textTransform: "uppercase" as const,
     letterSpacing: "0.05em",
   },
   input: {
     padding: "0.7rem 0.9rem",
     borderRadius: "0.75rem",
-    border: "1.5px solid #e8c4cd",
+    border: "1.5px solid #e8c4a0",
     fontSize: "0.95rem",
     color: "#3d1a24",
     backgroundColor: "#fffbfc",

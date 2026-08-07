@@ -1,0 +1,345 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-06T16:45:00Z",
+  "title": "Design System: Hey Cookie",
+  "extensions": {
+    "colorMeta": {
+      "terracota-vintage": {
+        "role": "vintage-accent",
+        "displayName": "Terracota Vintage",
+        "canonical": "#C56A4A",
+        "tonalRamp": [
+          "#1E100B",
+          "#45251A",
+          "#804530",
+          "#C56A4A",
+          "#D1886E",
+          "#DCA692",
+          "#EBCCC0",
+          "#F6E9E4"
+        ]
+      },
+      "verde-oliva": {
+        "role": "vintage-accent",
+        "displayName": "Verde Oliva",
+        "canonical": "#7C8C42",
+        "tonalRamp": [
+          "#13150A",
+          "#2B3117",
+          "#515B2B",
+          "#7C8C42",
+          "#96A368",
+          "#B0BA8E",
+          "#D1D7BD",
+          "#EBEEE3"
+        ]
+      },
+      "crema-vintage": {
+        "role": "vintage-neutral",
+        "displayName": "Crema Vintage",
+        "canonical": "#F5EFE6"
+      },
+      "caramelo-tostado": {
+        "role": "primary",
+        "displayName": "Caramelo Tostado",
+        "canonical": "#AA6A42",
+        "tonalRamp": [
+          "#19100A",
+          "#3B2517",
+          "#6E452B",
+          "#AA6A42",
+          "#BB8768",
+          "#CCA68E",
+          "#E1CCBD",
+          "#F2E9E3"
+        ]
+      },
+      "rosa-frambuesa": {
+        "role": "secondary",
+        "displayName": "Rosa Frambuesa",
+        "canonical": "#DA6C94",
+        "tonalRamp": [
+          "#201016",
+          "#4C2634",
+          "#8D4660",
+          "#DA6C94",
+          "#E189A9",
+          "#E9A7BF",
+          "#F2CCDA",
+          "#F9E9EF"
+        ]
+      },
+      "rosa-frambuesa-profundo": {
+        "role": "secondary",
+        "displayName": "Rosa Frambuesa Profundo",
+        "canonical": "#C0607A",
+        "tonalRamp": [
+          "#1C0E12",
+          "#43222B",
+          "#7D3E4F",
+          "#C0607A",
+          "#CD8095",
+          "#D9A0AF",
+          "#E9C7D0",
+          "#F6E7EB"
+        ]
+      },
+      "espresso": {
+        "role": "neutral",
+        "displayName": "Espresso",
+        "canonical": "#3A1F14"
+      },
+      "cacao": {
+        "role": "neutral",
+        "displayName": "Cacao",
+        "canonical": "#6B3E26"
+      },
+      "crema": {
+        "role": "neutral",
+        "displayName": "Crema",
+        "canonical": "#FAF3E0"
+      },
+      "crema-suave": {
+        "role": "neutral",
+        "displayName": "Crema Suave",
+        "canonical": "#FFFDF8"
+      },
+      "lino": {
+        "role": "neutral",
+        "displayName": "Lino",
+        "canonical": "#F0E0D0"
+      },
+      "arena": {
+        "role": "neutral",
+        "displayName": "Arena",
+        "canonical": "#E8C4A0"
+      },
+      "blanco": {
+        "role": "neutral",
+        "displayName": "Blanco",
+        "canonical": "#FFFFFF"
+      },
+      "verde-exito": {
+        "role": "success",
+        "displayName": "Verde Éxito",
+        "canonical": "#27AE60"
+      },
+      "rojo-error": {
+        "role": "error",
+        "displayName": "Rojo Error",
+        "canonical": "#C0392B"
+      },
+      "panel-suave": {
+        "role": "neutral",
+        "displayName": "Panel Suave",
+        "canonical": "#FFF7F0"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display (Pacifico)",
+        "purpose": "Hero's primary wordmark line only — the single biggest brand moment on the site."
+      },
+      "display-serif": {
+        "displayName": "Display Serif (Playfair Display)",
+        "purpose": "Hero secondary line and other large editorial headlines that need weight without competing with Display."
+      },
+      "headline-script": {
+        "displayName": "Headline Script (Dancing Script)",
+        "purpose": "Product names and modal/card titles throughout the storefront."
+      },
+      "body": {
+        "displayName": "Body (Montserrat)",
+        "purpose": "All paragraph copy, descriptions, table cells, and form values."
+      },
+      "label": {
+        "displayName": "Label (Montserrat, tracked uppercase)",
+        "purpose": "Field labels, section eyebrows, tag/chip text."
+      },
+      "caption": {
+        "displayName": "Caption (Montserrat, 10–13px)",
+        "purpose": "Micro-copy: card/modal descriptions, size-selector buttons, per-unit price notes, coupon/login helper text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "ambient-rest",
+        "value": "0 4px 20px rgba(0,0,0,0.06)",
+        "purpose": "Default resting state for product cards."
+      },
+      {
+        "name": "ambient-hover",
+        "value": "0 8px 30px rgba(0,0,0,0.12)",
+        "purpose": "Card hover/focus, paired with a slight image scale-up."
+      },
+      {
+        "name": "modal-elevation",
+        "value": "0 25px 50px rgba(0,0,0,0.35)",
+        "purpose": "Overlay panels (product modals, cart drawer, cotizador) detaching from the blurred backdrop."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Default easeOut tween used project-wide via framer-motion's MotionConfig."
+      },
+      {
+        "name": "duration-fast",
+        "value": "150ms",
+        "purpose": "Hover/focus micro-interactions (avatar ring, chip toggle, input focus)."
+      },
+      {
+        "name": "duration-standard",
+        "value": "300ms",
+        "purpose": "Card hover lift/shadow deepen, image scale-up."
+      },
+      {
+        "name": "duration-entrance",
+        "value": "700ms",
+        "purpose": "Hero content entrance (fade + rise) on page load."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Default solid CTA — Caramelo Tostado fill, used across the storefront and configurators.",
+      "html": "<button class=\"ds-btn-primary\">Agregar al carrito</button>",
+      "css": ".ds-btn-primary { background: #AA6A42; color: #FFFFFF; font-family: Montserrat, sans-serif; font-weight: 600; font-size: 14px; padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer; transition: background 0.2s ease; } .ds-btn-primary:hover { background: #8A5535; } .ds-btn-primary:focus-visible { outline: 2px solid #AA6A42; outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Outline pill CTA used over the dark Hero photo (e.g. the WhatsApp quote button).",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">Cotizar</a>",
+      "css": ".ds-btn-ghost { background: transparent; color: #FFEBDA; font-family: Montserrat, sans-serif; font-weight: 600; font-size: 15px; padding: 16px 32px; border-radius: 9999px; border: 2px solid #FFEBDA; cursor: pointer; display: inline-block; text-decoration: none; transition: background 0.2s ease, color 0.2s ease; } .ds-btn-ghost:hover { background: #6B3E26; color: #FFFFFF; }"
+    },
+    {
+      "name": "Product Card",
+      "kind": "card",
+      "refersTo": "card-product",
+      "description": "Catalog card for cakes/cookies/desserts — white surface on a cream page, ambient shadow, image scale on hover.",
+      "html": "<div class=\"ds-card-product\"><div class=\"ds-card-product-img-wrap\"><img src=\"https://placehold.co/400x300\" alt=\"Pastel de Zanahoria\" /><span class=\"ds-tag\">Sweet</span></div><h3>Pastel de Zanahoria</h3><p>Bizcocho de zanahoria con especias y cobertura de queso crema.</p></div>",
+      "css": ".ds-card-product { background: #FFFFFF; border-radius: 24px; padding: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: box-shadow 0.3s ease; cursor: pointer; max-width: 280px; font-family: Montserrat, sans-serif; } .ds-card-product:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.12); } .ds-card-product-img-wrap { position: relative; overflow: hidden; border-radius: 16px; } .ds-card-product img { width: 100%; height: 180px; object-fit: cover; display: block; transition: transform 0.3s ease; } .ds-card-product:hover img { transform: scale(1.05); } .ds-tag { position: absolute; top: 12px; left: 12px; background: #DA6C94; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 10px; border-radius: 9999px; } .ds-card-product h3 { color: #DA6C94; font-size: 18px; font-weight: 600; margin: 12px 0 4px; } .ds-card-product p { color: #6B3E26; font-size: 13px; margin: 0; }"
+    },
+    {
+      "name": "Toggle Chip",
+      "kind": "chip",
+      "refersTo": "chip-selected",
+      "description": "Multi-select chip for toppings/ornamentos and catalog line tags — solid fill is the selected-state signal.",
+      "html": "<div style=\"display:flex; gap:8px;\"><button class=\"ds-chip ds-chip-selected\">Chispas de chocolate</button><button class=\"ds-chip\">Fresas</button></div>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 6px; font-family: Montserrat, sans-serif; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 12px; border: 1px solid #E8C4A0; background: #FFFFFF; color: #6B3E26; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; } .ds-chip:hover { background: #FFF0E6; } .ds-chip-selected, .ds-chip-selected:hover { background: #C0607A; border-color: #C0607A; color: #FFFFFF; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Standard text field — quiet border-color focus treatment, no ring/glow.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Tu nombre\" />",
+      "css": ".ds-input { width: 100%; background: #FFFDF8; border: 1px solid #E8C4A0; border-radius: 12px; padding: 10px 14px; font-family: Montserrat, sans-serif; font-size: 14px; color: #3A1F14; outline: none; box-sizing: border-box; transition: border-color 0.15s ease; } .ds-input:focus { border-color: #AA6A42; } .ds-input::placeholder { color: #B0806A; }"
+    },
+    {
+      "name": "Nav Avatar Badge",
+      "kind": "nav",
+      "description": "Initials avatar in the public AppBar's account menu — solid Caramelo Tostado with a ring that appears on hover/open.",
+      "html": "<button class=\"ds-avatar\">HC</button>",
+      "css": ".ds-avatar { width: 36px; height: 36px; border-radius: 9999px; background: #AA6A42; color: #FFFFFF; font-family: Montserrat, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; box-shadow: 0 0 0 2px transparent; cursor: pointer; transition: background 0.15s ease, box-shadow 0.15s ease; } .ds-avatar:hover { background: #8A5535; box-shadow: 0 0 0 2px rgba(232,196,160,0.5); }"
+    },
+    {
+      "name": "Modal Panel",
+      "kind": "custom",
+      "description": "Overlay shell used by product/cotizador modals — blurred scrim, Dancing Script title, footer action row.",
+      "html": "<div class=\"ds-modal-overlay\"><div class=\"ds-modal-panel\"><div class=\"ds-modal-header\"><h2>Pastel de Zanahoria</h2></div><div class=\"ds-modal-body\">Contenido del modal…</div><div class=\"ds-modal-footer\"><button class=\"ds-btn-primary\">Agregar al carrito</button></div></div></div>",
+      "css": ".ds-modal-overlay { position: fixed; inset: 0; background: rgba(30,10,5,0.55); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; } .ds-modal-panel { width: 100%; max-width: 640px; background: #FFFDF8; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.35); overflow: hidden; font-family: Montserrat, sans-serif; } .ds-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid #F0E0D0; background: #FFF7F0; } .ds-modal-header h2 { font-family: 'Dancing Script', cursive; font-weight: 700; font-size: 18px; color: #3A1F14; margin: 0; } .ds-modal-body { padding: 20px 24px; color: #3A1F14; font-size: 14px; } .ds-modal-footer { display: flex; gap: 12px; padding: 16px 24px; border-top: 1px solid #F0E0D0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Bake Lab",
+    "overview": "Hey Cookie reads as a bakery run with lab-grade precision: every customization — bizcocho, cobertura, relleno, jarabe, toppings, ornamentos — recalculates its price the instant it's touched, but nothing about the surface feels clinical. The interface stays warm, hand-set, and celebratory throughout; the precision lives in the pricing engine, not in the visual language. Buttons are soft and pill-shaped, cards lift gently on hover, and three different script/serif display faces rotate through headlines like a bakery that hand-letters its own signage.\n\nThe public Hero opens cinematic and moody — a full-bleed product photo under a dark brown-to-black radial gradient, headlines rendered in gradient text (warm gold-to-cream for the wordmark line, soft green for \"Bake Lab · Sweet & Healthy\") — then hands off to a warm cream daytime register for everything after it, stitched together with organic SVG wave dividers instead of hard section breaks. The admin zone (Operate mode) is the same room as the storefront (confirmed 2026-08-07, retiring the earlier plum-wine admin identity): identical Caramelo Tostado primary, Espresso/Cacao text, warm Lino/Arena borders, and the shared raspberry action color. Admin doesn't borrow the Hero's cinematic drama or the wave dividers — Operate mode still means dense tables, forms, and modals — but every color, radius, shadow, and type choice comes from the exact same token set the public site uses.\n\nA confirmed brand tension sits on top of this: the storybook charm of Charlie and the Chocolate Factory — cute, whimsical, inviting — held together with an elegant Bake Lab polish. Neither side erases the other; the wave dividers are the confirmed carrier of the playful half and are protected through any elegance pass. Real marketing collateral (an ad for \"Galletas NY\") makes this concrete with an olive-green + terracotta + cream Vintage palette, an elegant serif/script logotype, a wax-seal badge, and icon+label feature callouts — and that exact three-color trio already exists in the codebase as an unused `.vintage-bg` CSS class, latent brand truth waiting to be wired up.",
+    "keyCharacteristics": [
+      "Warm and artisanal, never corporate or clinical — the explicit anti-reference.",
+      "Playful-storybook charm (the Wonka reference) held in tension with elegant Bake Lab polish — both required, neither dominant.",
+      "Soft, fully rounded geometry everywhere; no sharp corners on any interactive surface.",
+      "Layered script/serif typography (three display faces) treated as hand-lettered signage, not a single locked headline font.",
+      "Real product photography throughout (genuine studio photos, never stock); no customer testimonials exist yet — don't fabricate any.",
+      "Ambient, diffuse shadows only; elevation communicates focus (modals), never decoration.",
+      "A confirmed but not-yet-implemented Vintage palette (olive + terracotta + cream) exists in both real ad creative and dormant CSS — a live candidate for the next elegance pass."
+    ],
+    "rules": [
+      {
+        "name": "The Warm-Neutral Rule",
+        "body": "No neutral in this system is a cool gray. Every background, border, and muted-text value is warmed toward cream, tan, or blush — a true gray or blue-gray anywhere is an anti-pattern.",
+        "section": "colors"
+      },
+      {
+        "name": "The One-Room Rule",
+        "body": "Retires the former Two-Rooms Rule (2026-08-07). Admin and public are one visual system now, not two: every color, radius, shadow, and type token is shared. Nothing in the palette is scoped to \"admin only\" anymore. Operate-mode surfaces (dense tables, forms, modals) still follow Operate principles — scanability and information density over marketing flourish — but that's a layout/density decision, never a color decision.",
+        "section": "colors"
+      },
+      {
+        "name": "The One-Script Ceiling Rule",
+        "body": "Never more than one script/serif display face appears in a single component at once. Pacifico is Hero-only; Dancing Script lives at card/modal scale; Playfair bridges the two. Stacking two script faces in the same view reads as noise, not craft.",
+        "section": "typography"
+      },
+      {
+        "name": "The Depth-On-Intent Rule",
+        "body": "Ambient shadow deepens only in response to hover/focus — at rest, every surface uses the lightest shadow in its category. Nothing sits permanently \"elevated\" except true overlays (modals, drawers).",
+        "section": "elevation"
+      },
+      {
+        "name": "The No-Sharp-Corner Rule",
+        "body": "Every button, card, input, modal, and chip in the codebase carries a border-radius. A squared-off interactive element is a defect, not a stylistic choice.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Elegant-Never-Erases-Cute Rule",
+        "body": "Any pass that adds Bake Lab polish — the Vintage family, tighter type, restrained color — must leave the storybook/Wonka charm intact: the wave dividers, the round hover-lift on product cards, the hand-set script headlines. If an elegant revision would flatten those into something quiet and corporate, it has gone too far.",
+        "section": "colors"
+      },
+      {
+        "name": "The Script-Nav Scale Rule",
+        "body": "Headline-Script scales up to 24px specifically for top-level public navigation — a deliberate second size step beyond the 18px card/modal-title use documented under Typography. Don't shrink nav labels to a Montserrat/body size to \"fix\" a type-ramp mismatch; the script nav is the intended treatment.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do keep every interactive surface fully rounded (rounded-lg minimum) — see the No-Sharp-Corner Rule.",
+      "Do use real product photography freely; it exists and is genuine.",
+      "Do use the exact same color tokens in admin as in public — see the One-Room Rule.",
+      "Do let ambient shadow deepen only on hover/focus; keep rest states light.",
+      "Do treat \"Sweet & Healthy\" / lower-sugar language as an ingredient-quality promise, never a certified nutritional claim.",
+      "Do reach for the Vintage family (Terracota Vintage / Verde Oliva / Crema Vintage) when a surface is explicitly going for the elegant Bake Lab register — it's confirmed brand evidence, not an invention.",
+      "Do keep the wave dividers, hover-lift cards, and script headlines intact through any elegance pass — see the Elegant-Never-Erases-Cute Rule."
+    ],
+    "donts": [
+      "Don't introduce a cool gray or blue-gray neutral anywhere — see the Warm-Neutral Rule.",
+      "Don't stack two script/serif display faces in the same component — see the One-Script Ceiling Rule.",
+      "Don't invent or imply customer testimonials, ratings, or case studies — none exist yet.",
+      "Don't give a card or modal a permanent heavy shadow at rest; heavy elevation is reserved for true overlays.",
+      "Don't replace the organic SVG wave section dividers with straight edges or hard color blocks — it's a signature, not a placeholder.",
+      "Don't let an elegant revision go quiet/corporate and lose the playful Wonka-storybook charm — see the Elegant-Never-Erases-Cute Rule."
+    ]
+  }
+}

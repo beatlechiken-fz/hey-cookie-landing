@@ -95,7 +95,7 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
                     {initials}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-semibold text-[#3A1F14] truncate">{name}</p>
+                    <p className="text-sm font-semibold text-[#3A1F14] truncate">{name}</p>
                     {email && <p className="text-[11px] text-[#AA6A42]/70 truncate">{email}</p>}
                   </div>
                 </div>
@@ -106,7 +106,7 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
                 <a
                   href={`/${locale}/user/dashboard`}
                   onClick={() => setOpen(false)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
                 >
                   <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -116,7 +116,7 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
                 <a
                   href={`/${locale}/user/perfil`}
                   onClick={() => setOpen(false)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
                 >
                   <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -130,7 +130,7 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
                     onClose();
                     signOut({ callbackUrl: `/${locale}/user/login` });
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
                 >
                   <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
@@ -155,7 +155,13 @@ export default function AppBar() {
   const pathname = usePathname();
   const locale = useLocale();
   const { data: session } = useSession();
-  const totalItems = useCartStore((s) => s.totalItems());
+  const totalItemsRaw = useCartStore((s) => s.totalItems());
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  // El store del carrito persiste en localStorage; en el primer render del
+  // servidor siempre es 0, así que solo mostramos el valor real del cliente
+  // una vez montado, para evitar un mismatch de hidratación.
+  const totalItems = mounted ? totalItemsRaw : 0;
 
   const isUserLoggedIn = session?.user?.role === "user";
 
@@ -186,7 +192,7 @@ export default function AppBar() {
         <div className="flex items-center gap-4 order-1 lg:order-1">
           <button
             onClick={() => setMenuOpen(true)}
-            className="lg:hidden flex items-center mb-6 justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
+            className="lg:hidden flex items-center mb-6 justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
           >
             <svg viewBox="0 0 24 24" className="w-6 h-6">
               <path
@@ -214,7 +220,7 @@ export default function AppBar() {
           {!isUserLoggedIn && (
             <button
               onClick={() => router.push("/user/login")}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border border-[#AA6A42]/40 text-[#AA6A42] text-xs font-semibold hover:bg-[#AA6A42]/10 transition-colors cursor-pointer font-body"
+              className="flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-11 rounded-lg border border-[#AA6A42]/40 text-[#AA6A42] text-xs font-semibold hover:bg-[#AA6A42]/10 transition-colors cursor-pointer font-body"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -233,7 +239,7 @@ export default function AppBar() {
           {/* Cart button */}
           <button
             onClick={() => setCartOpen(true)}
-            className="relative mr-2 mt-1 p-2 rounded-lg hover:bg-[#AA6A42]/10 text-[#3A1F14] transition-colors cursor-pointer"
+            className="relative mr-2 mt-1 p-3 rounded-lg hover:bg-[#AA6A42]/10 text-[#3A1F14] transition-colors cursor-pointer"
             aria-label="Carrito de compras"
           >
             <svg
@@ -250,7 +256,7 @@ export default function AppBar() {
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
             {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#DA6C94] text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#A84D66] text-white text-[11px] font-bold flex items-center justify-center">
                 {totalItems > 99 ? "99+" : totalItems}
               </span>
             )}

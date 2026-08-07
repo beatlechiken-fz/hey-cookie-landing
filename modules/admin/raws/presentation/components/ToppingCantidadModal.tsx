@@ -52,7 +52,7 @@ export function ToppingCantidadModal({ open, item, onClose, onSave }: Props) {
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#c0a0a8]";
+    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
 
   // Preview del costo
   const costoTotal =
@@ -80,19 +80,19 @@ export function ToppingCantidadModal({ open, item, onClose, onSave }: Props) {
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f5dce4] overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f5dce4] bg-[#fdf6f0]">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
                 <div>
-                  <h2 className="font-bold text-[#7b2d42] text-base">
+                  <h2 className="font-bold text-[#AA6A42] text-base">
                     Cantidad de topping
                   </h2>
-                  <p className="text-[12px] text-[#b07a8a] mt-0.5">
+                  <p className="text-[12px] text-[#6B3E26] mt-0.5">
                     {item.ingrediente.nombre}
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f5dce4] transition text-[#b07a8a]"
+                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -132,7 +132,7 @@ export function ToppingCantidadModal({ open, item, onClose, onSave }: Props) {
 
                 {/* Cantidad */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Cantidad ({unidad})
                   </label>
                   <input
@@ -149,8 +149,8 @@ export function ToppingCantidadModal({ open, item, onClose, onSave }: Props) {
 
                 {/* Preview costo */}
                 {costoTotal && (
-                  <div className="rounded-xl bg-[#fdf6f0] border border-[#f5dce4] px-4 py-2.5 flex items-center justify-between">
-                    <span className="text-[12px] text-[#b07a8a]">
+                  <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-4 py-2.5 flex items-center justify-between">
+                    <span className="text-[12px] text-[#6B3E26]">
                       Costo estimado
                     </span>
                     <span className="font-bold text-[#c0607a]">
@@ -161,9 +161,9 @@ export function ToppingCantidadModal({ open, item, onClose, onSave }: Props) {
 
                 {/* Notas */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#7b2d42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                     Notas{" "}
-                    <span className="text-[#c0a0a8] normal-case font-normal">
+                    <span className="text-[#AA6A42] normal-case font-normal">
                       (opcional)
                     </span>
                   </label>
@@ -186,7 +186,7 @@ export function ToppingCantidadModal({ open, item, onClose, onSave }: Props) {
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
                   >
                     Cancelar
                   </button>

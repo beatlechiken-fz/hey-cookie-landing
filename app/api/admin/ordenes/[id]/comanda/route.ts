@@ -13,6 +13,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getAdminSession } from "@/core/helpers/auth";
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
+import { normalizeOpciones } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -40,6 +41,7 @@ export interface ComandaData {
   clienteNombre: string | null;
   fechaEntrega: string | null;
   createdAt: string;
+  notas: string | null;
   items: ItemComanda[];
 }
 
@@ -95,6 +97,7 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
       { data: jarabes },
       { data: saboresJarabe },
       { data: empaques },
+      { data: ornamentos },
       { data: productos },
       { data: toppingCants },
       { data: licorCants },
@@ -108,6 +111,7 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
         ingredientes:jarabe_ingredientes (cantidad, ingrediente:ingredientes (id, nombre, unidad_base))`),
       db.from("sabores_jarabe").select("id, nombre"),
       db.from("empaques").select("id, nombre"),
+      db.from("ornamentos").select("id, nombre"),
       db
         .from("productos")
         .select("id, nombre, ingredientes_base, elaboracion, medida_base_cm"),
@@ -128,7 +132,7 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
     for (const item of (orden.orden_items as any[]) ?? []) {
       const conf = (item.configuracion ?? {}) as Record<string, any>;
       const qty = Number(item.cantidad ?? 1);
-      const opciones = conf.opciones ?? conf; // productos usan conf.opciones; pastel usa conf
+      const opciones = normalizeOpciones(conf.opciones ?? conf); // productos usan conf.opciones; pastel usa conf
 
       // ── Calcular factor de volumen ─────────────────────────────────────────
       // Para productos del catálogo: medidaBaseCm viene del producto en BD
@@ -179,10 +183,10 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
           });
       }
 
-      // ── Cobertura ─────────────────────────────────────────────────────────
-      if (opciones.coberturaId) {
-        const cob = byId(coberturas, opciones.coberturaId);
-        const sab = byId(sabores, opciones.saborCoberturaId);
+      // ── Coberturas (varias) ──────────────────────────────────────────────
+      for (const sel of opciones.coberturas ?? []) {
+        const cob = byId(coberturas, sel.coberturaId);
+        const sab = byId(sabores, sel.saborCoberturaId);
         if (cob)
           secciones.push({
             titulo: `Cobertura: ${cob.nombre}`,
@@ -192,10 +196,10 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
           });
       }
 
-      // ── Relleno ───────────────────────────────────────────────────────────
-      if (opciones.rellenoId) {
-        const rel = byId(coberturas, opciones.rellenoId);
-        const sab = byId(sabores, opciones.saborRellenoId);
+      // ── Rellenos (varios) ────────────────────────────────────────────────
+      for (const sel of opciones.rellenos ?? []) {
+        const rel = byId(coberturas, sel.rellenoId);
+        const sab = byId(sabores, sel.saborRellenoId);
         if (rel)
           secciones.push({
             titulo: `Relleno: ${rel.nombre}`,
@@ -275,6 +279,18 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
       if (empIns.length > 0)
         secciones.push({ titulo: "Empaques", ingredientes: empIns });
 
+      // ── Ornamentos (no escalan por volumen — piezas fijas × qty) ──────────
+      const ornIns: IngredienteComanda[] = (opciones.ornamentos ?? []).flatMap(
+        (sel: { ornamentoId: string; cantidad: number }) => {
+          const orn = byId(ornamentos, sel.ornamentoId);
+          return orn
+            ? [{ nombre: orn.nombre, cantidad: sel.cantidad * qty, unidad: "pieza" }]
+            : [];
+        },
+      );
+      if (ornIns.length > 0)
+        secciones.push({ titulo: "Ornamentos", ingredientes: ornIns });
+
       comandaItems.push({
         nombre: item.nombre,
         cantidad: qty,
@@ -290,6 +306,7 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
       clienteNombre: (orden.clientes as any)?.nombre ?? null,
       fechaEntrega: orden.fecha_entrega ?? null,
       createdAt: orden.created_at,
+      notas: orden.notas ?? null,
       items: comandaItems,
     } satisfies ComandaData);
   } catch (e: any) {

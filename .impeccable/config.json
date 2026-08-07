@@ -1,0 +1,38 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "#b23a3a",
+        "createdAt": "2026-08-07T18:20:43.183Z",
+        "reason": "User confirmed intentional: red-to-green rating scale in Contact.tsx, outside brand palette by design"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#c97a7a",
+        "createdAt": "2026-08-07T18:20:43.238Z",
+        "reason": "User confirmed intentional: red-to-green rating scale in Contact.tsx, outside brand palette by design"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#c68642",
+        "createdAt": "2026-08-07T18:20:43.281Z",
+        "reason": "User confirmed intentional: red-to-green rating scale in Contact.tsx, outside brand palette by design"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#7fb77e",
+        "createdAt": "2026-08-07T18:20:43.322Z",
+        "reason": "User confirmed intentional: red-to-green rating scale in Contact.tsx, outside brand palette by design"
+      },
+      {
+        "rule": "design-system-color",
+        "value": "#3fae6a",
+        "createdAt": "2026-08-07T18:20:43.363Z",
+        "reason": "User confirmed intentional: red-to-green rating scale in Contact.tsx, outside brand palette by design"
+      }
+    ]
+  }
+}

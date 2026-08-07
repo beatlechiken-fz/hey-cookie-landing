@@ -72,23 +72,23 @@ export function IngresosTab({ desde, hasta }: Props) {
   }
 
   const inputCls =
-    "w-full px-2 py-1 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] transition text-right";
+    "w-full px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] transition text-right";
 
   return (
     <div className="flex flex-col gap-4">
       {isLoading && (
-        <p className="text-center text-[#c0a0a8] text-sm py-8">
+        <p className="text-center text-[#AA6A42] text-sm py-8">
           Cargando registros…
         </p>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {!isLoading && registros.length === 0 && (
-        <div className="rounded-2xl border border-[#f5dce4] bg-[#fdf6f0] py-12 text-center">
-          <p className="text-[#c0a0a8] text-sm">
+        <div className="rounded-2xl border border-[#f0e0d0] bg-[#FFF7F0] py-12 text-center">
+          <p className="text-[#AA6A42] text-sm">
             Sin ventas registradas en el período
           </p>
-          <p className="text-[11px] text-[#c0a0a8] mt-1">
+          <p className="text-[11px] text-[#AA6A42] mt-1">
             Los registros se crean automáticamente al marcar una orden como{" "}
             <strong>Pagado</strong>
           </p>
@@ -96,10 +96,10 @@ export function IngresosTab({ desde, hasta }: Props) {
       )}
 
       {registros.length > 0 && (
-        <div className="rounded-2xl border border-[#f5dce4] overflow-hidden">
+        <div className="rounded-2xl border border-[#f0e0d0] overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#fdf6f0] border-b border-[#f5dce4]">
+              <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
                 {[
                   "Fecha",
                   "Orden",
@@ -114,7 +114,7 @@ export function IngresosTab({ desde, hasta }: Props) {
                 ].map((h) => (
                   <th
                     key={h}
-                    className="px-3 py-2.5 text-[10px] font-semibold text-[#b07a8a] uppercase tracking-wider text-right first:text-left"
+                    className="px-3 py-2.5 text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider text-right first:text-left"
                   >
                     {h}
                   </th>
@@ -125,12 +125,12 @@ export function IngresosTab({ desde, hasta }: Props) {
               {registros.map((r) =>
                 editId === r.id ? (
                   // ── Fila de edición ─────────────────────────────────────
-                  <tr key={r.id} className="bg-[#fdf6f0]">
+                  <tr key={r.id} className="bg-[#FFF7F0]">
                     <td className="px-3 py-2" colSpan={3}>
                       <div className="font-medium text-[#3d1a24] text-[13px]">
                         {fmtD(r.fechaVenta)}
                       </div>
-                      <div className="text-[11px] text-[#b07a8a]">
+                      <div className="text-[11px] text-[#6B3E26]">
                         #{r.ordenNumero} · {r.clienteNombre ?? "Sin cliente"}
                       </div>
                       {editError && (
@@ -194,7 +194,7 @@ export function IngresosTab({ desde, hasta }: Props) {
                         </button>
                         <button
                           onClick={() => setEditId(null)}
-                          className="px-2 py-1 rounded-lg border border-[#e8c4cd] text-[#b07a8a] text-[11px] hover:bg-[#fdf6f0] transition"
+                          className="px-2 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-[#FFF7F0] transition"
                         >
                           ✕
                         </button>
@@ -210,7 +210,7 @@ export function IngresosTab({ desde, hasta }: Props) {
                       </p>
                     </td>
                     <td className="px-3 py-2.5 text-right">
-                      <span className="text-[#b07a8a] text-[12px]">
+                      <span className="text-[#6B3E26] text-[12px]">
                         #{r.ordenNumero ?? "—"}
                       </span>
                     </td>
@@ -219,7 +219,7 @@ export function IngresosTab({ desde, hasta }: Props) {
                         {r.clienteNombre ?? "—"}
                       </p>
                     </td>
-                    <td className="px-3 py-2.5 text-right font-bold text-[#7b2d42]">
+                    <td className="px-3 py-2.5 text-right font-bold text-[#AA6A42]">
                       {fmt(r.totalVenta)}
                     </td>
                     <td className="px-3 py-2.5 text-right text-[#3d1a24]">
@@ -240,14 +240,14 @@ export function IngresosTab({ desde, hasta }: Props) {
                           {fmt(r.comision)}
                         </span>
                       ) : (
-                        <span className="text-[#c0a0a8] text-[11px]">—</span>
+                        <span className="text-[#AA6A42] text-[11px]">—</span>
                       )}
                     </td>
                     <td className="px-3 py-2.5">
                       <div className="flex gap-1 justify-end">
                         <button
                           onClick={() => openEdit(r)}
-                          className="p-1.5 rounded-lg hover:bg-[#fdf6f0] text-[#b07a8a] hover:text-[#c0607a] transition"
+                          className="p-1.5 rounded-lg hover:bg-[#FFF7F0] text-[#6B3E26] hover:text-[#c0607a] transition"
                           title="Editar — ajustar comisión u otros campos"
                         >
                           <svg
@@ -264,7 +264,7 @@ export function IngresosTab({ desde, hasta }: Props) {
                         </button>
                         <button
                           onClick={() => setDeleting(r.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-[#c0a0a8] hover:text-red-500 transition"
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
                         >
                           <svg
                             viewBox="0 0 24 24"
@@ -285,14 +285,14 @@ export function IngresosTab({ desde, hasta }: Props) {
             </tbody>
             {/* Totales */}
             <tfoot>
-              <tr className="bg-[#fdf6f0] border-t-2 border-[#f5dce4]">
+              <tr className="bg-[#FFF7F0] border-t-2 border-[#f0e0d0]">
                 <td
                   colSpan={3}
-                  className="px-3 py-2.5 text-[11px] font-bold text-[#b07a8a] uppercase tracking-wider"
+                  className="px-3 py-2.5 text-[11px] font-bold text-[#6B3E26] uppercase tracking-wider"
                 >
                   TOTALES ({registros.length} ventas)
                 </td>
-                <td className="px-3 py-2.5 text-right font-bold text-[#7b2d42]">
+                <td className="px-3 py-2.5 text-right font-bold text-[#AA6A42]">
                   {fmt(totalVentas)}
                 </td>
                 <td className="px-3 py-2.5 text-right font-bold text-[#3d1a24]">
@@ -324,17 +324,17 @@ export function IngresosTab({ desde, hasta }: Props) {
             className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
             onClick={() => setDeleting(null)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f5dce4] p-6 max-w-sm w-full z-10">
+          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 max-w-sm w-full z-10">
             <p className="font-bold text-[#3d1a24] mb-2">
               ¿Eliminar este registro?
             </p>
-            <p className="text-[13px] text-[#b07a8a] mb-5">
+            <p className="text-[13px] text-[#6B3E26] mb-5">
               Esta acción es permanente y no puede deshacerse.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleting(null)}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4cd] text-[#b07a8a] text-sm font-semibold hover:bg-[#fdf6f0] transition"
+                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
               >
                 Cancelar
               </button>

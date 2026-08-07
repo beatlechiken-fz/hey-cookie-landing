@@ -28,22 +28,22 @@ export function FinanzasView() {
   const [hasta, setHasta] = useState(pd.hasta);
 
   const inputCls =
-    "px-3 py-1.5 rounded-lg border border-[#e8c4cd] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+    "px-3 py-1.5 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
 
   return (
     <div className="flex flex-col gap-0">
       {/* Header con tabs y filtro de período */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
         {/* Tabs */}
-        <div className="flex bg-[#fdf6f0] border border-[#f5dce4] rounded-xl p-1 gap-1">
+        <div className="flex bg-[#FFF7F0] border border-[#f0e0d0] rounded-xl p-1 gap-1">
           {TABS.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold transition ${
                 tab === t.key
-                  ? "bg-white text-[#7b2d42] shadow-sm border border-[#f5dce4]"
-                  : "text-[#b07a8a] hover:text-[#7b2d42]"
+                  ? "bg-white text-[#AA6A42] shadow-sm border border-[#f0e0d0]"
+                  : "text-[#6B3E26] hover:text-[#AA6A42]"
               }`}
             >
               <span>{t.icon}</span>
@@ -54,7 +54,7 @@ export function FinanzasView() {
 
         {/* Filtro de período */}
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-[11px] text-[#b07a8a] font-semibold uppercase tracking-wide">
+          <span className="text-[11px] text-[#6B3E26] font-semibold uppercase tracking-wide">
             Período
           </span>
           <input
@@ -63,7 +63,7 @@ export function FinanzasView() {
             onChange={(e) => setDesde(e.target.value)}
             className={inputCls}
           />
-          <span className="text-[#b07a8a]">—</span>
+          <span className="text-[#6B3E26]">—</span>
           <input
             type="date"
             value={hasta}

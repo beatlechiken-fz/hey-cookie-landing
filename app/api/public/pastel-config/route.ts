@@ -18,6 +18,7 @@ export async function GET() {
       { data: licorIngs,    error: e6 },
       { data: licorCants,   error: e7 },
       { data: empaques,     error: e8 },
+      { data: ornamentos,   error: e9 },
     ] = await Promise.all([
       db.from("coberturas").select("id, nombre, costo_total").eq("activo", true).order("nombre"),
       db.from("sabores").select("id, nombre, precio").eq("activo", true).order("nombre"),
@@ -30,9 +31,10 @@ export async function GET() {
         .eq("categoria", "licores_bebidas").eq("activo", true).order("nombre"),
       db.from("licor_cantidades").select("ingrediente_id, cantidad"),
       db.from("empaques").select("id, nombre, precio, imagen_url").eq("activo", true).order("nombre"),
+      db.from("ornamentos").select("id, nombre, precio, imagen_url").eq("activo", true).order("nombre"),
     ]);
 
-    const firstError = [e1, e2, e3, e4, e5, e6, e7, e8].find(Boolean);
+    const firstError = [e1, e2, e3, e4, e5, e6, e7, e8, e9].find(Boolean);
     if (firstError) throw new Error(firstError.message);
 
     const toppings = (toppingCants ?? [])
@@ -78,6 +80,9 @@ export async function GET() {
       licores,
       empaques: (empaques ?? []).map((e: any) => ({
         id: e.id, nombre: e.nombre, precio: Number(e.precio), imagenUrl: e.imagen_url ?? null,
+      })),
+      ornamentos: (ornamentos ?? []).map((o: any) => ({
+        id: o.id, nombre: o.nombre, precio: Number(o.precio), imagenUrl: o.imagen_url ?? null,
       })),
     };
 

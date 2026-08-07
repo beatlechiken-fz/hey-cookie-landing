@@ -64,7 +64,7 @@ export default function HeroDesktop() {
         <section className="w-full">
           <div className="flex flex-col w-full gap-8 pt-20 md:pt-24">
             {/* TITLE */}
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: "easeOut", delay: 0.3 }}
@@ -91,10 +91,10 @@ export default function HeroDesktop() {
                   {t("titleDescription2")}
                 </span>
               </div>
-            </motion.p>
+            </motion.div>
 
             {/* SLOGAN */}
-            <motion.div
+            <motion.h1
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
@@ -117,9 +117,9 @@ export default function HeroDesktop() {
                 alignItems: "flex-start",
               }}
             >
-              <h1>{t("title1")}</h1>
-              <h1>{t("title2")}</h1>
-            </motion.div>
+              <span>{t("title1")}</span>
+              <span>{t("title2")}</span>
+            </motion.h1>
 
             {/* BUTTONS */}
             <motion.div

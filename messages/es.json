@@ -80,6 +80,7 @@
     "gfCategory": "Libre de gluten",
     "lines": {
       "sweet": "Línea Dulce",
+      "fitness": "Línea Fitness",
       "healthy": "Línea Saludable",
       "sweetBakery": "Panadería Dulce",
       "healthyBakery": "Panadería Saludable",
@@ -308,7 +309,7 @@
     "desserts": "Repostería",
     "jelly": "Gelatinas",
     "other": "Otros alimentos",
-    "custom": "Arma tu pastel"
+    "custom": "Arma tu Postre"
   },
   "comingSoon": {
     "coming": "Próximamente",
@@ -317,7 +318,7 @@
     "backHome": "Volver al inicio"
   },
   "orders": {
-    "title": "Arma tu pastel",
+    "title": "Arma tu Postre",
     "next": "Siguiente",
     "back": "Anterior"
   },

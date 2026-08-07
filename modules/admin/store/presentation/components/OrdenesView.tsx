@@ -89,12 +89,12 @@ export function OrdenesView() {
   }
 
   const inputCls =
-    "w-full pl-4 pr-4 py-2.5 rounded-xl border border-[#e8c4cd] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#c0a0a8]";
+    "w-full pl-4 pr-4 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]";
 
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs horizontales */}
-      <div className="flex bg-[#fdf6f0] border border-[#f5dce4] rounded-xl p-1 gap-1 w-fit">
+      <div className="flex bg-[#FFF7F0] border border-[#f0e0d0] rounded-xl p-1 gap-1 w-fit">
         {[
           { key: "cotizaciones" as Tab, label: "Cotizaciones", icon: "📋" },
           { key: "ordenes" as Tab, label: "Órdenes", icon: "📦" },
@@ -104,8 +104,8 @@ export function OrdenesView() {
             onClick={() => handleTabChange(t.key)}
             className={`flex items-center gap-1.5 px-5 py-2 rounded-lg text-[13px] font-semibold transition ${
               tab === t.key
-                ? "bg-white text-[#7b2d42] shadow-sm border border-[#f5dce4]"
-                : "text-[#b07a8a] hover:text-[#7b2d42]"
+                ? "bg-white text-[#AA6A42] shadow-sm border border-[#f0e0d0]"
+                : "text-[#6B3E26] hover:text-[#AA6A42]"
             }`}
           >
             <span>{t.icon}</span>
@@ -130,7 +130,7 @@ export function OrdenesView() {
           }
           className={inputCls}
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c0a0a8] pointer-events-none">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
           <svg
             viewBox="0 0 24 24"
             className="w-4 h-4"
@@ -146,7 +146,7 @@ export function OrdenesView() {
       </div>
 
       {/* Contador */}
-      <p className="text-sm text-[#b07a8a]">
+      <p className="text-sm text-[#6B3E26]">
         {isLoading
           ? "Cargando…"
           : `${ordenes.length} ${tab === "cotizaciones" ? "cotización" : "orden"}${ordenes.length !== 1 ? "es" : ""}`}
@@ -156,31 +156,31 @@ export function OrdenesView() {
 
       {/* Tabla desktop */}
       {!isLoading && (
-        <div className="hidden md:block rounded-2xl border border-[#f5dce4] overflow-hidden bg-white shadow-sm">
+        <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#fdf6f0] border-b border-[#f5dce4]">
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+              <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   {tab === "cotizaciones" ? "Cotización" : "Orden"}
                 </th>
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Cliente
                 </th>
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Fecha
                 </th>
                 {tab === "ordenes" && (
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                     Estado
                   </th>
                 )}
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Entrega
                 </th>
-                <th className="px-4 py-3 text-right  text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                <th className="px-4 py-3 text-right  text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Total
                 </th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#b07a8a] uppercase tracking-wider">
+                <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Items
                 </th>
               </tr>
@@ -190,7 +190,7 @@ export function OrdenesView() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="py-12 text-center text-[#c0a0a8] text-sm"
+                    className="py-12 text-center text-[#AA6A42] text-sm"
                   >
                     No hay {tab === "cotizaciones" ? "cotizaciones" : "órdenes"}{" "}
                     {search ? "con ese criterio" : "aún"}
@@ -203,11 +203,11 @@ export function OrdenesView() {
                   onClick={() =>
                     router.push(`/admin/dashboard/store/ordenes/${o.id}`)
                   }
-                  className="hover:bg-[#fdf6f0]/60 transition cursor-pointer group"
+                  className="hover:bg-[#FFF7F0]/60 transition cursor-pointer group"
                 >
                   <td className="px-4 py-3">
                     <p className="font-bold text-[#3d1a24]">#{o.numero}</p>
-                    <p className="text-[11px] text-[#b07a8a]">
+                    <p className="text-[11px] text-[#6B3E26]">
                       {fmtDate(o.createdAt)}
                     </p>
                   </td>
@@ -216,7 +216,7 @@ export function OrdenesView() {
                       {o.clienteNombre ?? "Sin cliente"}
                     </p>
                   </td>
-                  <td className="px-4 py-3 text-[#7b2d42]/70 text-[13px]">
+                  <td className="px-4 py-3 text-[#AA6A42]/70 text-[13px]">
                     {fmtDate(o.createdAt)}
                   </td>
                   {tab === "ordenes" && (
@@ -224,17 +224,17 @@ export function OrdenesView() {
                       <StatusBadge status={o.status} />
                     </td>
                   )}
-                  <td className="px-4 py-3 text-[#7b2d42]/70 text-[13px]">
+                  <td className="px-4 py-3 text-[#AA6A42]/70 text-[13px]">
                     {o.fechaEntrega ? (
                       fmtDate(o.fechaEntrega)
                     ) : (
-                      <span className="text-[#c0a0a8]">—</span>
+                      <span className="text-[#AA6A42]">—</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-[#c0607a]">
                     {fmtMoney(o.total)}
                   </td>
-                  <td className="px-4 py-3 text-center text-[#b07a8a] text-[13px]">
+                  <td className="px-4 py-3 text-center text-[#6B3E26] text-[13px]">
                     {o.items.length}
                   </td>
                 </tr>
@@ -248,7 +248,7 @@ export function OrdenesView() {
       {!isLoading && (
         <div className="flex md:hidden flex-col gap-3">
           {ordenes.length === 0 && (
-            <p className="text-center text-[#c0a0a8] text-sm py-8">
+            <p className="text-center text-[#AA6A42] text-sm py-8">
               No hay {tab === "cotizaciones" ? "cotizaciones" : "órdenes"}{" "}
               {search ? "con ese criterio" : "aún"}
             </p>
@@ -259,7 +259,7 @@ export function OrdenesView() {
               onClick={() =>
                 router.push(`/admin/dashboard/store/ordenes/${o.id}`)
               }
-              className="bg-white rounded-2xl border border-[#f5dce4] p-4 shadow-sm cursor-pointer active:bg-[#fdf6f0]/60 transition"
+              className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm cursor-pointer active:bg-[#FFF7F0]/60 transition"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
@@ -267,7 +267,7 @@ export function OrdenesView() {
                     {tab === "cotizaciones" ? "Cotización" : "Orden"} #
                     {o.numero}
                   </p>
-                  <p className="text-[12px] text-[#b07a8a]">
+                  <p className="text-[12px] text-[#6B3E26]">
                     {o.clienteNombre ?? "Sin cliente"}
                   </p>
                 </div>
@@ -278,7 +278,7 @@ export function OrdenesView() {
                   {tab === "ordenes" && <StatusBadge status={o.status} />}
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-[#b07a8a]">
+              <div className="flex items-center justify-between text-[11px] text-[#6B3E26]">
                 <span>{fmtDate(o.createdAt)}</span>
                 {o.fechaEntrega ? (
                   <span>Entrega: {fmtDate(o.fechaEntrega)}</span>
@@ -299,17 +299,17 @@ export function OrdenesView() {
           <button
             onClick={() => setPage((p) => p - 1)}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-sm hover:bg-[#fdf6f0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             ← Anterior
           </button>
-          <span className="text-sm text-[#b07a8a]">
+          <span className="text-sm text-[#6B3E26]">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4cd] text-[#7b2d42] text-sm hover:bg-[#fdf6f0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             Siguiente →
           </button>

@@ -200,6 +200,15 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   }
 
   /* ── Generar orden ─────────────────────────────────────── */
+  function getAlergiasTexto(): string | null {
+    const alergias = items
+      .map((i) => (i.configuracion as any)?.datos?.alergias as string | undefined)
+      .filter((a): a is string => !!a && a.trim().length > 0)
+      .map((a) => a.trim());
+    if (!alergias.length) return null;
+    return `Alergias/observaciones: ${[...new Set(alergias)].join(" | ")}`;
+  }
+
   async function generarOrden() {
     if (!isUser || items.length === 0) return;
     setGenerando(true);
@@ -213,6 +222,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
           items, cupones, subtotal, descuentoTotal, total: total + COSTO_ENVIO,
           fechaEntrega: fechaEntrega || null,
           direccionEntrega,
+          notas: getAlergiasTexto(),
         }),
       });
       const data = await res.json();
@@ -375,7 +385,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
                                 <button onClick={() => updateCantidad(item.id, item.cantidad + 1)} className="w-6 h-6 rounded-md border border-[#e8c4a0] bg-[#FFF0E6] text-[#AA6A42] font-bold text-sm cursor-pointer hover:bg-[#fde8d0] transition-colors flex items-center justify-center">+</button>
                                 <div className="ml-auto text-right">
                                   {itemDisc > 0 && (
-                                    <p className="text-[10px] text-[#AA6A42]/50 line-through">${itemBase.toFixed(0)}</p>
+                                    <p className="text-[11px] text-[#AA6A42]/50 line-through">${itemBase.toFixed(0)}</p>
                                   )}
                                   <p className="text-sm font-bold text-[#3A1F14]">${(itemBase - itemDisc).toFixed(0)}</p>
                                 </div>

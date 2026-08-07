@@ -20,7 +20,8 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
   const t = useTranslations("cakes");
 
   return (
-    <section className="w-full max-w-6xl mx-auto px-4 py-16 bg-[#FAF3E0]">
+    <section className="relative overflow-hidden w-full px-4 pt-16 pb-16 bg-[#FAF3E0]">
+      <div className="relative z-10 max-w-6xl mx-auto">
       <h2 className="text-5xl text-center font-title text-[#DA6C94]">
         {t("title3")}
       </h2>
@@ -99,6 +100,7 @@ const CakeInfoSection: FC<Props> = ({ sweetness = 3 }) => {
           </h4>
           <p className="text-sm text-[#6B3E26]/80">{t("tips.orderDesc")}</p>
         </div>
+      </div>
       </div>
     </section>
   );

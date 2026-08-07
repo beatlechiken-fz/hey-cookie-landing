@@ -117,43 +117,45 @@ export function calcularCostoDesglose(
     );
   }
 
-  // Cobertura
-  const cobertura = find(catalogo.coberturas, opciones.coberturaId);
-  if (cobertura)
-    baseEstructura += addEscalado(
-      `Cobertura: ${cobertura.nombre}`,
-      cobertura.costoTotal,
-      detalleFactor,
-    );
+  // Coberturas (múltiples, todas escalan y suman al precio)
+  for (const sel of opciones.coberturas ?? []) {
+    const cobertura = find(catalogo.coberturas, sel.coberturaId);
+    if (cobertura)
+      baseEstructura += addEscalado(
+        `Cobertura: ${cobertura.nombre}`,
+        cobertura.costoTotal,
+        detalleFactor,
+      );
 
-  // Sabor de cobertura (precio fijo)
-  const saborCob = catalogo.saboresCobertura.find(
-    (s) => s.id === opciones.saborCoberturaId,
-  );
-  if (saborCob && saborCob.precio != null)
-    baseEstructura += addFijo(
-      `Sabor cobertura: ${saborCob.nombre}`,
-      saborCob.precio,
+    const saborCob = catalogo.saboresCobertura.find(
+      (s) => s.id === sel.saborCoberturaId,
     );
+    if (saborCob && saborCob.precio != null)
+      baseEstructura += addFijo(
+        `Sabor cobertura: ${saborCob.nombre}`,
+        saborCob.precio,
+      );
+  }
 
-  // Relleno (otra cobertura)
-  const relleno = find(catalogo.coberturas, opciones.rellenoId);
-  if (relleno)
-    baseEstructura += addEscalado(
-      `Relleno: ${relleno.nombre}`,
-      relleno.costoTotal,
-      detalleFactor,
-    );
+  // Rellenos (múltiples, otra cobertura cada uno)
+  for (const sel of opciones.rellenos ?? []) {
+    const relleno = find(catalogo.coberturas, sel.rellenoId);
+    if (relleno)
+      baseEstructura += addEscalado(
+        `Relleno: ${relleno.nombre}`,
+        relleno.costoTotal,
+        detalleFactor,
+      );
 
-  // Sabor de relleno (precio fijo)
-  const saborRelleno = catalogo.saboresCobertura.find(
-    (s) => s.id === opciones.saborRellenoId,
-  );
-  if (saborRelleno && saborRelleno.precio != null)
-    baseEstructura += addFijo(
-      `Sabor relleno: ${saborRelleno.nombre}`,
-      saborRelleno.precio,
+    const saborRelleno = catalogo.saboresCobertura.find(
+      (s) => s.id === sel.saborRellenoId,
     );
+    if (saborRelleno && saborRelleno.precio != null)
+      baseEstructura += addFijo(
+        `Sabor relleno: ${saborRelleno.nombre}`,
+        saborRelleno.precio,
+      );
+  }
 
   // Jarabe — si humedadJarabe === "humedo", el costo base del jarabe se multiplica ×2.2
   const jarabe = find(catalogo.jarabes, opciones.jarabeId);
@@ -205,6 +207,15 @@ export function calcularCostoDesglose(
     const emp = catalogo.empaques.find((x) => x.id === empaqueId);
     if (!emp) continue;
     addFijo(`Empaque: ${emp.nombre}`, emp.precio);
+  }
+
+  // Ornamentos (múltiples, precio fijo × cantidad de piezas)
+  for (const sel of opciones.ornamentos ?? []) {
+    if (sel.ornamentoId === NINGUNO) continue;
+    const orn = catalogo.ornamentos?.find((x) => x.id === sel.ornamentoId);
+    if (!orn) continue;
+    const cantidad = sel.cantidad ?? 1;
+    addFijo(`Ornamento: ${orn.nombre} ×${cantidad}`, orn.precio * cantidad);
   }
 
   const costoInsumos = items.reduce((sum, i) => sum + i.costoFinal, 0);

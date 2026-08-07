@@ -25,16 +25,15 @@ export type ProductoOpciones = Omit<
 >;
 
 export const OPCIONES_VACIAS: ProductoOpciones = {
-  coberturaId: null,
-  saborCoberturaId: null,
-  rellenoId: null,
-  saborRellenoId: null,
+  coberturas: [],
+  rellenos: [],
   toppingIds: [],
   jarabeId: null,
   saborJarabeId: null,
   humedadJarabe: null,
   licorId: null,
   empaqueIds: [],
+  ornamentos: [],
 };
 
 /** Variante de tamaño fijo (ej. Panna Cotta: Vaso grande / Vaso chico) */
