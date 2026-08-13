@@ -37,9 +37,15 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
 
   function handleAddToCart() {
     if (!desglose) return;
+    // Descarta filas de cobertura/relleno que se agregaron pero se dejaron sin elegir.
+    const configLimpia = {
+      ...config,
+      coberturas: config.coberturas.filter((c) => c.coberturaId),
+      rellenos: config.rellenos.filter((r) => r.rellenoId),
+    };
     addItem({
       nombre: `Pastel personalizado (${personasDesdeDiametro(config.diametroCm)} personas)`,
-      configuracion: { ...config },
+      configuracion: configLimpia,
       cantidad: config.cantidad,
       costoUnitario: desglose.costoProduccionTotal,
       precioUnitario: desglose.precioSugerido,
@@ -152,12 +158,10 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
                           onChange={(items) =>
                             update(
                               "coberturas",
-                              items
-                                .filter((it) => it.id)
-                                .map((it) => ({
-                                  coberturaId: it.id,
-                                  saborCoberturaId: it.saborId,
-                                })),
+                              items.map((it) => ({
+                                coberturaId: it.id,
+                                saborCoberturaId: it.saborId,
+                              })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({
@@ -184,12 +188,10 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
                           onChange={(items) =>
                             update(
                               "rellenos",
-                              items
-                                .filter((it) => it.id)
-                                .map((it) => ({
-                                  rellenoId: it.id,
-                                  saborRellenoId: it.saborId,
-                                })),
+                              items.map((it) => ({
+                                rellenoId: it.id,
+                                saborRellenoId: it.saborId,
+                              })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({

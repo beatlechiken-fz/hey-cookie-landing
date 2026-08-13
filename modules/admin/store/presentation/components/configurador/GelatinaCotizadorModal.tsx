@@ -115,8 +115,9 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
         litrosTresLeches: config.litrosTresLeches,
         litrosQuesoCrema: config.litrosQuesoCrema,
         litrosYogurt: config.litrosYogurt,
-        coberturas: config.coberturas,
-        rellenos: config.rellenos,
+        // Descarta filas de cobertura/relleno que se agregaron pero se dejaron sin elegir.
+        coberturas: config.coberturas.filter((c) => c.coberturaId),
+        rellenos: config.rellenos.filter((r) => r.rellenoId),
         toppingIds: config.toppingIds,
         jarabeId: config.jarabeId,
         saborJarabeId: config.saborJarabeId,
@@ -248,7 +249,7 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
                           onChange={(items) =>
                             update(
                               "coberturas",
-                              items.filter((it) => it.id).map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId })),
+                              items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
@@ -264,7 +265,7 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
                           onChange={(items) =>
                             update(
                               "rellenos",
-                              items.filter((it) => it.id).map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId })),
+                              items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}

@@ -275,12 +275,19 @@ export default function ProductoModal({ producto, onClose }: Props) {
         }]
       : [];
 
+    // Descarta filas de cobertura/relleno que el usuario agregó pero dejó sin elegir.
+    const opcionesLimpias = {
+      ...opciones,
+      coberturas: opciones.coberturas.filter((c) => c.coberturaId),
+      rellenos: opciones.rellenos.filter((r) => r.rellenoId),
+    };
+
     addItem({
       nombre: buildNombreItem(),
       configuracion: {
         productoId: producto.id,
         tipo: "pastel",
-        opciones: { ...opciones },
+        opciones: opcionesLimpias,
         diametroCm: producto.permiteMedidaPersonalizada ? diametroCm : null,
         tamanoFijoId: tamanoActivo?.id ?? null,
       },
@@ -426,9 +433,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
                       onChange={(items) =>
                         update(
                           "coberturas",
-                          items
-                            .filter((it) => it.id)
-                            .map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId })),
+                          items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId })),
                         )
                       }
                       options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
@@ -453,9 +458,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
                       onChange={(items) =>
                         update(
                           "rellenos",
-                          items
-                            .filter((it) => it.id)
-                            .map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId })),
+                          items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId })),
                         )
                       }
                       options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}

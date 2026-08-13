@@ -81,11 +81,18 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
         ? ` (${tamanoFijo.nombre})`
         : "";
 
+    // Descarta filas de cobertura/relleno que se agregaron pero se dejaron sin elegir.
+    const opcionesLimpias = {
+      ...opciones,
+      coberturas: opciones.coberturas.filter((c) => c.coberturaId),
+      rellenos: opciones.rellenos.filter((r) => r.rellenoId),
+    };
+
     addItem({
       nombre: `${producto.nombre}${sufijoNombre}`,
       configuracion: {
         productoId: producto.id,
-        opciones: { ...opciones },
+        opciones: opcionesLimpias,
         diametroCm: producto.permiteMedidaPersonalizada ? diametroCm : null,
         tamanoFijoId: tamanoFijo ? tamanoFijo.id : null,
       },
@@ -239,12 +246,10 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                           onChange={(items) =>
                             update(
                               "coberturas",
-                              items
-                                .filter((it) => it.id)
-                                .map((it) => ({
-                                  coberturaId: it.id,
-                                  saborCoberturaId: it.saborId,
-                                })),
+                              items.map((it) => ({
+                                coberturaId: it.id,
+                                saborCoberturaId: it.saborId,
+                              })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({
@@ -271,12 +276,10 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                           onChange={(items) =>
                             update(
                               "rellenos",
-                              items
-                                .filter((it) => it.id)
-                                .map((it) => ({
-                                  rellenoId: it.id,
-                                  saborRellenoId: it.saborId,
-                                })),
+                              items.map((it) => ({
+                                rellenoId: it.id,
+                                saborRellenoId: it.saborId,
+                              })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({
