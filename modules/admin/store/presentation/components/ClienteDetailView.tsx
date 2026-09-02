@@ -256,6 +256,7 @@ export function ClienteDetailView({ clienteId }: Props) {
               key={orden.id}
               orden={orden}
               onUpdateStatus={handleUpdateStatus}
+              onRefresh={reload}
             />
           ))}
         </div>

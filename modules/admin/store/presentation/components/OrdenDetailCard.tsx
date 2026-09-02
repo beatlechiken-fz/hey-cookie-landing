@@ -5,20 +5,58 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
   Orden,
+  OrdenItem,
   OrdenStatus,
 } from "@/modules/admin/store/domain/entities/Orden.entity";
-import { ORDEN_STATUS_LABELS } from "@/modules/admin/store/domain/entities/Orden.entity";
+import {
+  ORDEN_STATUS_LABELS,
+  ORDEN_STATUS_EDITABLES,
+} from "@/modules/admin/store/domain/entities/Orden.entity";
 import { OrdenPipeline } from "./OrdenPipeline";
 import { OrdenPagosSection } from "./OrdenPagosSection";
 import {
   generarCotizacionPdf,
   generarComandaPdf,
 } from "@/core/helpers/generarPDF";
+import {
+  resolveOrigen,
+  type CartItem,
+  type CartItemOrigen,
+} from "@/modules/admin/store/presentation/hooks/useCartStore";
+import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal";
+import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
+import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
+import type { Producto } from "@/modules/admin/store/domain/entities/Producto.entity";
 
 interface Props {
   orden: Orden;
   onUpdateStatus: (id: string, status: OrdenStatus) => Promise<void>;
+  /** Refresca la orden desde el padre — se llama tras editar/quitar una partida. */
+  onRefresh: () => void;
 }
+
+/** Adapta un OrdenItem (persistido) al shape de CartItem para reutilizar
+ *  resolveOrigen() y los modales de configurador ya existentes. `origen` se
+ *  omite a propósito: orden_items nunca lo persiste, siempre se infiere. */
+function toCartItemShape(item: OrdenItem): CartItem {
+  return {
+    id: item.id ?? "",
+    nombre: item.nombre,
+    configuracion: item.configuracion,
+    cantidad: item.cantidad,
+    costoUnitario: item.costoUnitario,
+    precioUnitario: item.precioUnitario,
+    desgloseCostos: item.desgloseCostos ?? null,
+    cuponesItem: [],
+  } as unknown as CartItem;
+}
+
+/** Solo estos 3 orígenes tienen un modal admin que reabrir. */
+const ORIGENES_ADMIN_EDITABLES: CartItemOrigen[] = [
+  "pastel-configurador",
+  "gelatina-configurador",
+  "producto-configurador",
+];
 
 const NEXT_STATUS: Record<OrdenStatus, OrdenStatus | null> = {
   cotizacion: "en_proceso",
@@ -37,7 +75,7 @@ function formatDate(iso: string) {
   });
 }
 
-export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
+export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +85,103 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
     orden.fechaEntrega?.slice(0, 10) ?? "",
   );
   const [savingFecha, setSavingFecha] = useState(false);
+
+  // ── Editar / quitar partidas de la orden ──────────────────────────────────
+  const puedeEditarItems = ORDEN_STATUS_EDITABLES.includes(orden.status);
+  const [editingOrdenItem, setEditingOrdenItem] = useState<OrdenItem | null>(null);
+  const [editingOrigen, setEditingOrigen] = useState<
+    "pastel-configurador" | "gelatina-configurador" | "producto-configurador" | null
+  >(null);
+  const [editProducto, setEditProducto] = useState<Producto | null>(null);
+  const [loadingEdit, setLoadingEdit] = useState(false);
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
+  const [itemError, setItemError] = useState<string | null>(null);
+
+  function closeEditModal() {
+    setEditingOrdenItem(null);
+    setEditingOrigen(null);
+    setEditProducto(null);
+  }
+
+  async function handleEditItem(item: OrdenItem) {
+    setItemError(null);
+    const origen = resolveOrigen(toCartItemShape(item));
+
+    if (origen === "producto-configurador") {
+      // any: configuracion sin tipo dedicado — mismo patrón que en los modales de carrito.
+      const productoId = (item.configuracion as Record<string, any>)?.productoId;
+      if (!productoId) {
+        setItemError("No se pudo determinar el producto de esta partida.");
+        return;
+      }
+      setLoadingEdit(true);
+      try {
+        const res = await fetch(`/api/admin/productos/${productoId}`);
+        if (!res.ok) throw new Error();
+        setEditProducto(await res.json());
+        setEditingOrigen("producto-configurador");
+        setEditingOrdenItem(item);
+      } catch {
+        setItemError("No se pudo cargar el producto de esta partida.");
+      } finally {
+        setLoadingEdit(false);
+      }
+      return;
+    }
+
+    if (origen === "pastel-configurador" || origen === "gelatina-configurador") {
+      setEditingOrigen(origen);
+      setEditingOrdenItem(item);
+      return;
+    }
+
+    setItemError("Esta partida no se puede editar desde aquí.");
+  }
+
+  async function handleSaveItem(payload: Omit<CartItem, "id" | "origen">) {
+    if (!editingOrdenItem?.id) return;
+    const res = await fetch(
+      `/api/admin/ordenes/${orden.id}/items/${editingOrdenItem.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: payload.nombre,
+          configuracion: payload.configuracion,
+          cantidad: payload.cantidad,
+          costoUnitario: payload.costoUnitario,
+          precioUnitario: payload.precioUnitario,
+          desgloseCostos: payload.desgloseCostos ?? null,
+        }),
+      },
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error ?? "Error al guardar el cambio");
+    }
+    onRefresh();
+  }
+
+  async function handleRemoveItem(itemId: string) {
+    setRemovingId(itemId);
+    setItemError(null);
+    try {
+      const res = await fetch(`/api/admin/ordenes/${orden.id}/items/${itemId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: res.statusText }));
+        throw new Error(err.error ?? "Error al quitar el producto");
+      }
+      setConfirmRemoveId(null);
+      onRefresh();
+    } catch (e: any) {
+      setItemError(e.message);
+    } finally {
+      setRemovingId(null);
+    }
+  }
 
   async function handleSaveFecha() {
     setSavingFecha(true);
@@ -117,6 +252,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
   }
 
   return (
+    <>
     <div className="rounded-2xl border border-[#f0e0d0] bg-white shadow-sm overflow-hidden">
       {/* Header */}
       <button
@@ -255,27 +391,111 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
                 <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
                   Productos
                 </p>
-                {orden.items.map((item, i) => (
-                  <div
-                    key={item.id ?? i}
-                    className="flex items-center justify-between rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2"
-                  >
-                    <div>
-                      <p className="text-[13px] font-semibold text-[#3d1a24]">
-                        {item.nombre}
-                      </p>
-                      <p className="text-[11px] text-[#6B3E26]">
-                        {item.cantidad} × ${item.precioUnitario.toFixed(2)}
-                        {(item.configuracion as any)?.diametroCm
-                          ? ` · ${(item.configuracion as any).diametroCm}cm`
-                          : ""}
-                      </p>
+                {itemError && (
+                  <p className="text-[12px] text-[#C0392B] bg-[#FCE9EA] border border-[#f5c6c8] rounded-lg px-3 py-2">
+                    {itemError}
+                  </p>
+                )}
+                {orden.items.map((item, i) => {
+                  const origenItem = resolveOrigen(toCartItemShape(item));
+                  const editable =
+                    puedeEditarItems &&
+                    origenItem &&
+                    ORIGENES_ADMIN_EDITABLES.includes(origenItem);
+                  const removible = puedeEditarItems && orden.items.length > 1;
+                  const confirming = confirmRemoveId === item.id;
+
+                  return (
+                    <div
+                      key={item.id ?? i}
+                      className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="text-[13px] font-semibold text-[#3d1a24] truncate">
+                            {item.nombre}
+                          </p>
+                          <p className="text-[11px] text-[#6B3E26]">
+                            {item.cantidad} × ${item.precioUnitario.toFixed(2)}
+                            {(item.configuracion as any)?.diametroCm
+                              ? ` · ${(item.configuracion as any).diametroCm}cm`
+                              : ""}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {editable && !confirming && (
+                            <button
+                              onClick={() => handleEditItem(item)}
+                              disabled={loadingEdit}
+                              className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition disabled:opacity-50"
+                              aria-label="Editar"
+                              title="Editar"
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              >
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                              </svg>
+                            </button>
+                          )}
+                          {removible && !confirming && (
+                            <button
+                              onClick={() => setConfirmRemoveId(item.id ?? null)}
+                              className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                              aria-label="Quitar"
+                              title="Quitar"
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              >
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                <path d="M10 11v6M14 11v6" />
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                              </svg>
+                            </button>
+                          )}
+                          <p className="font-bold text-[#c0607a] text-sm">
+                            ${item.subtotal.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                      {confirming && (
+                        <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#e8c4a0]">
+                          <span className="text-[12px] text-[#6B3E26]">
+                            ¿Quitar este producto de la orden?
+                          </span>
+                          <div className="flex gap-2 shrink-0">
+                            <button
+                              onClick={() => setConfirmRemoveId(null)}
+                              className="px-2.5 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-white transition"
+                            >
+                              No
+                            </button>
+                            <button
+                              onClick={() => handleRemoveItem(item.id!)}
+                              disabled={removingId === item.id}
+                              className="px-2.5 py-1 rounded-lg bg-red-600 text-white text-[11px] font-bold hover:bg-red-700 disabled:opacity-50 transition"
+                            >
+                              {removingId === item.id ? "Quitando…" : "Sí, quitar"}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <p className="font-bold text-[#c0607a] text-sm">
-                      ${item.subtotal.toFixed(2)}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Cupones */}
@@ -416,5 +636,26 @@ export function OrdenDetailCard({ orden, onUpdateStatus }: Props) {
         )}
       </AnimatePresence>
     </div>
+
+    {/* Modales de edición de partida — reabren el configurador correcto */}
+    <PastelConfiguradorModal
+      open={editingOrigen === "pastel-configurador"}
+      onClose={closeEditModal}
+      editItem={editingOrigen === "pastel-configurador" ? toCartItemShape(editingOrdenItem!) : null}
+      onSave={handleSaveItem}
+    />
+    <GelatinaCotizadorModal
+      open={editingOrigen === "gelatina-configurador"}
+      onClose={closeEditModal}
+      editItem={editingOrigen === "gelatina-configurador" ? toCartItemShape(editingOrdenItem!) : null}
+      onSave={handleSaveItem}
+    />
+    <ProductoConfiguradorModal
+      producto={editingOrigen === "producto-configurador" ? editProducto : null}
+      onClose={closeEditModal}
+      editItem={editingOrigen === "producto-configurador" && editingOrdenItem ? toCartItemShape(editingOrdenItem) : null}
+      onSave={handleSaveItem}
+    />
+    </>
   );
 }

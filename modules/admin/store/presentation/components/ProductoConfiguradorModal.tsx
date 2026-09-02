@@ -23,9 +23,11 @@ interface Props {
   onClose: () => void;
   /** Item del carrito a editar — si viene, precarga la config y guarda in-place en vez de agregar uno nuevo. */
   editItem?: CartItem | null;
+  /** Igual que en PastelConfiguradorModal — para editar una partida de una orden ya generada. */
+  onSave?: (payload: Omit<CartItem, "id" | "origen" | "productoId">) => Promise<void> | void;
 }
 
-export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props) {
+export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave }: Props) {
   const {
     catalogo,
     loading,
@@ -46,6 +48,8 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props
   const addItem = useCartStore((s) => s.addItem);
   const updateItem = useCartStore((s) => s.updateItem);
   const [added, setAdded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // En modo edición, sobreescribe los defaults del producto con la config guardada en el carrito.
   useEffect(() => {
@@ -87,7 +91,7 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props
     onClose();
   }
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (!desglose || !producto) return;
 
     const tamanoFijo = producto.tamanosFijos.find((t) => t.id === tamanoFijoId);
@@ -104,7 +108,7 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props
       rellenos: opciones.rellenos.filter((r) => r.rellenoId),
     };
 
-    const payload = {
+    const base = {
       nombre: `${producto.nombre}${sufijoNombre}`,
       configuracion: {
         productoId: producto.id,
@@ -127,9 +131,25 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props
             : "sugerido",
       },
       cuponesItem: editItem?.cuponesItem ?? [],
-      origen: "producto-configurador" as const,
-      productoId: producto.id,
     };
+
+    if (onSave) {
+      setSaveError(null);
+      setSaving(true);
+      try {
+        await onSave(base);
+      } catch (e: any) {
+        setSaveError(e.message ?? "No se pudo guardar el cambio");
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
+      setAdded(true);
+      setTimeout(() => handleClose(), 900);
+      return;
+    }
+
+    const payload = { ...base, origen: "producto-configurador" as const, productoId: producto.id };
     if (editItem) updateItem(editItem.id, payload);
     else addItem(payload);
     setAdded(true);
@@ -526,7 +546,11 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props
               </div>
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+              <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+                {saveError && (
+                  <p className="text-[12px] text-[#C0392B] text-center">{saveError}</p>
+                )}
+                <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={handleClose}
@@ -536,10 +560,10 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props
                 </button>
                 <button
                   onClick={handleAddToCart}
-                  disabled={!desglose || loading}
+                  disabled={!desglose || loading || saving}
                   className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition flex items-center justify-center gap-2"
                 >
-                  {added ? (
+                  {saving ? "Guardando…" : added ? (
                     <>
                       <svg
                         viewBox="0 0 24 24"
@@ -565,6 +589,7 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props
                     </>
                   )}
                 </button>
+                </div>
               </div>
             </div>
           </motion.div>

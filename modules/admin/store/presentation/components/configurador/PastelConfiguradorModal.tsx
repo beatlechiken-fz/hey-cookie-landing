@@ -23,14 +23,22 @@ interface Props {
   onClose: () => void;
   /** Item del carrito a editar — si viene, precarga la config y guarda in-place en vez de agregar uno nuevo. */
   editItem?: CartItem | null;
+  /**
+   * Cuando se edita una partida de una orden YA GENERADA (no del carrito),
+   * el guardado debe persistir en la orden en vez de tocar el store del
+   * carrito — pásalo junto con `editItem` y se usa en su lugar.
+   */
+  onSave?: (payload: Omit<CartItem, "id" | "origen">) => Promise<void> | void;
 }
 
-export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
+export function PastelConfiguradorModal({ open, onClose, editItem, onSave }: Props) {
   const { catalogo, loading, error, config, setConfig, update, reset, desglose } =
     usePastelConfigurador();
   const addItem = useCartStore((s) => s.addItem);
   const updateItem = useCartStore((s) => s.updateItem);
   const [added, setAdded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const inputCls =
     "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
@@ -48,7 +56,7 @@ export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
     onClose();
   }
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (!desglose) return;
     // Descarta filas de cobertura/relleno que se agregaron pero se dejaron sin elegir.
     const configLimpia = {
@@ -56,7 +64,7 @@ export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
       coberturas: config.coberturas.filter((c) => c.coberturaId),
       rellenos: config.rellenos.filter((r) => r.rellenoId),
     };
-    const payload = {
+    const base = {
       nombre: `Pastel personalizado (${personasDesdeDiametro(config.diametroCm)} personas)`,
       configuracion: configLimpia,
       cantidad: config.cantidad,
@@ -69,8 +77,25 @@ export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
         precioSugerido: desglose.precioSugerido,
       },
       cuponesItem: editItem?.cuponesItem ?? [],
-      origen: "pastel-configurador" as const,
     };
+
+    if (onSave) {
+      setSaveError(null);
+      setSaving(true);
+      try {
+        await onSave(base);
+      } catch (e: any) {
+        setSaveError(e.message ?? "No se pudo guardar el cambio");
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
+      setAdded(true);
+      setTimeout(() => handleClose(), 900);
+      return;
+    }
+
+    const payload = { ...base, origen: "pastel-configurador" as const };
     if (editItem) updateItem(editItem.id, payload);
     else addItem(payload);
     setAdded(true);
@@ -403,7 +428,11 @@ export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
               </div>
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+              <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+                {saveError && (
+                  <p className="text-[12px] text-[#C0392B] text-center">{saveError}</p>
+                )}
+                <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={handleClose}
@@ -413,10 +442,10 @@ export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
                 </button>
                 <button
                   onClick={handleAddToCart}
-                  disabled={!desglose || loading}
+                  disabled={!desglose || loading || saving}
                   className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition flex items-center justify-center gap-2"
                 >
-                  {added ? (
+                  {saving ? "Guardando…" : added ? (
                     <>
                       <svg
                         viewBox="0 0 24 24"
@@ -435,6 +464,7 @@ export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
                     editItem ? "Guardar cambios" : "Agregar al carrito"
                   )}
                 </button>
+                </div>
               </div>
             </div>
           </motion.div>

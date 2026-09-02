@@ -23,6 +23,8 @@ interface Props {
   onClose: () => void;
   /** Item del carrito a editar — si viene, precarga la config y guarda in-place en vez de agregar uno nuevo. */
   editItem?: CartItem | null;
+  /** Igual que en PastelConfiguradorModal — para editar una partida de una orden ya generada. */
+  onSave?: (payload: Omit<CartItem, "id" | "origen">) => Promise<void> | void;
 }
 
 const inputCls =
@@ -64,7 +66,7 @@ function LitroInput({ label, value, onChange, costoXLitro }: LitroInputProps) {
   );
 }
 
-export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
+export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Props) {
   const { catalogo, loading: catLoading } = usePastelConfigCatalogo();
   const addItem = useCartStore((s) => s.addItem);
   const updateItem = useCartStore((s) => s.updateItem);
@@ -74,6 +76,8 @@ export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
 
   const [config, setConfig] = useState<GelatinaCotizadorConfig>({ ...GELATINA_CONFIG_VACIA });
   const [added, setAdded] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const update = <K extends keyof GelatinaCotizadorConfig>(k: K, v: GelatinaCotizadorConfig[K]) =>
     setConfig((c) => ({ ...c, [k]: v }));
@@ -108,7 +112,7 @@ export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
   const costo = (tipo: "agua" | "leche" | "tres_leches" | "queso_crema" | "yogurt") =>
     findCostoGelatina(gelatinas, tipo === "tres_leches" ? "clasica" : config.categoria, tipo);
 
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (!desglose) return;
     const cat = CATEGORIAS.find((c) => c.id === config.categoria)?.label ?? "Gelatina";
     const bases: string[] = [];
@@ -118,7 +122,7 @@ export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
     if (config.litrosQuesoCrema > 0) bases.push(`${config.litrosQuesoCrema}L queso crema`);
     if (config.litrosYogurt > 0)     bases.push(`${config.litrosYogurt}L yogurt`);
 
-    const payload = {
+    const base = {
       nombre: `${cat} (${bases.join(" + ")})`,
       configuracion: {
         tipo: "gelatina",
@@ -155,8 +159,25 @@ export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
         precioSugerido: desglose.precioSugerido,
       },
       cuponesItem: editItem?.cuponesItem ?? [],
-      origen: "gelatina-configurador" as const,
     };
+
+    if (onSave) {
+      setSaveError(null);
+      setSaving(true);
+      try {
+        await onSave(base);
+      } catch (e: any) {
+        setSaveError(e.message ?? "No se pudo guardar el cambio");
+        setSaving(false);
+        return;
+      }
+      setSaving(false);
+      setAdded(true);
+      setTimeout(() => { setAdded(false); onClose(); }, 900);
+      return;
+    }
+
+    const payload = { ...base, origen: "gelatina-configurador" as const };
     if (editItem) updateItem(editItem.id, payload);
     else addItem(payload);
     setAdded(true);
@@ -382,13 +403,17 @@ export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
               </div>
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+              <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+                {saveError && (
+                  <p className="text-[12px] text-[#C0392B] text-center">{saveError}</p>
+                )}
+                <div className="flex gap-3">
                 <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition">
                   Cancelar
                 </button>
-                <button onClick={handleAddToCart} disabled={!desglose || catLoading}
+                <button onClick={handleAddToCart} disabled={!desglose || catLoading || saving}
                   className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition flex items-center justify-center gap-2">
-                  {added ? (
+                  {saving ? "Guardando…" : added ? (
                     <>
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20 6 9 17l-5-5" />
@@ -397,6 +422,7 @@ export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
                     </>
                   ) : (editItem ? "Guardar cambios" : "Agregar al carrito")}
                 </button>
+                </div>
               </div>
             </div>
           </motion.div>

@@ -124,7 +124,11 @@ export function OrdenDetailView({ ordenId }: Props) {
 
       {/* Detalle — reutiliza exactamente el mismo componente que en clientes */}
       {orden && !isPending && (
-        <OrdenDetailCard orden={orden} onUpdateStatus={handleUpdateStatus} />
+        <OrdenDetailCard
+          orden={orden}
+          onUpdateStatus={handleUpdateStatus}
+          onRefresh={load}
+        />
       )}
     </div>
   );

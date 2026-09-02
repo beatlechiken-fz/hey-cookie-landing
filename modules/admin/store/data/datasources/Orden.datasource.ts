@@ -7,6 +7,7 @@ import type {
   OrdenCuponAplicado,
   CreateOrdenDTO,
   OrdenStatus,
+  UpdateOrdenItemDTO,
 } from "../../domain/entities/Orden.entity";
 
 const TABLE = "ordenes";
@@ -23,6 +24,7 @@ function toItemEntity(row: any): OrdenItem {
     costoUnitario: Number(row.costo_unitario),
     precioUnitario: Number(row.precio_unitario),
     subtotal: Number(row.subtotal),
+    desgloseCostos: row.desglose_costos ?? null,
   };
 }
 
@@ -255,5 +257,78 @@ export class OrdenSupabaseDatasource {
       .eq("id", id);
     if (error) throw new Error(`updateFechaEntrega orden: ${error.message}`);
     return this.findById(id) as Promise<Orden>;
+  }
+
+  /**
+   * Recalcula subtotal/descuento_total/total de la orden a partir de sus
+   * orden_items y orden_cupones actuales — misma fórmula que create():
+   * subtotal = Σ item.subtotal, descuentoTotal = Σ cupón.monto_descontado.
+   * Se llama después de editar/quitar una partida.
+   */
+  private async recalcularTotales(ordenId: string): Promise<void> {
+    const db = this.db;
+    const [{ data: itemRows, error: ie }, { data: cupRows, error: ce }] =
+      await Promise.all([
+        db.from(TABLE_ITEMS).select("subtotal").eq("orden_id", ordenId),
+        db.from(TABLE_CUPONS).select("monto_descontado").eq("orden_id", ordenId),
+      ]);
+    if (ie) throw new Error(`recalcularTotales items: ${ie.message}`);
+    if (ce) throw new Error(`recalcularTotales cupones: ${ce.message}`);
+
+    // any: filas crudas de Supabase, mismo patrón que toItemEntity/toCuponEntity arriba.
+    const subtotal = (itemRows ?? []).reduce(
+      (s, r: any) => s + Number(r.subtotal),
+      0,
+    );
+    const descuentoTotal = (cupRows ?? []).reduce(
+      (s, r: any) => s + Number(r.monto_descontado),
+      0,
+    );
+    const total = Math.max(0, subtotal - descuentoTotal);
+
+    const { error } = await db
+      .from(TABLE)
+      .update({ subtotal, descuento_total: descuentoTotal, total })
+      .eq("id", ordenId);
+    if (error) throw new Error(`recalcularTotales orden: ${error.message}`);
+  }
+
+  /** Edita una partida existente (config/cantidad/precio) y recalcula los totales de la orden. */
+  async updateItem(
+    ordenId: string,
+    itemId: string,
+    dto: UpdateOrdenItemDTO,
+  ): Promise<Orden> {
+    const subtotalItem = dto.precioUnitario * dto.cantidad;
+    const { error } = await this.db
+      .from(TABLE_ITEMS)
+      .update({
+        nombre: dto.nombre,
+        configuracion: dto.configuracion,
+        cantidad: dto.cantidad,
+        costo_unitario: dto.costoUnitario,
+        precio_unitario: dto.precioUnitario,
+        subtotal: subtotalItem,
+        desglose_costos: dto.desgloseCostos ?? null,
+      })
+      .eq("id", itemId)
+      .eq("orden_id", ordenId);
+    if (error) throw new Error(`updateItem orden_items: ${error.message}`);
+
+    await this.recalcularTotales(ordenId);
+    return this.findById(ordenId) as Promise<Orden>;
+  }
+
+  /** Quita una partida de la orden y recalcula los totales. */
+  async removeItem(ordenId: string, itemId: string): Promise<Orden> {
+    const { error } = await this.db
+      .from(TABLE_ITEMS)
+      .delete()
+      .eq("id", itemId)
+      .eq("orden_id", ordenId);
+    if (error) throw new Error(`removeItem orden_items: ${error.message}`);
+
+    await this.recalcularTotales(ordenId);
+    return this.findById(ordenId) as Promise<Orden>;
   }
 }

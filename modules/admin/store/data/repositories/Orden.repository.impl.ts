@@ -5,6 +5,7 @@ import type {
   Orden,
   CreateOrdenDTO,
   OrdenStatus,
+  UpdateOrdenItemDTO,
 } from "../../domain/entities/Orden.entity";
 import {
   OrdenSupabaseDatasource,
@@ -29,5 +30,11 @@ export class OrdenRepositoryImpl implements OrdenRepository {
   }
   updateFechaEntrega(id: string, fecha: string | null): Promise<Orden> {
     return this.ds.updateFechaEntrega(id, fecha);
+  }
+  updateItem(ordenId: string, itemId: string, dto: UpdateOrdenItemDTO): Promise<Orden> {
+    return this.ds.updateItem(ordenId, itemId, dto);
+  }
+  removeItem(ordenId: string, itemId: string): Promise<Orden> {
+    return this.ds.removeItem(ordenId, itemId);
   }
 }

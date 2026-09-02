@@ -70,3 +70,19 @@ export interface CreateOrdenDTO {
 export interface UpdateOrdenStatusDTO {
   status: OrdenStatus;
 }
+
+/**
+ * Editar una partida (orden_item) ya existente — nombre/configuración/cantidad/precio,
+ * se recalcula subtotal. any: mismo shape sin tipo dedicado que OrdenItem arriba.
+ */
+export interface UpdateOrdenItemDTO {
+  nombre: string;
+  configuracion: Record<string, any>;
+  cantidad: number;
+  costoUnitario: number;
+  precioUnitario: number;
+  desgloseCostos?: Record<string, any> | null;
+}
+
+/** Solo se puede editar/quitar partidas mientras la orden está en estos estados. */
+export const ORDEN_STATUS_EDITABLES: OrdenStatus[] = ["cotizacion", "en_proceso"];
