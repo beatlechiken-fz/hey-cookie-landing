@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCartStore } from "../../hooks/useCartStore";
+import { useCartStore, type CartItem } from "../../hooks/useCartStore";
 import { usePastelConfigCatalogo } from "../../hooks/usePastelConfig";
 import { calcularCostoGelatina } from "../../../domain/usecases/CalcularCostoGelatina.usecase";
 import {
@@ -21,6 +21,8 @@ import { QuantityStepper } from "./QuantityStepper";
 interface Props {
   open: boolean;
   onClose: () => void;
+  /** Item del carrito a editar — si viene, precarga la config y guarda in-place en vez de agregar uno nuevo. */
+  editItem?: CartItem | null;
 }
 
 const inputCls =
@@ -62,9 +64,10 @@ function LitroInput({ label, value, onChange, costoXLitro }: LitroInputProps) {
   );
 }
 
-export function GelatinaCotizadorModal({ open, onClose }: Props) {
+export function GelatinaCotizadorModal({ open, onClose, editItem }: Props) {
   const { catalogo, loading: catLoading } = usePastelConfigCatalogo();
   const addItem = useCartStore((s) => s.addItem);
+  const updateItem = useCartStore((s) => s.updateItem);
 
   const [gelatinas, setGelatinas] = useState<GelatinaCatalogo[]>([]);
   const [loadingGel, setLoadingGel] = useState(false);
@@ -76,14 +79,24 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
     setConfig((c) => ({ ...c, [k]: v }));
 
   useEffect(() => {
-    if (!open) { setAdded(false); setConfig({ ...GELATINA_CONFIG_VACIA }); return; }
+    if (!open) {
+      setAdded(false);
+      setConfig({ ...GELATINA_CONFIG_VACIA });
+      return;
+    }
+    // En modo edición precarga la config del item del carrito en vez de arrancar vacío.
+    setConfig(
+      editItem
+        ? (editItem.configuracion as unknown as GelatinaCotizadorConfig)
+        : { ...GELATINA_CONFIG_VACIA },
+    );
     setLoadingGel(true);
     fetch("/api/admin/gelatinas")
       .then((r) => r.json())
       .then((data: GelatinaCatalogo[]) => setGelatinas(data))
       .catch(() => {})
       .finally(() => setLoadingGel(false));
-  }, [open]);
+  }, [open, editItem]);
 
   const totalLitros = config.litrosAgua + config.litrosLeche + config.litrosTresLeches + config.litrosQuesoCrema + config.litrosYogurt;
 
@@ -105,7 +118,7 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
     if (config.litrosQuesoCrema > 0) bases.push(`${config.litrosQuesoCrema}L queso crema`);
     if (config.litrosYogurt > 0)     bases.push(`${config.litrosYogurt}L yogurt`);
 
-    addItem({
+    const payload = {
       nombre: `${cat} (${bases.join(" + ")})`,
       configuracion: {
         tipo: "gelatina",
@@ -141,8 +154,11 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
         costoProduccionTotal: desglose.costoProduccionTotal,
         precioSugerido: desglose.precioSugerido,
       },
-      cuponesItem: [],
-    });
+      cuponesItem: editItem?.cuponesItem ?? [],
+      origen: "gelatina-configurador" as const,
+    };
+    if (editItem) updateItem(editItem.id, payload);
+    else addItem(payload);
     setAdded(true);
     setTimeout(() => { setAdded(false); onClose(); }, 900);
   }
@@ -173,8 +189,8 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
               {/* Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
                 <div>
-                  <h2 className="font-bold text-[#AA6A42] text-lg">Gelatina personalizada</h2>
-                  <p className="text-[12px] text-[#6B3E26]">Elige categoría, litros y extras</p>
+                  <h2 className="font-bold text-[#AA6A42] text-lg">{editItem ? "Editar gelatina personalizada" : "Gelatina personalizada"}</h2>
+                  <p className="text-[12px] text-[#6B3E26]">{editItem ? "Modifica tu gelatina — se actualizará en el carrito" : "Elige categoría, litros y extras"}</p>
                 </div>
                 <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]">
                   <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -377,9 +393,9 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20 6 9 17l-5-5" />
                       </svg>
-                      Agregada
+                      {editItem ? "Cambios guardados" : "Agregada"}
                     </>
-                  ) : "Agregar al carrito"}
+                  ) : (editItem ? "Guardar cambios" : "Agregar al carrito")}
                 </button>
               </div>
             </div>

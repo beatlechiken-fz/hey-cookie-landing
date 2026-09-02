@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
+import { useCartStore, type CartItem } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import type { GalletaPublica } from "./Cookies";
 import type { Cupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
 import { calcularDescuentoCupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
@@ -11,6 +11,8 @@ import { calcularDescuentoCupon } from "@/modules/admin/store/domain/entities/Cu
 interface Props {
   producto: GalletaPublica;
   onClose: () => void;
+  /** Item del carrito a editar — si viene, precarga la cantidad y guarda in-place en vez de agregar uno nuevo. */
+  editItem?: CartItem | null;
 }
 
 interface CuponAplicado {
@@ -18,13 +20,14 @@ interface CuponAplicado {
   monto: number;
 }
 
-export default function CookieModal({ producto, onClose }: Props) {
+export default function CookieModal({ producto, onClose, editItem }: Props) {
   const { data: session } = useSession();
   const isUser = session?.user?.role === "user";
 
   const addItem = useCartStore((s) => s.addItem);
+  const updateItem = useCartStore((s) => s.updateItem);
 
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(editItem?.cantidad ?? 1);
   const [codigoCupon, setCodigoCupon] = useState("");
   const [cuponAplicado, setCuponAplicado] = useState<CuponAplicado | null>(
     null,
@@ -96,16 +99,20 @@ export default function CookieModal({ producto, onClose }: Props) {
                 : Math.min(cuponAplicado.cupon.valor, precio * qty),
           },
         ]
-      : [];
+      : (editItem?.cuponesItem ?? []);
 
-    addItem({
+    const payload = {
       nombre: producto.nombre,
       configuracion: { productoId: producto.id, tipo: "cookie" },
       cantidad: qty,
       costoUnitario: 0,
       precioUnitario: precio,
       cuponesItem,
-    });
+      origen: "cookie-modal" as const,
+      productoId: producto.id,
+    };
+    if (editItem) updateItem(editItem.id, payload);
+    else addItem(payload);
 
     setJustAdded(true);
     setTimeout(() => {
@@ -159,7 +166,7 @@ export default function CookieModal({ producto, onClose }: Props) {
             {/* TITLE + DESCRIPTION */}
             <div>
               <h2 className="text-2xl font-bold text-[#3A1F14] leading-tight font-subtitle">
-                {producto.nombre}
+                {editItem ? `Editar: ${producto.nombre}` : producto.nombre}
               </h2>
               {producto.descripcion && (
                 <p className="mt-2 text-sm text-[#6B3E26]/80 leading-relaxed">
@@ -267,7 +274,7 @@ export default function CookieModal({ producto, onClose }: Props) {
               }`}
             >
               {justAdded ? (
-                "✓ Agregado al carrito"
+                editItem ? "✓ Cambios guardados" : "✓ Agregado al carrito"
               ) : (
                 <>
                   <Image
@@ -277,7 +284,7 @@ export default function CookieModal({ producto, onClose }: Props) {
                     height={18}
                     style={{ filter: "brightness(0) invert(1)" }}
                   />
-                  Agregar al carrito
+                  {editItem ? "Guardar cambios" : "Agregar al carrito"}
                 </>
               )}
             </button>

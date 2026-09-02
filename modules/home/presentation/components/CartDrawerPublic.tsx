@@ -8,7 +8,11 @@ import { useLocale } from "next-intl";
 import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import type { CartItem } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
+import type { Producto } from "@/modules/admin/store/domain/entities/Producto.entity";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
+import ProductoModal from "@/modules/cake/presentation/components/ProductoModal";
+import CookieModal from "./CookieModal";
+import type { GalletaPublica } from "./Cookies";
 
 interface Props {
   open: boolean;
@@ -73,6 +77,44 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   const subtotal        = useCartStore((s) => s.subtotal());
   const descuentoTotal  = useCartStore((s) => s.descuentoTotal());
   const total           = useCartStore((s) => s.total());
+
+  // ── Editar item del carrito: reabre el modal/flujo correcto con la config precargada ──
+  const [editItem, setEditItem] = useState<CartItem | null>(null);
+  const [editProducto, setEditProducto] = useState<Producto | null>(null);
+  const [loadingEditProducto, setLoadingEditProducto] = useState(false);
+
+  async function handleEdit(item: CartItem) {
+    if (item.origen === "pastel-custom" || item.origen === "gelatina-custom") {
+      onClose();
+      router.push(`/custom?editId=${item.id}`);
+      return;
+    }
+    if (item.origen === "producto-modal" || item.origen === "cookie-modal") {
+      // any: configuracion es PastelConfiguracion | Record<string, any> — productoId
+      // solo existe en la rama de "producto de catálogo" del union, no en todas.
+      const productoId = (item.configuracion as Record<string, any>).productoId;
+      if (!productoId) return;
+      setLoadingEditProducto(true);
+      try {
+        const res = await fetch(`/api/public/productos/${productoId}`);
+        if (!res.ok) throw new Error();
+        setEditProducto(await res.json());
+        setEditItem(item);
+        onClose();
+      } catch {
+        // Producto ya no existe o falló la carga — no hay nada que editar.
+      } finally {
+        setLoadingEditProducto(false);
+      }
+    }
+    // Items sin origen reconocido (agregados antes de esta función) no tienen
+    // un modal público que reabrir.
+  }
+
+  function closeEdit() {
+    setEditItem(null);
+    setEditProducto(null);
+  }
 
   // Global coupon input
   const [codigoGlobal, setCodigoGlobal]       = useState("");
@@ -289,6 +331,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   const globalDisc = cupones.reduce((s, c) => s + cuponMonto(c, baseGlobal), 0);
 
   return (
+    <>
     <AnimatePresence>
       {open && (
         <>
@@ -391,10 +434,26 @@ export function CartDrawerPublic({ open, onClose }: Props) {
                                 </div>
                               </div>
                             </div>
-                            {/* Remove item */}
-                            <button onClick={() => removeItem(item.id)} className="self-start p-1 rounded-lg text-[#AA6A42]/30 hover:text-[#c0607a] hover:bg-[#fdf6f0] transition-colors cursor-pointer" aria-label="Eliminar">
-                              <XIcon className="w-4 h-4" />
-                            </button>
+                            {/* Edit + Remove item */}
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                              {item.origen && (
+                                <button
+                                  onClick={() => handleEdit(item)}
+                                  disabled={loadingEditProducto}
+                                  className="p-1 rounded-lg text-[#AA6A42]/50 hover:text-[#AA6A42] hover:bg-[#fdf6f0] transition-colors cursor-pointer disabled:opacity-50"
+                                  aria-label="Editar"
+                                  title="Editar"
+                                >
+                                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                  </svg>
+                                </button>
+                              )}
+                              <button onClick={() => removeItem(item.id)} className="p-1 rounded-lg text-[#AA6A42]/30 hover:text-[#c0607a] hover:bg-[#fdf6f0] transition-colors cursor-pointer" aria-label="Eliminar">
+                                <XIcon className="w-4 h-4" />
+                              </button>
+                            </div>
                           </div>
 
                           {/* Per-item coupons */}
@@ -680,5 +739,25 @@ export function CartDrawerPublic({ open, onClose }: Props) {
         </>
       )}
     </AnimatePresence>
+
+    {/* Modales de edición — reabren el flujo correcto con la config del item precargada */}
+    {editItem?.origen === "producto-modal" && editProducto && (
+      <ProductoModal producto={editProducto} onClose={closeEdit} editItem={editItem} />
+    )}
+    {editItem?.origen === "cookie-modal" && editProducto && (
+      <CookieModal
+        producto={{
+          id: editProducto.id,
+          nombre: editProducto.nombre,
+          descripcion: editProducto.descripcion,
+          imagenUrl: editProducto.imagenUrl ?? null,
+          precioEstablecido: editProducto.precioEstablecido,
+          linea: editProducto.linea as GalletaPublica["linea"],
+        }}
+        onClose={closeEdit}
+        editItem={editItem}
+      />
+    )}
+    </>
   );
 }

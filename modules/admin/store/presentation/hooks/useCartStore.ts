@@ -5,6 +5,19 @@ import { persist } from "zustand/middleware";
 import type { PastelConfiguracion } from "../../domain/entities/PastelPersonalizado.entity";
 import type { OrdenCuponAplicado } from "../../domain/entities/Orden.entity";
 
+/**
+ * De dónde salió este item — determina qué modal/flujo reabrir para editarlo.
+ * Cada uno de los 5 puntos donde se agrega un item al carrito debe marcar el suyo.
+ */
+export type CartItemOrigen =
+  | "pastel-configurador" // admin, PastelConfiguradorModal
+  | "gelatina-configurador" // admin, GelatinaCotizadorModal
+  | "producto-configurador" // admin, ProductoConfiguradorModal (producto de catálogo)
+  | "producto-modal" // público, ProductoModal (producto de catálogo)
+  | "cookie-modal" // público, CookieModal (galleta simple, sin configurador)
+  | "pastel-custom" // público, CustomPipeline (Arma tu Postre — pastel)
+  | "gelatina-custom"; // público, CustomPipeline (Arma tu Postre — gelatina)
+
 export interface CartItem {
   id: string;
   nombre: string;
@@ -15,6 +28,10 @@ export interface CartItem {
   desgloseCostos?: Record<string, any> | null;
   /** Cupones aplicados a este item específico (desde el modal de producto) */
   cuponesItem: OrdenCuponAplicado[];
+  /** Origen del item — necesario para poder reabrir el modal/flujo correcto al editar. */
+  origen: CartItemOrigen;
+  /** id del producto de catálogo, solo cuando origen es "producto-configurador"/"producto-modal". */
+  productoId?: string | null;
 }
 
 interface CartState {
@@ -27,6 +44,8 @@ interface CartState {
   setCliente: (cliente: { id: string; nombre: string } | null) => void;
 
   addItem: (item: Omit<CartItem, "id">) => void;
+  /** Reemplaza un item existente conservando su id (para "editar" en vez de duplicar). */
+  updateItem: (id: string, item: Omit<CartItem, "id">) => void;
   removeItem: (id: string) => void;
   updateCantidad: (id: string, cantidad: number) => void;
   clear: () => void;
@@ -81,6 +100,15 @@ export const useCartStore = create<CartState>()(
             ...state.items,
             { ...item, id: genId(), cuponesItem: item.cuponesItem ?? [] },
           ],
+        })),
+
+      updateItem: (id, item) =>
+        set((state) => ({
+          items: state.items.map((i) =>
+            i.id === id
+              ? { ...item, id, cuponesItem: item.cuponesItem ?? [] }
+              : i,
+          ),
         })),
 
       removeItem: (id) =>

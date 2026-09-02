@@ -1,10 +1,10 @@
 "use client";
 // src/modules/admin/productos/presentation/components/ProductoConfiguradorModal.tsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useProductoConfigurador } from "../hooks/useProductoConfigurador";
-import { useCartStore } from "../hooks/useCartStore";
+import { useCartStore, type CartItem } from "../hooks/useCartStore";
 import {
   SelectField,
   NINGUNO,
@@ -21,9 +21,11 @@ import type { Producto } from "../../domain/entities/Producto.entity";
 interface Props {
   producto: Producto | null;
   onClose: () => void;
+  /** Item del carrito a editar — si viene, precarga la config y guarda in-place en vez de agregar uno nuevo. */
+  editItem?: CartItem | null;
 }
 
-export function ProductoConfiguradorModal({ producto, onClose }: Props) {
+export function ProductoConfiguradorModal({ producto, onClose, editItem }: Props) {
   const {
     catalogo,
     loading,
@@ -32,6 +34,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
     diametroCm,
     tamanoFijoId,
     cantidad,
+    setOpciones,
     setDiametroCm,
     setTamanoFijoId,
     setCantidad,
@@ -41,7 +44,20 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
   } = useProductoConfigurador(producto);
 
   const addItem = useCartStore((s) => s.addItem);
+  const updateItem = useCartStore((s) => s.updateItem);
   const [added, setAdded] = useState(false);
+
+  // En modo edición, sobreescribe los defaults del producto con la config guardada en el carrito.
+  useEffect(() => {
+    if (!producto || !editItem) return;
+    // any: configuracion guardada es un objeto plano {productoId, opciones,
+    // diametroCm, tamanoFijoId} sin tipo dedicado — se lee tal cual se guardó.
+    const conf = editItem.configuracion as Record<string, any>;
+    if (conf.opciones) setOpciones(conf.opciones);
+    if (conf.diametroCm != null) setDiametroCm(conf.diametroCm);
+    if (conf.tamanoFijoId !== undefined) setTamanoFijoId(conf.tamanoFijoId);
+    setCantidad(editItem.cantidad);
+  }, [producto, editItem, setOpciones, setDiametroCm, setTamanoFijoId, setCantidad]);
 
   // ── Precio: sugerido vs establecido ───────────────────────────────────────
   // "sugerido" = precio calculado del desglose
@@ -88,7 +104,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
       rellenos: opciones.rellenos.filter((r) => r.rellenoId),
     };
 
-    addItem({
+    const payload = {
       nombre: `${producto.nombre}${sufijoNombre}`,
       configuracion: {
         productoId: producto.id,
@@ -110,8 +126,12 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
             ? "establecido"
             : "sugerido",
       },
-      cuponesItem: [],
-    });
+      cuponesItem: editItem?.cuponesItem ?? [],
+      origen: "producto-configurador" as const,
+      productoId: producto.id,
+    };
+    if (editItem) updateItem(editItem.id, payload);
+    else addItem(payload);
     setAdded(true);
     setTimeout(() => handleClose(), 900);
   }
@@ -142,7 +162,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
                 <div>
                   <h2 className="font-bold text-[#AA6A42] text-lg">
-                    {producto.nombre}
+                    {editItem ? `Editar: ${producto.nombre}` : producto.nombre}
                   </h2>
                   {producto.descripcion && (
                     <p className="text-[12px] text-[#6B3E26] mt-0.5 line-clamp-1">
@@ -532,11 +552,11 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                       >
                         <path d="M20 6 9 17l-5-5" />
                       </svg>
-                      Agregado al carrito
+                      {editItem ? "Cambios guardados" : "Agregado al carrito"}
                     </>
                   ) : (
                     <>
-                      Agregar
+                      {editItem ? "Guardar cambios" : "Agregar"}
                       {desglose && (
                         <span className="opacity-90 text-[13px] font-semibold">
                           · ${precioFinal.toFixed(2)}

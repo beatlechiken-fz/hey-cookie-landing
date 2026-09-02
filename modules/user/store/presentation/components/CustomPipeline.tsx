@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { OptionCard } from "./OptionCard";
 import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
@@ -327,7 +329,7 @@ function FactorInput({
 
 // ── Success banner ───────────────────────────────────────────────────────────
 
-function SuccessBanner({ onDismiss }: { onDismiss: () => void }) {
+function SuccessBanner({ onDismiss, edited }: { onDismiss: () => void; edited?: boolean }) {
   return (
     <div className="mb-8 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 p-8 text-center shadow-sm">
       <div className="flex justify-center mb-4">
@@ -338,18 +340,19 @@ function SuccessBanner({ onDismiss }: { onDismiss: () => void }) {
         </div>
       </div>
       <h2 className="text-xl font-bold text-green-800 mb-2">
-        ¡Tu producto ha sido agregado al carrito!
+        {edited ? "¡Tus cambios se guardaron!" : "¡Tu producto ha sido agregado al carrito!"}
       </h2>
       <p className="text-green-700 text-sm leading-relaxed max-w-sm mx-auto">
-        Si deseas puedes agregar más productos o proceder a generar tu pedido accediendo
-        a tu carrito en la parte superior derecha del sitio.
+        {edited
+          ? "El producto se actualizó en tu carrito. Puedes seguir editándolo desde ahí o proceder a generar tu pedido."
+          : "Si deseas puedes agregar más productos o proceder a generar tu pedido accediendo a tu carrito en la parte superior derecha del sitio."}
       </p>
       <button
         type="button"
         onClick={onDismiss}
         className="mt-5 px-6 py-2 rounded-full border border-green-300 text-green-700 text-sm font-medium hover:bg-green-100 transition"
       >
-        Agregar otro producto
+        {edited ? "Seguir comprando" : "Agregar otro producto"}
       </button>
     </div>
   );
@@ -372,6 +375,7 @@ function ResumenStep({
   onQuitarCupon,
   onBack,
   onAddToCart,
+  isEditing,
 }: {
   rows: { label: string; value: string }[];
   fotoUrl: string | null;
@@ -387,6 +391,7 @@ function ResumenStep({
   onQuitarCupon: () => void;
   onBack: () => void;
   onAddToCart: () => void;
+  isEditing?: boolean;
 }) {
   return (
     <div>
@@ -487,7 +492,7 @@ function ResumenStep({
             <line x1="3" y1="6" x2="21" y2="6" />
             <path d="M16 10a4 4 0 0 1-8 0" />
           </svg>
-          <span>Agregar al carrito</span>
+          <span>{isEditing ? "Guardar cambios" : "Agregar al carrito"}</span>
         </button>
       </div>
     </div>
@@ -498,7 +503,18 @@ function ResumenStep({
 
 export function CustomPipeline() {
   const { data: session } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const addItem = useCartStore((s) => s.addItem);
+  const updateItem = useCartStore((s) => s.updateItem);
+
+  // Editar un item ya en el carrito: /custom?editId=<id> — el carrito es un
+  // store global compartido, así que el item sigue disponible tras navegar aquí.
+  const editId = searchParams.get("editId");
+  const editItem = useCartStore((s) =>
+    editId ? (s.items.find((i) => i.id === editId) ?? null) : null,
+  );
+  const [editLoaded, setEditLoaded] = useState(false);
 
   const [catalogo, setCatalogo] = useState<ConfigPersonalizadoCatalogo | null>(null);
   const [loadingCatalog, setLoadingCatalog] = useState(true);
@@ -506,6 +522,7 @@ export function CustomPipeline() {
   const [step, setStep] = useState(0);
   const [tipo, setTipo] = useState<TipoProducto>("pastel");
   const [added, setAdded] = useState(false);
+  const [justEdited, setJustEdited] = useState(false);
   const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [datos, setDatos] = useState<DatosCliente>({ nombre: "", telefono: "", direccion: "", alergias: "" });
@@ -548,6 +565,33 @@ export function CustomPipeline() {
   }, []);
 
   useEffect(() => () => { if (addedTimerRef.current) clearTimeout(addedTimerRef.current); }, []);
+
+  // Precarga la config guardada del item del carrito que se está editando.
+  // Salta directo al Resumen — todo ya está lleno, solo falta ajustar y guardar.
+  useEffect(() => {
+    if (!editItem || editLoaded) return;
+    // any: configuracion guardada por este mismo pipeline es {tipo, ...config,
+    // notas/fotoRef/datos} sin tipo dedicado — se lee tal cual se guardó.
+    const conf = editItem.configuracion as Record<string, any>;
+    if (editItem.origen === "pastel-custom") {
+      setTipo("pastel");
+      setConfig(conf as unknown as PastelConfiguracion);
+      setPersonas(personasDesdeDiametro(conf.diametroCm ?? 24));
+      setNotasPastel(conf.notas ?? "");
+      setStep(STEPS_PASTEL.length - 1);
+    } else if (editItem.origen === "gelatina-custom") {
+      setTipo("gelatina");
+      setGCfg(conf as unknown as GelatinaCustomConfig);
+      setStep(STEPS_GELATINA.length - 1);
+    }
+    if (conf.fotoRef) { setFotoRef(conf.fotoRef); setFotoPreview(conf.fotoRef); }
+    if (conf.datos) setDatos(conf.datos);
+    if (editItem.cuponesItem?.[0]) {
+      setCuponAplicado(editItem.cuponesItem[0]);
+      setCuponInput(editItem.cuponesItem[0].codigo);
+    }
+    setEditLoaded(true);
+  }, [editItem, editLoaded]);
 
   const resetForm = () => {
     setStep(0);
@@ -689,7 +733,7 @@ export function CustomPipeline() {
       : [];
 
     if (tipo === "pastel") {
-      addItem({
+      const payload = {
         nombre: `Pastel personalizado (${personasDesdeDiametro(config.diametroCm)} personas)`,
         configuracion: { tipo: "pastel-custom", ...config, notas: notasPastel, fotoRef, datos },
         cantidad: 1,
@@ -702,11 +746,14 @@ export function CustomPipeline() {
           precioSugerido: (desgloseP?.precioSugerido ?? 0) + CARGO_DECORACION + CARGO_EMPAQUE,
         },
         cuponesItem,
-      });
+        origen: "pastel-custom" as const,
+      };
+      if (editItem) updateItem(editItem.id, payload);
+      else addItem(payload);
     } else {
       const totalLitros = gCfg.litrosAgua + gCfg.litrosLeche + gCfg.litrosTresLeches + gCfg.litrosQuesoCrema + gCfg.litrosYogurt;
       const catLabel = gCfg.categoria === "clasica" ? "Clásica" : gCfg.categoria === "healthy" ? "Healthy" : "Sin Azúcar";
-      addItem({
+      const payload = {
         nombre: `Gelatina ${catLabel} personalizada (${totalLitros}L)`,
         configuracion: { tipo: "gelatina-custom", ...gCfg, fotoRef, datos },
         cantidad: 1,
@@ -714,9 +761,18 @@ export function CustomPipeline() {
         precioUnitario: calcPrecioGelatina(gCfg, catalogo!) + CARGO_EMPAQUE,
         desgloseCostos: { costoInsumos: 0, cargosAdicionales: [], costoProduccionTotal: 0, precioSugerido: calcPrecioGelatina(gCfg, catalogo!) + CARGO_EMPAQUE },
         cuponesItem,
-      });
+        origen: "gelatina-custom" as const,
+      };
+      if (editItem) updateItem(editItem.id, payload);
+      else addItem(payload);
     }
 
+    if (editItem) {
+      // Quita el ?editId= — ya se guardó, reabrir esta URL no debe reeditar el mismo item.
+      router.replace("/custom");
+      setEditLoaded(false);
+      setJustEdited(true);
+    }
     resetForm();
     setAdded(true);
     if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
@@ -1281,6 +1337,7 @@ export function CustomPipeline() {
             onQuitarCupon={() => { setCuponAplicado(null); setCuponInput(""); }}
             onBack={() => setStep(8)}
             onAddToCart={handleAddToCart}
+            isEditing={!!editItem}
           />
         );
       }
@@ -1570,6 +1627,7 @@ export function CustomPipeline() {
             onQuitarCupon={() => { setCuponAplicado(null); setCuponInput(""); }}
             onBack={() => setStep(6)}
             onAddToCart={handleAddToCart}
+            isEditing={!!editItem}
           />
         );
       }
@@ -1580,12 +1638,21 @@ export function CustomPipeline() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#3A1F14] text-center mb-1">Arma tu pedido</h1>
+      <h1 className="text-2xl font-bold text-[#3A1F14] text-center mb-1">
+        {editItem ? "Editar tu pedido" : "Arma tu pedido"}
+      </h1>
       <p className="text-sm text-[#6B3E26]/60 text-center mb-6">
-        Personaliza cada detalle — te contactaremos para confirmar
+        {editItem
+          ? "Ajusta lo que necesites y guarda los cambios"
+          : "Personaliza cada detalle — te contactaremos para confirmar"}
       </p>
 
-      {added && <SuccessBanner onDismiss={() => setAdded(false)} />}
+      {added && (
+        <SuccessBanner
+          edited={justEdited}
+          onDismiss={() => { setAdded(false); setJustEdited(false); }}
+        />
+      )}
 
       <Timeline steps={steps} current={step} />
 

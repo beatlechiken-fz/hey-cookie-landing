@@ -3,13 +3,17 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useCartStore } from "../hooks/useCartStore";
+import { useCartStore, type CartItem } from "../hooks/useCartStore";
 import { useOrdenes, useValidarCupon } from "../hooks/useOrdenes";
+import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal";
+import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
+import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
 import type {
   CreateOrdenDTO,
   OrdenItem,
 } from "../../domain/entities/Orden.entity";
 import type { ClienteResumen } from "../../domain/entities/Cliente.entity";
+import type { Producto } from "../../domain/entities/Producto.entity";
 import { useRouter } from "@/i18n/navigation";
 
 interface Props {
@@ -31,6 +35,44 @@ export function CartDrawer({ open, onClose }: Props) {
   const subtotal = useCartStore((s) => s.subtotal());
   const descuentoTotal = useCartStore((s) => s.descuentoTotal());
   const total = useCartStore((s) => s.total());
+
+  // ── Editar item del carrito: reabre el modal correcto con la config precargada ──
+  const [editItem, setEditItem] = useState<CartItem | null>(null);
+  const [editProducto, setEditProducto] = useState<Producto | null>(null);
+  const [loadingEditProducto, setLoadingEditProducto] = useState(false);
+
+  async function handleEdit(item: CartItem) {
+    if (item.origen === "producto-configurador") {
+      // any: configuracion es PastelConfiguracion | Record<string, any> — productoId
+      // solo existe en la rama de "producto de catálogo" del union, no en todas.
+      const productoId = (item.configuracion as Record<string, any>).productoId;
+      if (!productoId) return;
+      setLoadingEditProducto(true);
+      try {
+        const res = await fetch(`/api/admin/productos/${productoId}`);
+        if (!res.ok) throw new Error();
+        setEditProducto(await res.json());
+        setEditItem(item);
+        onClose();
+      } catch {
+        // Producto ya no existe o falló la carga — no hay nada que editar.
+      } finally {
+        setLoadingEditProducto(false);
+      }
+      return;
+    }
+    if (item.origen === "pastel-configurador" || item.origen === "gelatina-configurador") {
+      setEditItem(item);
+      onClose();
+    }
+    // Items sin origen reconocido (agregados antes de esta función, o de un
+    // flujo público como CustomPipeline) no tienen un modal admin que reabrir.
+  }
+
+  function closeEdit() {
+    setEditItem(null);
+    setEditProducto(null);
+  }
 
   const { createOrden, creating } = useOrdenes();
   const { validar, validating, error: cuponError } = useValidarCupon();
@@ -183,6 +225,7 @@ export function CartDrawer({ open, onClose }: Props) {
   );
 
   return (
+    <>
     <AnimatePresence>
       {open && (
         <>
@@ -416,24 +459,47 @@ export function CartDrawer({ open, onClose }: Props) {
                               ${item.precioUnitario.toFixed(2)} c/u
                             </p>
                           </div>
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="p-1 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition shrink-0"
-                          >
-                            <svg
-                              viewBox="0 0 24 24"
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
+                          <div className="flex items-center gap-0.5 shrink-0">
+                            {item.origen && (
+                              <button
+                                onClick={() => handleEdit(item)}
+                                disabled={loadingEditProducto}
+                                className="p-1 rounded-lg hover:bg-[#f0e0d0] text-[#AA6A42] transition disabled:opacity-50"
+                                aria-label="Editar"
+                                title="Editar"
+                              >
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                >
+                                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                              </button>
+                            )}
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              className="p-1 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
                             >
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                              <path d="M10 11v6M14 11v6" />
-                              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                            </svg>
-                          </button>
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              >
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                <path d="M10 11v6M14 11v6" />
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="inline-flex items-center rounded-lg border border-[#e8c4a0] overflow-hidden">
@@ -625,5 +691,23 @@ export function CartDrawer({ open, onClose }: Props) {
         </>
       )}
     </AnimatePresence>
+
+    {/* Modales de edición — reabren el flujo correcto con la config del item precargada */}
+    <PastelConfiguradorModal
+      open={editItem?.origen === "pastel-configurador"}
+      onClose={closeEdit}
+      editItem={editItem?.origen === "pastel-configurador" ? editItem : null}
+    />
+    <GelatinaCotizadorModal
+      open={editItem?.origen === "gelatina-configurador"}
+      onClose={closeEdit}
+      editItem={editItem?.origen === "gelatina-configurador" ? editItem : null}
+    />
+    <ProductoConfiguradorModal
+      producto={editItem?.origen === "producto-configurador" ? editProducto : null}
+      onClose={closeEdit}
+      editItem={editItem?.origen === "producto-configurador" ? editItem : null}
+    />
+    </>
   );
 }

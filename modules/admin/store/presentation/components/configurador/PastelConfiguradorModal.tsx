@@ -1,10 +1,10 @@
 "use client";
 // src/modules/admin/store/presentation/components/configurador/PastelConfiguradorModal.tsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePastelConfigurador } from "../../hooks/usePastelConfig";
-import { useCartStore } from "../../hooks/useCartStore";
+import { useCartStore, type CartItem } from "../../hooks/useCartStore";
 import { SelectField, NINGUNO } from "./SelectField";
 import { MultiSelectField } from "./MultiselectField";
 import { MultiCoberturaField } from "./MultiCoberturaField";
@@ -12,22 +12,35 @@ import { MultiSelectQuantityField } from "./MultiSelectQuantityField";
 import { QuantityStepper } from "./QuantityStepper";
 import { CostoDesgloseTable } from "./CostoDesgloceTable";
 import { DiametroPersonasSelector } from "./DiametroPersonasSelector";
-import { DIAMETRO_BASE_CM } from "../../../domain/entities/PastelPersonalizado.entity";
+import {
+  DIAMETRO_BASE_CM,
+  type PastelConfiguracion,
+} from "../../../domain/entities/PastelPersonalizado.entity";
 import { personasDesdeDiametro } from "../../../domain/entities/PastelMedida.entity";
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  /** Item del carrito a editar — si viene, precarga la config y guarda in-place en vez de agregar uno nuevo. */
+  editItem?: CartItem | null;
 }
 
-export function PastelConfiguradorModal({ open, onClose }: Props) {
-  const { catalogo, loading, error, config, update, reset, desglose } =
+export function PastelConfiguradorModal({ open, onClose, editItem }: Props) {
+  const { catalogo, loading, error, config, setConfig, update, reset, desglose } =
     usePastelConfigurador();
   const addItem = useCartStore((s) => s.addItem);
+  const updateItem = useCartStore((s) => s.updateItem);
   const [added, setAdded] = useState(false);
 
   const inputCls =
     "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+
+  // Al abrir en modo edición, precarga la configuración del item del carrito.
+  useEffect(() => {
+    if (open && editItem) {
+      setConfig(editItem.configuracion as PastelConfiguracion);
+    }
+  }, [open, editItem, setConfig]);
 
   function handleClose() {
     reset();
@@ -43,7 +56,7 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
       coberturas: config.coberturas.filter((c) => c.coberturaId),
       rellenos: config.rellenos.filter((r) => r.rellenoId),
     };
-    addItem({
+    const payload = {
       nombre: `Pastel personalizado (${personasDesdeDiametro(config.diametroCm)} personas)`,
       configuracion: configLimpia,
       cantidad: config.cantidad,
@@ -55,8 +68,11 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
         costoProduccionTotal: desglose.costoProduccionTotal,
         precioSugerido: desglose.precioSugerido,
       },
-      cuponesItem: [],
-    });
+      cuponesItem: editItem?.cuponesItem ?? [],
+      origen: "pastel-configurador" as const,
+    };
+    if (editItem) updateItem(editItem.id, payload);
+    else addItem(payload);
     setAdded(true);
     setTimeout(() => handleClose(), 900);
   }
@@ -87,10 +103,10 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
                 <div>
                   <h2 className="font-bold text-[#AA6A42] text-lg">
-                    Pastel personalizado
+                    {editItem ? "Editar pastel personalizado" : "Pastel personalizado"}
                   </h2>
                   <p className="text-[12px] text-[#6B3E26]">
-                    Configura tu pastel a la medida
+                    {editItem ? "Modifica tu pastel — se actualizará en el carrito" : "Configura tu pastel a la medida"}
                   </p>
                 </div>
                 <button
@@ -413,10 +429,10 @@ export function PastelConfiguradorModal({ open, onClose }: Props) {
                       >
                         <path d="M20 6 9 17l-5-5" />
                       </svg>
-                      Agregado al carrito
+                      {editItem ? "Cambios guardados" : "Agregado al carrito"}
                     </>
                   ) : (
-                    "Agregar al carrito"
+                    editItem ? "Guardar cambios" : "Agregar al carrito"
                   )}
                 </button>
               </div>

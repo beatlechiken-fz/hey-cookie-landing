@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useProductoConfigurador } from "@/modules/admin/store/presentation/hooks/useProductoConfigurador";
-import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
+import { useCartStore, type CartItem } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import { personasDesdeDiametro } from "@/modules/admin/store/domain/entities/PastelMedida.entity";
 import { NINGUNO } from "@/modules/admin/store/presentation/components/configurador/SelectField";
 import { DiametroPersonasSelectorPublic as DiametroPersonasSelector } from "./DiametroPersonasSelectorPublic";
@@ -16,6 +16,8 @@ import { calcularDescuentoCupon } from "@/modules/admin/store/domain/entities/Cu
 interface Props {
   producto: Producto;
   onClose: () => void;
+  /** Item del carrito a editar — si viene, precarga la config y guarda in-place en vez de agregar uno nuevo. */
+  editItem?: CartItem | null;
 }
 
 interface CuponAplicado {
@@ -205,18 +207,31 @@ function getVisibilidad(nombre: string): Visibilidad {
 
 // ── Modal principal ───────────────────────────────────────────────────────────
 
-export default function ProductoModal({ producto, onClose }: Props) {
+export default function ProductoModal({ producto, onClose, editItem }: Props) {
   const { data: session } = useSession();
   const isUser = session?.user?.role === "user";
 
   const {
     catalogo, loading, error,
     opciones, diametroCm, tamanoFijoId, cantidad,
-    setDiametroCm, setTamanoFijoId, setCantidad,
+    setOpciones, setDiametroCm, setTamanoFijoId, setCantidad,
     update, reset, desglose,
   } = useProductoConfigurador(producto, "/api/public/pastel-config");
 
   const addItem = useCartStore((s) => s.addItem);
+  const updateItem = useCartStore((s) => s.updateItem);
+
+  // En modo edición, sobreescribe los defaults del producto con la config guardada en el carrito.
+  useEffect(() => {
+    if (!editItem) return;
+    // any: configuracion guardada es un objeto plano {productoId, opciones,
+    // diametroCm, tamanoFijoId} sin tipo dedicado — se lee tal cual se guardó.
+    const conf = editItem.configuracion as Record<string, any>;
+    if (conf.opciones) setOpciones(conf.opciones);
+    if (conf.diametroCm != null) setDiametroCm(conf.diametroCm);
+    if (conf.tamanoFijoId !== undefined) setTamanoFijoId(conf.tamanoFijoId);
+    setCantidad(editItem.cantidad);
+  }, [editItem, setOpciones, setDiametroCm, setTamanoFijoId, setCantidad]);
 
   // Cupón por item
   const [codigoCupon, setCodigoCupon]     = useState("");
@@ -298,7 +313,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
           valor: cuponAplicado.cupon.valor,
           montoDescontado: descuento,
         }]
-      : [];
+      : (editItem?.cuponesItem ?? []);
 
     // Descarta filas de cobertura/relleno que el usuario agregó pero dejó sin elegir.
     const opcionesLimpias = {
@@ -307,7 +322,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
       rellenos: opciones.rellenos.filter((r) => r.rellenoId),
     };
 
-    addItem({
+    const payload = {
       nombre: buildNombreItem(),
       configuracion: {
         productoId: producto.id,
@@ -325,7 +340,11 @@ export default function ProductoModal({ producto, onClose }: Props) {
         costoProduccionTotal: desglose.costoProduccionTotal,
         precioSugerido: desglose.precioSugerido,
       },
-    });
+      origen: "producto-modal" as const,
+      productoId: producto.id,
+    };
+    if (editItem) updateItem(editItem.id, payload);
+    else addItem(payload);
 
     setJustAdded(true);
     setTimeout(() => {
@@ -370,7 +389,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
               )}
               <div className="min-w-0">
                 <h2 id="producto-modal-title" className="font-bold text-[#3A1F14] text-lg font-subtitle">
-                  {producto.nombre}
+                  {editItem ? `Editar: ${producto.nombre}` : producto.nombre}
                 </h2>
                 {producto.descripcion && (
                   <p className="text-xs text-[#AA6A42]/70 mt-0.5 line-clamp-1">
@@ -872,7 +891,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
                     <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 6 9 17l-5-5" />
                     </svg>
-                    Agregado
+                    {editItem ? "Cambios guardados" : "Agregado"}
                   </>
                 ) : (
                   <>
@@ -884,7 +903,7 @@ export default function ProductoModal({ producto, onClose }: Props) {
                       className="shrink-0"
                       style={{ filter: "brightness(0) invert(1)" }}
                     />
-                    <span>Agregar al carrito</span>
+                    <span>{editItem ? "Guardar cambios" : "Agregar al carrito"}</span>
                   </>
                 )}
               </button>
