@@ -34,6 +34,28 @@ export interface CartItem {
   productoId?: string | null;
 }
 
+/**
+ * Items guardados en el carrito ANTES de que existiera `origen` (persistido en
+ * localStorage, sobrevive a los deploys) no lo traen — `item.origen` llega
+ * `undefined` en tiempo de ejecución aunque el tipo lo marque requerido.
+ * Esta función infiere el origen a partir de la forma de `configuracion`
+ * (cada modal la guarda con un shape distinto, ver comentarios abajo) para
+ * que esos items también puedan editarse en vez de quedar "huérfanos".
+ */
+export function resolveOrigen(item: CartItem): CartItemOrigen | null {
+  if (item.origen) return item.origen;
+  const conf = item.configuracion as Record<string, any>;
+  if (!conf) return null;
+  if (conf.tipo === "pastel-custom") return "pastel-custom";
+  if (conf.tipo === "gelatina-custom") return "gelatina-custom";
+  if (conf.tipo === "gelatina") return "gelatina-configurador"; // único lugar que usaba este valor
+  if (conf.tipo === "cookie") return "cookie-modal";
+  if (conf.tipo === "pastel" && conf.productoId) return "producto-modal"; // público, catálogo
+  if (conf.productoId && conf.opciones) return "producto-configurador"; // admin, catálogo (sin tipo)
+  if (conf.bizcochoId !== undefined && conf.diametroCm !== undefined) return "pastel-configurador"; // admin, pastel custom
+  return null;
+}
+
 interface CartState {
   items: CartItem[];
   /** Cupones globales: se aplican al total del carrito completo */

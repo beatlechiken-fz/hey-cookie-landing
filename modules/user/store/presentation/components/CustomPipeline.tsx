@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { OptionCard } from "./OptionCard";
-import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
+import { useCartStore, resolveOrigen } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import { calcularCostoPastel } from "@/modules/admin/store/domain/usecases/CalcularCostoPastel.usecase";
 import {
   personasDesdeDiametro,
@@ -573,13 +573,14 @@ export function CustomPipeline() {
     // any: configuracion guardada por este mismo pipeline es {tipo, ...config,
     // notas/fotoRef/datos} sin tipo dedicado — se lee tal cual se guardó.
     const conf = editItem.configuracion as Record<string, any>;
-    if (editItem.origen === "pastel-custom") {
+    const origen = resolveOrigen(editItem);
+    if (origen === "pastel-custom") {
       setTipo("pastel");
       setConfig(conf as unknown as PastelConfiguracion);
       setPersonas(personasDesdeDiametro(conf.diametroCm ?? 24));
       setNotasPastel(conf.notas ?? "");
       setStep(STEPS_PASTEL.length - 1);
-    } else if (editItem.origen === "gelatina-custom") {
+    } else if (origen === "gelatina-custom") {
       setTipo("gelatina");
       setGCfg(conf as unknown as GelatinaCustomConfig);
       setStep(STEPS_GELATINA.length - 1);

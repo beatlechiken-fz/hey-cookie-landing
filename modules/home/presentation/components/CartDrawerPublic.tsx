@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
-import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
+import { useCartStore, resolveOrigen } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import type { CartItem } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
 import type { Producto } from "@/modules/admin/store/domain/entities/Producto.entity";
@@ -84,12 +84,15 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   const [loadingEditProducto, setLoadingEditProducto] = useState(false);
 
   async function handleEdit(item: CartItem) {
-    if (item.origen === "pastel-custom" || item.origen === "gelatina-custom") {
+    // Items del carrito guardados antes de que existiera `origen` no lo traen
+    // — se infiere de la forma de `configuracion` para que sigan siendo editables.
+    const origen = resolveOrigen(item);
+    if (origen === "pastel-custom" || origen === "gelatina-custom") {
       onClose();
       router.push(`/custom?editId=${item.id}`);
       return;
     }
-    if (item.origen === "producto-modal" || item.origen === "cookie-modal") {
+    if (origen === "producto-modal" || origen === "cookie-modal") {
       // any: configuracion es PastelConfiguracion | Record<string, any> — productoId
       // solo existe en la rama de "producto de catálogo" del union, no en todas.
       const productoId = (item.configuracion as Record<string, any>).productoId;
@@ -99,7 +102,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
         const res = await fetch(`/api/public/productos/${productoId}`);
         if (!res.ok) throw new Error();
         setEditProducto(await res.json());
-        setEditItem(item);
+        setEditItem({ ...item, origen });
         onClose();
       } catch {
         // Producto ya no existe o falló la carga — no hay nada que editar.
@@ -107,8 +110,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
         setLoadingEditProducto(false);
       }
     }
-    // Items sin origen reconocido (agregados antes de esta función) no tienen
-    // un modal público que reabrir.
+    // Items cuyo origen no se pudo inferir no tienen un modal público que reabrir.
   }
 
   function closeEdit() {
@@ -436,7 +438,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
                             </div>
                             {/* Edit + Remove item */}
                             <div className="flex flex-col items-end gap-1 shrink-0">
-                              {item.origen && (
+                              {resolveOrigen(item) && (
                                 <button
                                   onClick={() => handleEdit(item)}
                                   disabled={loadingEditProducto}
