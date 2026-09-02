@@ -16,7 +16,7 @@ export function CartButton() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="relative p-2 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition"
+        className="relative p-2 rounded-lg hover:bg-[#AA6A42]/10 text-[#3A1F14] transition"
       >
         <svg
           viewBox="0 0 24 24"
