@@ -86,13 +86,15 @@ export function calcularCostoDesglose(
     concepto: string,
     costoBase: number,
     detalle?: string,
+    factorExtra: number = 1,
   ) => {
-    const costoFinal = costoBase * factor;
+    const factorAplicado = factor * factorExtra;
+    const costoFinal = costoBase * factorAplicado;
     items.push({
       concepto,
       detalle,
       costoBase,
-      factorAplicado: factor,
+      factorAplicado,
       costoFinal,
     });
     return costoFinal;
@@ -117,14 +119,17 @@ export function calcularCostoDesglose(
     );
   }
 
-  // Coberturas (múltiples, todas escalan y suman al precio)
+  // Coberturas (múltiples, todas escalan y suman al precio; cada una puede
+  // llevar su propio factor extra encima del factor de volumen por diámetro)
   for (const sel of opciones.coberturas ?? []) {
     const cobertura = find(catalogo.coberturas, sel.coberturaId);
+    const factorCob = sel.factor ?? 1;
     if (cobertura)
       baseEstructura += addEscalado(
         `Cobertura: ${cobertura.nombre}`,
         cobertura.costoTotal,
-        detalleFactor,
+        factorCob !== 1 ? `${detalleFactor} · ×${factorCob}` : detalleFactor,
+        factorCob,
       );
 
     const saborCob = catalogo.saboresCobertura.find(
@@ -137,14 +142,16 @@ export function calcularCostoDesglose(
       );
   }
 
-  // Rellenos (múltiples, otra cobertura cada uno)
+  // Rellenos (múltiples, otra cobertura cada uno; mismo factor extra por ítem)
   for (const sel of opciones.rellenos ?? []) {
     const relleno = find(catalogo.coberturas, sel.rellenoId);
+    const factorRel = sel.factor ?? 1;
     if (relleno)
       baseEstructura += addEscalado(
         `Relleno: ${relleno.nombre}`,
         relleno.costoTotal,
-        detalleFactor,
+        factorRel !== 1 ? `${detalleFactor} · ×${factorRel}` : detalleFactor,
+        factorRel,
       );
 
     const saborRelleno = catalogo.saboresCobertura.find(

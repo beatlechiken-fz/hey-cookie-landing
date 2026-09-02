@@ -122,16 +122,23 @@ export interface PastelConfigCatalogo {
  */
 export type HumedadJarabe = "semi_humedo" | "humedo";
 
-/** Una cobertura exterior seleccionada (puede haber varias, todas suman al precio) */
+/**
+ * Una cobertura exterior seleccionada (puede haber varias, todas suman al precio).
+ * `factor` escala las cantidades/costo de ESA cobertura en particular, encima del
+ * factor de volumen por diámetro (que sigue aplicando igual) — 1 = normal,
+ * 0.5 = mitad de ingredientes/costo, 2 = el doble. Default 1 si no se especifica.
+ */
 export interface CoberturaSeleccionada {
   coberturaId: string;
   saborCoberturaId: string | null;
+  factor?: number;
 }
 
-/** Un relleno (= otra cobertura usada como capa interna) seleccionado */
+/** Un relleno (= otra cobertura usada como capa interna) seleccionado — ver `factor` arriba. */
 export interface RellenoSeleccionado {
   rellenoId: string; // referencia a coberturas
   saborRellenoId: string | null;
+  factor?: number;
 }
 
 /** Un ornamento seleccionado con cuántas piezas de ese ornamento lleva el pastel */
@@ -185,19 +192,21 @@ export function normalizeOpciones<T extends Record<string, any>>(
 
   if (!Array.isArray(r.coberturas)) {
     r.coberturas = r.coberturaId
-      ? [{ coberturaId: r.coberturaId, saborCoberturaId: r.saborCoberturaId ?? null }]
+      ? [{ coberturaId: r.coberturaId, saborCoberturaId: r.saborCoberturaId ?? null, factor: 1 }]
       : [];
   }
   delete r.coberturaId;
   delete r.saborCoberturaId;
+  r.coberturas = (r.coberturas as any[]).map((c) => ({ ...c, factor: c.factor ?? 1 }));
 
   if (!Array.isArray(r.rellenos)) {
     r.rellenos = r.rellenoId
-      ? [{ rellenoId: r.rellenoId, saborRellenoId: r.saborRellenoId ?? null }]
+      ? [{ rellenoId: r.rellenoId, saborRellenoId: r.saborRellenoId ?? null, factor: 1 }]
       : [];
   }
   delete r.rellenoId;
   delete r.saborRellenoId;
+  r.rellenos = (r.rellenos as any[]).map((rr) => ({ ...rr, factor: rr.factor ?? 1 }));
 
   if (!Array.isArray(r.ornamentos)) {
     const legacyIds: string[] = Array.isArray(r.ornamentoIds) ? r.ornamentoIds : [];

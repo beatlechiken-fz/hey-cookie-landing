@@ -183,29 +183,36 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
           });
       }
 
-      // ── Coberturas (varias) ──────────────────────────────────────────────
+      // ── Coberturas (varias) — cada una puede llevar su propio factor extra
+      //    encima del factor de volumen/piezas ya aplicado en `scale` ────────
       for (const sel of opciones.coberturas ?? []) {
         const cob = byId(coberturas, sel.coberturaId);
         const sab = byId(sabores, sel.saborCoberturaId);
+        const factorCob = sel.factor ?? 1;
         if (cob)
           secciones.push({
             titulo: `Cobertura: ${cob.nombre}`,
-            ingredientes: ingRowsFromJoin(cob.ingredientes ?? [], scale),
+            ingredientes: ingRowsFromJoin(cob.ingredientes ?? [], scale * factorCob),
             procedimiento: cob.elaboracion ?? null,
-            nota: sab ? `Sabor: ${sab.nombre}` : null,
+            nota: [sab ? `Sabor: ${sab.nombre}` : null, factorCob !== 1 ? `Factor ×${factorCob}` : null]
+              .filter(Boolean)
+              .join(" · ") || null,
           });
       }
 
-      // ── Rellenos (varios) ────────────────────────────────────────────────
+      // ── Rellenos (varios) — mismo factor extra por ítem ──────────────────
       for (const sel of opciones.rellenos ?? []) {
         const rel = byId(coberturas, sel.rellenoId);
         const sab = byId(sabores, sel.saborRellenoId);
+        const factorRel = sel.factor ?? 1;
         if (rel)
           secciones.push({
             titulo: `Relleno: ${rel.nombre}`,
-            ingredientes: ingRowsFromJoin(rel.ingredientes ?? [], scale),
+            ingredientes: ingRowsFromJoin(rel.ingredientes ?? [], scale * factorRel),
             procedimiento: rel.elaboracion ?? null,
-            nota: sab ? `Sabor: ${sab.nombre}` : null,
+            nota: [sab ? `Sabor: ${sab.nombre}` : null, factorRel !== 1 ? `Factor ×${factorRel}` : null]
+              .filter(Boolean)
+              .join(" · ") || null,
           });
       }
 

@@ -59,6 +59,8 @@ const SectionDivider = () => <hr className="border-[#f0e0d0]" />;
 interface CoberturaRow {
   id: string;
   saborId: string | null;
+  /** Escala las cantidades/costo de ESTA cobertura o relleno en particular — 1 = normal. */
+  factor?: number;
 }
 
 /** N coberturas/rellenos, cada una con su propio sabor opcional — todas suman al precio. */
@@ -100,6 +102,29 @@ function MultiCoberturaSelect({
                   onChange={(v) => updateRow(idx, { saborId: v === NINGUNO ? null : v })}
                   options={sabores}
                 />
+              )}
+              {item.id && (
+                <div className="flex items-center gap-2">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    Factor
+                  </label>
+                  <input
+                    type="number"
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    value={item.factor ?? 1}
+                    onChange={(e) =>
+                      updateRow(idx, {
+                        factor: Math.max(0.1, Math.min(5, Number(e.target.value) || 1)),
+                      })
+                    }
+                    className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3A1F14] text-[12px] font-semibold text-center focus:outline-none focus:border-[#AA6A42] focus:ring-1 focus:ring-[#AA6A42]/20 transition"
+                  />
+                  <span className="text-[11px] text-[#6B3E26]/80">
+                    × cantidad{(item.factor ?? 1) !== 1 && ` (${((item.factor ?? 1) * 100).toFixed(0)}%)`}
+                  </span>
+                </div>
               )}
             </div>
             <button
@@ -429,11 +454,11 @@ export default function ProductoModal({ producto, onClose }: Props) {
                   {vis.cobertura && (
                     <MultiCoberturaSelect
                       label="Coberturas"
-                      items={opciones.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId }))}
+                      items={opciones.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId, factor: c.factor ?? 1 }))}
                       onChange={(items) =>
                         update(
                           "coberturas",
-                          items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId })),
+                          items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId, factor: it.factor ?? 1 })),
                         )
                       }
                       options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
@@ -454,11 +479,11 @@ export default function ProductoModal({ producto, onClose }: Props) {
                   {vis.relleno && (
                     <MultiCoberturaSelect
                       label="Rellenos"
-                      items={opciones.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId }))}
+                      items={opciones.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId, factor: r.factor ?? 1 }))}
                       onChange={(items) =>
                         update(
                           "rellenos",
-                          items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId })),
+                          items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId, factor: it.factor ?? 1 })),
                         )
                       }
                       options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}

@@ -31,11 +31,11 @@ export function calcularCostoGelatina(
 
   const costoCobertura = (config.coberturas ?? []).reduce((sum, sel) => {
     const cob = find(catalogo.coberturas, sel.coberturaId);
-    return sum + (cob ? cob.costoTotal * factorOpciones : 0);
+    return sum + (cob ? cob.costoTotal * factorOpciones * (sel.factor ?? 1) : 0);
   }, 0);
   const costoRelleno = (config.rellenos ?? []).reduce((sum, sel) => {
     const rel = find(catalogo.coberturas, sel.rellenoId);
-    return sum + (rel ? rel.costoTotal * factorOpciones : 0);
+    return sum + (rel ? rel.costoTotal * factorOpciones * (sel.factor ?? 1) : 0);
   }, 0);
   const costoJarabe = jar ? jar.costoTotal * factorOpciones : 0;
 

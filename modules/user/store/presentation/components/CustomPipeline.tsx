@@ -8,7 +8,7 @@ import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartSt
 import { calcularCostoPastel } from "@/modules/admin/store/domain/usecases/CalcularCostoPastel.usecase";
 import {
   personasDesdeDiametro,
-  diametroDesdePersonas,
+  diametroPreciso,
 } from "@/modules/admin/store/domain/entities/PastelMedida.entity";
 import {
   CONFIGURACION_VACIA,
@@ -108,7 +108,7 @@ function calcPrecioGelatina(
   const costoCoberturas = (gCfg.coberturas ?? []).reduce((sum, sel) => {
     const cob = catalogo.coberturas.find((c) => c.id === sel.coberturaId);
     const saborCob = catalogo.saboresCobertura.find((s) => s.id === sel.saborCoberturaId);
-    return sum + (cob ? cob.costoTotal * factor : 0) + (saborCob?.precio ?? 0);
+    return sum + (cob ? cob.costoTotal * factor * (sel.factor ?? 1) : 0) + (saborCob?.precio ?? 0);
   }, 0);
   const costoJarabe = jar ? jar.costoTotal * factor : 0;
   const costoSaborJar = saborJar?.precio ?? 0;
@@ -293,6 +293,35 @@ function SaborChip({
     >
       {label}
     </button>
+  );
+}
+
+/** Input de factor por cobertura/relleno individual — 1 = cantidad normal. */
+function FactorInput({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div className="flex items-center gap-2 mt-2">
+      <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+        Factor
+      </label>
+      <input
+        type="number"
+        min={0.1}
+        max={5}
+        step={0.1}
+        value={value}
+        onChange={(e) => onChange(Math.max(0.1, Math.min(5, Number(e.target.value) || 1)))}
+        className="w-20 px-2 py-1 rounded-lg border border-[#e0c9b0] bg-white text-[#3A1F14] text-[12px] font-semibold text-center focus:outline-none focus:border-[#AA6A42] focus:ring-1 focus:ring-[#AA6A42]/20 transition"
+      />
+      <span className="text-[11px] text-[#6B3E26]/80">
+        × cantidad{value !== 1 && ` (${(value * 100).toFixed(0)}%)`}
+      </span>
+    </div>
   );
 }
 
@@ -505,7 +534,9 @@ export function CustomPipeline() {
   }, [session]);
 
   useEffect(() => {
-    const dm = Math.round(diametroDesdePersonas(personas));
+    // Personas siempre es entero (ver input de abajo); el diámetro que resulta
+    // de convertirlo puede quedar en decimales — ya no se fuerza a cm entero.
+    const dm = diametroPreciso(personas);
     setConfig((c) => ({ ...c, diametroCm: dm }));
   }, [personas]);
 
@@ -893,6 +924,13 @@ export function CustomPipeline() {
               c.coberturaId === coberturaId ? { ...c, saborCoberturaId: saborId } : c,
             ),
           }));
+        const setFactorCobertura = (coberturaId: string, factor: number) =>
+          setConfig((cfg) => ({
+            ...cfg,
+            coberturas: cfg.coberturas.map((c) =>
+              c.coberturaId === coberturaId ? { ...c, factor } : c,
+            ),
+          }));
         return (
           <div>
             <SectionTitle>Cobertura</SectionTitle>
@@ -928,6 +966,10 @@ export function CustomPipeline() {
                       />
                     ))}
                   </SaborGrid>
+                  <FactorInput
+                    value={sel.factor ?? 1}
+                    onChange={(f) => setFactorCobertura(sel.coberturaId, f)}
+                  />
                 </div>
               );
             })}
@@ -950,6 +992,13 @@ export function CustomPipeline() {
             ...cfg,
             rellenos: cfg.rellenos.map((r) =>
               r.rellenoId === rellenoId ? { ...r, saborRellenoId: saborId } : r,
+            ),
+          }));
+        const setFactorRelleno = (rellenoId: string, factor: number) =>
+          setConfig((cfg) => ({
+            ...cfg,
+            rellenos: cfg.rellenos.map((r) =>
+              r.rellenoId === rellenoId ? { ...r, factor } : r,
             ),
           }));
         return (
@@ -987,6 +1036,10 @@ export function CustomPipeline() {
                       />
                     ))}
                   </SaborGrid>
+                  <FactorInput
+                    value={sel.factor ?? 1}
+                    onChange={(f) => setFactorRelleno(sel.rellenoId, f)}
+                  />
                 </div>
               );
             })}
@@ -1310,6 +1363,13 @@ export function CustomPipeline() {
               c.coberturaId === coberturaId ? { ...c, saborCoberturaId: saborId } : c,
             ),
           }));
+        const setFactorCoberturaG = (coberturaId: string, factor: number) =>
+          setGCfg((cfg) => ({
+            ...cfg,
+            coberturas: cfg.coberturas.map((c) =>
+              c.coberturaId === coberturaId ? { ...c, factor } : c,
+            ),
+          }));
         return (
           <div>
             <SectionTitle>Cobertura (opcional)</SectionTitle>
@@ -1338,6 +1398,10 @@ export function CustomPipeline() {
                         onClick={() => setSaborCoberturaG(sel.coberturaId, s.id)} />
                     ))}
                   </SaborGrid>
+                  <FactorInput
+                    value={sel.factor ?? 1}
+                    onChange={(f) => setFactorCoberturaG(sel.coberturaId, f)}
+                  />
                 </div>
               );
             })}

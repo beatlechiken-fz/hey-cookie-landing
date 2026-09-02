@@ -242,6 +242,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                           items={opciones.coberturas.map((c) => ({
                             id: c.coberturaId,
                             saborId: c.saborCoberturaId,
+                            factor: c.factor ?? 1,
                           }))}
                           onChange={(items) =>
                             update(
@@ -249,6 +250,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                               items.map((it) => ({
                                 coberturaId: it.id,
                                 saborCoberturaId: it.saborId,
+                                factor: it.factor ?? 1,
                               })),
                             )
                           }
@@ -272,6 +274,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                           items={opciones.rellenos.map((r) => ({
                             id: r.rellenoId,
                             saborId: r.saborRellenoId,
+                            factor: r.factor ?? 1,
                           }))}
                           onChange={(items) =>
                             update(
@@ -279,6 +282,7 @@ export function ProductoConfiguradorModal({ producto, onClose }: Props) {
                               items.map((it) => ({
                                 rellenoId: it.id,
                                 saborRellenoId: it.saborId,
+                                factor: it.factor ?? 1,
                               })),
                             )
                           }

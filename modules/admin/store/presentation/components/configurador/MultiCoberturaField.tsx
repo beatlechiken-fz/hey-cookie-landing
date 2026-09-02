@@ -6,6 +6,8 @@ import { SelectField, NINGUNO } from "./SelectField";
 export interface CoberturaFieldItem {
   id: string;
   saborId: string | null;
+  /** Escala las cantidades/costo de ESTA cobertura o relleno en particular — 1 = normal. */
+  factor?: number;
 }
 
 interface Option {
@@ -85,11 +87,34 @@ export function MultiCoberturaField({
                   ningunoLabel="Sin sabor"
                 />
               )}
+              {item.id && (
+                <div className="flex items-center gap-2">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    Factor
+                  </label>
+                  <input
+                    type="number"
+                    min={0.1}
+                    max={5}
+                    step={0.1}
+                    value={item.factor ?? 1}
+                    onChange={(e) =>
+                      updateRow(idx, {
+                        factor: Math.max(0.1, Math.min(5, Number(e.target.value) || 1)),
+                      })
+                    }
+                    className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3A1F14] text-[12px] font-semibold text-center focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
+                  />
+                  <span className="text-[11px] text-[#6B3E26]">
+                    × cantidad {(item.factor ?? 1) !== 1 && `(${((item.factor ?? 1) * 100).toFixed(0)}%)`}
+                  </span>
+                </div>
+              )}
             </div>
             <button
               type="button"
               onClick={() => removeRow(idx)}
-              className="mt-6 w-7 h-7 flex items-center justify-center rounded-full text-[#c0607a] hover:bg-[#f5dde3] transition cursor-pointer"
+              className="mt-6 w-7 h-7 flex items-center justify-center rounded-full text-[#c0607a] hover:bg-[#f0e0d0] transition cursor-pointer"
               aria-label="Quitar"
             >
               ✕

@@ -224,6 +224,28 @@ function CoberturasTab() {
     }
   }, [deleteTarget, remove]);
 
+  const handleDuplicate = useCallback(
+    async (c: Cobertura) => {
+      try {
+        const dto: CreateCoberturaDTO = {
+          nombre: `${c.nombre} (copia)`,
+          descripcion: c.descripcion,
+          elaboracion: c.elaboracion,
+          imagenUrl: c.imagenUrl ?? null,
+          ingredientes: c.ingredientes.map((i) => ({
+            ingredienteId: i.ingredienteId,
+            cantidad: i.cantidad,
+          })),
+        };
+        const created = await create(dto);
+        openEdit(created);
+      } catch (e: any) {
+        setActionError(e.message);
+      }
+    },
+    [create],
+  );
+
   return (
     <div className="flex flex-col gap-5">
       {/* Toolbar */}
@@ -369,6 +391,25 @@ function CoberturasTab() {
                       </svg>
                     </button>
                     <button
+                      onClick={() => handleDuplicate(c)}
+                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#AA6A42] transition"
+                      aria-label="Duplicar"
+                      title="Duplicar"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                    </button>
+                    <button
                       onClick={() => openDelete(c)}
                       className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
                     >
@@ -433,6 +474,24 @@ function CoberturasTab() {
                     >
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleDuplicate(c)}
+                    className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                    aria-label="Duplicar"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                     </svg>
                   </button>
                   <button

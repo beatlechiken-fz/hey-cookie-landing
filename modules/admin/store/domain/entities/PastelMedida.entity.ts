@@ -43,6 +43,19 @@ export function diametroRedondeado(
   return Math.round(diametroDesdePersonas(personas, medidaBaseCm));
 }
 
+/**
+ * Diámetro redondeado a 1 decimal (0.1cm) para servir `personas` personas —
+ * a diferencia de `diametroRedondeado`, no fuerza el cm a entero. El número
+ * de personas siempre debe ser entero; el diámetro que resulta de convertirlo
+ * puede (y normalmente va a) tener decimales — ej. 12 personas → 19.5cm.
+ */
+export function diametroPreciso(
+  personas: number,
+  medidaBaseCm = DIAMETRO_BASE,
+): number {
+  return Math.round(diametroDesdePersonas(personas, medidaBaseCm) * 10) / 10;
+}
+
 /** Tabla de sugerencias diámetro → personas para mostrar en UI */
 export const TABLA_SUGERENCIAS: { diametro: number; personas: number }[] =
   DIAMETROS_SUGERIDOS.map((d) => ({

@@ -245,11 +245,11 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
                       <div className="sm:col-span-2">
                         <MultiCoberturaField
                           label="Coberturas"
-                          items={config.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId }))}
+                          items={config.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId, factor: c.factor ?? 1 }))}
                           onChange={(items) =>
                             update(
                               "coberturas",
-                              items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId })),
+                              items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId, factor: it.factor ?? 1 })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
@@ -261,11 +261,11 @@ export function GelatinaCotizadorModal({ open, onClose }: Props) {
                       <div className="sm:col-span-2">
                         <MultiCoberturaField
                           label="Rellenos"
-                          items={config.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId }))}
+                          items={config.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId, factor: r.factor ?? 1 }))}
                           onChange={(items) =>
                             update(
                               "rellenos",
-                              items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId })),
+                              items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId, factor: it.factor ?? 1 })),
                             )
                           }
                           options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}

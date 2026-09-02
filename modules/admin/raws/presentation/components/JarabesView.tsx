@@ -440,6 +440,20 @@ const deleteIcon = (
     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
   </svg>
 );
+const duplicateIcon = (
+  <svg
+    viewBox="0 0 24 24"
+    className="w-4 h-4"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </svg>
+);
 
 // ── Jarabes Tab ───────────────────────────────────────────────────────────────
 
@@ -491,6 +505,28 @@ function JarabesTab() {
       setActionError(e.message);
     }
   }, [deleteTarget, remove]);
+
+  const handleDuplicate = useCallback(
+    async (j: Jarabe) => {
+      try {
+        const dto: CreateJarabeDTO = {
+          nombre: `${j.nombre} (copia)`,
+          descripcion: j.descripcion,
+          elaboracion: j.elaboracion,
+          imagenUrl: j.imagenUrl ?? null,
+          ingredientes: j.ingredientes.map((i) => ({
+            ingredienteId: i.ingredienteId,
+            cantidad: i.cantidad,
+          })),
+        };
+        const created = await create(dto);
+        openEdit(created);
+      } catch (e: any) {
+        setActionError(e.message);
+      }
+    },
+    [create],
+  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -624,6 +660,14 @@ function JarabesTab() {
                       {editIcon}
                     </button>
                     <button
+                      onClick={() => handleDuplicate(j)}
+                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#AA6A42] transition"
+                      aria-label="Duplicar"
+                      title="Duplicar"
+                    >
+                      {duplicateIcon}
+                    </button>
+                    <button
                       onClick={() => setDeleteTarget(j)}
                       className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
                     >
@@ -676,6 +720,13 @@ function JarabesTab() {
                   className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
                 >
                   {editIcon}
+                </button>
+                <button
+                  onClick={() => handleDuplicate(j)}
+                  className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                  aria-label="Duplicar"
+                >
+                  {duplicateIcon}
                 </button>
                 <button
                   onClick={() => setDeleteTarget(j)}

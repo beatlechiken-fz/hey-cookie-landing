@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import {
   personasDesdeDiametro,
-  diametroRedondeado,
+  diametroPreciso,
 } from "../../../domain/entities/PastelMedida.entity";
 
 interface Props {
@@ -41,18 +41,19 @@ export function DiametroPersonasSelector({
   function handlePersonasChange(val: string) {
     // Actualiza el display local inmediatamente (permite escribir libremente)
     setPersonasInput(val);
-    // Solo convierte si hay un número válido
-    const p = Number(val);
+    // Solo convierte si hay un número entero válido — personas siempre es entero,
+    // el diámetro resultante puede (y normalmente va a) quedar en decimales.
+    const p = Math.round(Number(val));
     if (p > 0) {
-      onChange(diametroRedondeado(p, medidaBaseCm));
+      onChange(diametroPreciso(p, medidaBaseCm));
     }
   }
 
   function handlePersonasBlur() {
     // Al salir del campo, normaliza el valor mostrado al real calculado
-    const p = Number(personasInput);
+    const p = Math.round(Number(personasInput));
     if (p > 0) {
-      const d = diametroRedondeado(p, medidaBaseCm);
+      const d = diametroPreciso(p, medidaBaseCm);
       onChange(d);
       setPersonasInput(String(personasDesdeDiametro(d, medidaBaseCm)));
     } else {
@@ -81,7 +82,7 @@ export function DiametroPersonasSelector({
             <input
               type="number"
               min="1"
-              step="1"
+              step="0.1"
               value={diametroCm}
               onChange={(e) => handleDiametroChange(e.target.value)}
               className={inputCls}
