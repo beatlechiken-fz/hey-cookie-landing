@@ -8,6 +8,7 @@ interface Props {
   producto: Producto;
   onClick: () => void;
   onEdit: (e: React.MouseEvent) => void;
+  onDuplicate: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
 }
 
@@ -23,7 +24,7 @@ const LINEA_LABELS: Record<string, { label: string; cls: string }> = {
   },
 };
 
-export function ProductoCard({ producto, onClick, onEdit, onDelete }: Props) {
+export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete }: Props) {
   const linea = LINEA_LABELS[producto.linea] ?? LINEA_LABELS.sweet;
 
   return (
@@ -82,6 +83,24 @@ export function ProductoCard({ producto, onClick, onEdit, onDelete }: Props) {
               >
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </button>
+            <button
+              onClick={onDuplicate}
+              title="Duplicar"
+              className="p-1.5 rounded-lg bg-white/90 border border-[#e8c4a0] text-[#AA6A42] hover:bg-[#FFF7F0] hover:text-[#c0607a] shadow-sm transition backdrop-blur-sm"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
             </button>
             <button

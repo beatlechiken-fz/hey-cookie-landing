@@ -66,6 +66,27 @@ export function ProductosView() {
     }
   }
 
+  async function handleDuplicate(p: Producto) {
+    const dto: CreateProductoDTO = {
+      nombre: `${p.nombre} (copia)`,
+      descripcion: p.descripcion,
+      imagenUrl: p.imagenUrl,
+      linea: p.linea,
+      categoria: p.categoria,
+      elaboracion: p.elaboracion,
+      ingredientesBase: p.ingredientesBase,
+      opcionesDefault: p.opcionesDefault,
+      medidaBaseCm: p.medidaBaseCm,
+      permiteMedidaPersonalizada: p.permiteMedidaPersonalizada,
+      tamanosFijos: p.tamanosFijos,
+      factorOpciones: p.factorOpciones,
+      manoDeObraMinimo: p.manoDeObraMinimo,
+      precioEstablecido: p.precioEstablecido,
+    };
+    const created = await create(dto);
+    setEditing(created);
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {/* Toolbar */}
@@ -143,6 +164,10 @@ export function ProductosView() {
               onEdit={(e) => {
                 e.stopPropagation();
                 setEditing(p);
+              }}
+              onDuplicate={(e) => {
+                e.stopPropagation();
+                handleDuplicate(p);
               }}
               onDelete={(e) => {
                 e.stopPropagation();
