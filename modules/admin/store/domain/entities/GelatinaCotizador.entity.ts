@@ -2,6 +2,7 @@ import type {
   CoberturaSeleccionada,
   RellenoSeleccionado,
   OrnamentoSeleccionado,
+  ToppingSeleccionado,
 } from "./PastelPersonalizado.entity";
 
 export type CategoriaGelatina = "clasica" | "healthy" | "sin_azucar";
@@ -60,7 +61,7 @@ export interface GelatinaCotizadorConfig {
   litrosYogurt: number;
   coberturas: CoberturaSeleccionada[];
   rellenos: RellenoSeleccionado[];
-  toppingIds: string[];
+  toppings: ToppingSeleccionado[];
   jarabeId: string | null;
   saborJarabeId: string | null;
   licorId: string | null;
@@ -80,7 +81,7 @@ export const GELATINA_CONFIG_VACIA: GelatinaCotizadorConfig = {
   litrosYogurt: 0,
   coberturas: [],
   rellenos: [],
-  toppingIds: [],
+  toppings: [],
   jarabeId: null,
   saborJarabeId: null,
   licorId: null,

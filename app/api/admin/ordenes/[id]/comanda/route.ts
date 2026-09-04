@@ -235,19 +235,24 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
           });
       }
 
-      // ── Toppings (escalan igual que ingredientes base) ────────────────────
-      const toppingIds: string[] = opciones.toppingIds ?? [];
-      const toppingIns: IngredienteComanda[] = toppingIds
-        .filter((t) => t && t !== "ninguno")
-        .flatMap((tid) => {
+      // ── Toppings (escalan igual que ingredientes base, salvo que la orden
+      //    traiga un override manual de cantidad — ahí es valor final × qty,
+      //    igual que Ornamentos) ───────────────────────────────────────────
+      const toppingSels: { ingredienteId: string; cantidad?: number | null }[] =
+        opciones.toppings ?? [];
+      const toppingIns: IngredienteComanda[] = toppingSels
+        .filter((t) => t.ingredienteId && t.ingredienteId !== "ninguno")
+        .flatMap((sel) => {
           const tc = ((toppingCants as any[]) ?? []).find(
-            (t: any) => t.ingrediente_id === tid,
+            (t: any) => t.ingrediente_id === sel.ingredienteId,
           );
           if (!tc) return [];
+          const cantidad =
+            sel.cantidad != null ? sel.cantidad * qty : Number(tc.cantidad) * scale;
           return [
             {
-              nombre: tc.ingrediente?.nombre ?? tid,
-              cantidad: r2(Number(tc.cantidad) * scale),
+              nombre: tc.ingrediente?.nombre ?? sel.ingredienteId,
+              cantidad: r2(cantidad),
               unidad: tc.unidad ?? tc.ingrediente?.unidad_base ?? "gr",
             },
           ];

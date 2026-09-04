@@ -147,12 +147,24 @@ export interface OrnamentoSeleccionado {
   cantidad: number;
 }
 
+/**
+ * Un topping seleccionado — `cantidad` es un override MANUAL de gramaje solo
+ * para esta orden (ej. catálogo trae 200gr, aquí se pone 50gr). `undefined`/
+ * `null` = usar la cantidad del catálogo (que sí escala con el diámetro del
+ * pastel); un override explícito es un valor final absoluto para esa orden,
+ * ya NO escala con el diámetro — ver CalcularCostosDesgloce.usecase.ts.
+ */
+export interface ToppingSeleccionado {
+  ingredienteId: string;
+  cantidad?: number | null;
+}
+
 export interface PastelConfiguracion {
   diametroCm: number;
   bizcochoId: string | null;
   coberturas: CoberturaSeleccionada[]; // varias coberturas exteriores, todas suman al precio
   rellenos: RellenoSeleccionado[]; // varios rellenos (otras coberturas), todos suman al precio
-  toppingIds: string[]; // ingrediente_id[] de topping_cantidades
+  toppings: ToppingSeleccionado[];
   jarabeId: string | null;
   saborJarabeId: string | null;
   humedadJarabe: HumedadJarabe | null; // null = sin jarabe / no aplica
@@ -167,7 +179,7 @@ export const CONFIGURACION_VACIA: PastelConfiguracion = {
   bizcochoId: null,
   coberturas: [],
   rellenos: [],
-  toppingIds: [],
+  toppings: [],
   jarabeId: null,
   saborJarabeId: null,
   humedadJarabe: null,
@@ -215,6 +227,16 @@ export function normalizeOpciones<T extends Record<string, any>>(
       .map((ornamentoId) => ({ ornamentoId, cantidad: 1 }));
   }
   delete r.ornamentoIds;
+
+  if (!Array.isArray(r.toppings)) {
+    // Formato viejo: toppingIds: string[], sin cantidad propia — al no
+    // traer `cantidad`, el cálculo de costo sigue usando la del catálogo.
+    const legacyToppingIds: string[] = Array.isArray(r.toppingIds) ? r.toppingIds : [];
+    r.toppings = legacyToppingIds
+      .filter((id) => id && id !== "ninguno")
+      .map((ingredienteId) => ({ ingredienteId }));
+  }
+  delete r.toppingIds;
 
   return r as T;
 }

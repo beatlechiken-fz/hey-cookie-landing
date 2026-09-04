@@ -172,7 +172,7 @@ export function ProductoEditorModal({
       setDefJarabeId(od.jarabeId ?? null);
       setDefSaborJarabeId(od.saborJarabeId ?? null);
       setDefLicorId(od.licorId ?? null);
-      setDefToppingIds(od.toppingIds ?? []);
+      setDefToppingIds((od.toppings ?? []).map((t) => t.ingredienteId));
       setDefEmpaqueIds(od.empaqueIds ?? []);
     } else {
       setNombre("");
@@ -338,7 +338,7 @@ export function ProductoEditorModal({
           jarabeId: defJarabeId,
           saborJarabeId: defSaborJarabeId,
           licorId: defLicorId,
-          toppingIds: defToppingIds,
+          toppings: defToppingIds.map((id) => ({ ingredienteId: id })),
           empaqueIds: defEmpaqueIds,
           ornamentos: [],
           humedadJarabe: null,

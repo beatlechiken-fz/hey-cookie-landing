@@ -39,12 +39,16 @@ export function calcularCostoGelatina(
   }, 0);
   const costoJarabe = jar ? jar.costoTotal * factorOpciones : 0;
 
-  const costoToppings = config.toppingIds
-    .filter((t) => t && t !== "ninguno")
-    .reduce((sum, tid) => {
-      const t = catalogo.toppings.find((x) => x.ingredienteId === tid);
-      return sum + (t && t.cantidad != null && t.costoUnidadMinima != null
-        ? t.cantidad * t.costoUnidadMinima * factorOpciones : 0);
+  // Igual que en CalcularCostosDesgloce: un override de gramaje (sel.cantidad)
+  // es el valor final para esta orden, ya no escala con factorOpciones.
+  const costoToppings = (config.toppings ?? [])
+    .filter((sel) => sel.ingredienteId && sel.ingredienteId !== "ninguno")
+    .reduce((sum, sel) => {
+      const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+      if (!t || t.costoUnidadMinima == null) return sum;
+      if (sel.cantidad != null) return sum + sel.cantidad * t.costoUnidadMinima;
+      if (t.cantidad == null) return sum;
+      return sum + t.cantidad * t.costoUnidadMinima * factorOpciones;
     }, 0);
 
   const lic = catalogo.licores.find((l) => l.ingredienteId === config.licorId);

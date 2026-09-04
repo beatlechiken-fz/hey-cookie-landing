@@ -27,7 +27,7 @@ export type ProductoOpciones = Omit<
 export const OPCIONES_VACIAS: ProductoOpciones = {
   coberturas: [],
   rellenos: [],
-  toppingIds: [],
+  toppings: [],
   jarabeId: null,
   saborJarabeId: null,
   humedadJarabe: null,

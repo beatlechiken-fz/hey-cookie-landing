@@ -606,7 +606,7 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
                 {/* ── Extras opcionales (Toppings + Ornamentos), colapsado por defecto ── */}
                 {(vis.toppings || catalogo.ornamentos.length > 0) && (() => {
                   const extrasCount =
-                    opciones.toppingIds.length +
+                    opciones.toppings.length +
                     opciones.ornamentos.reduce((sum, o) => sum + o.cantidad, 0);
                   return (
                     <div>
@@ -642,39 +642,70 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
                                 {catalogo.toppings
                                   .filter((t) => t.cantidad != null)
                                   .map((t) => {
-                                    const active = opciones.toppingIds.includes(t.ingredienteId);
+                                    const sel = opciones.toppings.find((x) => x.ingredienteId === t.ingredienteId);
+                                    const active = !!sel;
                                     return (
-                                      <button
+                                      <div
                                         key={t.ingredienteId}
-                                        type="button"
-                                        onClick={() => {
-                                          const next = active
-                                            ? opciones.toppingIds.filter((id) => id !== t.ingredienteId)
-                                            : [...opciones.toppingIds, t.ingredienteId];
-                                          update("toppingIds", next);
-                                        }}
-                                        className={`flex items-center gap-2 rounded-xl text-xs font-semibold border transition cursor-pointer ${
-                                          t.imagenUrl ? "pl-1.5 pr-3 py-1.5" : "px-3 py-1.5"
+                                        className={`flex items-center gap-1.5 rounded-xl text-xs font-semibold border transition ${
+                                          t.imagenUrl ? "pl-1.5 pr-2 py-1.5" : "px-3 py-1.5"
                                         } ${
                                           active
                                             ? "bg-[#DA6C94] text-white border-[#DA6C94]"
                                             : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
                                         }`}
                                       >
-                                        {t.imagenUrl && (
-                                          <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
-                                            <Image
-                                              src={t.imagenUrl}
-                                              alt={t.nombre}
-                                              fill
-                                              className="object-cover"
-                                              sizes="32px"
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const next = active
+                                              ? opciones.toppings.filter((x) => x.ingredienteId !== t.ingredienteId)
+                                              : [...opciones.toppings, { ingredienteId: t.ingredienteId }];
+                                            update("toppings", next);
+                                          }}
+                                          className="flex items-center gap-2 cursor-pointer"
+                                        >
+                                          {t.imagenUrl && (
+                                            <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                                              <Image
+                                                src={t.imagenUrl}
+                                                alt={t.nombre}
+                                                fill
+                                                className="object-cover"
+                                                sizes="32px"
+                                              />
+                                            </div>
+                                          )}
+                                          <span>{t.nombre}</span>
+                                          {!active && <span className="opacity-60">{t.cantidad}{t.unidad}</span>}
+                                        </button>
+                                        {active && sel && (
+                                          <span
+                                            className="flex items-center gap-1"
+                                            onClick={(e) => e.stopPropagation()}
+                                          >
+                                            <input
+                                              type="number"
+                                              min={0}
+                                              value={sel.cantidad ?? t.cantidad ?? 0}
+                                              onChange={(e) => {
+                                                const n = Number(e.target.value);
+                                                update(
+                                                  "toppings",
+                                                  opciones.toppings.map((x) =>
+                                                    x.ingredienteId === t.ingredienteId
+                                                      ? { ...x, cantidad: Number.isFinite(n) && n >= 0 ? n : 0 }
+                                                      : x,
+                                                  ),
+                                                );
+                                              }}
+                                              aria-label={`Cantidad de ${t.nombre}`}
+                                              className="w-12 bg-white/20 rounded text-white text-center focus:outline-none focus:bg-white/30 transition"
                                             />
-                                          </div>
+                                            <span className="opacity-80">{t.unidad}</span>
+                                          </span>
                                         )}
-                                        <span>{t.nombre}</span>
-                                        <span className="opacity-60">{t.cantidad}{t.unidad}</span>
-                                      </button>
+                                      </div>
                                     );
                                   })}
                                 {catalogo.toppings.filter((t) => t.cantidad != null).length === 0 && (

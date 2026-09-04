@@ -357,6 +357,7 @@ interface CatNames {
   jarabes?: Record<string, string>;
   saboresJarabe?: Record<string, string>;
   toppings?: Record<string, string>;
+  toppingsUnidad?: Record<string, string>;
   licores?: Record<string, string>;
   empaques?: Record<string, string>;
   ornamentos?: Record<string, string>;
@@ -376,6 +377,9 @@ async function fetchCatNames(): Promise<CatNames> {
       saboresJarabe: toMap(data.saboresJarabe ?? []),
       toppings: Object.fromEntries(
         (data.toppings ?? []).map((t: any) => [t.ingredienteId, t.nombre]),
+      ),
+      toppingsUnidad: Object.fromEntries(
+        (data.toppings ?? []).map((t: any) => [t.ingredienteId, t.unidad ?? ""]),
       ),
       licores: Object.fromEntries(
         (data.licores ?? []).map((l: any) => [l.ingredienteId, l.nombre]),
@@ -438,9 +442,15 @@ export async function buildCotizacionHtml(orden: Orden, costoEnvio?: number): Pr
     const sabJar = opc.saborJarabeId ? cn.saboresJarabe?.[opc.saborJarabeId as string] : null;
     if (jarNom) detalles.push(`Jarabe: ${jarNom}${sabJar ? ` — sabor ${sabJar}` : ""}`);
 
-    const tops = ((opc.toppingIds ?? []) as string[])
-      .filter((t) => t !== "ninguno")
-      .map((t) => cn.toppings?.[t])
+    const tops = ((opc.toppings ?? []) as { ingredienteId: string; cantidad?: number | null }[])
+      .filter((sel) => sel.ingredienteId && sel.ingredienteId !== "ninguno")
+      .map((sel) => {
+        const nom = cn.toppings?.[sel.ingredienteId];
+        if (!nom) return null;
+        if (sel.cantidad == null) return nom;
+        const unidad = cn.toppingsUnidad?.[sel.ingredienteId] ?? "";
+        return `${nom} (${sel.cantidad}${unidad})`;
+      })
       .filter(Boolean) as string[];
     if (tops.length) detalles.push(`Toppings: ${tops.join(", ")}`);
 

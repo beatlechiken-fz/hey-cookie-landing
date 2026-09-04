@@ -18,6 +18,7 @@ import {
   type HumedadJarabe,
   type CoberturaSeleccionada,
   type OrnamentoSeleccionado,
+  type ToppingSeleccionado,
 } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
 import {
   FACTOR_GELATINA_POR_LITRO,
@@ -64,7 +65,7 @@ interface GelatinaCustomConfig {
   coberturas: CoberturaSeleccionada[];
   jarabeId: string | null;
   saborJarabeId: string | null;
-  toppingIds: string[];
+  toppings: ToppingSeleccionado[];
   ornamentos: OrnamentoSeleccionado[];
   notas: string;
 }
@@ -79,7 +80,7 @@ const GELATINA_VACIA: GelatinaCustomConfig = {
   coberturas: [],
   jarabeId: null,
   saborJarabeId: null,
-  toppingIds: [],
+  toppings: [],
   ornamentos: [],
   notas: "",
 };
@@ -115,10 +116,14 @@ function calcPrecioGelatina(
   const costoJarabe = jar ? jar.costoTotal * factor : 0;
   const costoSaborJar = saborJar?.precio ?? 0;
 
-  const costoToppings = gCfg.toppingIds.reduce((sum, tid) => {
-    const t = catalogo.toppings.find((x) => x.ingredienteId === tid);
-    return sum + (t && t.cantidad != null && t.costoUnidadMinima != null
-      ? t.cantidad * t.costoUnidadMinima * factor : 0);
+  // Un override de gramaje (sel.cantidad) es el valor final para esta orden,
+  // ya no escala con el factor de volumen — igual que en los usecases admin.
+  const costoToppings = (gCfg.toppings ?? []).reduce((sum, sel) => {
+    const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+    if (!t || t.costoUnidadMinima == null) return sum;
+    if (sel.cantidad != null) return sum + sel.cantidad * t.costoUnidadMinima;
+    if (t.cantidad == null) return sum;
+    return sum + t.cantidad * t.costoUnidadMinima * factor;
   }, 0);
 
   const costoOrnamentos = (gCfg.ornamentos ?? []).reduce((sum, sel) => {
@@ -323,6 +328,53 @@ function FactorInput({
       <span className="text-[11px] text-[#6B3E26]/80">
         × cantidad{value !== 1 && ` (${(value * 100).toFixed(0)}%)`}
       </span>
+    </div>
+  );
+}
+
+/**
+ * Cantidad de un topping — muestra la cantidad del catálogo por default,
+ * editable solo para esta orden (no cambia el catálogo global). "Restablecer"
+ * vuelve a usar la del catálogo (y con eso, vuelve a escalar con el diámetro).
+ */
+function ToppingCantidadInput({
+  cantidadCatalogo,
+  unidad,
+  value,
+  onChange,
+}: {
+  cantidadCatalogo: number;
+  unidad: string;
+  value: number | null | undefined;
+  onChange: (v: number | undefined) => void;
+}) {
+  const overridden = value != null;
+  return (
+    <div className="flex items-center gap-2 mt-2">
+      <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+        Cantidad
+      </label>
+      <input
+        type="number"
+        min={0}
+        step={1}
+        value={value ?? cantidadCatalogo}
+        onChange={(e) => {
+          const n = Number(e.target.value);
+          onChange(Number.isFinite(n) && n >= 0 ? n : 0);
+        }}
+        className="w-20 px-2 py-1 rounded-lg border border-[#e0c9b0] bg-white text-[#3A1F14] text-[12px] font-semibold text-center focus:outline-none focus:border-[#AA6A42] focus:ring-1 focus:ring-[#AA6A42]/20 transition"
+      />
+      <span className="text-[11px] text-[#6B3E26]/80">{unidad}</span>
+      {overridden && (
+        <button
+          type="button"
+          onClick={() => onChange(undefined)}
+          className="text-[11px] text-[#AA6A42] underline hover:text-[#8A5535] transition cursor-pointer"
+        >
+          Restablecer ({cantidadCatalogo}{unidad})
+        </button>
+      )}
     </div>
   );
 }
@@ -611,17 +663,35 @@ export function CustomPipeline() {
   const toggleTopping = (id: string) =>
     setConfig((c) => ({
       ...c,
-      toppingIds: c.toppingIds.includes(id)
-        ? c.toppingIds.filter((t) => t !== id)
-        : [...c.toppingIds, id],
+      toppings: c.toppings.some((t) => t.ingredienteId === id)
+        ? c.toppings.filter((t) => t.ingredienteId !== id)
+        : [...c.toppings, { ingredienteId: id }],
+    }));
+
+  // undefined = usar la cantidad del catálogo (sigue escalando con el
+  // diámetro); un número = override manual solo para esta orden.
+  const setToppingCantidad = (id: string, cantidad: number | undefined) =>
+    setConfig((c) => ({
+      ...c,
+      toppings: c.toppings.map((t) =>
+        t.ingredienteId === id ? { ...t, cantidad } : t,
+      ),
     }));
 
   const toggleToppingG = (id: string) =>
     setGCfg((c) => ({
       ...c,
-      toppingIds: c.toppingIds.includes(id)
-        ? c.toppingIds.filter((t) => t !== id)
-        : [...c.toppingIds, id],
+      toppings: c.toppings.some((t) => t.ingredienteId === id)
+        ? c.toppings.filter((t) => t.ingredienteId !== id)
+        : [...c.toppings, { ingredienteId: id }],
+    }));
+
+  const setToppingCantidadG = (id: string, cantidad: number | undefined) =>
+    setGCfg((c) => ({
+      ...c,
+      toppings: c.toppings.map((t) =>
+        t.ingredienteId === id ? { ...t, cantidad } : t,
+      ),
     }));
 
   const toggleOrnamentoPastel = (id: string) =>
@@ -1191,7 +1261,7 @@ export function CustomPipeline() {
                   id={t.ingredienteId}
                   label={t.nombre}
                   image={t.imagenUrl ?? null}
-                  selected={config.toppingIds.includes(t.ingredienteId)}
+                  selected={config.toppings.some((x) => x.ingredienteId === t.ingredienteId)}
                   onClick={() => toggleTopping(t.ingredienteId)}
                 />
               ))}
@@ -1199,6 +1269,21 @@ export function CustomPipeline() {
             {catalogo?.toppings.length && catalogo.toppings.filter((t) => t.nombre.toLowerCase().includes(toppingSearch.toLowerCase())).length === 0 && (
               <p className="text-xs text-[#AA6A42]/60 text-center py-4">Sin resultados para &quot;{toppingSearch}&quot;</p>
             )}
+            {config.toppings.map((sel) => {
+              const t = catalogo?.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+              if (!t || t.cantidad == null) return null;
+              return (
+                <div key={sel.ingredienteId} className="mt-3">
+                  <p className="text-sm font-semibold text-[#3A1F14]">{t.nombre}</p>
+                  <ToppingCantidadInput
+                    cantidadCatalogo={t.cantidad}
+                    unidad={t.unidad}
+                    value={sel.cantidad}
+                    onChange={(v) => setToppingCantidad(sel.ingredienteId, v)}
+                  />
+                </div>
+              );
+            })}
             {(catalogo?.ornamentos?.length ?? 0) > 0 && (
               <div className="mt-12">
                 <SectionTitle>Ornamentos (opcional)</SectionTitle>
@@ -1301,7 +1386,13 @@ export function CustomPipeline() {
         const jarabe = catalogo?.jarabes.find((j) => j.id === config.jarabeId);
         const saborJar = catalogo?.saboresJarabe.find((s) => s.id === config.saborJarabeId);
         const licor = catalogo?.licores.find((l) => l.ingredienteId === config.licorId);
-        const toppingsSel = catalogo?.toppings.filter((t) => config.toppingIds.includes(t.ingredienteId));
+        const toppingsSel = config.toppings
+          .map((sel) => {
+            const t = catalogo?.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+            if (!t) return null;
+            return sel.cantidad != null ? `${t.nombre} (${sel.cantidad}${t.unidad})` : t.nombre;
+          })
+          .filter(Boolean) as string[];
         const ornamentosSel = (config.ornamentos ?? [])
           .map((sel) => {
             const orn = catalogo?.ornamentos?.find((o) => o.id === sel.ornamentoId);
@@ -1316,7 +1407,7 @@ export function CustomPipeline() {
         if (coberturasSel.length) rows.push({ label: "Cobertura", value: coberturasSel.join(" + ") });
         if (rellenosSel.length) rows.push({ label: "Relleno", value: rellenosSel.join(" + ") });
         if (jarabe) rows.push({ label: "Jarabe", value: `${jarabe.nombre}${saborJar ? ` · ${saborJar.nombre}` : ""} — ${config.humedadJarabe === "humedo" ? "Húmedo" : "Semi húmedo"}` });
-        if (toppingsSel?.length) rows.push({ label: "Toppings", value: toppingsSel.map((t) => t.nombre).join(", ") });
+        if (toppingsSel.length) rows.push({ label: "Toppings", value: toppingsSel.join(", ") });
         if (licor) rows.push({ label: "Licor", value: licor.nombre });
         if (ornamentosSel.length) rows.push({ label: "Ornamentos", value: ornamentosSel.join(", ") });
         if (notasPastel) rows.push({ label: "Notas", value: notasPastel });
@@ -1516,13 +1607,28 @@ export function CustomPipeline() {
                 .map((t) => (
                 <OptionCard key={t.ingredienteId} id={t.ingredienteId} label={t.nombre}
                   image={t.imagenUrl ?? null}
-                  selected={gCfg.toppingIds.includes(t.ingredienteId)}
+                  selected={gCfg.toppings.some((x) => x.ingredienteId === t.ingredienteId)}
                   onClick={() => toggleToppingG(t.ingredienteId)} />
               ))}
             </CardGrid>
             {catalogo?.toppings.length && catalogo.toppings.filter((t) => t.nombre.toLowerCase().includes(toppingSearch.toLowerCase())).length === 0 && (
               <p className="text-xs text-[#AA6A42]/60 text-center py-4">Sin resultados para &quot;{toppingSearch}&quot;</p>
             )}
+            {gCfg.toppings.map((sel) => {
+              const t = catalogo?.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+              if (!t || t.cantidad == null) return null;
+              return (
+                <div key={sel.ingredienteId} className="mt-3">
+                  <p className="text-sm font-semibold text-[#3A1F14]">{t.nombre}</p>
+                  <ToppingCantidadInput
+                    cantidadCatalogo={t.cantidad}
+                    unidad={t.unidad}
+                    value={sel.cantidad}
+                    onChange={(v) => setToppingCantidadG(sel.ingredienteId, v)}
+                  />
+                </div>
+              );
+            })}
             {(catalogo?.ornamentos?.length ?? 0) > 0 && (
               <div className="mt-12">
                 <SectionTitle>Ornamentos (opcional)</SectionTitle>
@@ -1585,7 +1691,13 @@ export function CustomPipeline() {
           .filter(Boolean) as string[];
         const jarabe = catalogo?.jarabes.find((j) => j.id === gCfg.jarabeId);
         const saborJar = catalogo?.saboresJarabe.find((s) => s.id === gCfg.saborJarabeId);
-        const toppingsSel = catalogo?.toppings.filter((t) => gCfg.toppingIds.includes(t.ingredienteId));
+        const toppingsSel = gCfg.toppings
+          .map((sel) => {
+            const t = catalogo?.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+            if (!t) return null;
+            return sel.cantidad != null ? `${t.nombre} (${sel.cantidad}${t.unidad})` : t.nombre;
+          })
+          .filter(Boolean) as string[];
         const ornamentosSel = (gCfg.ornamentos ?? [])
           .map((sel) => {
             const orn = catalogo?.ornamentos?.find((o) => o.id === sel.ornamentoId);
@@ -1607,7 +1719,7 @@ export function CustomPipeline() {
         if (liquidosTexto.length) rows.push({ label: "Bases", value: liquidosTexto.join(", ") });
         if (coberturasSel.length) rows.push({ label: "Cobertura", value: coberturasSel.join(" + ") });
         if (jarabe) rows.push({ label: "Jarabe", value: `${jarabe.nombre}${saborJar ? ` · ${saborJar.nombre}` : ""}` });
-        if (toppingsSel?.length) rows.push({ label: "Toppings", value: toppingsSel.map((t) => t.nombre).join(", ") });
+        if (toppingsSel.length) rows.push({ label: "Toppings", value: toppingsSel.join(", ") });
         if (ornamentosSel.length) rows.push({ label: "Ornamentos", value: ornamentosSel.join(", ") });
         if (gCfg.notas) rows.push({ label: "Notas", value: gCfg.notas });
         if (datos.alergias.trim()) rows.push({ label: "Alergias", value: datos.alergias.trim() });

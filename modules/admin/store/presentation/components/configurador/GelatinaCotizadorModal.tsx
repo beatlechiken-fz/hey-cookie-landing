@@ -135,7 +135,7 @@ export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Prop
         // Descarta filas de cobertura/relleno que se agregaron pero se dejaron sin elegir.
         coberturas: config.coberturas.filter((c) => c.coberturaId),
         rellenos: config.rellenos.filter((r) => r.rellenoId),
-        toppingIds: config.toppingIds,
+        toppings: config.toppings,
         jarabeId: config.jarabeId,
         saborJarabeId: config.saborJarabeId,
         licorId: config.licorId,
@@ -324,11 +324,62 @@ export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Prop
 
                     <div className="h-px bg-[#f0e0d0]" />
 
-                    <MultiSelectField label="Toppings" values={config.toppingIds}
+                    <MultiSelectField label="Toppings" values={config.toppings.map((t) => t.ingredienteId)}
                       options={catalogo.toppings.filter((t) => t.cantidad != null)
                         .map((t) => ({ value: t.ingredienteId, label: t.nombre, sublabel: `${t.cantidad}${t.unidad}` }))
                         .sort((a, b) => a.label.localeCompare(b.label, "es", { sensitivity: "base" }))}
-                      onChange={(v) => update("toppingIds", v)} />
+                      onChange={(ids) =>
+                        update(
+                          "toppings",
+                          ids.map((id) => config.toppings.find((t) => t.ingredienteId === id) ?? { ingredienteId: id }),
+                        )
+                      } />
+                    {/* Cantidad ajustable por topping — override manual solo para esta orden */}
+                    {config.toppings.map((sel) => {
+                      const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+                      if (!t || t.cantidad == null) return null;
+                      const overridden = sel.cantidad != null;
+                      return (
+                        <div key={sel.ingredienteId} className="flex items-center gap-2 -mt-1">
+                          <span className="text-[12px] text-[#6B3E26] shrink-0">{t.nombre}:</span>
+                          <input
+                            type="number"
+                            min={0}
+                            step={1}
+                            value={sel.cantidad ?? t.cantidad}
+                            onChange={(e) => {
+                              const n = Number(e.target.value);
+                              update(
+                                "toppings",
+                                config.toppings.map((x) =>
+                                  x.ingredienteId === sel.ingredienteId
+                                    ? { ...x, cantidad: Number.isFinite(n) && n >= 0 ? n : 0 }
+                                    : x,
+                                ),
+                              );
+                            }}
+                            className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-[12px] font-semibold text-center focus:outline-none focus:border-[#c0607a]"
+                          />
+                          <span className="text-[11px] text-[#6B3E26]">{t.unidad}</span>
+                          {overridden && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                update(
+                                  "toppings",
+                                  config.toppings.map((x) =>
+                                    x.ingredienteId === sel.ingredienteId ? { ...x, cantidad: undefined } : x,
+                                  ),
+                                )
+                              }
+                              className="text-[11px] text-[#AA6A42] underline hover:text-[#8A5535] transition cursor-pointer"
+                            >
+                              Restablecer ({t.cantidad}{t.unidad})
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
 
                     <MultiSelectField label="Empaques" values={config.empaqueIds}
                       options={catalogo.empaques.map((e) => ({ value: e.id, label: e.nombre, sublabel: `$${e.precio}` }))}
