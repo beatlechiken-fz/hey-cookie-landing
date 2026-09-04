@@ -12,7 +12,10 @@ import type {
 } from "../../domain/entities/Producto.entity";
 import type { Ingrediente } from "@/modules/admin/raws/domain/entities/Ingrediente.entity";
 import { usePastelConfigCatalogo } from "@/modules/admin/store/presentation/hooks/usePastelConfig";
-import { normalizeOpciones } from "../../domain/entities/PastelPersonalizado.entity";
+import {
+  normalizeOpciones,
+  type ToppingSeleccionado,
+} from "../../domain/entities/PastelPersonalizado.entity";
 import {
   MultiCoberturaField,
   type CoberturaFieldItem,
@@ -111,7 +114,7 @@ export function ProductoEditorModal({
   const [defJarabeId, setDefJarabeId] = useState<string | null>(null);
   const [defSaborJarabeId, setDefSaborJarabeId] = useState<string | null>(null);
   const [defLicorId, setDefLicorId] = useState<string | null>(null);
-  const [defToppingIds, setDefToppingIds] = useState<string[]>([]);
+  const [defToppings, setDefToppings] = useState<ToppingSeleccionado[]>([]);
   const [defEmpaqueIds, setDefEmpaqueIds] = useState<string[]>([]);
 
   // Catálogo para opciones default
@@ -172,7 +175,7 @@ export function ProductoEditorModal({
       setDefJarabeId(od.jarabeId ?? null);
       setDefSaborJarabeId(od.saborJarabeId ?? null);
       setDefLicorId(od.licorId ?? null);
-      setDefToppingIds((od.toppings ?? []).map((t) => t.ingredienteId));
+      setDefToppings(od.toppings ?? []);
       setDefEmpaqueIds(od.empaqueIds ?? []);
     } else {
       setNombre("");
@@ -193,7 +196,7 @@ export function ProductoEditorModal({
       setDefJarabeId(null);
       setDefSaborJarabeId(null);
       setDefLicorId(null);
-      setDefToppingIds([]);
+      setDefToppings([]);
       setDefEmpaqueIds([]);
     }
     setError(null);
@@ -338,7 +341,7 @@ export function ProductoEditorModal({
           jarabeId: defJarabeId,
           saborJarabeId: defSaborJarabeId,
           licorId: defLicorId,
-          toppings: defToppingIds.map((id) => ({ ingredienteId: id })),
+          toppings: defToppings,
           empaqueIds: defEmpaqueIds,
           ornamentos: [],
           humedadJarabe: null,
@@ -1059,8 +1062,17 @@ export function ProductoEditorModal({
 
                         <MultiChips
                           label="Toppings preseleccionados"
-                          selected={defToppingIds}
-                          onChange={setDefToppingIds}
+                          selected={defToppings.map((t) => t.ingredienteId)}
+                          onChange={(ids) =>
+                            setDefToppings(
+                              ids.map(
+                                (id) =>
+                                  defToppings.find((t) => t.ingredienteId === id) ?? {
+                                    ingredienteId: id,
+                                  },
+                              ),
+                            )
+                          }
                           options={catalogo.toppings
                             .filter((t) => t.cantidad != null)
                             .map((t) => ({
@@ -1069,6 +1081,67 @@ export function ProductoEditorModal({
                               sublabel: `${t.cantidad}${t.unidad}`,
                             }))}
                         />
+
+                        {/* Cantidad por default para este producto — se guarda como
+                            el nuevo default del catálogo hasta que se vuelva a cambiar */}
+                        {defToppings.map((sel) => {
+                          const t = catalogo.toppings.find(
+                            (x) => x.ingredienteId === sel.ingredienteId,
+                          );
+                          if (!t || t.cantidad == null) return null;
+                          const overridden = sel.cantidad != null;
+                          return (
+                            <div
+                              key={sel.ingredienteId}
+                              className="flex items-center gap-2 -mt-1"
+                            >
+                              <span className="text-[12px] text-[#6B3E26] shrink-0">
+                                {t.nombre}:
+                              </span>
+                              <input
+                                type="number"
+                                min={0}
+                                step={1}
+                                value={sel.cantidad ?? t.cantidad}
+                                onChange={(e) => {
+                                  const n = Number(e.target.value);
+                                  setDefToppings(
+                                    defToppings.map((x) =>
+                                      x.ingredienteId === sel.ingredienteId
+                                        ? {
+                                            ...x,
+                                            cantidad:
+                                              Number.isFinite(n) && n >= 0 ? n : 0,
+                                          }
+                                        : x,
+                                    ),
+                                  );
+                                }}
+                                className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-[12px] font-semibold text-center focus:outline-none focus:border-[#c0607a]"
+                              />
+                              <span className="text-[11px] text-[#6B3E26]">
+                                {t.unidad}
+                              </span>
+                              {overridden && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setDefToppings(
+                                      defToppings.map((x) =>
+                                        x.ingredienteId === sel.ingredienteId
+                                          ? { ...x, cantidad: undefined }
+                                          : x,
+                                      ),
+                                    )
+                                  }
+                                  className="text-[11px] text-[#AA6A42] underline hover:text-[#8A5535] transition cursor-pointer"
+                                >
+                                  Restablecer ({t.cantidad}{t.unidad})
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
 
                         <MultiChips
                           label="Empaques preseleccionados"
@@ -1082,31 +1155,35 @@ export function ProductoEditorModal({
                         />
 
                         {/* Resumen */}
-                        {(defToppingIds.length > 0 ||
+                        {(defToppings.length > 0 ||
                           defEmpaqueIds.length > 0) && (
                           <div className={sectionCls}>
                             <p className={labelCls}>Resumen de defaults</p>
                             <div className="flex flex-col gap-1 text-[12px]">
-                              {defToppingIds.length > 0 && (
+                              {defToppings.length > 0 && (
                                 <div className="flex gap-2 flex-wrap">
                                   <span className="text-[#6B3E26] shrink-0">
                                     Toppings:
                                   </span>
-                                  {defToppingIds.map((tid) => {
+                                  {defToppings.map((sel) => {
                                     const t = catalogo.toppings.find(
-                                      (x) => x.ingredienteId === tid,
+                                      (x) => x.ingredienteId === sel.ingredienteId,
                                     );
-                                    return t ? (
+                                    if (!t) return null;
+                                    return (
                                       <span
-                                        key={tid}
+                                        key={sel.ingredienteId}
                                         className="flex items-center gap-1 bg-[#f0e0d0] text-[#AA6A42] px-2 py-0.5 rounded-full"
                                       >
                                         {t.nombre}
+                                        {sel.cantidad != null &&
+                                          ` (${sel.cantidad}${t.unidad})`}
                                         <button
                                           onClick={() =>
-                                            setDefToppingIds(
-                                              defToppingIds.filter(
-                                                (x) => x !== tid,
+                                            setDefToppings(
+                                              defToppings.filter(
+                                                (x) =>
+                                                  x.ingredienteId !== sel.ingredienteId,
                                               ),
                                             )
                                           }
@@ -1115,7 +1192,7 @@ export function ProductoEditorModal({
                                           ✕
                                         </button>
                                       </span>
-                                    ) : null;
+                                    );
                                   })}
                                 </div>
                               )}
@@ -1151,7 +1228,7 @@ export function ProductoEditorModal({
 
                         {defCoberturas.length === 0 &&
                           defRellenos.length === 0 &&
-                          defToppingIds.length === 0 &&
+                          defToppings.length === 0 &&
                           defEmpaqueIds.length === 0 && (
                             <p className="text-[12px] text-[#AA6A42] text-center py-2">
                               Sin opciones predeterminadas — el configurador
