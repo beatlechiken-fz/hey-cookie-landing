@@ -123,5 +123,6 @@ export function calcularCostoProducto(
     detalleFactor,
     factorBase,
     producto.manoDeObraMinimo ?? 60,
+    producto.manoDeObraModo ?? "dinamico",
   );
 }

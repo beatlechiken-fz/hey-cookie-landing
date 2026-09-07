@@ -33,6 +33,7 @@ function toEntity(row: any): Producto {
       row.factor_opciones != null ? Number(row.factor_opciones) : null,
     manoDeObraMinimo:
       row.mano_de_obra_minimo != null ? Number(row.mano_de_obra_minimo) : null,
+    manoDeObraModo: row.mano_de_obra_modo === "fijo" ? "fijo" : "dinamico",
     precioEstablecido:
       row.precio_establecido != null ? Number(row.precio_establecido) : null,
     activo: row.activo,
@@ -62,6 +63,8 @@ function toRow(dto: Partial<CreateProductoDTO>) {
     row.factor_opciones = dto.factorOpciones;
   if (dto.manoDeObraMinimo !== undefined)
     row.mano_de_obra_minimo = dto.manoDeObraMinimo;
+  if (dto.manoDeObraModo !== undefined)
+    row.mano_de_obra_modo = dto.manoDeObraModo;
   if (dto.precioEstablecido !== undefined)
     row.precio_establecido = dto.precioEstablecido;
   if (dto.activo !== undefined) row.activo = dto.activo;

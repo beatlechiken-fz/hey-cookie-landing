@@ -94,15 +94,19 @@ export function MultiCoberturaField({
                   </label>
                   <input
                     type="number"
-                    min={0.1}
+                    min={0.001}
                     max={5}
-                    step={0.1}
+                    step={0.001}
                     value={item.factor ?? 1}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const n = Number(e.target.value);
                       updateRow(idx, {
-                        factor: Math.max(0.1, Math.min(5, Number(e.target.value) || 1)),
-                      })
-                    }
+                        factor:
+                          e.target.value === ""
+                            ? 1
+                            : Math.max(0.001, Math.min(5, Number.isFinite(n) ? n : 1)),
+                      });
+                    }}
                     className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3A1F14] text-[12px] font-semibold text-center focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
                   />
                   <span className="text-[11px] text-[#6B3E26]">

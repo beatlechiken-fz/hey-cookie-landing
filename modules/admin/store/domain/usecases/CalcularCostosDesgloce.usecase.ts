@@ -60,6 +60,7 @@ export function calcularCostoDesglose(
   detalleFactor: string,
   factorBase?: number,
   manoDeObraMinimo: number = 60, // default $60 para pasteles estándar
+  manoDeObraModo: "fijo" | "dinamico" = "dinamico",
 ): PastelCostoDesglose {
   const items: CostoLineaItem[] = [];
   const fBase = factorBase !== undefined ? factorBase : factor;
@@ -251,14 +252,17 @@ export function calcularCostoDesglose(
   });
 
   const cargo2Pct = baseEstructura * 0.25;
-  const cargo2Monto = Math.max(manoDeObraMinimo, cargo2Pct);
+  const cargo2Monto =
+    manoDeObraModo === "fijo" ? manoDeObraMinimo : Math.max(manoDeObraMinimo, cargo2Pct);
   cargosAdicionales.push({
     concepto:
-      cargo2Pct > manoDeObraMinimo
-        ? "Mano de obra (25% sobre estructura)"
-        : `Mano de obra (mínimo $${manoDeObraMinimo})`,
+      manoDeObraModo === "fijo"
+        ? `Mano de obra (fija $${manoDeObraMinimo})`
+        : cargo2Pct > manoDeObraMinimo
+          ? "Mano de obra (25% sobre estructura)"
+          : `Mano de obra (mínimo $${manoDeObraMinimo})`,
     base: baseEstructura,
-    porcentaje: cargo2Pct > manoDeObraMinimo ? 25 : 0,
+    porcentaje: manoDeObraModo === "fijo" ? 0 : cargo2Pct > manoDeObraMinimo ? 25 : 0,
     monto: cargo2Monto,
   });
 

@@ -99,6 +99,9 @@ export function ProductoEditorModal({
   const [tamanos, setTamanos] = useState<TamanoRow[]>([]);
   const [factorOpciones, setFactorOpciones] = useState<number | "">("");
   const [manoDeObraMinimo, setManoDeObraMinimo] = useState<number | "">("");
+  const [manoDeObraModo, setManoDeObraModo] = useState<"fijo" | "dinamico">(
+    "dinamico",
+  );
   const [precioEstablecido, setPrecioEstablecido] = useState<number | "">("");
 
   // Ingredientes
@@ -140,6 +143,7 @@ export function ProductoEditorModal({
       setMedidaBaseCm(producto.medidaBaseCm ?? 24);
       setFactorOpciones(producto.factorOpciones ?? "");
       setManoDeObraMinimo(producto.manoDeObraMinimo ?? "");
+      setManoDeObraModo(producto.manoDeObraModo ?? "dinamico");
       setPrecioEstablecido(producto.precioEstablecido ?? "");
       setLineas(
         producto.ingredientesBase.map((ing) => ({
@@ -167,10 +171,18 @@ export function ProductoEditorModal({
       // Opciones default (normaliza formato viejo — singular — a arrays)
       const od = normalizeOpciones(producto.opcionesDefault);
       setDefCoberturas(
-        od.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId })),
+        od.coberturas.map((c) => ({
+          id: c.coberturaId,
+          saborId: c.saborCoberturaId,
+          factor: c.factor,
+        })),
       );
       setDefRellenos(
-        od.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId })),
+        od.rellenos.map((r) => ({
+          id: r.rellenoId,
+          saborId: r.saborRellenoId,
+          factor: r.factor,
+        })),
       );
       setDefJarabeId(od.jarabeId ?? null);
       setDefSaborJarabeId(od.saborJarabeId ?? null);
@@ -189,6 +201,7 @@ export function ProductoEditorModal({
       setTamanos([]);
       setFactorOpciones("");
       setManoDeObraMinimo("");
+      setManoDeObraModo("dinamico");
       setPrecioEstablecido("");
       setLineas([]);
       setDefCoberturas([]);
@@ -334,10 +347,18 @@ export function ProductoEditorModal({
         opcionesDefault: {
           coberturas: defCoberturas
             .filter((c) => c.id)
-            .map((c) => ({ coberturaId: c.id, saborCoberturaId: c.saborId })),
+            .map((c) => ({
+              coberturaId: c.id,
+              saborCoberturaId: c.saborId,
+              factor: c.factor,
+            })),
           rellenos: defRellenos
             .filter((r) => r.id)
-            .map((r) => ({ rellenoId: r.id, saborRellenoId: r.saborId })),
+            .map((r) => ({
+              rellenoId: r.id,
+              saborRellenoId: r.saborId,
+              factor: r.factor,
+            })),
           jarabeId: defJarabeId,
           saborJarabeId: defSaborJarabeId,
           licorId: defLicorId,
@@ -364,6 +385,7 @@ export function ProductoEditorModal({
         factorOpciones: factorOpciones !== "" ? Number(factorOpciones) : null,
         manoDeObraMinimo:
           manoDeObraMinimo !== "" ? Number(manoDeObraMinimo) : null,
+        manoDeObraModo,
         precioEstablecido:
           precioEstablecido !== "" ? Number(precioEstablecido) : null,
         activo: true,
@@ -1290,12 +1312,31 @@ export function ProductoEditorModal({
                     </div>
                     <div className={sectionCls}>
                       <div>
-                        <label className={labelCls}>Mano de obra mínima</label>
+                        <label className={labelCls}>Mano de obra</label>
                         <p className="text-[11px] text-[#6B3E26] mt-1">
-                          Cargo 2 = max(mínimo, 25% base estructural). Vacío =
-                          $60.
+                          {manoDeObraModo === "fijo"
+                            ? "Fija — se cobra siempre este monto para este producto, sin importar la base estructural."
+                            : "Dinámica — Cargo 2 = max(mínimo, 25% base estructural)."}
                         </p>
                       </div>
+
+                      <div className="flex rounded-lg border border-[#e8c4a0] p-0.5 bg-white w-fit">
+                        {(["dinamico", "fijo"] as const).map((modo) => (
+                          <button
+                            key={modo}
+                            type="button"
+                            onClick={() => setManoDeObraModo(modo)}
+                            className={`px-3 py-1 rounded-md text-[12px] font-semibold transition cursor-pointer ${
+                              manoDeObraModo === modo
+                                ? "bg-[#c0607a] text-white"
+                                : "text-[#AA6A42] hover:bg-[#FFF7F0]"
+                            }`}
+                          >
+                            {modo === "dinamico" ? "Dinámico" : "Fijo"}
+                          </button>
+                        ))}
+                      </div>
+
                       <div className="flex items-center gap-2">
                         <span className="text-[#6B3E26] text-sm">$</span>
                         <input

@@ -16,7 +16,7 @@ async function fetchDesserts(): Promise<Producto[]> {
         id, nombre, descripcion, imagen_url, linea, categoria, elaboracion,
         ingredientes_base, opciones_default, medida_base_cm,
         permite_medida_personalizada, tamanos_fijos, factor_opciones,
-        mano_de_obra_minimo, precio_establecido, activo, orden,
+        mano_de_obra_minimo, mano_de_obra_modo, precio_establecido, activo, orden,
         created_at, updated_at
       `)
       .eq("categoria", "dessert")
@@ -40,6 +40,7 @@ async function fetchDesserts(): Promise<Producto[]> {
       tamanosFijos: row.tamanos_fijos ?? [],
       factorOpciones: row.factor_opciones != null ? Number(row.factor_opciones) : null,
       manoDeObraMinimo: row.mano_de_obra_minimo != null ? Number(row.mano_de_obra_minimo) : null,
+      manoDeObraModo: row.mano_de_obra_modo === "fijo" ? "fijo" : "dinamico",
       precioEstablecido: row.precio_establecido != null ? Number(row.precio_establecido) : null,
       activo: row.activo,
       orden: row.orden ?? 0,

@@ -87,12 +87,18 @@ export interface Producto {
   factorOpciones: number | null;
 
   /**
-   * Mínimo de mano de obra en pesos (Cargo 2 = max(manoDeObraMinimo, 25% baseEstructura)).
+   * Mínimo de mano de obra en pesos (Cargo 2 = max(manoDeObraMinimo, 25% baseEstructura)
+   * en modo "dinamico"; valor fijo directo en modo "fijo").
    * NULL = usar el default global de $60 (pasteles estándar).
    * Productos individuales tienen mínimos más bajos:
    *   tarta sablé $45, panna cotta $20, crème brûlée $30, pavlova $5, muffin $10
    */
   manoDeObraMinimo: number | null;
+  /**
+   * "dinamico" (default) = manoDeObraMinimo es un PISO, Cargo 2 = max(piso, 25% base).
+   * "fijo" = manoDeObraMinimo se usa TAL CUAL como Cargo 2, sin importar la base.
+   */
+  manoDeObraModo: "fijo" | "dinamico";
   precioEstablecido: number | null;
 
   activo: boolean;
@@ -116,6 +122,7 @@ export interface CreateProductoDTO {
   tamanosFijos?: TamanoFijo[];
   factorOpciones?: number | null;
   manoDeObraMinimo?: number | null;
+  manoDeObraModo?: "fijo" | "dinamico";
   precioEstablecido?: number | null;
   activo?: boolean;
   orden?: number;
