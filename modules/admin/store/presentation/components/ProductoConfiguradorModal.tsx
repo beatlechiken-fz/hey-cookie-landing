@@ -16,7 +16,10 @@ import { QuantityStepper } from "@/modules/admin/store/presentation/components/c
 import { CostoDesgloseTable } from "./configurador/CostoDesgloceTable";
 import { DiametroPersonasSelector } from "@/modules/admin/store/presentation/components/configurador/DiametroPersonasSelector";
 import { personasDesdeDiametro } from "../../domain/entities/PastelMedida.entity";
-import type { Producto } from "../../domain/entities/Producto.entity";
+import {
+  getPrecioEstablecidoEfectivo,
+  type Producto,
+} from "../../domain/entities/Producto.entity";
 
 interface Props {
   producto: Producto | null;
@@ -68,15 +71,21 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
   // "establecido" = precio_establecido del producto (si existe)
   const [usarPrecioEstablecido, setUsarPrecioEstablecido] = useState(false);
 
+  // Precio establecido efectivo: el de la variante de tamaño elegida si
+  // define uno propio, si no el del producto.
+  const precioEstablecidoEfectivo = producto
+    ? getPrecioEstablecidoEfectivo(producto, tamanoFijoId)
+    : null;
+
   // Cuando cambia el producto, resetear la selección de precio
-  // Si el producto tiene precio_establecido, lo preseleccionamos
-  const tieneEstablecido = Boolean(producto?.precioEstablecido);
+  // Si el producto (o su variante) tiene precio establecido, lo preseleccionamos
+  const tieneEstablecido = precioEstablecidoEfectivo != null;
 
   // Precio que se mostrará y se usará en el carrito
   const precioFinal = (() => {
     if (!desglose) return 0;
     if (tieneEstablecido && usarPrecioEstablecido)
-      return producto!.precioEstablecido!;
+      return precioEstablecidoEfectivo!;
     return desglose.precioSugerido;
   })();
 
@@ -124,7 +133,7 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
         cargosAdicionales: desglose.cargosAdicionales,
         costoProduccionTotal: desglose.costoProduccionTotal,
         precioSugerido: desglose.precioSugerido,
-        precioEstablecido: producto.precioEstablecido ?? null,
+        precioEstablecido: precioEstablecidoEfectivo,
         precioUsado:
           usarPrecioEstablecido && tieneEstablecido
             ? "establecido"
@@ -564,7 +573,7 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
                             <span
                               className={`text-lg font-bold mt-0.5 ${usarPrecioEstablecido ? "text-[#AA6A42]" : "text-[#6B3E26]"}`}
                             >
-                              ${producto.precioEstablecido!.toFixed(2)}
+                              ${precioEstablecidoEfectivo!.toFixed(2)}
                             </span>
                             <span className="text-[10px] text-[#AA6A42] mt-0.5">
                               Definido manualmente

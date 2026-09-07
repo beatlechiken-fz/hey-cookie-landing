@@ -57,6 +57,19 @@ export interface TamanoFijo {
   factorOpciones?: number | null;
   /** Si la variante tiene su propia receta en vez de escalar por factor */
   ingredientesOverride?: IngredienteBaseItem[] | null;
+
+  /** Override de precio establecido para ESTA variante. null/undefined = usa el del producto. */
+  precioEstablecido?: number | null;
+  /** Override de mano de obra para ESTA variante. null/undefined = usa el del producto. */
+  manoDeObraMinimo?: number | null;
+  manoDeObraModo?: "fijo" | "dinamico" | null;
+  /**
+   * Precio de empaque específico para esta variante (empaqueId -> precio en
+   * pesos) — reemplaza el precio del catálogo para ese empaque, sin aplicar
+   * ningún factor de escala. Un empaqueId ausente aquí sigue usando el precio
+   * del catálogo tal cual.
+   */
+  empaquePrecios?: Record<string, number>;
 }
 
 export interface Producto {
@@ -155,4 +168,17 @@ export function toProductoResumen(p: Producto): ProductoResumen {
     medidaBaseCm: p.medidaBaseCm,
     tieneTamanosFijos: p.tamanosFijos.length > 0,
   };
+}
+
+/**
+ * Precio establecido a usar para una configuración de producto — el de la
+ * variante de tamaño elegida si la variante define uno propio, si no el del
+ * producto (o null si ninguno de los dos define precio establecido).
+ */
+export function getPrecioEstablecidoEfectivo(
+  producto: Pick<Producto, "precioEstablecido" | "tamanosFijos">,
+  tamanoFijoId?: string | null,
+): number | null {
+  const tamano = producto.tamanosFijos.find((t) => t.id === tamanoFijoId);
+  return tamano?.precioEstablecido ?? producto.precioEstablecido ?? null;
 }

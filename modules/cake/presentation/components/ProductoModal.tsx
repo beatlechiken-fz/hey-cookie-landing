@@ -8,7 +8,10 @@ import { useCartStore, type CartItem } from "@/modules/admin/store/presentation/
 import { personasDesdeDiametro } from "@/modules/admin/store/domain/entities/PastelMedida.entity";
 import { NINGUNO } from "@/modules/admin/store/presentation/components/configurador/SelectField";
 import { DiametroPersonasSelectorPublic as DiametroPersonasSelector } from "./DiametroPersonasSelectorPublic";
-import type { Producto } from "@/modules/admin/store/domain/entities/Producto.entity";
+import {
+  getPrecioEstablecidoEfectivo,
+  type Producto,
+} from "@/modules/admin/store/domain/entities/Producto.entity";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
 import type { Cupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
 import { calcularDescuentoCupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
@@ -257,7 +260,10 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
   }, [onClose, reset]);
 
   // ── Precio final ────────────────────────────────────────────────────────────
-  const precioBase = desglose?.precioSugerido ?? producto.precioEstablecido ?? 0;
+  const precioBase =
+    desglose?.precioSugerido ??
+    getPrecioEstablecidoEfectivo(producto, tamanoFijoId) ??
+    0;
   const subtotal = precioBase * cantidad;
   const descuento = cuponAplicado ? calcularDescuentoCupon(cuponAplicado.cupon, subtotal) : 0;
   const total = Math.max(0, subtotal - descuento);

@@ -115,14 +115,30 @@ export function calcularCostoProducto(
     }));
   }
 
+  // Overrides de la variante de tamaño (si los define): mano de obra propia,
+  // y precio de empaque específico (reemplaza el del catálogo, sin factor).
+  const manoDeObraMinimo = tamanoFijo?.manoDeObraMinimo ?? producto.manoDeObraMinimo ?? 60;
+  const manoDeObraModo = tamanoFijo?.manoDeObraModo ?? producto.manoDeObraModo ?? "dinamico";
+  const catalogoConEmpaques =
+    tamanoFijo?.empaquePrecios && Object.keys(tamanoFijo.empaquePrecios).length > 0
+      ? {
+          ...catalogo,
+          empaques: catalogo.empaques.map((e) =>
+            tamanoFijo.empaquePrecios![e.id] != null
+              ? { ...e, precio: tamanoFijo.empaquePrecios![e.id] }
+              : e,
+          ),
+        }
+      : catalogo;
+
   return calcularCostoDesglose(
     baseItems,
     config.opciones,
-    catalogo,
+    catalogoConEmpaques,
     factorOpciones,
     detalleFactor,
     factorBase,
-    producto.manoDeObraMinimo ?? 60,
-    producto.manoDeObraModo ?? "dinamico",
+    manoDeObraMinimo,
+    manoDeObraModo,
   );
 }

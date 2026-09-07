@@ -36,6 +36,14 @@ interface TamanoRow {
   nombre: string;
   factorCosto: number;
   factorOpciones: number | "";
+  /** "" = hereda el precio establecido del producto */
+  precioEstablecido: number | "";
+  /** "" = hereda la mano de obra del producto */
+  manoDeObraMinimo: number | "";
+  /** "" = hereda el modo de mano de obra del producto */
+  manoDeObraModo: "" | "fijo" | "dinamico";
+  /** empaqueId -> precio específico para esta variante */
+  empaquePrecios: Record<string, number>;
 }
 
 interface Props {
@@ -162,6 +170,10 @@ export function ProductoEditorModal({
             nombre: t.nombre,
             factorCosto: t.factorCosto,
             factorOpciones: t.factorOpciones ?? "",
+            precioEstablecido: t.precioEstablecido ?? "",
+            manoDeObraMinimo: t.manoDeObraMinimo ?? "",
+            manoDeObraModo: t.manoDeObraModo ?? "",
+            empaquePrecios: t.empaquePrecios ?? {},
           })),
         );
       } else {
@@ -277,12 +289,35 @@ export function ProductoEditorModal({
   const addTamano = () =>
     setTamanos((p) => [
       ...p,
-      { id: uid(), nombre: "", factorCosto: 1, factorOpciones: "" },
+      {
+        id: uid(),
+        nombre: "",
+        factorCosto: 1,
+        factorOpciones: "",
+        precioEstablecido: "",
+        manoDeObraMinimo: "",
+        manoDeObraModo: "",
+        empaquePrecios: {},
+      },
     ]);
   const removeTamano = (id: string) =>
     setTamanos((p) => p.filter((t) => t.id !== id));
   const updateTamano = (id: string, field: keyof TamanoRow, val: any) =>
     setTamanos((p) => p.map((t) => (t.id === id ? { ...t, [field]: val } : t)));
+  const updateTamanoEmpaquePrecio = (
+    tamanoId: string,
+    empaqueId: string,
+    precio: number | null,
+  ) =>
+    setTamanos((p) =>
+      p.map((t) => {
+        if (t.id !== tamanoId) return t;
+        const next = { ...t.empaquePrecios };
+        if (precio == null) delete next[empaqueId];
+        else next[empaqueId] = precio;
+        return { ...t, empaquePrecios: next };
+      }),
+    );
 
   // ── Topping toggle helper ─────────────────────────────────────────────────
   const toggleTopping = (
@@ -379,6 +414,12 @@ export function ProductoEditorModal({
                     factorCosto: Number(t.factorCosto) || 1,
                     factorOpciones:
                       t.factorOpciones !== "" ? Number(t.factorOpciones) : null,
+                    precioEstablecido:
+                      t.precioEstablecido !== "" ? Number(t.precioEstablecido) : null,
+                    manoDeObraMinimo:
+                      t.manoDeObraMinimo !== "" ? Number(t.manoDeObraMinimo) : null,
+                    manoDeObraModo: t.manoDeObraModo || null,
+                    empaquePrecios: t.empaquePrecios,
                   }) as TamanoFijo,
               )
             : [],
@@ -1176,6 +1217,68 @@ export function ProductoEditorModal({
                           }))}
                         />
 
+                        {tipoTamano === "fijos" &&
+                          tamanos.length > 0 &&
+                          defEmpaqueIds.length > 0 && (
+                            <div className="flex flex-col gap-2">
+                              <label className={labelCls}>
+                                Precio de empaque por variante
+                              </label>
+                              <p className="text-[11px] text-[#6B3E26] -mt-1">
+                                Para cada variante, precio real de este
+                                empaque en esa presentación — reemplaza el
+                                precio del catálogo, sin escalar por factor.
+                                Vacío = usa el precio del catálogo tal cual.
+                              </p>
+                              {tamanos.map((t) => (
+                                <div
+                                  key={t.id}
+                                  className="flex flex-col gap-1.5 p-3 rounded-xl bg-white border border-[#e8c4a0]"
+                                >
+                                  <span className="text-[12px] font-semibold text-[#3A1F14]">
+                                    {t.nombre || "(variante sin nombre)"}
+                                  </span>
+                                  {defEmpaqueIds.map((eid) => {
+                                    const emp = catalogo.empaques.find(
+                                      (x) => x.id === eid,
+                                    );
+                                    if (!emp) return null;
+                                    return (
+                                      <div
+                                        key={eid}
+                                        className="flex items-center gap-2"
+                                      >
+                                        <span className="text-[12px] text-[#6B3E26] flex-1">
+                                          {emp.nombre}
+                                        </span>
+                                        <span className="text-[#6B3E26] text-sm">
+                                          $
+                                        </span>
+                                        <input
+                                          type="number"
+                                          min="0"
+                                          step="0.01"
+                                          value={t.empaquePrecios[eid] ?? ""}
+                                          onChange={(e) =>
+                                            updateTamanoEmpaquePrecio(
+                                              t.id,
+                                              eid,
+                                              e.target.value === ""
+                                                ? null
+                                                : Number(e.target.value),
+                                            )
+                                          }
+                                          placeholder={`${emp.precio}`}
+                                          className={inputCls + " max-w-[100px]"}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
                         {/* Resumen */}
                         {(defToppings.length > 0 ||
                           defEmpaqueIds.length > 0) && (
@@ -1369,6 +1472,114 @@ export function ProductoEditorModal({
                         ))}
                       </div>
                     </div>
+
+                    {tipoTamano === "fijos" && tamanos.length > 0 && (
+                      <div className={sectionCls}>
+                        <div>
+                          <label className={labelCls}>
+                            Precio y mano de obra por variante
+                          </label>
+                          <p className="text-[11px] text-[#6B3E26] mt-1">
+                            Override por variante de tamaño — vacío = usa el
+                            precio establecido / mano de obra del producto
+                            (arriba).
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {tamanos.map((t) => (
+                            <div
+                              key={t.id}
+                              className="flex flex-col gap-2 p-3 rounded-xl bg-white border border-[#e8c4a0]"
+                            >
+                              <span className="text-[12px] font-semibold text-[#3A1F14]">
+                                {t.nombre || "(variante sin nombre)"}
+                              </span>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
+                                    Precio establecido
+                                  </span>
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[#6B3E26] text-sm">
+                                      $
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      step="0.01"
+                                      value={t.precioEstablecido}
+                                      onChange={(e) =>
+                                        updateTamano(
+                                          t.id,
+                                          "precioEstablecido",
+                                          e.target.value === ""
+                                            ? ""
+                                            : Number(e.target.value),
+                                        )
+                                      }
+                                      placeholder={
+                                        precioEstablecido !== ""
+                                          ? `Hereda: ${precioEstablecido}`
+                                          : "Ninguno"
+                                      }
+                                      className={inputCls}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
+                                    Mano de obra
+                                  </span>
+                                  <div className="flex items-center gap-1">
+                                    <select
+                                      value={t.manoDeObraModo}
+                                      onChange={(e) =>
+                                        updateTamano(
+                                          t.id,
+                                          "manoDeObraModo",
+                                          e.target.value,
+                                        )
+                                      }
+                                      className={inputCls + " max-w-[110px]"}
+                                    >
+                                      <option value="">
+                                        Hereda ({manoDeObraModo === "fijo" ? "Fijo" : "Dinámico"})
+                                      </option>
+                                      <option value="dinamico">Dinámico</option>
+                                      <option value="fijo">Fijo</option>
+                                    </select>
+                                    <span className="text-[#6B3E26] text-sm">
+                                      $
+                                    </span>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      step="1"
+                                      value={t.manoDeObraMinimo}
+                                      onChange={(e) =>
+                                        updateTamano(
+                                          t.id,
+                                          "manoDeObraMinimo",
+                                          e.target.value === ""
+                                            ? ""
+                                            : Number(e.target.value),
+                                        )
+                                      }
+                                      placeholder={
+                                        manoDeObraMinimo !== ""
+                                          ? `${manoDeObraMinimo}`
+                                          : "60"
+                                      }
+                                      className={inputCls}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <div className={sectionCls}>
                       <div>
