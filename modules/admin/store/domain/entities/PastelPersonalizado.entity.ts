@@ -148,11 +148,12 @@ export interface OrnamentoSeleccionado {
 }
 
 /**
- * Un topping seleccionado — `cantidad` es un override MANUAL de gramaje solo
- * para esta orden (ej. catálogo trae 200gr, aquí se pone 50gr). `undefined`/
- * `null` = usar la cantidad del catálogo (que sí escala con el diámetro del
- * pastel); un override explícito es un valor final absoluto para esa orden,
- * ya NO escala con el diámetro — ver CalcularCostosDesgloce.usecase.ts.
+ * Un topping seleccionado — `cantidad` es un override MANUAL de gramaje (ej.
+ * catálogo trae 200gr, aquí se pone 50gr) para esta orden, o el default del
+ * producto si se guardó desde el editor de catálogo. `undefined`/`null` =
+ * usar la cantidad del catálogo. En ambos casos esa cantidad (la del
+ * catálogo o la ajustada) sigue escalando con el diámetro/factor del tamaño
+ * igual que el resto de las opciones — ver CalcularCostosDesgloce.usecase.ts.
  */
 export interface ToppingSeleccionado {
   ingredienteId: string;

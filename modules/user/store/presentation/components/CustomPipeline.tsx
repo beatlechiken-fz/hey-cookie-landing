@@ -121,9 +121,9 @@ function calcPrecioGelatina(
   const costoToppings = (gCfg.toppings ?? []).reduce((sum, sel) => {
     const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
     if (!t || t.costoUnidadMinima == null) return sum;
-    if (sel.cantidad != null) return sum + sel.cantidad * t.costoUnidadMinima;
-    if (t.cantidad == null) return sum;
-    return sum + t.cantidad * t.costoUnidadMinima * factor;
+    const cantidadBase = sel.cantidad ?? t.cantidad;
+    if (cantidadBase == null) return sum;
+    return sum + cantidadBase * t.costoUnidadMinima * factor;
   }, 0);
 
   const costoOrnamentos = (gCfg.ornamentos ?? []).reduce((sum, sel) => {

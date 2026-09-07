@@ -235,9 +235,9 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
           });
       }
 
-      // ── Toppings (escalan igual que ingredientes base, salvo que la orden
-      //    traiga un override manual de cantidad — ahí es valor final × qty,
-      //    igual que Ornamentos) ───────────────────────────────────────────
+      // ── Toppings (escalan igual que ingredientes base — la cantidad base es
+      //    la del catálogo, o la ajustada manualmente si la trae la orden,
+      //    pero en ambos casos escala por `scale` igual que siempre) ───────
       const toppingSels: { ingredienteId: string; cantidad?: number | null }[] =
         opciones.toppings ?? [];
       const toppingIns: IngredienteComanda[] = toppingSels
@@ -247,12 +247,11 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
             (t: any) => t.ingrediente_id === sel.ingredienteId,
           );
           if (!tc) return [];
-          const cantidad =
-            sel.cantidad != null ? sel.cantidad * qty : Number(tc.cantidad) * scale;
+          const cantidadBase = sel.cantidad ?? Number(tc.cantidad);
           return [
             {
               nombre: tc.ingrediente?.nombre ?? sel.ingredienteId,
-              cantidad: r2(cantidad),
+              cantidad: r2(cantidadBase * scale),
               unidad: tc.unidad ?? tc.ingrediente?.unidad_base ?? "gr",
             },
           ];

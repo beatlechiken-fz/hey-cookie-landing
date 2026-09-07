@@ -183,27 +183,22 @@ export function calcularCostoDesglose(
   if (saborJar && saborJar.precio != null)
     baseJarabe += addFijo(`Sabor jarabe: ${saborJar.nombre}`, saborJar.precio);
 
-  // Toppings (múltiples). Por default escalan con el diámetro igual que
-  // siempre (cantidad del catálogo × factor de volumen). Si esta orden trae
-  // un override manual de gramaje (sel.cantidad), ese valor es la cantidad
-  // FINAL para esta orden — ya no se vuelve a escalar por diámetro.
+  // Toppings (múltiples). La cantidad base es la del catálogo, o la ajustada
+  // manualmente si esta orden/producto trae un override (sel.cantidad) — en
+  // ambos casos esa cantidad sigue escalando con el diámetro/factor del
+  // tamaño igual que el resto de las opciones.
   for (const sel of opciones.toppings ?? []) {
     if (sel.ingredienteId === NINGUNO) continue;
     const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
     if (!t || t.costoUnidadMinima == null) continue;
-    if (sel.cantidad != null) {
-      addFijo(
-        `Topping: ${t.nombre} (${sel.cantidad}${t.unidad}, ajustado)`,
-        sel.cantidad * t.costoUnidadMinima,
-      );
-    } else if (t.cantidad != null) {
-      const costoBase = t.cantidad * t.costoUnidadMinima;
-      addEscalado(
-        `Topping: ${t.nombre}`,
-        costoBase,
-        `${t.cantidad}${t.unidad} a base · ${detalleFactor}`,
-      );
-    }
+    const cantidadBase = sel.cantidad ?? t.cantidad;
+    if (cantidadBase == null) continue;
+    const costoBase = cantidadBase * t.costoUnidadMinima;
+    addEscalado(
+      `Topping: ${t.nombre}${sel.cantidad != null ? " (ajustado)" : ""}`,
+      costoBase,
+      `${cantidadBase}${t.unidad} a base · ${detalleFactor}`,
+    );
   }
 
   // Licor (escalado)

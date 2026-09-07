@@ -46,9 +46,9 @@ export function calcularCostoGelatina(
     .reduce((sum, sel) => {
       const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
       if (!t || t.costoUnidadMinima == null) return sum;
-      if (sel.cantidad != null) return sum + sel.cantidad * t.costoUnidadMinima;
-      if (t.cantidad == null) return sum;
-      return sum + t.cantidad * t.costoUnidadMinima * factorOpciones;
+      const cantidadBase = sel.cantidad ?? t.cantidad;
+      if (cantidadBase == null) return sum;
+      return sum + cantidadBase * t.costoUnidadMinima * factorOpciones;
     }, 0);
 
   const lic = catalogo.licores.find((l) => l.ingredienteId === config.licorId);
