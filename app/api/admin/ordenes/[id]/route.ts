@@ -8,7 +8,13 @@ import { OrdenRepositoryImpl } from "@/modules/admin/store/data/repositories/Ord
 import {
   GetOrdenByIdUseCase,
   UpdateOrdenStatusUseCase,
+  resolveItemsInventario,
 } from "@/modules/admin/store/domain/usecases/Orden.usecase";
+import { InventarioRepositoryImpl } from "@/modules/admin/store/data/repositories/Inventario.repository.impl";
+import {
+  DescontarInventarioOrdenUseCase,
+  RestaurarInventarioOrdenUseCase,
+} from "@/modules/admin/store/domain/usecases/Inventario.usecase";
 import { FinanzasDatasource } from "@/modules/admin/store/data/datasources/Finanzas.datasource";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
 import type { Orden } from "@/modules/admin/store/domain/entities/Orden.entity";
@@ -46,8 +52,34 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       const ord = await new UpdateOrdenStatusUseCase(repo).execute(
         id,
         body.status,
+        body.descontarInventario,
       );
       updated = ord;
+
+      // ── Descontar inventario al pasar a en_proceso (si el toggle viene activo) ─
+      if (
+        ord.status === "en_proceso" &&
+        ord.descontarInventario &&
+        !ord.inventarioDescontado
+      ) {
+        const itemsInv = resolveItemsInventario(ord);
+        if (itemsInv.length > 0) {
+          await new DescontarInventarioOrdenUseCase(
+            new InventarioRepositoryImpl(),
+          ).execute(ord.id, itemsInv);
+          await repo.setInventarioDescontado(ord.id, true);
+          updated = { ...ord, inventarioDescontado: true };
+        }
+      }
+
+      // ── Restaurar inventario si se cancela una orden que ya había descontado ──
+      if (ord.status === "cancelado" && ord.inventarioDescontado) {
+        await new RestaurarInventarioOrdenUseCase(
+          new InventarioRepositoryImpl(),
+        ).execute(ord.id);
+        await repo.setInventarioDescontado(ord.id, false);
+        updated = { ...ord, inventarioDescontado: false };
+      }
 
       // ── Auto-crear registro financiero al marcar como pagado ──────────────
       if (body.status === "pagado") {

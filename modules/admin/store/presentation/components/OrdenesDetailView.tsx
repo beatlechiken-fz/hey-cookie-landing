@@ -43,11 +43,11 @@ export function OrdenDetailView({ ordenId }: Props) {
   }, [load]);
 
   const handleUpdateStatus = useCallback(
-    async (id: string, status: OrdenStatus) => {
+    async (id: string, status: OrdenStatus, descontarInventario?: boolean) => {
       const res = await fetch(`/api/admin/ordenes/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, descontarInventario }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: res.statusText }));

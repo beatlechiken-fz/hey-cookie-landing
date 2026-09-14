@@ -4,10 +4,12 @@ import type { OrdenRepository } from "../repositories/Orden.repository";
 import {
   ORDEN_STATUS_EDITABLES,
   type CreateOrdenDTO,
+  type Orden,
   type OrdenStatus,
   type UpdateOrdenItemDTO,
 } from "../entities/Orden.entity";
 import type { OrdenFilters } from "../../data/datasources/Orden.datasource";
+import type { OrdenItemInventario } from "../repositories/Inventario.repository";
 
 function assertEditable(status: OrdenStatus) {
   if (!ORDEN_STATUS_EDITABLES.includes(status)) {
@@ -15,6 +17,25 @@ function assertEditable(status: OrdenStatus) {
       "Esta orden ya no se puede editar — solo se permite mientras está en cotización o en proceso.",
     );
   }
+}
+
+/**
+ * Resuelve qué partidas de una orden son productos de catálogo con
+ * inventario propio (traen `productoId` en su `configuracion`) — los
+ * pasteles/gelatinas personalizados se hacen sobre pedido y no descuentan.
+ */
+export function resolveItemsInventario(orden: Orden): OrdenItemInventario[] {
+  const items: OrdenItemInventario[] = [];
+  for (const item of orden.items) {
+    const productoId = (item.configuracion as Record<string, any>)?.productoId;
+    if (!productoId) continue;
+    items.push({
+      productoId,
+      productoNombre: item.nombre,
+      cantidad: item.cantidad,
+    });
+  }
+  return items;
 }
 
 export class GetOrdenesUseCase {
@@ -44,10 +65,10 @@ export class CreateOrdenUseCase {
 
 export class UpdateOrdenStatusUseCase {
   constructor(private repo: OrdenRepository) {}
-  async execute(id: string, status: OrdenStatus) {
+  async execute(id: string, status: OrdenStatus, descontarInventario?: boolean) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new Error(`Orden ${id} no encontrada`);
-    return this.repo.updateStatus(id, status);
+    return this.repo.updateStatus(id, status, descontarInventario);
   }
 }
 

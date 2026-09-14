@@ -53,6 +53,10 @@ export interface Orden {
   direccionEntrega: string | null;
   items: OrdenItem[];
   cupones: OrdenCuponAplicado[];
+  /** Intención: si al pasar a "en_proceso" debe restar del inventario los productos con stock. */
+  descontarInventario: boolean;
+  /** Hecho: true una vez que ya se descontó el inventario para esta orden (evita descontar dos veces). */
+  inventarioDescontado: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -65,6 +69,8 @@ export interface CreateOrdenDTO {
   notas?: string | null;
   fechaEntrega?: string | null;
   direccionEntrega?: string | null;
+  /** Solo aplica si status = "en_proceso" — en cotización nunca se descuenta. */
+  descontarInventario?: boolean;
 }
 
 export interface UpdateOrdenStatusDTO {

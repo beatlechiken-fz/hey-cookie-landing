@@ -40,8 +40,8 @@ export function ClienteDetailView({ clienteId }: Props) {
   );
 
   const handleUpdateStatus = useCallback(
-    async (id: string, status: OrdenStatus) => {
-      await updateStatus(id, status);
+    async (id: string, status: OrdenStatus, descontarInventario?: boolean) => {
+      await updateStatus(id, status, descontarInventario);
       reload();
     },
     [updateStatus, reload],

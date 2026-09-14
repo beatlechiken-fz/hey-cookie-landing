@@ -11,6 +11,25 @@ export interface DashboardKPI {
   totalClientes: number;
   totalProductos: number;
   ordenesActivas: number;
+  ticketPromedio: number;
+}
+
+export interface InventarioResumen {
+  totalSkus: number;
+  skusBajoStock: number;
+  itemsBajoStock: { productoId: string; nombre: string; stock: number }[];
+}
+
+export interface IngresosVsGastos {
+  ingresos: number;
+  gastos: number;
+  margenPct: number | null;
+}
+
+export interface TopProducto {
+  productoNombre: string;
+  cantidad: number;
+  ingreso: number;
 }
 
 export interface OrdenResumenItem {
@@ -35,6 +54,9 @@ export interface DashboardData {
     utilidad: number;
     comision: number;
   };
+  inventario: InventarioResumen;
+  ingresosVsGastos: IngresosVsGastos;
+  topProductos: TopProducto[];
 }
 
 export async function GET() {
@@ -67,6 +89,8 @@ export async function GET() {
       { count: totalClientes },
       { count: totalProductos },
       { data: regChart },
+      { data: produccionesRows },
+      { data: ordenesMes },
     ] = await Promise.all([
       db.from("finanzas_registros")
         .select("total_venta, utilidad, insumos, mano_de_obra, servicios, comision")
@@ -93,6 +117,14 @@ export async function GET() {
         .gte("fecha_venta", hace30)
         .lte("fecha_venta", hoy)
         .order("fecha_venta", { ascending: true }),
+      // Inventario: solo productos que alguna vez registraron producción.
+      db.from("producciones").select("producto_id"),
+      // Órdenes del mes (no canceladas) para costo de producción y top productos.
+      db.from("ordenes")
+        .select("id, status")
+        .gte("created_at", iniMes)
+        .lte("created_at", `${hoy}T23:59:59`)
+        .neq("status", "cancelado"),
     ]);
 
     // ── KPIs ────────────────────────────────────────────────────────
@@ -160,6 +192,68 @@ export async function GET() {
       { insumos: 0, manoDeObra: 0, servicios: 0, utilidad: 0, comision: 0 },
     );
 
+    // ── Inventario: solo SKUs que alguna vez se produjeron ────────────
+    const productoIdsConProduccion = Array.from(
+      new Set((produccionesRows ?? []).map((r: any) => r.producto_id)),
+    );
+    let inventario: InventarioResumen = { totalSkus: 0, skusBajoStock: 0, itemsBajoStock: [] };
+    if (productoIdsConProduccion.length > 0) {
+      const { data: prods } = await db
+        .from("productos")
+        .select("id, nombre, stock_actual")
+        .in("id", productoIdsConProduccion);
+      const STOCK_BAJO = 5;
+      const items = (prods ?? []).map((p: any) => ({
+        productoId: p.id,
+        nombre: p.nombre,
+        stock: Number(p.stock_actual ?? 0),
+      }));
+      inventario = {
+        totalSkus: items.length,
+        skusBajoStock: items.filter((i) => i.stock <= STOCK_BAJO).length,
+        itemsBajoStock: items
+          .filter((i) => i.stock <= STOCK_BAJO)
+          .sort((a, b) => a.stock - b.stock)
+          .slice(0, 6),
+      };
+    }
+
+    // ── Costo de producción del mes + top productos (de orden_items) ──
+    const ordenIdsMes = (ordenesMes ?? []).map((o: any) => o.id);
+    let costoProduccionMes = 0;
+    const topMap = new Map<string, TopProducto>();
+    if (ordenIdsMes.length > 0) {
+      const { data: itemsMes } = await db
+        .from("orden_items")
+        .select("nombre, cantidad, costo_unitario, precio_unitario")
+        .in("orden_id", ordenIdsMes);
+      for (const it of itemsMes ?? []) {
+        const cant = Number(it.cantidad);
+        costoProduccionMes += Number(it.costo_unitario) * cant;
+        const ingreso = Number(it.precio_unitario) * cant;
+        const existing = topMap.get(it.nombre);
+        if (existing) {
+          existing.cantidad += cant;
+          existing.ingreso += ingreso;
+        } else {
+          topMap.set(it.nombre, { productoNombre: it.nombre, cantidad: cant, ingreso });
+        }
+      }
+    }
+    const topProductos = Array.from(topMap.values())
+      .sort((a, b) => b.ingreso - a.ingreso)
+      .slice(0, 5);
+
+    const gastosMes = comprasMesTot + costoProduccionMes;
+    const ingresosVsGastos: IngresosVsGastos = {
+      ingresos: ventasMes,
+      gastos: gastosMes,
+      margenPct: ventasMes > 0 ? ((ventasMes - gastosMes) / ventasMes) * 100 : null,
+    };
+
+    const totalOrdenesMes = (regMes ?? []).length;
+    const ticketPromedio = totalOrdenesMes > 0 ? ventasMes / totalOrdenesMes : 0;
+
     const data: DashboardData = {
       kpi: {
         ventasMes, ventasMesAnterior,
@@ -168,11 +262,15 @@ export async function GET() {
         totalClientes: totalClientes ?? 0,
         totalProductos: totalProductos ?? 0,
         ordenesActivas,
+        ticketPromedio,
       },
       ordenesPorEstado,
       ordenesRecientes,
       ventasPorDia,
       desgloseFinanciero,
+      inventario,
+      ingresosVsGastos,
+      topProductos,
     };
 
     return NextResponse.json(data);

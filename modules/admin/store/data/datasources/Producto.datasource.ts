@@ -38,6 +38,7 @@ function toEntity(row: any): Producto {
       row.precio_establecido != null ? Number(row.precio_establecido) : null,
     activo: row.activo,
     orden: row.orden ?? 0,
+    stockActual: row.stock_actual != null ? Number(row.stock_actual) : 0,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

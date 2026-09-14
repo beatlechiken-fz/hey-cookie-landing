@@ -117,6 +117,9 @@ export interface Producto {
   activo: boolean;
   orden: number;
 
+  /** Existencias actuales en inventario — solo relevante para productos que se producen por lote (galletas, etc.). */
+  stockActual: number;
+
   createdAt: string;
   updatedAt: string;
 }

@@ -30,7 +30,11 @@ import type { Producto } from "@/modules/admin/store/domain/entities/Producto.en
 
 interface Props {
   orden: Orden;
-  onUpdateStatus: (id: string, status: OrdenStatus) => Promise<void>;
+  onUpdateStatus: (
+    id: string,
+    status: OrdenStatus,
+    descontarInventario?: boolean,
+  ) => Promise<void>;
   /** Refresca la orden desde el padre — se llama tras editar/quitar una partida. */
   onRefresh: () => void;
 }
@@ -85,6 +89,12 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
     orden.fechaEntrega?.slice(0, 10) ?? "",
   );
   const [savingFecha, setSavingFecha] = useState(false);
+
+  // ── Descontar inventario al pasar a "en_proceso" ──────────────────────────
+  const tieneProductosInventariables = orden.items.some(
+    (i) => (i.configuracion as Record<string, any> | null)?.productoId,
+  );
+  const [descontarInv, setDescontarInv] = useState(true);
 
   // ── Editar / quitar partidas de la orden ──────────────────────────────────
   const puedeEditarItems = ORDEN_STATUS_EDITABLES.includes(orden.status);
@@ -231,7 +241,11 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
     setUpdating(true);
     setError(null);
     try {
-      await onUpdateStatus(orden.id, nextStatus);
+      await onUpdateStatus(
+        orden.id,
+        nextStatus,
+        nextStatus === "en_proceso" ? descontarInv : undefined,
+      );
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -544,6 +558,15 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
                 </div>
               </div>
 
+              {orden.inventarioDescontado && (
+                <p className="flex items-center gap-1.5 text-[11px] text-[#6B3E26]/70">
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4M4 6v12a2 2 0 0 0 2 2h14v-4M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
+                  </svg>
+                  Esta orden ya descontó inventario — se restaura solo si se cancela.
+                </p>
+              )}
+
               {/* Pagos parciales */}
               <OrdenPagosSection
                 ordenId={orden.id}
@@ -556,6 +579,27 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
                   {error}
                 </p>
               )}
+
+              {/* Toggle de inventario — solo antes de pasar a "en_proceso" */}
+              {orden.status === "cotizacion" &&
+                nextStatus === "en_proceso" &&
+                tieneProductosInventariables && (
+                  <label className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={descontarInv}
+                      onChange={(e) => setDescontarInv(e.target.checked)}
+                      className="w-4 h-4 accent-[#c0607a] cursor-pointer"
+                    />
+                    <span className="text-[12px] text-[#6B3E26]">
+                      <span className="font-semibold text-[#3A1F14]">
+                        Descontar de inventario
+                      </span>{" "}
+                      al generar la orden — resta del stock los productos de
+                      catálogo que trae esta cotización.
+                    </span>
+                  </label>
+                )}
 
               {/* Acciones de pipeline */}
               {orden.status !== "entregado" && orden.status !== "cancelado" && (

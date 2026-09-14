@@ -83,13 +83,14 @@ export function useUpdateOrdenStatus() {
   const updateStatus = async (
     id: string,
     status: import("../../domain/entities/Orden.entity").OrdenStatus,
+    descontarInventario?: boolean,
   ): Promise<Orden> => {
     setUpdating(true);
     setError(null);
     try {
       return await apiFetch<Orden>(`/api/admin/ordenes/${id}`, {
         method: "PATCH",
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, descontarInventario }),
       });
     } catch (e: any) {
       setError(e.message);

@@ -185,7 +185,16 @@ export function AdminDashboard() {
     );
   }
 
-  const { kpi, ordenesPorEstado, ordenesRecientes, ventasPorDia, desgloseFinanciero } = data;
+  const {
+    kpi,
+    ordenesPorEstado,
+    ordenesRecientes,
+    ventasPorDia,
+    desgloseFinanciero,
+    inventario,
+    ingresosVsGastos,
+    topProductos,
+  } = data;
 
   const deltaVentas = calcDelta(kpi.ventasMes, kpi.ventasMesAnterior);
   const deltaUtilidad = calcDelta(kpi.utilidadMes, kpi.utilidadMesAnterior);
@@ -406,6 +415,146 @@ export function AdminDashboard() {
           </div>
         </div>
 
+        {/* ── Ingresos vs Gastos + Top productos + Inventario ── */}
+        <div className="grid lg:grid-cols-3 gap-4 mb-4">
+          {/* Ingresos vs Gastos */}
+          <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-[#3A1F14]">Ingresos vs gastos</h2>
+              <a
+                href={goto("/admin/dashboard/store/finanzas")}
+                className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
+              >
+                Gastos →
+              </a>
+            </div>
+            <div className="flex flex-col gap-3">
+              {[
+                { label: "Ingresos", value: ingresosVsGastos.ingresos, color: "#DA6C94" },
+                { label: "Gastos", value: ingresosVsGastos.gastos, color: "#ef4444" },
+              ].map((r) => {
+                const max = Math.max(
+                  ingresosVsGastos.ingresos,
+                  ingresosVsGastos.gastos,
+                  1,
+                );
+                const pct = (r.value / max) * 100;
+                return (
+                  <div key={r.label}>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-[#6B3E26]/70">{r.label}</span>
+                      <span className="font-semibold text-[#3A1F14]">
+                        {fmtMXN(r.value)}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-[#f5e8db] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full"
+                        style={{ width: `${pct}%`, background: r.color }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="pt-2 mt-1 border-t border-[#f5e8db] flex items-center justify-between text-xs">
+                <span className="text-[#6B3E26]/50 font-medium">Margen</span>
+                <span
+                  className={`font-bold ${
+                    (ingresosVsGastos.margenPct ?? 0) >= 0
+                      ? "text-emerald-600"
+                      : "text-red-500"
+                  }`}
+                >
+                  {ingresosVsGastos.margenPct != null
+                    ? `${ingresosVsGastos.margenPct.toFixed(0)}%`
+                    : "—"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Top productos del mes */}
+          <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+            <h2 className="text-sm font-bold text-[#3A1F14] mb-4">
+              Top productos del mes
+            </h2>
+            {topProductos.length === 0 ? (
+              <div className="flex items-center justify-center h-32 text-[#AA6A42]/40 text-sm">
+                Sin ventas este mes
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2.5">
+                {topProductos.map((p, i) => (
+                  <div key={p.productoNombre} className="flex items-center gap-2.5 text-xs">
+                    <span className="w-5 h-5 rounded-full bg-[#FFF7F0] text-[#AA6A42] font-bold flex items-center justify-center shrink-0 text-[10px]">
+                      {i + 1}
+                    </span>
+                    <span className="flex-1 text-[#3A1F14] truncate">
+                      {p.productoNombre}
+                    </span>
+                    <span className="text-[#6B3E26]/50 shrink-0">×{p.cantidad}</span>
+                    <span className="font-semibold text-[#3A1F14] shrink-0 tabular-nums">
+                      {fmtMXN(p.ingreso)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Inventario */}
+          <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-[#3A1F14]">Inventario</h2>
+              <a
+                href={goto("/admin/dashboard/store/produccion")}
+                className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
+              >
+                Producción →
+              </a>
+            </div>
+            {inventario.totalSkus === 0 ? (
+              <div className="flex items-center justify-center h-32 text-[#AA6A42]/40 text-sm text-center px-4">
+                Sin productos con producción registrada
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-4 mb-3 text-xs">
+                  <span className="text-[#6B3E26]/60">
+                    <span className="font-bold text-[#3A1F14]">{inventario.totalSkus}</span> SKUs
+                  </span>
+                  <span className={inventario.skusBajoStock > 0 ? "text-amber-600" : "text-[#6B3E26]/60"}>
+                    <span className="font-bold">{inventario.skusBajoStock}</span> con stock bajo
+                  </span>
+                </div>
+                {inventario.itemsBajoStock.length === 0 ? (
+                  <p className="text-xs text-emerald-600 font-medium">
+                    Todo el inventario está en niveles saludables ✓
+                  </p>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    {inventario.itemsBajoStock.map((it) => (
+                      <div
+                        key={it.productoId}
+                        className="flex items-center justify-between text-xs"
+                      >
+                        <span className="text-[#3A1F14] truncate">{it.nombre}</span>
+                        <span
+                          className={`font-bold shrink-0 ml-2 ${
+                            it.stock < 0 ? "text-red-500" : "text-amber-600"
+                          }`}
+                        >
+                          {it.stock}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+
         {/* ── Órdenes recientes + Desglose + Quick links ── */}
         <div className="grid lg:grid-cols-3 gap-4">
 
@@ -573,6 +722,16 @@ export function AdminDashboard() {
                     icon: (
                       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                         <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18" />
+                      </svg>
+                    ),
+                  },
+                  {
+                    label: "Producción",
+                    path: "/admin/dashboard/store/produccion",
+                    colorClass: "bg-orange-50 hover:bg-orange-100 text-orange-700",
+                    icon: (
+                      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                        <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4M4 6v12a2 2 0 0 0 2 2h14v-4M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
                       </svg>
                     ),
                   },

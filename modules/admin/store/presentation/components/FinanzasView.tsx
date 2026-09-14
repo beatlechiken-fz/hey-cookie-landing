@@ -5,12 +5,14 @@ import { useState } from "react";
 import { ResumenTab } from "./ResumenTab";
 import { IngresosTab } from "./IngresosTab";
 import { ComprasTab } from "./ComprasTab";
+import { GastosTab } from "./GastosTab";
 
-type Tab = "resumen" | "ingresos" | "compras";
+type Tab = "resumen" | "ingresos" | "gastos" | "compras";
 
 const TABS: { key: Tab; label: string; icon: string }[] = [
   { key: "resumen", label: "Resumen", icon: "📊" },
   { key: "ingresos", label: "Ingresos", icon: "💰" },
+  { key: "gastos", label: "Gastos", icon: "📉" },
   { key: "compras", label: "Compras", icon: "🛒" },
 ];
 
@@ -76,6 +78,7 @@ export function FinanzasView() {
       {/* Tab content */}
       {tab === "resumen" && <ResumenTab desde={desde} hasta={hasta} />}
       {tab === "ingresos" && <IngresosTab desde={desde} hasta={hasta} />}
+      {tab === "gastos" && <GastosTab desde={desde} hasta={hasta} />}
       {tab === "compras" && <ComprasTab desde={desde} hasta={hasta} />}
     </div>
   );

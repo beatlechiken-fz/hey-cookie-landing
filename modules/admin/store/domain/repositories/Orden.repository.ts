@@ -15,7 +15,8 @@ export interface OrdenRepository {
   findAll(filters: OrdenFilters): Promise<PaginatedResult<Orden>>;
   findById(id: string): Promise<Orden | null>;
   create(dto: CreateOrdenDTO): Promise<Orden>;
-  updateStatus(id: string, status: OrdenStatus): Promise<Orden>;
+  updateStatus(id: string, status: OrdenStatus, descontarInventario?: boolean): Promise<Orden>;
+  setInventarioDescontado(id: string, value: boolean): Promise<void>;
   updateFechaEntrega(id: string, fechaEntrega: string | null): Promise<Orden>;
   updateItem(ordenId: string, itemId: string, dto: UpdateOrdenItemDTO): Promise<Orden>;
   removeItem(ordenId: string, itemId: string): Promise<Orden>;

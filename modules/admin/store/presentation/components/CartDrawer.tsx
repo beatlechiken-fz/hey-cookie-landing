@@ -89,6 +89,10 @@ export function CartDrawer({ open, onClose }: Props) {
   const [fechaEntrega, setFechaEntrega] = useState<string>("");
   const [notas, setNotas] = useState<string>("");
   const [incluirEnvio, setIncluirEnvio] = useState(false);
+  const [descontarInv, setDescontarInv] = useState(true);
+  const tieneProductosInventariables = items.some(
+    (i) => (i.configuracion as Record<string, any> | null)?.productoId,
+  );
 
   // Buscador de cliente
   const [clienteSearch, setClienteSearch] = useState("");
@@ -108,6 +112,7 @@ export function CartDrawer({ open, onClose }: Props) {
       setFechaEntrega("");
       setNotas("");
       setIncluirEnvio(false);
+      setDescontarInv(true);
     }
   }, [open]);
 
@@ -181,6 +186,7 @@ export function CartDrawer({ open, onClose }: Props) {
         status,
         fechaEntrega: fechaEntrega || null,
         notas: notas.trim() || null,
+        descontarInventario: status === "en_proceso" ? descontarInv : undefined,
         items: buildOrdenItems(),
         cupones: cupones.map((c) => ({
           cuponId: c.cuponId,
@@ -421,6 +427,24 @@ export function CartDrawer({ open, onClose }: Props) {
                   className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] resize-none focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
                 />
               </div>
+
+              {/* Descontar inventario — solo importa si se genera como orden (en_proceso) */}
+              {tieneProductosInventariables && (
+                <label className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-[#FFF7F0] border border-[#e8c4a0] cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={descontarInv}
+                    onChange={(e) => setDescontarInv(e.target.checked)}
+                    className="w-4 h-4 accent-[#c0607a] cursor-pointer"
+                  />
+                  <span className="text-[11px] text-[#6B3E26]">
+                    <span className="font-semibold text-[#3A1F14]">
+                      Descontar de inventario
+                    </span>{" "}
+                    si se genera como orden. En cotización nunca se descuenta.
+                  </span>
+                </label>
+              )}
             </div>
 
             {/* Body */}

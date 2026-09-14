@@ -58,6 +58,8 @@ function toEntity(
     direccionEntrega: row.direccion_entrega ?? null,
     items,
     cupones,
+    descontarInventario: row.descontar_inventario ?? false,
+    inventarioDescontado: row.inventario_descontado ?? false,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -182,6 +184,8 @@ export class OrdenSupabaseDatasource {
         notas: dto.notas ?? null,
         fecha_entrega: dto.fechaEntrega ?? null,
         ...(dto.direccionEntrega ? { direccion_entrega: dto.direccionEntrega } : {}),
+        descontar_inventario:
+          dto.status === "en_proceso" ? (dto.descontarInventario ?? false) : false,
       })
       .select()
       .single();
@@ -241,10 +245,28 @@ export class OrdenSupabaseDatasource {
     return this.findById(orden.id) as Promise<Orden>;
   }
 
-  async updateStatus(id: string, status: OrdenStatus): Promise<Orden> {
-    const { error } = await this.db.from(TABLE).update({ status }).eq("id", id);
+  async updateStatus(
+    id: string,
+    status: OrdenStatus,
+    descontarInventario?: boolean,
+  ): Promise<Orden> {
+    const patch: Record<string, any> = { status };
+    // Al pasar a en_proceso es cuando se fija la intención del toggle (si vino en el body).
+    if (status === "en_proceso" && descontarInventario !== undefined) {
+      patch.descontar_inventario = descontarInventario;
+    }
+    const { error } = await this.db.from(TABLE).update(patch).eq("id", id);
     if (error) throw new Error(`updateStatus orden: ${error.message}`);
     return this.findById(id) as Promise<Orden>;
+  }
+
+  /** Marca si el inventario ya fue descontado/restaurado para esta orden — evita doble descuento/restauración. */
+  async setInventarioDescontado(id: string, value: boolean): Promise<void> {
+    const { error } = await this.db
+      .from(TABLE)
+      .update({ inventario_descontado: value })
+      .eq("id", id);
+    if (error) throw new Error(`setInventarioDescontado: ${error.message}`);
   }
 
   async updateFechaEntrega(

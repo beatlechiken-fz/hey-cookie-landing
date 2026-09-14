@@ -25,8 +25,11 @@ export class OrdenRepositoryImpl implements OrdenRepository {
   create(dto: CreateOrdenDTO): Promise<Orden> {
     return this.ds.create(dto);
   }
-  updateStatus(id: string, status: OrdenStatus): Promise<Orden> {
-    return this.ds.updateStatus(id, status);
+  updateStatus(id: string, status: OrdenStatus, descontarInventario?: boolean): Promise<Orden> {
+    return this.ds.updateStatus(id, status, descontarInventario);
+  }
+  setInventarioDescontado(id: string, value: boolean): Promise<void> {
+    return this.ds.setInventarioDescontado(id, value);
   }
   updateFechaEntrega(id: string, fecha: string | null): Promise<Orden> {
     return this.ds.updateFechaEntrega(id, fecha);

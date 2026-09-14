@@ -77,6 +77,11 @@ export function createAdminMenuNavElement(): AdminMenuNavElement {
           url: "/admin/dashboard/store/servicios",
         },
         {
+          id: "produccion",
+          label: "Producción",
+          url: "/admin/dashboard/store/produccion",
+        },
+        {
           id: "cupones",
           label: "Cupones",
           url: "/admin/dashboard/store/cupones",

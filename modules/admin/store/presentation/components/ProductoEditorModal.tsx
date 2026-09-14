@@ -624,6 +624,22 @@ export function ProductoEditorModal({
                         className={inputCls}
                       />
                     </div>
+                    {producto && (
+                      <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0]">
+                        <span className="text-[12px] font-semibold text-[#6B3E26]">
+                          Existencias en inventario
+                        </span>
+                        <span
+                          className={`text-lg font-bold tabular-nums ${
+                            producto.stockActual < 0
+                              ? "text-red-500"
+                              : "text-[#AA6A42]"
+                          }`}
+                        >
+                          {producto.stockActual}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex flex-col gap-1.5">
                       <label className={labelCls}>Línea</label>
                       <div className="flex gap-2">
