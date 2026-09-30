@@ -6,6 +6,7 @@ import type {
   CreateOrdenDTO,
   OrdenStatus,
   UpdateOrdenItemDTO,
+  AddOrdenItemDTO,
 } from "../../domain/entities/Orden.entity";
 import {
   OrdenSupabaseDatasource,
@@ -39,5 +40,8 @@ export class OrdenRepositoryImpl implements OrdenRepository {
   }
   removeItem(ordenId: string, itemId: string): Promise<Orden> {
     return this.ds.removeItem(ordenId, itemId);
+  }
+  addItem(ordenId: string, dto: AddOrdenItemDTO): Promise<Orden> {
+    return this.ds.addItem(ordenId, dto);
   }
 }

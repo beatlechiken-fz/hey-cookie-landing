@@ -92,3 +92,13 @@ export interface UpdateOrdenItemDTO {
 
 /** Solo se puede editar/quitar partidas mientras la orden está en estos estados. */
 export const ORDEN_STATUS_EDITABLES: OrdenStatus[] = ["cotizacion", "en_proceso"];
+
+/** Agregar una partida nueva a una orden ya existente — mismo shape que UpdateOrdenItemDTO sin id. */
+export interface AddOrdenItemDTO {
+  nombre: string;
+  configuracion: Record<string, any>;
+  cantidad: number;
+  costoUnitario: number;
+  precioUnitario: number;
+  desgloseCostos?: Record<string, any> | null;
+}

@@ -139,7 +139,7 @@ export function OrnamentosView() {
                   </svg>
                 </div>
               )}
-              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+              <div className="absolute top-2 right-2 flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                 <button onClick={() => openEdit(orn)}
                   className="p-1.5 rounded-lg bg-white/90 hover:bg-white text-[#6B3E26] hover:text-[#c0607a] shadow-sm transition">
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

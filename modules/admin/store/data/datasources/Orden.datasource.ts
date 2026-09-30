@@ -8,6 +8,7 @@ import type {
   CreateOrdenDTO,
   OrdenStatus,
   UpdateOrdenItemDTO,
+  AddOrdenItemDTO,
 } from "../../domain/entities/Orden.entity";
 
 const TABLE = "ordenes";
@@ -336,6 +337,26 @@ export class OrdenSupabaseDatasource {
       .eq("id", itemId)
       .eq("orden_id", ordenId);
     if (error) throw new Error(`updateItem orden_items: ${error.message}`);
+
+    await this.recalcularTotales(ordenId);
+    return this.findById(ordenId) as Promise<Orden>;
+  }
+
+  /** Agrega una partida nueva a la orden y recalcula los totales. */
+  async addItem(ordenId: string, dto: AddOrdenItemDTO): Promise<Orden> {
+    const subtotalItem = dto.precioUnitario * dto.cantidad;
+    const { error } = await this.db.from(TABLE_ITEMS).insert({
+      orden_id: ordenId,
+      tipo: "pastel_personalizado",
+      nombre: dto.nombre,
+      configuracion: dto.configuracion,
+      cantidad: dto.cantidad,
+      costo_unitario: dto.costoUnitario,
+      precio_unitario: dto.precioUnitario,
+      subtotal: subtotalItem,
+      desglose_costos: dto.desgloseCostos ?? null,
+    });
+    if (error) throw new Error(`addItem orden_items: ${error.message}`);
 
     await this.recalcularTotales(ordenId);
     return this.findById(ordenId) as Promise<Orden>;

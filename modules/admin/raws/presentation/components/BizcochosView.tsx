@@ -469,7 +469,7 @@ export function BizchosView() {
                   ${b.costoTotal.toFixed(2)}
                 </td>
                 <td className="px-4 py-3">
-                  <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition">
+                  <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                     <button
                       onClick={() => openEdit(b)}
                       className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"

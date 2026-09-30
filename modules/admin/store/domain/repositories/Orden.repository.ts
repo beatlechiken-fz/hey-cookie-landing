@@ -5,6 +5,7 @@ import type {
   CreateOrdenDTO,
   OrdenStatus,
   UpdateOrdenItemDTO,
+  AddOrdenItemDTO,
 } from "../entities/Orden.entity";
 import type {
   OrdenFilters,
@@ -20,4 +21,5 @@ export interface OrdenRepository {
   updateFechaEntrega(id: string, fechaEntrega: string | null): Promise<Orden>;
   updateItem(ordenId: string, itemId: string, dto: UpdateOrdenItemDTO): Promise<Orden>;
   removeItem(ordenId: string, itemId: string): Promise<Orden>;
+  addItem(ordenId: string, dto: AddOrdenItemDTO): Promise<Orden>;
 }

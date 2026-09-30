@@ -26,6 +26,11 @@ import {
 import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal";
 import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
+import { ProductoPickerModal } from "./ProductoPickerModal";
+import {
+  AgregarItemCustomModal,
+  type AddItemPayload,
+} from "./AgregarItemCustomModal";
 import type { Producto } from "@/modules/admin/store/domain/entities/Producto.entity";
 
 interface Props {
@@ -112,6 +117,34 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
     setEditingOrdenItem(null);
     setEditingOrigen(null);
     setEditProducto(null);
+  }
+
+  // ── Agregar partida nueva a la orden ───────────────────────────────────────
+  const [addMenuOpen, setAddMenuOpen] = useState(false);
+  const [addingOrigen, setAddingOrigen] = useState<
+    "pastel-configurador" | "gelatina-configurador" | "custom" | null
+  >(null);
+  const [pickingProducto, setPickingProducto] = useState(false);
+  const [addingProducto, setAddingProducto] = useState<Producto | null>(null);
+
+  async function handleAddItem(payload: AddItemPayload) {
+    const res = await fetch(`/api/admin/ordenes/${orden.id}/items`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nombre: payload.nombre,
+        configuracion: payload.configuracion,
+        cantidad: payload.cantidad,
+        costoUnitario: payload.costoUnitario,
+        precioUnitario: payload.precioUnitario,
+        desgloseCostos: payload.desgloseCostos ?? null,
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error ?? "Error al agregar el producto");
+    }
+    onRefresh();
   }
 
   async function handleEditItem(item: OrdenItem) {
@@ -402,9 +435,70 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
 
               {/* Items */}
               <div className="flex flex-col gap-2">
-                <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
-                  Productos
-                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    Productos
+                  </p>
+                  {puedeEditarItems && (
+                    <div className="relative">
+                      <button
+                        onClick={() => setAddMenuOpen((v) => !v)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-[11px] font-semibold hover:bg-[#FFF7F0] transition"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        >
+                          <path d="M12 5v14M5 12h14" />
+                        </svg>
+                        Agregar producto
+                      </button>
+                      {addMenuOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-10"
+                            onClick={() => setAddMenuOpen(false)}
+                          />
+                          <div className="absolute right-0 top-full mt-1 z-20 w-56 rounded-xl border border-[#f0e0d0] bg-white shadow-lg overflow-hidden">
+                            {[
+                              {
+                                label: "Pastel personalizado",
+                                onClick: () => setAddingOrigen("pastel-configurador"),
+                              },
+                              {
+                                label: "Gelatina",
+                                onClick: () => setAddingOrigen("gelatina-configurador"),
+                              },
+                              {
+                                label: "Producto de catálogo",
+                                onClick: () => setPickingProducto(true),
+                              },
+                              {
+                                label: "Línea personalizada",
+                                onClick: () => setAddingOrigen("custom"),
+                              },
+                            ].map((opt) => (
+                              <button
+                                key={opt.label}
+                                onClick={() => {
+                                  setAddMenuOpen(false);
+                                  opt.onClick();
+                                }}
+                                className="w-full text-left px-3 py-2.5 text-[13px] text-[#3d1a24] hover:bg-[#FFF7F0] transition"
+                              >
+                                {opt.label}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {itemError && (
                   <p className="text-[12px] text-[#C0392B] bg-[#FCE9EA] border border-[#f5c6c8] rounded-lg px-3 py-2">
                     {itemError}
@@ -699,6 +793,36 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
       onClose={closeEditModal}
       editItem={editingOrigen === "producto-configurador" && editingOrdenItem ? toCartItemShape(editingOrdenItem) : null}
       onSave={handleSaveItem}
+    />
+
+    {/* Modales de agregar partida nueva — sin editItem, los configuradores caen en modo "crear" */}
+    <PastelConfiguradorModal
+      open={addingOrigen === "pastel-configurador"}
+      onClose={() => setAddingOrigen(null)}
+      onSave={handleAddItem}
+    />
+    <GelatinaCotizadorModal
+      open={addingOrigen === "gelatina-configurador"}
+      onClose={() => setAddingOrigen(null)}
+      onSave={handleAddItem}
+    />
+    <ProductoPickerModal
+      open={pickingProducto}
+      onClose={() => setPickingProducto(false)}
+      onSelect={(p) => {
+        setPickingProducto(false);
+        setAddingProducto(p);
+      }}
+    />
+    <ProductoConfiguradorModal
+      producto={addingProducto}
+      onClose={() => setAddingProducto(null)}
+      onSave={handleAddItem}
+    />
+    <AgregarItemCustomModal
+      open={addingOrigen === "custom"}
+      onClose={() => setAddingOrigen(null)}
+      onSave={handleAddItem}
     />
     </>
   );

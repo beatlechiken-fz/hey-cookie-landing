@@ -1,0 +1,230 @@
+"use client";
+// src/modules/admin/store/presentation/components/AgregarItemCustomModal.tsx
+//
+// Agrega una partida "libre" a una orden existente: nombre + costo/precio
+// manual, sin pasar por ningún configurador (pastel/gelatina/producto).
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export interface AddItemPayload {
+  nombre: string;
+  configuracion: Record<string, any>;
+  cantidad: number;
+  costoUnitario: number;
+  precioUnitario: number;
+  desgloseCostos?: Record<string, any> | null;
+}
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  onSave: (payload: AddItemPayload) => Promise<void> | void;
+}
+
+const EMPTY = { nombre: "", cantidad: 1, costoUnitario: 0, precioUnitario: 0 };
+
+export function AgregarItemCustomModal({ open, onClose, onSave }: Props) {
+  const [form, setForm] = useState(EMPTY);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function handleClose() {
+    setForm(EMPTY);
+    setError(null);
+    onClose();
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.nombre.trim()) {
+      setError("El nombre es requerido");
+      return;
+    }
+    if (form.cantidad < 1) {
+      setError("La cantidad debe ser al menos 1");
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await onSave({
+        nombre: form.nombre.trim(),
+        configuracion: {},
+        cantidad: form.cantidad,
+        costoUnitario: form.costoUnitario,
+        precioUnitario: form.precioUnitario,
+        desgloseCostos: null,
+      });
+      handleClose();
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const inputCls =
+    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            key="bd"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleClose}
+            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+          />
+          <motion.div
+            key="modal"
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ duration: 0.18 }}
+            className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
+          >
+            <div className="pointer-events-auto w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
+                <h2 className="font-bold text-[#AA6A42] text-lg">
+                  Línea personalizada
+                </h2>
+                <button
+                  onClick={handleClose}
+                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  </svg>
+                </button>
+              </div>
+
+              <form
+                onSubmit={handleSubmit}
+                className="px-6 py-5 flex flex-col gap-4"
+              >
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    Nombre
+                  </label>
+                  <input
+                    className={inputCls}
+                    value={form.nombre}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, nombre: e.target.value }))
+                    }
+                    placeholder="Ej: Velas de cumpleaños"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    Cantidad
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    className={inputCls}
+                    value={form.cantidad}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        cantidad: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                      Costo unitario
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B3E26] text-sm">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className={inputCls + " pl-7"}
+                        value={form.costoUnitario || ""}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            costoUnitario: Number(e.target.value),
+                          }))
+                        }
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                      Precio unitario
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B3E26] text-sm">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className={inputCls + " pl-7"}
+                        value={form.precioUnitario || ""}
+                        onChange={(e) =>
+                          setForm((f) => ({
+                            ...f,
+                            precioUnitario: Number(e.target.value),
+                          }))
+                        }
+                        placeholder="0"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {error && (
+                  <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                    {error}
+                  </p>
+                )}
+
+                <div className="flex gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                  >
+                    {saving ? "Agregando…" : "Agregar"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}

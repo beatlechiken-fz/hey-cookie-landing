@@ -7,6 +7,7 @@ import {
   type Orden,
   type OrdenStatus,
   type UpdateOrdenItemDTO,
+  type AddOrdenItemDTO,
 } from "../entities/Orden.entity";
 import type { OrdenFilters } from "../../data/datasources/Orden.datasource";
 import type { OrdenItemInventario } from "../repositories/Inventario.repository";
@@ -83,6 +84,20 @@ export class UpdateOrdenItemUseCase {
     if (!dto.nombre.trim()) throw new Error("El nombre del producto es requerido");
     if (dto.cantidad < 1) throw new Error("La cantidad debe ser al menos 1");
     return this.repo.updateItem(ordenId, itemId, dto);
+  }
+}
+
+export class AddOrdenItemUseCase {
+  constructor(private repo: OrdenRepository) {}
+  async execute(ordenId: string, dto: AddOrdenItemDTO) {
+    const existing = await this.repo.findById(ordenId);
+    if (!existing) throw new Error(`Orden ${ordenId} no encontrada`);
+    assertEditable(existing.status);
+    if (!dto.nombre.trim()) throw new Error("El nombre del producto es requerido");
+    if (dto.cantidad < 1) throw new Error("La cantidad debe ser al menos 1");
+    if (dto.costoUnitario < 0 || dto.precioUnitario < 0)
+      throw new Error("Los montos no pueden ser negativos");
+    return this.repo.addItem(ordenId, dto);
   }
 }
 
