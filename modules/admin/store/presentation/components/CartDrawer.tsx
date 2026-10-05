@@ -28,6 +28,7 @@ export function CartDrawer({ open, onClose }: Props) {
   const clienteNombre = useCartStore((s) => s.clienteNombre);
   const setCliente = useCartStore((s) => s.setCliente);
   const removeItem = useCartStore((s) => s.removeItem);
+  const setItemObservaciones = useCartStore((s) => s.setItemObservaciones);
   const updateCantidad = useCartStore((s) => s.updateCantidad);
   const addCupon = useCartStore((s) => s.addCupon);
   const removeCupon = useCartStore((s) => s.removeCupon);
@@ -174,6 +175,7 @@ export function CartDrawer({ open, onClose }: Props) {
       precioUnitario: i.precioUnitario,
       subtotal: i.precioUnitario * i.cantidad,
       desgloseCostos: i.desgloseCostos ?? null,
+      observaciones: i.observaciones?.trim() || null,
     }));
   }
 
@@ -555,6 +557,17 @@ export function CartDrawer({ open, onClose }: Props) {
                             ${(item.precioUnitario * item.cantidad).toFixed(2)}
                           </p>
                         </div>
+                        <textarea
+                          value={item.observaciones ?? ""}
+                          onChange={(e) =>
+                            setItemObservaciones(item.id, e.target.value)
+                          }
+                          rows={2}
+                          maxLength={1000}
+                          aria-label={`Observaciones de ${item.nombre}`}
+                          placeholder="Observaciones del producto (opcional)"
+                          className="w-full resize-none rounded-lg border border-[#e8c4a0] bg-white px-2.5 py-1.5 text-[12px] text-[#3d1a24] placeholder:text-[#AA6A42]/60 focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
+                        />
                       </div>
                     ))}
                   </div>

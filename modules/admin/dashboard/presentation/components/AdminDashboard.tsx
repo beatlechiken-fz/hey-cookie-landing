@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocale } from "next-intl";
+import { EntregasCalendario } from "./EntregasCalendario";
 import { FinanzasFiltrosBar } from "@/modules/admin/store/presentation/components/FinanzasFiltrosBar";
 import {
   FILTROS_VACIOS,
@@ -254,6 +255,11 @@ export function AdminDashboard() {
           >
             Ver todas las órdenes →
           </a>
+        </div>
+
+        {/* ── Calendario de entregas (no depende de los filtros de finanzas) ── */}
+        <div className="mb-5">
+          <EntregasCalendario />
         </div>
 
         {/* ── Filtros de ventas ── */}

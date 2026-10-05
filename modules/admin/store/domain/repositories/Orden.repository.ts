@@ -23,4 +23,5 @@ export interface OrdenRepository {
   removeItem(ordenId: string, itemId: string): Promise<Orden>;
   addItem(ordenId: string, dto: AddOrdenItemDTO): Promise<Orden>;
   updateFinanzas(id: string, value: boolean): Promise<Orden>;
+  updateItemObservaciones(ordenId: string, itemId: string, observaciones: string | null): Promise<Orden>;
 }

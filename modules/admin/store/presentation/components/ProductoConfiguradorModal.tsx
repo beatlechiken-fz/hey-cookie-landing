@@ -140,6 +140,7 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
             : "sugerido",
       },
       cuponesItem: editItem?.cuponesItem ?? [],
+      observaciones: editItem?.observaciones ?? null,
     };
 
     if (onSave) {

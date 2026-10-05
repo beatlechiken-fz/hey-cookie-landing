@@ -28,6 +28,8 @@ export interface OrdenItem {
   subtotal: number;
   /** Snapshot del PastelCostoDesglose para generar registro financiero */
   desgloseCostos?: Record<string, any> | null;
+  /** Observaciones / descripción detallada de este producto (opcional). */
+  observaciones?: string | null;
 }
 
 export interface OrdenCuponAplicado {
@@ -90,6 +92,8 @@ export interface UpdateOrdenItemDTO {
   costoUnitario: number;
   precioUnitario: number;
   desgloseCostos?: Record<string, any> | null;
+  /** Si no viene (undefined) no se modifica la observación existente. */
+  observaciones?: string | null;
 }
 
 /** Solo se puede editar/quitar partidas mientras la orden está en estos estados. */
@@ -106,4 +110,8 @@ export interface AddOrdenItemDTO {
   costoUnitario: number;
   precioUnitario: number;
   desgloseCostos?: Record<string, any> | null;
+  observaciones?: string | null;
 }
+
+/** Máximo de caracteres de la observación de un producto. */
+export const OBSERVACIONES_MAX = 1000;

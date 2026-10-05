@@ -26,7 +26,14 @@ function toItemEntity(row: any): OrdenItem {
     precioUnitario: Number(row.precio_unitario),
     subtotal: Number(row.subtotal),
     desgloseCostos: row.desglose_costos ?? null,
+    observaciones: row.observaciones ?? null,
   };
+}
+
+/** Texto de observaciones listo para guardar: recortado, null si queda vacío. */
+function cleanObs(v: string | null | undefined): string | null {
+  const t = v?.trim();
+  return t ? t : null;
 }
 
 function toCuponEntity(row: any): OrdenCuponAplicado {
@@ -204,6 +211,7 @@ export class OrdenSupabaseDatasource {
         precio_unitario: i.precioUnitario,
         subtotal: i.subtotal,
         desglose_costos: i.desgloseCostos ?? null,
+        observaciones: cleanObs(i.observaciones),
       }));
       const { error: ie } = await db.from(TABLE_ITEMS).insert(rows);
       if (ie) throw new Error(`create orden_items: ${ie.message}`);
@@ -336,6 +344,10 @@ export class OrdenSupabaseDatasource {
         precio_unitario: dto.precioUnitario,
         subtotal: subtotalItem,
         desglose_costos: dto.desgloseCostos ?? null,
+        // Solo si viene: editar con un configurador no debe borrar la observación.
+        ...(dto.observaciones !== undefined
+          ? { observaciones: cleanObs(dto.observaciones) }
+          : {}),
       })
       .eq("id", itemId)
       .eq("orden_id", ordenId);
@@ -354,6 +366,21 @@ export class OrdenSupabaseDatasource {
     return this.findById(id) as Promise<Orden>;
   }
 
+  /** Actualiza solo las observaciones de una partida (no toca montos, no recalcula totales). */
+  async updateItemObservaciones(
+    ordenId: string,
+    itemId: string,
+    observaciones: string | null,
+  ): Promise<Orden> {
+    const { error } = await this.db
+      .from(TABLE_ITEMS)
+      .update({ observaciones: cleanObs(observaciones) })
+      .eq("id", itemId)
+      .eq("orden_id", ordenId);
+    if (error) throw new Error(`updateItemObservaciones: ${error.message}`);
+    return this.findById(ordenId) as Promise<Orden>;
+  }
+
   /** Agrega una partida nueva a la orden y recalcula los totales. */
   async addItem(ordenId: string, dto: AddOrdenItemDTO): Promise<Orden> {
     const subtotalItem = dto.precioUnitario * dto.cantidad;
@@ -367,6 +394,7 @@ export class OrdenSupabaseDatasource {
       precio_unitario: dto.precioUnitario,
       subtotal: subtotalItem,
       desglose_costos: dto.desgloseCostos ?? null,
+      observaciones: cleanObs(dto.observaciones),
     });
     if (error) throw new Error(`addItem orden_items: ${error.message}`);
 

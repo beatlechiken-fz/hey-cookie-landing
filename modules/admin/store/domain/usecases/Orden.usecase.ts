@@ -4,6 +4,7 @@ import type { OrdenRepository } from "../repositories/Orden.repository";
 import {
   ORDEN_STATUS_EDITABLES,
   ORDEN_STATUS_FINANZAS,
+  OBSERVACIONES_MAX,
   type CreateOrdenDTO,
   type Orden,
   type OrdenStatus,
@@ -99,6 +100,20 @@ export class AddOrdenItemUseCase {
     if (dto.costoUnitario < 0 || dto.precioUnitario < 0)
       throw new Error("Los montos no pueden ser negativos");
     return this.repo.addItem(ordenId, dto);
+  }
+}
+
+export class UpdateOrdenItemObservacionesUseCase {
+  constructor(private repo: OrdenRepository) {}
+  async execute(ordenId: string, itemId: string, observaciones: string | null) {
+    const existing = await this.repo.findById(ordenId);
+    if (!existing) throw new Error(`Orden ${ordenId} no encontrada`);
+    assertEditable(existing.status);
+    if (!existing.items.some((i) => i.id === itemId))
+      throw new Error(`La orden no tiene un producto ${itemId}`);
+    if (observaciones && observaciones.length > OBSERVACIONES_MAX)
+      throw new Error(`Las observaciones no pueden pasar de ${OBSERVACIONES_MAX} caracteres`);
+    return this.repo.updateItemObservaciones(ordenId, itemId, observaciones);
   }
 }
 

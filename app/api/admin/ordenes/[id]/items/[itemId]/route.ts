@@ -38,6 +38,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       costoUnitario: body.costoUnitario,
       precioUnitario: body.precioUnitario,
       desgloseCostos: body.desgloseCostos ?? null,
+      observaciones: body.observaciones,
     });
     return NextResponse.json(updated);
   } catch (e: any) {

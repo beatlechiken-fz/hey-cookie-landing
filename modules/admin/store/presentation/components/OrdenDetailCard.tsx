@@ -58,6 +58,7 @@ function toCartItemShape(item: OrdenItem): CartItem {
     costoUnitario: item.costoUnitario,
     precioUnitario: item.precioUnitario,
     desgloseCostos: item.desgloseCostos ?? null,
+    observaciones: item.observaciones ?? null,
     cuponesItem: [],
   } as unknown as CartItem;
 }
@@ -142,6 +143,42 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
     }
   }
 
+  // ── Observaciones por producto (edición en línea) ─────────────────────────
+  const [editingObsId, setEditingObsId] = useState<string | null>(null);
+  const [obsDraft, setObsDraft] = useState("");
+  const [savingObs, setSavingObs] = useState(false);
+
+  function startEditObs(item: OrdenItem) {
+    setItemError(null);
+    setObsDraft(item.observaciones ?? "");
+    setEditingObsId(item.id ?? null);
+  }
+
+  async function handleSaveObs(itemId: string) {
+    setSavingObs(true);
+    setItemError(null);
+    try {
+      const res = await fetch(
+        `/api/admin/ordenes/${orden.id}/items/${itemId}/observaciones`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ observaciones: obsDraft.trim() || null }),
+        },
+      );
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: res.statusText }));
+        throw new Error(err.error ?? "No se pudieron guardar las observaciones");
+      }
+      setEditingObsId(null);
+      onRefresh();
+    } catch (e: any) {
+      setItemError(e.message);
+    } finally {
+      setSavingObs(false);
+    }
+  }
+
   // ── Agregar partida nueva a la orden ───────────────────────────────────────
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [addingOrigen, setAddingOrigen] = useState<
@@ -161,6 +198,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
         costoUnitario: payload.costoUnitario,
         precioUnitario: payload.precioUnitario,
         desgloseCostos: payload.desgloseCostos ?? null,
+        observaciones: payload.observaciones,
       }),
     });
     if (!res.ok) {
@@ -219,6 +257,7 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
           costoUnitario: payload.costoUnitario,
           precioUnitario: payload.precioUnitario,
           desgloseCostos: payload.desgloseCostos ?? null,
+          observaciones: payload.observaciones,
         }),
       },
     );
@@ -602,6 +641,53 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
                           </p>
                         </div>
                       </div>
+                      {editingObsId === item.id ? (
+                        <div className="mt-2 flex flex-col gap-2">
+                          <textarea
+                            value={obsDraft}
+                            onChange={(e) => setObsDraft(e.target.value)}
+                            rows={3}
+                            maxLength={1000}
+                            autoFocus
+                            aria-label={`Observaciones de ${item.nombre}`}
+                            placeholder="Observaciones / descripción detallada del producto"
+                            className="w-full resize-none rounded-lg border border-[#e8c4a0] bg-white px-2.5 py-1.5 text-[12px] text-[#3d1a24] placeholder:text-[#AA6A42]/60 focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => setEditingObsId(null)}
+                              className="px-2.5 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-white transition"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={() => handleSaveObs(item.id!)}
+                              disabled={savingObs}
+                              className="px-2.5 py-1 rounded-lg bg-[#c0607a] text-white text-[11px] font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                            >
+                              {savingObs ? "Guardando…" : "Guardar"}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {item.observaciones && (
+                            <p className="mt-1.5 text-[12px] text-[#6B3E26] whitespace-pre-wrap break-words">
+                              {item.observaciones}
+                            </p>
+                          )}
+                          {puedeEditarItems && item.id && !confirming && (
+                            <button
+                              onClick={() => startEditObs(item)}
+                              className="mt-1.5 text-[11px] font-semibold text-[#AA6A42] hover:text-[#c0607a] transition"
+                            >
+                              {item.observaciones
+                                ? "Editar observaciones"
+                                : "+ Agregar observaciones"}
+                            </button>
+                          )}
+                        </>
+                      )}
                       {confirming && (
                         <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#e8c4a0]">
                           <span className="text-[12px] text-[#6B3E26]">

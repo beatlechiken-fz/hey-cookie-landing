@@ -32,6 +32,8 @@ export interface CartItem {
   origen: CartItemOrigen;
   /** id del producto de catálogo, solo cuando origen es "producto-configurador"/"producto-modal". */
   productoId?: string | null;
+  /** Observaciones / descripción detallada de este producto (opcional). */
+  observaciones?: string | null;
 }
 
 /**
@@ -69,6 +71,7 @@ interface CartState {
   /** Reemplaza un item existente conservando su id (para "editar" en vez de duplicar). */
   updateItem: (id: string, item: Omit<CartItem, "id">) => void;
   removeItem: (id: string) => void;
+  setItemObservaciones: (id: string, observaciones: string) => void;
   updateCantidad: (id: string, cantidad: number) => void;
   clear: () => void;
 
@@ -130,6 +133,13 @@ export const useCartStore = create<CartState>()(
             i.id === id
               ? { ...item, id, cuponesItem: item.cuponesItem ?? [] }
               : i,
+          ),
+        })),
+
+      setItemObservaciones: (id, observaciones) =>
+        set((state) => ({
+          items: state.items.map((i) =>
+            i.id === id ? { ...i, observaciones } : i,
           ),
         })),
 

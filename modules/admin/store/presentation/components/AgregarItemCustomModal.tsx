@@ -14,6 +14,7 @@ export interface AddItemPayload {
   costoUnitario: number;
   precioUnitario: number;
   desgloseCostos?: Record<string, any> | null;
+  observaciones?: string | null;
 }
 
 interface Props {
@@ -22,7 +23,13 @@ interface Props {
   onSave: (payload: AddItemPayload) => Promise<void> | void;
 }
 
-const EMPTY = { nombre: "", cantidad: 1, costoUnitario: 0, precioUnitario: 0 };
+const EMPTY = {
+  nombre: "",
+  cantidad: 1,
+  costoUnitario: 0,
+  precioUnitario: 0,
+  observaciones: "",
+};
 
 export function AgregarItemCustomModal({ open, onClose, onSave }: Props) {
   const [form, setForm] = useState(EMPTY);
@@ -55,6 +62,7 @@ export function AgregarItemCustomModal({ open, onClose, onSave }: Props) {
         costoUnitario: form.costoUnitario,
         precioUnitario: form.precioUnitario,
         desgloseCostos: null,
+        observaciones: form.observaciones.trim() || null,
       });
       handleClose();
     } catch (e: any) {
@@ -196,6 +204,23 @@ export function AgregarItemCustomModal({ open, onClose, onSave }: Props) {
                       />
                     </div>
                   </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    Observaciones{" "}
+                    <span className="normal-case font-normal">(opcional)</span>
+                  </label>
+                  <textarea
+                    className={inputCls + " resize-none"}
+                    rows={3}
+                    maxLength={1000}
+                    value={form.observaciones}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, observaciones: e.target.value }))
+                    }
+                    placeholder="Detalles de este producto"
+                  />
                 </div>
 
                 {error && (

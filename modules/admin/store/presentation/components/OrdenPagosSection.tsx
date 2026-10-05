@@ -6,6 +6,7 @@ interface OrdenPago {
   id: string;
   fecha: string;
   monto: number;
+  observaciones: string | null;
   createdAt: string;
 }
 
@@ -31,6 +32,7 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [fecha, setFecha]       = useState(hoy());
   const [monto, setMonto]       = useState("");
+  const [observaciones, setObservaciones] = useState("");
   const [saving, setSaving]     = useState(false);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -66,7 +68,7 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
       const res = await fetch(`/api/admin/ordenes/${ordenId}/pagos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fecha, monto: m }),
+        body: JSON.stringify({ fecha, monto: m, observaciones: observaciones.trim() || null }),
       });
       if (!res.ok) {
         const e = await res.json().catch(() => ({}));
@@ -74,6 +76,7 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
       }
       setShowForm(false);
       setMonto("");
+      setObservaciones("");
       setFecha(hoy());
       await load();
     } catch (e: any) {
@@ -157,12 +160,17 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
               key={p.id}
               className="flex items-center justify-between rounded-lg bg-white border border-[#f0e0d0] px-3 py-2"
             >
-              <div className="flex items-center gap-3">
-                <div>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="min-w-0">
                   <p className="text-[12px] font-semibold text-[#3d1a24] tabular-nums">
                     ${p.monto.toFixed(2)}
                   </p>
                   <p className="text-[10px] text-[#6B3E26]">{fmtDate(p.fecha)}</p>
+                  {p.observaciones && (
+                    <p className="mt-0.5 text-[11px] text-[#6B3E26] whitespace-pre-wrap break-words">
+                      {p.observaciones}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -233,6 +241,19 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
               />
             </div>
           </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-[10px] text-[#6B3E26] font-medium">
+              Observación <span className="font-normal">(opcional)</span>
+            </label>
+            <textarea
+              rows={2}
+              maxLength={500}
+              placeholder="Ej: transferencia, anticipo del 50%…"
+              value={observaciones}
+              onChange={(e) => setObservaciones(e.target.value)}
+              className="text-[12px] border border-[#e8c4a0] rounded-lg px-2.5 py-1.5 text-[#3d1a24] focus:outline-none focus:border-[#c0607a] bg-white resize-none"
+            />
+          </div>
           {errMsg && (
             <p className="text-[11px] text-red-500">{errMsg}</p>
           )}
@@ -245,7 +266,7 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
               {saving ? "Guardando…" : "Guardar pago"}
             </button>
             <button
-              onClick={() => { setShowForm(false); setMonto(""); setErrMsg(null); }}
+              onClick={() => { setShowForm(false); setMonto(""); setObservaciones(""); setErrMsg(null); }}
               className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[12px] hover:bg-[#f0e0d0] transition"
             >
               Cancelar

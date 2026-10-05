@@ -12,7 +12,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const db = getSupabaseAdmin();
   const { data, error } = await db
     .from("orden_pagos")
-    .select("id, fecha, monto, created_at")
+    .select("id, fecha, monto, observaciones, created_at")
     .eq("orden_id", id)
     .order("fecha", { ascending: false })
     .order("created_at", { ascending: false });
@@ -22,6 +22,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
       id: r.id,
       fecha: r.fecha,
       monto: Number(r.monto),
+      observaciones: r.observaciones ?? null,
       createdAt: r.created_at,
     })),
   );
@@ -36,15 +37,29 @@ export async function POST(req: NextRequest, { params }: Params) {
   if (!monto || monto <= 0)
     return NextResponse.json({ error: "Monto inválido" }, { status: 400 });
   const fecha: string = body.fecha ?? new Date().toISOString().slice(0, 10);
+  if (body.observaciones != null && typeof body.observaciones !== "string")
+    return NextResponse.json({ error: "Observación inválida" }, { status: 400 });
+  const observaciones: string | null = body.observaciones?.trim() || null;
+  if (observaciones && observaciones.length > 500)
+    return NextResponse.json(
+      { error: "La observación no puede pasar de 500 caracteres" },
+      { status: 400 },
+    );
   const db = getSupabaseAdmin();
   const { data, error } = await db
     .from("orden_pagos")
-    .insert({ orden_id: id, fecha, monto })
-    .select("id, fecha, monto, created_at")
+    .insert({ orden_id: id, fecha, monto, observaciones })
+    .select("id, fecha, monto, observaciones, created_at")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(
-    { id: data.id, fecha: data.fecha, monto: Number(data.monto), createdAt: data.created_at },
+    {
+      id: data.id,
+      fecha: data.fecha,
+      monto: Number(data.monto),
+      observaciones: data.observaciones ?? null,
+      createdAt: data.created_at,
+    },
     { status: 201 },
   );
 }

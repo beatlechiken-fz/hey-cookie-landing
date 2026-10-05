@@ -77,6 +77,7 @@ export function PastelConfiguradorModal({ open, onClose, editItem, onSave }: Pro
         precioSugerido: desglose.precioSugerido,
       },
       cuponesItem: editItem?.cuponesItem ?? [],
+      observaciones: editItem?.observaciones ?? null,
     };
 
     if (onSave) {

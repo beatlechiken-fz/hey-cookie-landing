@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { FinanzasToggle } from "./FinanzasToggle";
+import { resumenProductos } from "@/core/helpers/ordenesResumen";
 import { ORDEN_STATUS_FINANZAS } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { useOrdenesGlobal } from "@/modules/admin/store/presentation/hooks/useOrdenesGlobal";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
@@ -194,6 +195,9 @@ export function OrdenesView() {
                 <th className="px-4 py-3 text-right  text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Total
                 </th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                  Productos
+                </th>
                 <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Items
                 </th>
@@ -208,7 +212,7 @@ export function OrdenesView() {
               {ordenes.length === 0 && (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={9}
                     className="py-12 text-center text-[#AA6A42] text-sm"
                   >
                     No hay {tab === "cotizaciones" ? "cotizaciones" : "órdenes"}{" "}
@@ -252,6 +256,14 @@ export function OrdenesView() {
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-[#c0607a]">
                     {fmtMoney(o.total)}
+                  </td>
+                  <td className="px-4 py-3 text-[#3d1a24] text-[12px] max-w-[18rem]">
+                    <p
+                      className="line-clamp-3 break-words"
+                      title={resumenProductos(o.items)}
+                    >
+                      {resumenProductos(o.items) || "—"}
+                    </p>
                   </td>
                   <td className="px-4 py-3 text-center text-[#6B3E26] text-[13px]">
                     {o.items.length}
@@ -302,6 +314,11 @@ export function OrdenesView() {
                   <p className="text-[12px] text-[#6B3E26]">
                     {o.clienteNombre ?? "Sin cliente"}
                   </p>
+                  {o.items.length > 0 && (
+                    <p className="mt-1 text-[12px] text-[#3d1a24] line-clamp-3 break-words">
+                      {resumenProductos(o.items)}
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <span className="font-bold text-[#c0607a] text-sm">
