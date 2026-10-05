@@ -17,10 +17,20 @@ export interface AddItemPayload {
   observaciones?: string | null;
 }
 
+export interface CustomItemInicial {
+  nombre: string;
+  cantidad: number;
+  costoUnitario: number;
+  precioUnitario: number;
+  observaciones: string;
+}
+
 interface Props {
   open: boolean;
   onClose: () => void;
   onSave: (payload: AddItemPayload) => Promise<void> | void;
+  /** Modo edición: valores iniciales de la línea. Usar `key` distinto por línea para reiniciar el form. */
+  initial?: CustomItemInicial;
 }
 
 const EMPTY = {
@@ -31,13 +41,14 @@ const EMPTY = {
   observaciones: "",
 };
 
-export function AgregarItemCustomModal({ open, onClose, onSave }: Props) {
-  const [form, setForm] = useState(EMPTY);
+export function AgregarItemCustomModal({ open, onClose, onSave, initial }: Props) {
+  const isEdit = Boolean(initial);
+  const [form, setForm] = useState(initial ?? EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function handleClose() {
-    setForm(EMPTY);
+    setForm(initial ?? EMPTY);
     setError(null);
     onClose();
   }
@@ -98,7 +109,7 @@ export function AgregarItemCustomModal({ open, onClose, onSave }: Props) {
             <div className="pointer-events-auto w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
               <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
                 <h2 className="font-bold text-[#AA6A42] text-lg">
-                  Línea personalizada
+                  {isEdit ? "Editar línea personalizada" : "Línea personalizada"}
                 </h2>
                 <button
                   onClick={handleClose}
@@ -242,7 +253,13 @@ export function AgregarItemCustomModal({ open, onClose, onSave }: Props) {
                     disabled={saving}
                     className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
                   >
-                    {saving ? "Agregando…" : "Agregar"}
+                    {saving
+                      ? isEdit
+                        ? "Guardando…"
+                        : "Agregando…"
+                      : isEdit
+                        ? "Guardar cambios"
+                        : "Agregar"}
                   </button>
                 </div>
               </form>

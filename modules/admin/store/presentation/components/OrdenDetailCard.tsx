@@ -111,6 +111,8 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
     "pastel-configurador" | "gelatina-configurador" | "producto-configurador" | null
   >(null);
   const [editProducto, setEditProducto] = useState<Producto | null>(null);
+  // Línea personalizada (sin configurador) que se está editando.
+  const [editingCustom, setEditingCustom] = useState<OrdenItem | null>(null);
   const [loadingEdit, setLoadingEdit] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -240,7 +242,38 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
       return;
     }
 
+    // Línea personalizada (sin configurador): se edita con su propio modal.
+    if (origen === null) {
+      setEditingCustom(item);
+      return;
+    }
+
     setItemError("Esta partida no se puede editar desde aquí.");
+  }
+
+  async function handleSaveCustom(payload: AddItemPayload) {
+    if (!editingCustom?.id) return;
+    const res = await fetch(
+      `/api/admin/ordenes/${orden.id}/items/${editingCustom.id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: payload.nombre,
+          configuracion: editingCustom.configuracion,
+          cantidad: payload.cantidad,
+          costoUnitario: payload.costoUnitario,
+          precioUnitario: payload.precioUnitario,
+          desgloseCostos: editingCustom.desgloseCostos ?? null,
+          observaciones: payload.observaciones ?? null,
+        }),
+      },
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error ?? "Error al guardar el cambio");
+    }
+    onRefresh();
   }
 
   async function handleSaveItem(payload: Omit<CartItem, "id" | "origen">) {
@@ -570,8 +603,8 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
                   const origenItem = resolveOrigen(toCartItemShape(item));
                   const editable =
                     puedeEditarItems &&
-                    origenItem &&
-                    ORIGENES_ADMIN_EDITABLES.includes(origenItem);
+                    (origenItem === null ||
+                      ORIGENES_ADMIN_EDITABLES.includes(origenItem));
                   const removible = puedeEditarItems && orden.items.length > 1;
                   const confirming = confirmRemoveId === item.id;
 
@@ -646,6 +679,11 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
                           <textarea
                             value={obsDraft}
                             onChange={(e) => setObsDraft(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Escape") setEditingObsId(null);
+                              if (e.key === "Enter" && (e.metaKey || e.ctrlKey))
+                                handleSaveObs(item.id!);
+                            }}
                             rows={3}
                             maxLength={1000}
                             autoFocus
@@ -676,14 +714,25 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
                               {item.observaciones}
                             </p>
                           )}
-                          {puedeEditarItems && item.id && !confirming && (
+                          {item.id && !confirming && (
                             <button
                               onClick={() => startEditObs(item)}
-                              className="mt-1.5 text-[11px] font-semibold text-[#AA6A42] hover:text-[#c0607a] transition"
+                              className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[11px] font-semibold text-[#AA6A42] hover:text-[#c0607a] hover:border-[#c0607a] transition"
                             >
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                              >
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <path d="M14 2v6h6M8 13h8M8 17h5" />
+                              </svg>
                               {item.observaciones
                                 ? "Editar observaciones"
-                                : "+ Agregar observaciones"}
+                                : "Agregar observaciones"}
                             </button>
                           )}
                         </>
@@ -942,6 +991,21 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
       onClose={() => setAddingProducto(null)}
       onSave={handleAddItem}
     />
+    {editingCustom && (
+      <AgregarItemCustomModal
+        key={editingCustom.id}
+        open
+        onClose={() => setEditingCustom(null)}
+        onSave={handleSaveCustom}
+        initial={{
+          nombre: editingCustom.nombre,
+          cantidad: editingCustom.cantidad,
+          costoUnitario: editingCustom.costoUnitario,
+          precioUnitario: editingCustom.precioUnitario,
+          observaciones: editingCustom.observaciones ?? "",
+        }}
+      />
+    )}
     <AgregarItemCustomModal
       open={addingOrigen === "custom"}
       onClose={() => setAddingOrigen(null)}

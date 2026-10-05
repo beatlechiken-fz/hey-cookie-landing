@@ -108,7 +108,7 @@ export class UpdateOrdenItemObservacionesUseCase {
   async execute(ordenId: string, itemId: string, observaciones: string | null) {
     const existing = await this.repo.findById(ordenId);
     if (!existing) throw new Error(`Orden ${ordenId} no encontrada`);
-    assertEditable(existing.status);
+    // Las observaciones son notas: se pueden editar en cualquier estado, sin la regla de partidas.
     if (!existing.items.some((i) => i.id === itemId))
       throw new Error(`La orden no tiene un producto ${itemId}`);
     if (observaciones && observaciones.length > OBSERVACIONES_MAX)
