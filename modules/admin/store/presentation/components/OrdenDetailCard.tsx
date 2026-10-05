@@ -44,6 +44,8 @@ interface Props {
   ) => Promise<void>;
   /** Refresca la orden desde el padre — se llama tras editar/quitar una partida. */
   onRefresh: () => void;
+  /** Empieza expandida (p. ej. en la página de detalle de una orden). Por defecto colapsada. */
+  defaultExpanded?: boolean;
 }
 
 /** Adapta un OrdenItem (persistido) al shape de CartItem para reutilizar
@@ -87,8 +89,13 @@ function formatDate(iso: string) {
   });
 }
 
-export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
-  const [expanded, setExpanded] = useState(false);
+export function OrdenDetailCard({
+  orden,
+  onUpdateStatus,
+  onRefresh,
+  defaultExpanded = false,
+}: Props) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generandoPdf, setGenerandoPdf] = useState(false);

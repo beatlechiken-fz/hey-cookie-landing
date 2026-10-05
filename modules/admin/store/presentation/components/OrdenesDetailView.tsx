@@ -128,6 +128,7 @@ export function OrdenDetailView({ ordenId }: Props) {
           orden={orden}
           onUpdateStatus={handleUpdateStatus}
           onRefresh={load}
+          defaultExpanded
         />
       )}
     </div>
