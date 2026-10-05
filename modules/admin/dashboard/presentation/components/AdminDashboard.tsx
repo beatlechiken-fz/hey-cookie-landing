@@ -2,6 +2,12 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocale } from "next-intl";
+import { FinanzasFiltrosBar } from "@/modules/admin/store/presentation/components/FinanzasFiltrosBar";
+import {
+  FILTROS_VACIOS,
+  appendFiltrosToParams,
+  type FinanzasFiltros,
+} from "@/core/helpers/finanzasFiltros";
 import {
   AreaChart,
   Area,
@@ -160,13 +166,33 @@ export function AdminDashboard() {
   const locale = useLocale();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [filtros, setFiltros] = useState<FinanzasFiltros>(FILTROS_VACIOS);
+  const [refreshing, setRefreshing] = useState(false);
+
+  function cambiarFiltros(f: FinanzasFiltros) {
+    setRefreshing(true);
+    setFiltros(f);
+  }
 
   useEffect(() => {
-    fetch("/api/admin/dashboard")
-      .then((r) => r.json())
-      .then(setData)
-      .finally(() => setLoading(false));
-  }, []);
+    let cancelled = false;
+    const qs = appendFiltrosToParams(new URLSearchParams(), filtros).toString();
+    fetch(`/api/admin/dashboard${qs ? `?${qs}` : ""}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("dashboard"))))
+      .then((d) => {
+        if (!cancelled) setData(d);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [filtros]);
 
   const goto = (path: string) => `/${locale}${path}`;
 
@@ -230,6 +256,16 @@ export function AdminDashboard() {
           </a>
         </div>
 
+        {/* ── Filtros de ventas ── */}
+        <div className="mb-5">
+          <FinanzasFiltrosBar
+            filtros={filtros}
+            onChange={cambiarFiltros}
+            avisoCompras
+          />
+        </div>
+
+        <div className={refreshing ? "opacity-60 transition-opacity" : "transition-opacity"}>
         {/* ── KPI cards ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-5">
           <KPICard
@@ -748,6 +784,7 @@ export function AdminDashboard() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

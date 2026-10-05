@@ -1,6 +1,27 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { getAdminSession } from "@/core/helpers/auth";
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
+import {
+  clasificarItem,
+  hayFiltroProducto,
+  itemCoincide,
+  parseFinanzasFiltros,
+  type ProductoClasif,
+} from "@/core/helpers/finanzasFiltros";
+import { FinanzasDatasource } from "@/modules/admin/store/data/datasources/Finanzas.datasource";
+import type { FinanzasRegistro } from "@/modules/admin/store/domain/entities/Finanzas.entity";
+
+/** Registro filtrado -> forma de fila que usa el resto del cálculo del dashboard. */
+const toRow = (r: FinanzasRegistro) => ({
+  fecha_venta: r.fechaVenta,
+  total_venta: r.totalVenta,
+  utilidad: r.utilidad,
+  insumos: r.insumos,
+  mano_de_obra: r.manoDeObra,
+  servicios: r.servicios,
+  comision: r.comision,
+});
 
 export interface DashboardKPI {
   ventasMes: number;
@@ -59,12 +80,14 @@ export interface DashboardData {
   topProductos: TopProducto[];
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   if (!(await getAdminSession()))
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   try {
     const db = getSupabaseAdmin();
+    const filtros = parseFinanzasFiltros(req.nextUrl.searchParams);
+    const finDs = new FinanzasDatasource();
     const now = new Date();
     const y = now.getFullYear();
     const m = now.getMonth() + 1;
@@ -92,14 +115,12 @@ export async function GET() {
       { data: produccionesRows },
       { data: ordenesMes },
     ] = await Promise.all([
-      db.from("finanzas_registros")
-        .select("total_venta, utilidad, insumos, mano_de_obra, servicios, comision")
-        .gte("fecha_venta", iniMes)
-        .lte("fecha_venta", hoy),
-      db.from("finanzas_registros")
-        .select("total_venta, utilidad")
-        .gte("fecha_venta", iniPrev)
-        .lte("fecha_venta", finPrev),
+      finDs
+        .getRegistrosFiltrados(iniMes, hoy, filtros)
+        .then((rs) => ({ data: rs.map(toRow) })),
+      finDs
+        .getRegistrosFiltrados(iniPrev, finPrev, filtros)
+        .then((rs) => ({ data: rs.map(toRow) })),
       db.from("finanzas_compras")
         .select("monto")
         .gte("fecha", iniMes)
@@ -112,19 +133,25 @@ export async function GET() {
       db.from("productos")
         .select("*", { count: "exact", head: true })
         .eq("activo", true),
-      db.from("finanzas_registros")
-        .select("fecha_venta, total_venta, utilidad")
-        .gte("fecha_venta", hace30)
-        .lte("fecha_venta", hoy)
-        .order("fecha_venta", { ascending: true }),
+      finDs
+        .getRegistrosFiltrados(hace30, hoy, filtros)
+        .then((rs) => ({
+          data: rs.map(toRow).sort((a, b) => a.fecha_venta.localeCompare(b.fecha_venta)),
+        })),
       // Inventario: solo productos que alguna vez registraron producción.
       db.from("producciones").select("producto_id"),
       // Órdenes del mes (no canceladas) para costo de producción y top productos.
-      db.from("ordenes")
-        .select("id, status")
-        .gte("created_at", iniMes)
-        .lte("created_at", `${hoy}T23:59:59`)
-        .neq("status", "cancelado"),
+      (() => {
+        let q = db
+          .from("ordenes")
+          .select("id, status")
+          .gte("created_at", iniMes)
+          .lte("created_at", `${hoy}T23:59:59`)
+          .neq("status", "cancelado");
+        if (filtros.finanzas === "si") q = q.eq("finanzas", true);
+        if (filtros.finanzas === "no") q = q.eq("finanzas", false);
+        return q;
+      })(),
     ]);
 
     // ── KPIs ────────────────────────────────────────────────────────
@@ -225,9 +252,26 @@ export async function GET() {
     if (ordenIdsMes.length > 0) {
       const { data: itemsMes } = await db
         .from("orden_items")
-        .select("nombre, cantidad, costo_unitario, precio_unitario")
+        .select("nombre, cantidad, costo_unitario, precio_unitario, configuracion")
         .in("orden_id", ordenIdsMes);
+
+      // Tipo / línea: solo cuentan los items que coinciden.
+      let prodMap = new Map<string, ProductoClasif>();
+      if (hayFiltroProducto(filtros)) {
+        const { data: prods } = await db
+          .from("productos")
+          .select("id, categoria, linea");
+        prodMap = new Map(
+          (prods ?? []).map((p: any) => [p.id, { categoria: p.categoria, linea: p.linea }]),
+        );
+      }
+
       for (const it of itemsMes ?? []) {
+        if (
+          hayFiltroProducto(filtros) &&
+          !itemCoincide(clasificarItem(it.configuracion as any, prodMap), filtros)
+        )
+          continue;
         const cant = Number(it.cantidad);
         costoProduccionMes += Number(it.costo_unitario) * cant;
         const ingreso = Number(it.precio_unitario) * cant;

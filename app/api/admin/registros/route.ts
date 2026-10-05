@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getAdminSession } from "@/core/helpers/auth";
+import { parseFinanzasFiltros } from "@/core/helpers/finanzasFiltros";
 import { FinanzasDatasource } from "@/modules/admin/store/data/datasources/Finanzas.datasource";
 
 const ds = new FinanzasDatasource();
@@ -10,9 +11,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   try {
     const { searchParams } = req.nextUrl;
-    const data = await ds.getRegistros(
+    const data = await ds.getRegistrosFiltrados(
       searchParams.get("desde") ?? undefined,
       searchParams.get("hasta") ?? undefined,
+      parseFinanzasFiltros(searchParams),
     );
     return NextResponse.json(data);
   } catch (e: any) {

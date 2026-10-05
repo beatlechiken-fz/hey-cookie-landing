@@ -6,6 +6,11 @@ import { ResumenTab } from "./ResumenTab";
 import { IngresosTab } from "./IngresosTab";
 import { ComprasTab } from "./ComprasTab";
 import { GastosTab } from "./GastosTab";
+import { FinanzasFiltrosBar } from "./FinanzasFiltrosBar";
+import {
+  FILTROS_VACIOS,
+  type FinanzasFiltros,
+} from "@/core/helpers/finanzasFiltros";
 
 type Tab = "resumen" | "ingresos" | "gastos" | "compras";
 
@@ -28,6 +33,7 @@ export function FinanzasView() {
   const pd = periodoDefault();
   const [desde, setDesde] = useState(pd.desde);
   const [hasta, setHasta] = useState(pd.hasta);
+  const [filtros, setFiltros] = useState<FinanzasFiltros>(FILTROS_VACIOS);
 
   const inputCls =
     "px-3 py-1.5 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
@@ -75,10 +81,27 @@ export function FinanzasView() {
         </div>
       </div>
 
+      {/* Filtros de ventas — Compras no tiene producto, no aplica */}
+      {tab !== "compras" && (
+        <div className="mb-5">
+          <FinanzasFiltrosBar
+            filtros={filtros}
+            onChange={setFiltros}
+            avisoCompras={tab === "resumen" || tab === "gastos"}
+          />
+        </div>
+      )}
+
       {/* Tab content */}
-      {tab === "resumen" && <ResumenTab desde={desde} hasta={hasta} />}
-      {tab === "ingresos" && <IngresosTab desde={desde} hasta={hasta} />}
-      {tab === "gastos" && <GastosTab desde={desde} hasta={hasta} />}
+      {tab === "resumen" && (
+        <ResumenTab desde={desde} hasta={hasta} filtros={filtros} />
+      )}
+      {tab === "ingresos" && (
+        <IngresosTab desde={desde} hasta={hasta} filtros={filtros} />
+      )}
+      {tab === "gastos" && (
+        <GastosTab desde={desde} hasta={hasta} filtros={filtros} />
+      )}
       {tab === "compras" && <ComprasTab desde={desde} hasta={hasta} />}
     </div>
   );

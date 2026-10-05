@@ -11,7 +11,9 @@ import type {
 import {
   ORDEN_STATUS_LABELS,
   ORDEN_STATUS_EDITABLES,
+  ORDEN_STATUS_FINANZAS,
 } from "@/modules/admin/store/domain/entities/Orden.entity";
+import { FinanzasToggle } from "./FinanzasToggle";
 import { OrdenPipeline } from "./OrdenPipeline";
 import { OrdenPagosSection } from "./OrdenPagosSection";
 import {
@@ -117,6 +119,27 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
     setEditingOrdenItem(null);
     setEditingOrigen(null);
     setEditProducto(null);
+  }
+
+  // ── Marcar la venta para finanzas ─────────────────────────────────────────
+  const puedeMarcarFinanzas = ORDEN_STATUS_FINANZAS.includes(orden.status);
+
+  async function handleToggleFinanzas(next: boolean) {
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/ordenes/${orden.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ finanzas: next }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: res.statusText }));
+        throw new Error(err.error ?? "No se pudo actualizar finanzas");
+      }
+      onRefresh();
+    } catch (e: any) {
+      setError(e.message);
+    }
   }
 
   // ── Agregar partida nueva a la orden ───────────────────────────────────────
@@ -651,6 +674,20 @@ export function OrdenDetailCard({ orden, onUpdateStatus, onRefresh }: Props) {
                   </span>
                 </div>
               </div>
+
+              {puedeMarcarFinanzas && (
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
+                  <p className="text-[12px] text-[#6B3E26]">
+                    <span className="font-semibold text-[#3A1F14]">Finanzas</span>
+                    {" "}— cuenta esta venta en los dashboards de finanzas.
+                  </p>
+                  <FinanzasToggle
+                    checked={orden.finanzas}
+                    onChange={handleToggleFinanzas}
+                    showLabel={false}
+                  />
+                </div>
+              )}
 
               {orden.inventarioDescontado && (
                 <p className="flex items-center gap-1.5 text-[11px] text-[#6B3E26]/70">

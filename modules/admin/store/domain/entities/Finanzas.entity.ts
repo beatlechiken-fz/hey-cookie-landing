@@ -17,6 +17,10 @@ export interface FinanzasRegistro {
   notas: string | null;
   createdAt: string;
   updatedAt: string;
+  /** La orden de origen está marcada para finanzas (y sigue pagada/entregada). Lo calcula el datasource. */
+  finanzas?: boolean;
+  /** Montos escalados a los productos que coinciden con el filtro de tipo/línea (no son los montos guardados). */
+  parcial?: boolean;
 }
 
 export interface CreateFinanzasRegistroDTO {
@@ -127,6 +131,8 @@ export interface ResumenFinanciero {
   periodo: { desde: string; hasta: string };
   cuentas: SaldoCuenta[];
   totalVentas: number;
+  /** Cantidad de ventas (registros) del período, ya con los filtros aplicados. */
+  numVentas: number;
   totalCompras: number;
   saldoNeto: number;
 }

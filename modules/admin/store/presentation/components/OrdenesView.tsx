@@ -7,6 +7,8 @@
 
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { FinanzasToggle } from "./FinanzasToggle";
+import { ORDEN_STATUS_FINANZAS } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { useOrdenesGlobal } from "@/modules/admin/store/presentation/hooks/useOrdenesGlobal";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { ORDEN_STATUS_LABELS } from "@/modules/admin/store/domain/entities/Orden.entity";
@@ -72,11 +74,22 @@ export function OrdenesView() {
     totalPages,
     isLoading,
     error,
+    setFinanzas,
   } = useOrdenesGlobal({
     search,
     page,
     pageSize: 50,
   });
+
+  const [finError, setFinError] = useState<string | null>(null);
+  async function handleFinanzas(id: string, value: boolean) {
+    setFinError(null);
+    try {
+      await setFinanzas(id, value);
+    } catch (e: any) {
+      setFinError(e.message);
+    }
+  }
 
   // Filtrar por tab en cliente
   const statuses = TAB_STATUSES[tab];
@@ -153,6 +166,7 @@ export function OrdenesView() {
       </p>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
+      {finError && <p className="text-sm text-red-600">{finError}</p>}
 
       {/* Tabla desktop */}
       {!isLoading && (
@@ -183,13 +197,18 @@ export function OrdenesView() {
                 <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
                   Items
                 </th>
+                {tab === "ordenes" && (
+                  <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                    Finanzas
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-[#f9eef2]">
               {ordenes.length === 0 && (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="py-12 text-center text-[#AA6A42] text-sm"
                   >
                     No hay {tab === "cotizaciones" ? "cotizaciones" : "órdenes"}{" "}
@@ -237,6 +256,19 @@ export function OrdenesView() {
                   <td className="px-4 py-3 text-center text-[#6B3E26] text-[13px]">
                     {o.items.length}
                   </td>
+                  {tab === "ordenes" && (
+                    <td className="px-4 py-3 text-center">
+                      {ORDEN_STATUS_FINANZAS.includes(o.status) ? (
+                        <FinanzasToggle
+                          checked={o.finanzas}
+                          onChange={(v) => handleFinanzas(o.id, v)}
+                          showLabel={false}
+                        />
+                      ) : (
+                        <span className="text-[#AA6A42]/50">—</span>
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -288,6 +320,18 @@ export function OrdenesView() {
                   </span>
                 )}
               </div>
+              {tab === "ordenes" && ORDEN_STATUS_FINANZAS.includes(o.status) && (
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#f0e0d0]">
+                  <span className="text-[11px] text-[#6B3E26]">
+                    Cuenta en finanzas
+                  </span>
+                  <FinanzasToggle
+                    checked={o.finanzas}
+                    onChange={(v) => handleFinanzas(o.id, v)}
+                    showLabel={false}
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>

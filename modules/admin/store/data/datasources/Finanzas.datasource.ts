@@ -14,6 +14,28 @@ import type {
   ResumenFinanciero,
   SaldoCuenta,
 } from "../../domain/entities/Finanzas.entity";
+import { ORDEN_STATUS_FINANZAS } from "../../domain/entities/Orden.entity";
+import {
+  FILTROS_VACIOS,
+  clasificarItem,
+  desgloseItem,
+  fraccion,
+  hayFiltroProducto,
+  itemCoincide,
+  sumarDesgloses,
+  type FinanzasFiltros,
+  type ProductoClasif,
+} from "@/core/helpers/finanzasFiltros";
+
+const CHUNK = 100;
+
+function chunk<T>(arr: T[], size = CHUNK): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+}
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
 
 function toRegistro(r: any): FinanzasRegistro {
   return {
@@ -81,6 +103,116 @@ export class FinanzasDatasource {
     const { data, error } = await q;
     if (error) throw new Error(error.message);
     return (data ?? []).map(toRegistro);
+  }
+
+  /**
+   * Registros del período con los filtros de los dashboards de finanzas:
+   *  - finanzas: "si" = orden marcada (y aún pagada/entregada), "no" = el resto
+   *    (incluye registros manuales sin orden);
+   *  - tipo/línea: reparte cada venta por producto y deja solo la parte de los
+   *    items que coinciden (montos escalados, `parcial: true`). Los registros sin
+   *    orden no tienen producto, así que quedan fuera con estos filtros.
+   * Siempre anota `finanzas` en cada registro.
+   */
+  async getRegistrosFiltrados(
+    desde?: string,
+    hasta?: string,
+    filtros: FinanzasFiltros = FILTROS_VACIOS,
+  ): Promise<FinanzasRegistro[]> {
+    const base = await this.getRegistros(desde, hasta);
+    const db = this.db;
+
+    // Órdenes de origen: flag y status
+    const ordenIds = Array.from(
+      new Set(base.map((r) => r.ordenId).filter((x): x is string => !!x)),
+    );
+    const ordenMap = new Map<string, { finanzas: boolean; status: string }>();
+    for (const ids of chunk(ordenIds)) {
+      const { data, error } = await db
+        .from("ordenes")
+        .select("id, finanzas, status")
+        .in("id", ids);
+      if (error) throw new Error(error.message);
+      for (const o of data ?? [])
+        ordenMap.set(o.id, { finanzas: !!o.finanzas, status: o.status });
+    }
+
+    const marcada = (r: FinanzasRegistro) => {
+      const o = r.ordenId ? ordenMap.get(r.ordenId) : undefined;
+      return !!o && o.finanzas && (ORDEN_STATUS_FINANZAS as string[]).includes(o.status);
+    };
+
+    let registros = base.map((r) => ({ ...r, finanzas: marcada(r) }));
+    if (filtros.finanzas === "si") registros = registros.filter((r) => r.finanzas);
+    if (filtros.finanzas === "no") registros = registros.filter((r) => !r.finanzas);
+
+    if (!hayFiltroProducto(filtros)) return registros;
+
+    // Tipo / línea: repartir cada venta por producto
+    const ids = Array.from(
+      new Set(registros.map((r) => r.ordenId).filter((x): x is string => !!x)),
+    );
+    const itemsPorOrden = new Map<string, any[]>();
+    for (const part of chunk(ids)) {
+      const { data, error } = await db
+        .from("orden_items")
+        .select("orden_id, configuracion, cantidad, costo_unitario, subtotal, desglose_costos")
+        .in("orden_id", part);
+      if (error) throw new Error(error.message);
+      for (const it of data ?? []) {
+        const list = itemsPorOrden.get(it.orden_id) ?? [];
+        list.push(it);
+        itemsPorOrden.set(it.orden_id, list);
+      }
+    }
+    const { data: prods, error: pe } = await db
+      .from("productos")
+      .select("id, categoria, linea");
+    if (pe) throw new Error(pe.message);
+    const prodMap = new Map<string, ProductoClasif>(
+      (prods ?? []).map((p: any) => [p.id, { categoria: p.categoria, linea: p.linea }]),
+    );
+
+    const out: FinanzasRegistro[] = [];
+    for (const r of registros) {
+      const items = r.ordenId ? itemsPorOrden.get(r.ordenId) : undefined;
+      if (!items || items.length === 0) continue;
+
+      const todos = items.map((it) => ({
+        it,
+        d: desgloseItem({
+          cantidad: Number(it.cantidad),
+          costoUnitario: Number(it.costo_unitario),
+          subtotal: Number(it.subtotal),
+          desgloseCostos: it.desglose_costos,
+        }),
+      }));
+      const coinciden = todos.filter((x) =>
+        itemCoincide(clasificarItem(x.it.configuracion, prodMap), filtros),
+      );
+      if (coinciden.length === 0) continue;
+
+      if (coinciden.length === todos.length) {
+        out.push(r);
+        continue;
+      }
+
+      const t = sumarDesgloses(todos.map((x) => x.d));
+      const m = sumarDesgloses(coinciden.map((x) => x.d));
+      const fVenta = fraccion(m.venta, t.venta);
+      const f = (a: number, b: number) => (b > 0 ? a / b : fVenta);
+      out.push({
+        ...r,
+        totalVenta: round2(r.totalVenta * fVenta),
+        insumos: round2(r.insumos * f(m.insumos, t.insumos)),
+        servicios: round2(r.servicios * f(m.servicios, t.servicios)),
+        manoDeObra: round2(r.manoDeObra * f(m.manoDeObra, t.manoDeObra)),
+        utilidad: round2(r.utilidad * f(m.utilidad, t.utilidad)),
+        comision: r.comision != null ? round2(r.comision * fVenta) : null,
+        parcial: true,
+      });
+    }
+    return out;
   }
 
   async getRegistroByOrdenId(
@@ -260,9 +392,13 @@ export class FinanzasDatasource {
 
   // ── Resumen ─────────────────────────────────────────────────────────────────
 
-  async getResumen(desde: string, hasta: string): Promise<ResumenFinanciero> {
+  async getResumen(
+    desde: string,
+    hasta: string,
+    filtros: FinanzasFiltros = FILTROS_VACIOS,
+  ): Promise<ResumenFinanciero> {
     const [registros, movimientos, compras] = await Promise.all([
-      this.getRegistros(desde, hasta),
+      this.getRegistrosFiltrados(desde, hasta, filtros),
       this.getMovimientos(desde, hasta),
       this.getCompras(desde, hasta),
     ]);
@@ -338,6 +474,7 @@ export class FinanzasDatasource {
       periodo: { desde, hasta },
       cuentas,
       totalVentas: totales.totalVentas,
+      numVentas: registros.length,
       totalCompras,
       saldoNeto: cuentas.find((c) => c.clave === "utilidad")?.saldo ?? 0,
     };

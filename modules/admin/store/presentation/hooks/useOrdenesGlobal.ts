@@ -78,6 +78,30 @@ export function useOrdenesGlobal(filters: Filters = {}) {
     load();
   };
 
+  /** Marca/desmarca la venta para finanzas con actualización optimista (revierte si falla). */
+  const setFinanzas = async (id: string, value: boolean): Promise<void> => {
+    const prev = result;
+    setResult((r) =>
+      r
+        ? { ...r, data: r.data.map((o) => (o.id === id ? { ...o, finanzas: value } : o)) }
+        : r,
+    );
+    try {
+      const res = await fetch(`/api/admin/ordenes/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ finanzas: value }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: res.statusText }));
+        throw new Error(err.error ?? "Error al actualizar finanzas");
+      }
+    } catch (e) {
+      setResult(prev);
+      throw e;
+    }
+  };
+
   return {
     ordenes: result?.data ?? [],
     total: result?.total ?? 0,
@@ -88,5 +112,6 @@ export function useOrdenesGlobal(filters: Filters = {}) {
     reload: load,
     updateStatus,
     updateFechaEntrega,
+    setFinanzas,
   };
 }

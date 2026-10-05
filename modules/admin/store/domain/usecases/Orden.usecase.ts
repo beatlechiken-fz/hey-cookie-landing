@@ -3,6 +3,7 @@
 import type { OrdenRepository } from "../repositories/Orden.repository";
 import {
   ORDEN_STATUS_EDITABLES,
+  ORDEN_STATUS_FINANZAS,
   type CreateOrdenDTO,
   type Orden,
   type OrdenStatus,
@@ -114,5 +115,18 @@ export class RemoveOrdenItemUseCase {
     if (!existing.items.some((i) => i.id === itemId))
       throw new Error(`La orden no tiene un producto ${itemId}`);
     return this.repo.removeItem(ordenId, itemId);
+  }
+}
+
+export class UpdateOrdenFinanzasUseCase {
+  constructor(private repo: OrdenRepository) {}
+  async execute(id: string, value: boolean) {
+    const existing = await this.repo.findById(id);
+    if (!existing) throw new Error(`Orden ${id} no encontrada`);
+    if (!ORDEN_STATUS_FINANZAS.includes(existing.status))
+      throw new Error(
+        "Solo se puede marcar para finanzas una venta pagada o entregada.",
+      );
+    return this.repo.updateFinanzas(id, value);
   }
 }

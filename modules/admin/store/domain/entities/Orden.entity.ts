@@ -57,6 +57,8 @@ export interface Orden {
   descontarInventario: boolean;
   /** Hecho: true una vez que ya se descontó el inventario para esta orden (evita descontar dos veces). */
   inventarioDescontado: boolean;
+  /** Marca manual: esta venta cuenta para los dashboards de finanzas. Solo editable en pagado/entregado. */
+  finanzas: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -92,6 +94,9 @@ export interface UpdateOrdenItemDTO {
 
 /** Solo se puede editar/quitar partidas mientras la orden está en estos estados. */
 export const ORDEN_STATUS_EDITABLES: OrdenStatus[] = ["cotizacion", "en_proceso"];
+
+/** Solo se puede marcar una venta para finanzas en estos estados. */
+export const ORDEN_STATUS_FINANZAS: OrdenStatus[] = ["pagado", "entregado"];
 
 /** Agregar una partida nueva a una orden ya existente — mismo shape que UpdateOrdenItemDTO sin id. */
 export interface AddOrdenItemDTO {

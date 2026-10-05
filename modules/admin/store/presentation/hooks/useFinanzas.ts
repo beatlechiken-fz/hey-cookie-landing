@@ -13,6 +13,11 @@ import type {
   UpdateCompraDTO,
   ResumenFinanciero,
 } from "../../domain/entities/Finanzas.entity";
+import {
+  FILTROS_VACIOS,
+  appendFiltrosToParams,
+  type FinanzasFiltros,
+} from "@/core/helpers/finanzasFiltros";
 
 async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -36,16 +41,21 @@ function periodoDefault() {
 
 // ── Registros ────────────────────────────────────────────────────────────────
 
-export function useRegistros(desde?: string, hasta?: string) {
+export function useRegistros(
+  desde?: string,
+  hasta?: string,
+  filtros: FinanzasFiltros = FILTROS_VACIOS,
+) {
   const [registros, setRegistros] = useState<FinanzasRegistro[]>([]);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const filtrosKey = appendFiltrosToParams(new URLSearchParams(), filtros).toString();
 
   const load = useCallback((d?: string, h?: string) => {
     startTransition(async () => {
       setError(null);
       try {
-        const params = new URLSearchParams();
+        const params = new URLSearchParams(filtrosKey);
         if (d) params.set("desde", d);
         if (h) params.set("hasta", h);
         setRegistros(
@@ -55,7 +65,7 @@ export function useRegistros(desde?: string, hasta?: string) {
         setError(e.message);
       }
     });
-  }, []);
+  }, [filtrosKey]);
 
   useEffect(() => {
     load(desde, hasta);
@@ -212,7 +222,12 @@ export function useCompras(desde?: string, hasta?: string) {
 
 // ── Resumen ──────────────────────────────────────────────────────────────────
 
-export function useResumen(desde?: string, hasta?: string) {
+export function useResumen(
+  desde?: string,
+  hasta?: string,
+  filtros: FinanzasFiltros = FILTROS_VACIOS,
+) {
+  const filtrosKey = appendFiltrosToParams(new URLSearchParams(), filtros).toString();
   const pd = periodoDefault();
   const d = desde ?? pd.desde;
   const h = hasta ?? pd.hasta;
@@ -227,14 +242,14 @@ export function useResumen(desde?: string, hasta?: string) {
       try {
         setResumen(
           await apiFetch<ResumenFinanciero>(
-            `/api/admin/resumen?desde=${d}&hasta=${h}`,
+            `/api/admin/resumen?desde=${d}&hasta=${h}${filtrosKey ? `&${filtrosKey}` : ""}`,
           ),
         );
       } catch (e: any) {
         setError(e.message);
       }
     });
-  }, []);
+  }, [filtrosKey]);
 
   useEffect(() => {
     load(d, h);

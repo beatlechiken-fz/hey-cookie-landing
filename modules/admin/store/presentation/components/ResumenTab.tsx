@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useResumen, useMovimientos } from "../hooks/useFinanzas";
+import type { FinanzasFiltros } from "@/core/helpers/finanzasFiltros";
 import type {
   CuentaMovimiento,
   TipoMovimiento,
@@ -71,10 +72,11 @@ const fmt = (n: number) =>
 interface Props {
   desde: string;
   hasta: string;
+  filtros?: FinanzasFiltros;
 }
 
-export function ResumenTab({ desde, hasta }: Props) {
-  const { resumen, isLoading, error, reload } = useResumen(desde, hasta);
+export function ResumenTab({ desde, hasta, filtros }: Props) {
+  const { resumen, isLoading, error, reload } = useResumen(desde, hasta, filtros);
   const {
     movimientos,
     create: createMov,
@@ -153,7 +155,8 @@ export function ResumenTab({ desde, hasta }: Props) {
               },
               {
                 label: "Nro. de ventas",
-                value: null,
+                value: resumen.numVentas,
+                esConteo: true,
                 icon: "📋",
                 color: "text-[#AA6A42]",
               },
@@ -172,9 +175,9 @@ export function ResumenTab({ desde, hasta }: Props) {
                   {kpi.icon} {kpi.label}
                 </span>
                 <span className={`text-xl font-bold ${kpi.color}`}>
-                  {kpi.value != null
-                    ? fmt(kpi.value)
-                    : `${resumen.cuentas.length > 0 ? "—" : "0"}`}
+                  {"esConteo" in kpi && kpi.esConteo
+                    ? kpi.value
+                    : fmt(kpi.value)}
                 </span>
               </div>
             ))}

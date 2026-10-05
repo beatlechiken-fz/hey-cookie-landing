@@ -8,6 +8,11 @@ import { useEffect, useState } from "react";
 import type { CategoriaCompra } from "../../domain/entities/Finanzas.entity";
 import { CATEGORIA_COMPRA_LABELS } from "../../domain/entities/Finanzas.entity";
 import type { GastosData } from "@/app/api/admin/finanzas/gastos/route";
+import {
+  FILTROS_VACIOS,
+  appendFiltrosToParams,
+  type FinanzasFiltros,
+} from "@/core/helpers/finanzasFiltros";
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(n);
@@ -17,24 +22,18 @@ const fmtD = (s: string) =>
     month: "short",
   });
 
-const LINEAS = [
-  { value: "", label: "Todas las líneas" },
-  { value: "sweet", label: "Sweet" },
-  { value: "fitness", label: "Fitness" },
-  { value: "healthy", label: "Healthy" },
-];
-
 interface Props {
   desde: string;
   hasta: string;
+  /** Filtros globales de finanzas (marcadas / tipo / línea), definidos en FinanzasView. */
+  filtros?: FinanzasFiltros;
 }
 
-export function GastosTab({ desde, hasta }: Props) {
+export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
   const [data, setData] = useState<GastosData | null>(null);
   const [loading, setLoading] = useState(true);
   const [categoria, setCategoria] = useState("");
   const [proveedor, setProveedor] = useState("");
-  const [linea, setLinea] = useState("");
   const [productoBusqueda, setProductoBusqueda] = useState("");
 
   useEffect(() => {
@@ -42,12 +41,12 @@ export function GastosTab({ desde, hasta }: Props) {
     const qs = new URLSearchParams({ desde, hasta });
     if (categoria) qs.set("categoria", categoria);
     if (proveedor) qs.set("proveedor", proveedor);
-    if (linea) qs.set("linea", linea);
+    appendFiltrosToParams(qs, filtros);
     fetch(`/api/admin/finanzas/gastos?${qs}`)
       .then((r) => r.json())
       .then(setData)
       .finally(() => setLoading(false));
-  }, [desde, hasta, categoria, proveedor, linea]);
+  }, [desde, hasta, categoria, proveedor, filtros]);
 
   const inputCls =
     "px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
@@ -86,23 +85,11 @@ export function GastosTab({ desde, hasta }: Props) {
           placeholder="Proveedor…"
           className={inputCls}
         />
-        <select
-          value={linea}
-          onChange={(e) => setLinea(e.target.value)}
-          className={inputCls}
-        >
-          {LINEAS.map((l) => (
-            <option key={l.value} value={l.value}>
-              {l.label}
-            </option>
-          ))}
-        </select>
-        {(categoria || proveedor || linea) && (
+        {(categoria || proveedor) && (
           <button
             onClick={() => {
               setCategoria("");
               setProveedor("");
-              setLinea("");
             }}
             className="text-[12px] font-semibold text-[#AA6A42] hover:text-red-500 transition"
           >

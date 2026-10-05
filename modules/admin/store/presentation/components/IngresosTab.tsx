@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useRegistros } from "../hooks/useFinanzas";
+import type { FinanzasFiltros } from "@/core/helpers/finanzasFiltros";
 import type {
   FinanzasRegistro,
   UpdateFinanzasRegistroDTO,
@@ -22,12 +23,14 @@ const fmtD = (s: string) =>
 interface Props {
   desde: string;
   hasta: string;
+  filtros?: FinanzasFiltros;
 }
 
-export function IngresosTab({ desde, hasta }: Props) {
+export function IngresosTab({ desde, hasta, filtros }: Props) {
   const { registros, isLoading, error, update, remove } = useRegistros(
     desde,
     hasta,
+    filtros,
   );
 
   const [editId, setEditId] = useState<string | null>(null);
@@ -213,6 +216,22 @@ export function IngresosTab({ desde, hasta }: Props) {
                       <span className="text-[#6B3E26] text-[12px]">
                         #{r.ordenNumero ?? "—"}
                       </span>
+                      {r.finanzas && (
+                        <span
+                          className="ml-1.5 px-1.5 py-0.5 rounded bg-[#FBE9EE] text-[#c0607a] text-[10px] font-bold uppercase"
+                          title="Venta marcada para finanzas"
+                        >
+                          Fin
+                        </span>
+                      )}
+                      {r.parcial && (
+                        <span
+                          className="ml-1 px-1.5 py-0.5 rounded bg-[#FFF3D6] text-[#AA6A42] text-[10px] font-bold uppercase"
+                          title="Montos de los productos que coinciden con el filtro, no de toda la venta"
+                        >
+                          Parcial
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-2.5">
                       <p className="text-[#3d1a24] text-[13px] truncate max-w-[120px]">
@@ -247,8 +266,13 @@ export function IngresosTab({ desde, hasta }: Props) {
                       <div className="flex gap-1 justify-end">
                         <button
                           onClick={() => openEdit(r)}
-                          className="p-1.5 rounded-lg hover:bg-[#FFF7F0] text-[#6B3E26] hover:text-[#c0607a] transition"
-                          title="Editar — ajustar comisión u otros campos"
+                          disabled={r.parcial}
+                          className="p-1.5 rounded-lg hover:bg-[#FFF7F0] text-[#6B3E26] hover:text-[#c0607a] transition disabled:opacity-30 disabled:cursor-not-allowed"
+                          title={
+                            r.parcial
+                              ? "Quita el filtro de tipo/línea para editar la venta completa"
+                              : "Editar — ajustar comisión u otros campos"
+                          }
                         >
                           <svg
                             viewBox="0 0 24 24"
@@ -264,7 +288,8 @@ export function IngresosTab({ desde, hasta }: Props) {
                         </button>
                         <button
                           onClick={() => setDeleting(r.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
+                          disabled={r.parcial}
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           <svg
                             viewBox="0 0 24 24"

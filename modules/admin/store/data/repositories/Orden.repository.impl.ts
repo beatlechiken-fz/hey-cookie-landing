@@ -44,4 +44,7 @@ export class OrdenRepositoryImpl implements OrdenRepository {
   addItem(ordenId: string, dto: AddOrdenItemDTO): Promise<Orden> {
     return this.ds.addItem(ordenId, dto);
   }
+  updateFinanzas(id: string, value: boolean): Promise<Orden> {
+    return this.ds.updateFinanzas(id, value);
+  }
 }

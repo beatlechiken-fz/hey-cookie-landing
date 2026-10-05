@@ -9,6 +9,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getAdminSession } from "@/core/helpers/auth";
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
+import { clasificarItem, parseFinanzasFiltros } from "@/core/helpers/finanzasFiltros";
 import type { CategoriaCompra } from "@/modules/admin/store/domain/entities/Finanzas.entity";
 
 export interface CostoPorProducto {
@@ -50,7 +51,8 @@ export async function GET(req: NextRequest) {
     const categoriaFiltro = sp.get("categoria") ?? undefined;
     const proveedorFiltro = sp.get("proveedor")?.trim().toLowerCase() ?? undefined;
     const productoIdFiltro = sp.get("productoId") ?? undefined;
-    const lineaFiltro = sp.get("linea") ?? undefined;
+    const filtros = parseFinanzasFiltros(sp);
+    const lineaFiltro = filtros.linea;
 
     const db = getSupabaseAdmin();
 
@@ -81,12 +83,16 @@ export async function GET(req: NextRequest) {
     }));
 
     // ── Costo de producción por producto/línea (de orden_items, sin canceladas) ──
-    const { data: ordenesRango, error: oe } = await db
+    let ordenesQ = db
       .from("ordenes")
       .select("id, status, created_at")
       .gte("created_at", desde)
       .lte("created_at", `${hasta}T23:59:59`)
       .neq("status", "cancelado");
+    // Flag "finanzas": solo marcadas / solo sin marcar.
+    if (filtros.finanzas === "si") ordenesQ = ordenesQ.eq("finanzas", true);
+    if (filtros.finanzas === "no") ordenesQ = ordenesQ.eq("finanzas", false);
+    const { data: ordenesRango, error: oe } = await ordenesQ;
     if (oe) throw new Error(oe.message);
 
     const ordenIds = (ordenesRango ?? []).map((o: any) => o.id);
@@ -104,7 +110,7 @@ export async function GET(req: NextRequest) {
       // productoId -> nombre/línea, para agrupar por línea también.
       const { data: productos } = await db
         .from("productos")
-        .select("id, nombre, linea");
+        .select("id, nombre, linea, categoria");
       const prodMap = new Map((productos ?? []).map((p: any) => [p.id, p]));
 
       const porProducto = new Map<string, CostoPorProducto>();
@@ -117,6 +123,11 @@ export async function GET(req: NextRequest) {
 
         const prod = prodMap.get(productoId);
         if (lineaFiltro && prod?.linea !== lineaFiltro) continue;
+        if (
+          filtros.tipo &&
+          clasificarItem(item.configuracion as any, prodMap).tipo !== filtros.tipo
+        )
+          continue;
 
         const costo = Number(item.costo_unitario) * Number(item.cantidad);
         totalCostoProduccion += costo;

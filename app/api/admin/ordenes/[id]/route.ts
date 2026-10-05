@@ -8,6 +8,7 @@ import { OrdenRepositoryImpl } from "@/modules/admin/store/data/repositories/Ord
 import {
   GetOrdenByIdUseCase,
   UpdateOrdenStatusUseCase,
+  UpdateOrdenFinanzasUseCase,
   resolveItemsInventario,
 } from "@/modules/admin/store/domain/usecases/Orden.usecase";
 import { InventarioRepositoryImpl } from "@/modules/admin/store/data/repositories/Inventario.repository.impl";
@@ -17,6 +18,7 @@ import {
 } from "@/modules/admin/store/domain/usecases/Inventario.usecase";
 import { FinanzasDatasource } from "@/modules/admin/store/data/datasources/Finanzas.datasource";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
+import { desgloseItem, sumarDesgloses } from "@/core/helpers/finanzasFiltros";
 import type { Orden } from "@/modules/admin/store/domain/entities/Orden.entity";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -87,27 +89,12 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
         const existing = await finDs.getRegistroByOrdenId(id).catch(() => null);
 
         if (!existing) {
-          let insumos = 0;
-          let servicios = 0;
-          let manoObra = 0;
-          let utilidad = 0;
-
-          for (const item of ord.items) {
-            const d = item.desgloseCostos as Record<string, any> | null;
-            if (!d) {
-              const costo = item.costoUnitario * item.cantidad;
-              insumos += costo * 0.55;
-              servicios += costo * 0.08;
-              manoObra += costo * 0.1;
-              utilidad += costo * 0.27;
-            } else {
-              const cargos = (d.cargosAdicionales ?? []) as Array<{ monto: number }>;
-              insumos += (d.costoInsumos ?? 0) * item.cantidad;
-              servicios += (cargos[0]?.monto ?? 0) * item.cantidad;
-              manoObra += (cargos[1]?.monto ?? 0) * item.cantidad;
-              utilidad += (cargos[2]?.monto ?? 0) * item.cantidad;
-            }
-          }
+          const {
+            insumos,
+            servicios,
+            manoDeObra: manoObra,
+            utilidad,
+          } = sumarDesgloses(ord.items.map(desgloseItem));
 
           await finDs
             .createRegistro({
@@ -180,11 +167,27 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       updated = await repo.updateFechaEntrega(id, body.fechaEntrega ?? null);
     }
 
+    // Marcar / desmarcar la venta para finanzas
+    if (body.finanzas !== undefined) {
+      if (typeof body.finanzas !== "boolean")
+        return NextResponse.json(
+          { error: "finanzas debe ser boolean" },
+          { status: 400 },
+        );
+      updated = await new UpdateOrdenFinanzasUseCase(repo).execute(id, body.finanzas);
+    }
+
     return NextResponse.json(updated);
   } catch (e: any) {
     return NextResponse.json(
       { error: e.message },
-      { status: e.message.includes("no encontrada") ? 404 : 500 },
+      {
+        status: e.message.includes("no encontrada")
+          ? 404
+          : e.message.includes("pagada o entregada")
+            ? 409
+            : 500,
+      },
     );
   }
 }

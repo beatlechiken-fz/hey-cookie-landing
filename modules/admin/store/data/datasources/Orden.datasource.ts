@@ -61,6 +61,7 @@ function toEntity(
     cupones,
     descontarInventario: row.descontar_inventario ?? false,
     inventarioDescontado: row.inventario_descontado ?? false,
+    finanzas: row.finanzas ?? false,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -252,6 +253,8 @@ export class OrdenSupabaseDatasource {
     descontarInventario?: boolean,
   ): Promise<Orden> {
     const patch: Record<string, any> = { status };
+    // Una venta cancelada nunca cuenta para finanzas.
+    if (status === "cancelado") patch.finanzas = false;
     // Al pasar a en_proceso es cuando se fija la intención del toggle (si vino en el body).
     if (status === "en_proceso" && descontarInventario !== undefined) {
       patch.descontar_inventario = descontarInventario;
@@ -340,6 +343,15 @@ export class OrdenSupabaseDatasource {
 
     await this.recalcularTotales(ordenId);
     return this.findById(ordenId) as Promise<Orden>;
+  }
+
+  async updateFinanzas(id: string, value: boolean): Promise<Orden> {
+    const { error } = await this.db
+      .from(TABLE)
+      .update({ finanzas: value })
+      .eq("id", id);
+    if (error) throw new Error(`updateFinanzas orden: ${error.message}`);
+    return this.findById(id) as Promise<Orden>;
   }
 
   /** Agrega una partida nueva a la orden y recalcula los totales. */
