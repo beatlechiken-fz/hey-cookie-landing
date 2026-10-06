@@ -76,6 +76,8 @@ function toEntity(
 
 export interface OrdenFilters {
   status?: OrdenStatus;
+  /** Varios estatus a la vez (tiene prioridad sobre `status` si ambos vienen). */
+  statuses?: OrdenStatus[];
   clienteId?: string;
   search?: string;
   page?: number;
@@ -96,13 +98,14 @@ export class OrdenSupabaseDatasource {
   }
 
   async findAll(filters: OrdenFilters): Promise<PaginatedResult<Orden>> {
-    const { status, clienteId, search, page = 1, pageSize = 20 } = filters;
+    const { status, statuses, clienteId, search, page = 1, pageSize = 20 } = filters;
     const from = (page - 1) * pageSize;
 
     let q = this.db
       .from(TABLE)
       .select("*, clientes(nombre)", { count: "exact" });
-    if (status) q = q.eq("status", status);
+    if (statuses?.length) q = q.in("status", statuses);
+    else if (status) q = q.eq("status", status);
     if (clienteId) q = q.eq("cliente_id", clienteId);
     if (search) {
       const s = search.trim();

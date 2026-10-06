@@ -12,6 +12,7 @@ import {
 import { InventarioRepositoryImpl } from "@/modules/admin/store/data/repositories/Inventario.repository.impl";
 import { DescontarInventarioOrdenUseCase } from "@/modules/admin/store/domain/usecases/Inventario.usecase";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
+import { ORDEN_STATUS_LABELS } from "@/modules/admin/store/domain/entities/Orden.entity";
 
 export async function GET(req: NextRequest) {
   if (!(await getAdminSession()))
@@ -22,6 +23,10 @@ export async function GET(req: NextRequest) {
       new OrdenRepositoryImpl(),
     ).execute({
       status: (sp.get("status") as OrdenStatus) ?? undefined,
+      // ?statuses=en_proceso,pagado — solo se aceptan estatus válidos
+      statuses: (sp.get("statuses") ?? "")
+        .split(",")
+        .filter((s): s is OrdenStatus => s in ORDEN_STATUS_LABELS),
       clienteId: sp.get("clienteId") ?? undefined,
       search: sp.get("search") ?? undefined,
       page: Number(sp.get("page") ?? 1),

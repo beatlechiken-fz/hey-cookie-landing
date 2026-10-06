@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { FinanzasToggle } from "./FinanzasToggle";
+import { OrdenStatusFilter } from "./OrdenStatusFilter";
 import { resumenProductos } from "@/core/helpers/ordenesResumen";
 import { ORDEN_STATUS_FINANZAS } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { useOrdenesGlobal } from "@/modules/admin/store/presentation/hooks/useOrdenesGlobal";
@@ -51,26 +52,38 @@ function fmtMoney(n: number) {
 }
 
 // ── Tipos de pestaña ──────────────────────────────────────────────────────────
-type Tab = "cotizaciones" | "ordenes";
+type Tab = "cotizaciones" | "ordenes" | "canceladas";
 
+// Las canceladas (y las cotizaciones) tienen su propia pestaña: no entran en "Órdenes".
 const TAB_STATUSES: Record<Tab, OrdenStatus[]> = {
   cotizaciones: ["cotizacion"],
-  ordenes: ["en_proceso", "listo_entregar", "pagado", "entregado", "cancelado"],
+  ordenes: ["en_proceso", "listo_entregar", "pagado", "entregado"],
+  canceladas: ["cancelado"],
+};
+
+/** Sustantivo (singular, plural) de cada pestaña para los textos de conteo y vacío. */
+const TAB_NOUN: Record<Tab, [string, string]> = {
+  cotizaciones: ["cotización", "cotizaciones"],
+  ordenes: ["orden", "órdenes"],
+  canceladas: ["cancelada", "canceladas"],
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function OrdenesView() {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("cotizaciones");
+  // "Órdenes" es siempre la pestaña inicial.
+  const [tab, setTab] = useState<Tab>("ordenes");
+  // Filtro por estatus (solo pestaña Órdenes). Vacío = todos los de la pestaña.
+  const [statusSel, setStatusSel] = useState<OrdenStatus[]>([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  // Cada tab filtra por su conjunto de statuses
-  // La API soporta `status` como un único valor — para múltiples usamos sin filtro
-  // y filtramos en cliente (pageSize grande para compensar)
+  // El filtro por estatus lo resuelve el servidor (así la paginación es correcta por pestaña).
+  const statusesFiltro =
+    tab === "ordenes" && statusSel.length > 0 ? statusSel : TAB_STATUSES[tab];
   const {
-    ordenes: todas,
+    ordenes,
     total,
     totalPages,
     isLoading,
@@ -80,6 +93,7 @@ export function OrdenesView() {
     search,
     page,
     pageSize: 50,
+    statuses: statusesFiltro,
   });
 
   const [finError, setFinError] = useState<string | null>(null);
@@ -92,14 +106,18 @@ export function OrdenesView() {
     }
   }
 
-  // Filtrar por tab en cliente
-  const statuses = TAB_STATUSES[tab];
-  const ordenes = todas.filter((o) => statuses.includes(o.status));
+  const [sing, plur] = TAB_NOUN[tab];
 
   function handleTabChange(t: Tab) {
     setTab(t);
     setPage(1);
     setSearch("");
+    setStatusSel([]);
+  }
+
+  function handleStatusChange(next: OrdenStatus[]) {
+    setStatusSel(next);
+    setPage(1);
   }
 
   const inputCls =
@@ -110,8 +128,9 @@ export function OrdenesView() {
       {/* Tabs horizontales */}
       <div className="flex bg-[#FFF7F0] border border-[#f0e0d0] rounded-xl p-1 gap-1 w-fit">
         {[
-          { key: "cotizaciones" as Tab, label: "Cotizaciones", icon: "📋" },
           { key: "ordenes" as Tab, label: "Órdenes", icon: "📦" },
+          { key: "cotizaciones" as Tab, label: "Cotizaciones", icon: "📋" },
+          { key: "canceladas" as Tab, label: "Canceladas", icon: "🚫" },
         ].map((t) => (
           <button
             key={t.key}
@@ -127,6 +146,15 @@ export function OrdenesView() {
           </button>
         ))}
       </div>
+
+      {/* Filtro por estatus — solo en Órdenes (cotización y cancelado tienen su pestaña) */}
+      {tab === "ordenes" && (
+        <OrdenStatusFilter
+          opciones={TAB_STATUSES.ordenes}
+          selected={statusSel}
+          onChange={handleStatusChange}
+        />
+      )}
 
       {/* Buscador */}
       <div className="relative">
@@ -163,7 +191,7 @@ export function OrdenesView() {
       <p className="text-sm text-[#6B3E26]">
         {isLoading
           ? "Cargando…"
-          : `${ordenes.length} ${tab === "cotizaciones" ? "cotización" : "orden"}${ordenes.length !== 1 ? "es" : ""}`}
+          : `${total} ${total === 1 ? sing : plur}`}
       </p>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -215,7 +243,7 @@ export function OrdenesView() {
                     colSpan={9}
                     className="py-12 text-center text-[#AA6A42] text-sm"
                   >
-                    No hay {tab === "cotizaciones" ? "cotizaciones" : "órdenes"}{" "}
+                    No hay {plur}{" "}
                     {search ? "con ese criterio" : "aún"}
                   </td>
                 </tr>
@@ -293,7 +321,7 @@ export function OrdenesView() {
         <div className="flex md:hidden flex-col gap-3">
           {ordenes.length === 0 && (
             <p className="text-center text-[#AA6A42] text-sm py-8">
-              No hay {tab === "cotizaciones" ? "cotizaciones" : "órdenes"}{" "}
+              No hay {plur}{" "}
               {search ? "con ese criterio" : "aún"}
             </p>
           )}

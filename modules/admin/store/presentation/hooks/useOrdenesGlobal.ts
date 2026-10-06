@@ -5,6 +5,8 @@ import type { Orden, OrdenStatus } from "../../domain/entities/Orden.entity";
 
 interface Filters {
   status?: OrdenStatus | "";
+  /** Varios estatus (multiselect); vacío = sin filtro por estatus. */
+  statuses?: OrdenStatus[];
   search?: string;
   page?: number;
   pageSize?: number;
@@ -19,7 +21,8 @@ interface PaginatedResult {
 }
 
 export function useOrdenesGlobal(filters: Filters = {}) {
-  const { status = "", search = "", page = 1, pageSize = 20 } = filters;
+  const { status = "", statuses, search = "", page = 1, pageSize = 20 } = filters;
+  const statusesKey = (statuses ?? []).join(",");
   const [result, setResult] = useState<PaginatedResult | null>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +33,7 @@ export function useOrdenesGlobal(filters: Filters = {}) {
       try {
         const params = new URLSearchParams();
         if (status) params.set("status", status);
+        if (statusesKey) params.set("statuses", statusesKey);
         if (search) params.set("search", search);
         params.set("page", String(page));
         params.set("pageSize", String(pageSize));
@@ -43,7 +47,7 @@ export function useOrdenesGlobal(filters: Filters = {}) {
         setError(e.message);
       }
     });
-  }, [status, search, page, pageSize]);
+  }, [status, statusesKey, search, page, pageSize]);
 
   useEffect(() => {
     load();
