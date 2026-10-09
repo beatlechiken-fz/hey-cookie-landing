@@ -1,14 +1,23 @@
 "use client";
 // src/modules/admin/store/presentation/components/ServiciosView.tsx
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal";
 import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
-import { ProductosView } from "./ProductosView";
+import { ProductosView, type ProductosViewHandle } from "./ProductosView";
+import type { CreateProductoDTO } from "../../domain/entities/Producto.entity";
 
 export function ServiciosView() {
   const [configuradorOpen, setConfiguradorOpen] = useState(false);
   const [gelatinaOpen, setGelatinaOpen] = useState(false);
+  const productosRef = useRef<ProductosViewHandle>(null);
+
+  // "Guardar como producto" desde un configurador: crea el producto y abre su
+  // editor en ProductosView; el configurador se cierra solo al terminar.
+  async function guardarComoProducto(dto: CreateProductoDTO) {
+    if (!productosRef.current) throw new Error("El listado de productos no está listo");
+    await productosRef.current.crearYEditar(dto);
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -99,16 +108,18 @@ export function ServiciosView() {
       {/* Sección: Productos */}
       <div className="flex flex-col gap-4">
         <h2 className="text-lg font-bold text-[#AA6A42]">Productos</h2>
-        <ProductosView />
+        <ProductosView ref={productosRef} />
       </div>
 
       <PastelConfiguradorModal
         open={configuradorOpen}
         onClose={() => setConfiguradorOpen(false)}
+        onGuardarComoProducto={guardarComoProducto}
       />
       <GelatinaCotizadorModal
         open={gelatinaOpen}
         onClose={() => setGelatinaOpen(false)}
+        onGuardarComoProducto={guardarComoProducto}
       />
     </div>
   );

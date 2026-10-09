@@ -1,7 +1,7 @@
 "use client";
 // src/modules/admin/productos/presentation/components/ProductosView.tsx
 
-import { useState } from "react";
+import { useState, useImperativeHandle, type Ref } from "react";
 import { useProductos } from "../hooks/useProductos";
 import { ProductoCard } from "./ProductoCard";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
@@ -19,7 +19,13 @@ const LINEAS: { value: LineaProducto | ""; label: string }[] = [
   { value: "healthy", label: "Healthy" },
 ];
 
-export function ProductosView() {
+/** Acciones que la vista padre (ServiciosView) puede disparar sobre el listado. */
+export interface ProductosViewHandle {
+  /** Crea el producto y abre su editor — mismo flujo que "Duplicar". */
+  crearYEditar: (dto: CreateProductoDTO) => Promise<void>;
+}
+
+export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
   const {
     productos,
     isLoading,
@@ -65,6 +71,12 @@ export function ProductosView() {
       setDeleting2(false);
     }
   }
+
+  useImperativeHandle(ref, () => ({
+    crearYEditar: async (dto) => {
+      setEditing(await create(dto));
+    },
+  }));
 
   async function handleDuplicate(p: Producto) {
     const dto: CreateProductoDTO = {

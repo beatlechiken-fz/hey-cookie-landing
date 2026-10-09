@@ -10,8 +10,13 @@ import {
   type CategoriaGelatina,
   type GelatinaCatalogo,
   type GelatinaCotizadorConfig,
+  type TipoBaseGelatina,
   findCostoGelatina,
+  findGelatina,
 } from "../../../domain/entities/GelatinaCotizador.entity";
+import type { CreateProductoDTO } from "../../../domain/entities/Producto.entity";
+import type { Gelatina } from "@/modules/admin/raws/domain/entities/Gelatina.entity";
+import { productoDesdeGelatina } from "../../../domain/usecases/ProductoDesdePersonalizado.usecase";
 import { SelectField, NINGUNO } from "./SelectField";
 import { MultiSelectField } from "./MultiselectField";
 import { MultiCoberturaField } from "./MultiCoberturaField";
@@ -25,6 +30,20 @@ interface Props {
   editItem?: CartItem | null;
   /** Igual que en PastelConfiguradorModal — para editar una partida de una orden ya generada. */
   onSave?: (payload: Omit<CartItem, "id" | "origen">) => Promise<void> | void;
+  /** Igual que en PastelConfiguradorModal — "Guardar como producto". */
+  onGuardarComoProducto?: (dto: CreateProductoDTO) => Promise<void>;
+}
+
+/** Nombre descriptivo: "Gelatina Clásica (1L agua + 0.5L leche)". */
+function nombreGelatina(config: GelatinaCotizadorConfig): string {
+  const cat = CATEGORIAS.find((c) => c.id === config.categoria)?.label ?? "Gelatina";
+  const bases: string[] = [];
+  if (config.litrosAgua > 0)       bases.push(`${config.litrosAgua}L agua`);
+  if (config.litrosLeche > 0)      bases.push(`${config.litrosLeche}L leche`);
+  if (config.litrosTresLeches > 0) bases.push(`${config.litrosTresLeches}L tres leches`);
+  if (config.litrosQuesoCrema > 0) bases.push(`${config.litrosQuesoCrema}L queso crema`);
+  if (config.litrosYogurt > 0)     bases.push(`${config.litrosYogurt}L yogurt`);
+  return `${cat} (${bases.join(" + ")})`;
 }
 
 const inputCls =
@@ -66,7 +85,13 @@ function LitroInput({ label, value, onChange, costoXLitro }: LitroInputProps) {
   );
 }
 
-export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Props) {
+export function GelatinaCotizadorModal({
+  open,
+  onClose,
+  editItem,
+  onSave,
+  onGuardarComoProducto,
+}: Props) {
   const { catalogo, loading: catLoading } = usePastelConfigCatalogo();
   const addItem = useCartStore((s) => s.addItem);
   const updateItem = useCartStore((s) => s.updateItem);
@@ -78,6 +103,7 @@ export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Prop
   const [added, setAdded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [savingProducto, setSavingProducto] = useState(false);
 
   const update = <K extends keyof GelatinaCotizadorConfig>(k: K, v: GelatinaCotizadorConfig[K]) =>
     setConfig((c) => ({ ...c, [k]: v }));
@@ -85,6 +111,7 @@ export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Prop
   useEffect(() => {
     if (!open) {
       setAdded(false);
+      setSaveError(null);
       setConfig({ ...GELATINA_CONFIG_VACIA });
       return;
     }
@@ -114,16 +141,8 @@ export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Prop
 
   async function handleAddToCart() {
     if (!desglose) return;
-    const cat = CATEGORIAS.find((c) => c.id === config.categoria)?.label ?? "Gelatina";
-    const bases: string[] = [];
-    if (config.litrosAgua > 0)       bases.push(`${config.litrosAgua}L agua`);
-    if (config.litrosLeche > 0)      bases.push(`${config.litrosLeche}L leche`);
-    if (config.litrosTresLeches > 0) bases.push(`${config.litrosTresLeches}L tres leches`);
-    if (config.litrosQuesoCrema > 0) bases.push(`${config.litrosQuesoCrema}L queso crema`);
-    if (config.litrosYogurt > 0)     bases.push(`${config.litrosYogurt}L yogurt`);
-
     const base = {
-      nombre: `${cat} (${bases.join(" + ")})`,
+      nombre: nombreGelatina(config),
       configuracion: {
         tipo: "gelatina",
         categoria: config.categoria,
@@ -183,6 +202,47 @@ export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Prop
     else addItem(payload);
     setAdded(true);
     setTimeout(() => { setAdded(false); onClose(); }, 900);
+  }
+
+  async function handleGuardarComoProducto() {
+    if (!onGuardarComoProducto || !catalogo) return;
+    setSaveError(null);
+    setSavingProducto(true);
+    try {
+      const litrosPorTipo: [TipoBaseGelatina, number][] = [
+        ["agua", config.litrosAgua],
+        ["leche", config.litrosLeche],
+        ["tres_leches", config.litrosTresLeches],
+        ["queso_crema", config.litrosQuesoCrema],
+        ["yogurt", config.litrosYogurt],
+      ];
+      const bases = await Promise.all(
+        litrosPorTipo
+          .filter(([, litros]) => litros > 0)
+          .map(async ([tipo, litros]) => {
+            // Tres leches solo existe en la línea clásica (igual que en el costeo).
+            const g = findGelatina(
+              gelatinas,
+              tipo === "tres_leches" ? "clasica" : config.categoria,
+              tipo,
+            );
+            if (!g) throw new Error(`No hay base de gelatina para "${tipo}" en raws`);
+            const res = await fetch(`/api/admin/gelatinas/${g.id}`);
+            if (!res.ok) throw new Error(`No se pudo cargar la receta de ${g.nombre}`);
+            const receta: Gelatina = await res.json();
+            return { lineas: receta.ingredientes, litros };
+          }),
+      );
+      await onGuardarComoProducto(
+        productoDesdeGelatina(config, bases, catalogo, nombreGelatina(config)),
+      );
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "No se pudo crear el producto");
+      setSavingProducto(false);
+      return;
+    }
+    setSavingProducto(false);
+    onClose();
   }
 
   const Row = ({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) => (
@@ -458,6 +518,16 @@ export function GelatinaCotizadorModal({ open, onClose, editItem, onSave }: Prop
               <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
                 {saveError && (
                   <p className="text-[12px] text-[#C0392B] text-center">{saveError}</p>
+                )}
+                {onGuardarComoProducto && !editItem && (
+                  <button
+                    type="button"
+                    onClick={handleGuardarComoProducto}
+                    disabled={!desglose || catLoading || savingProducto || saving}
+                    className="w-full py-2.5 rounded-xl border border-[#c0607a] text-[#c0607a] text-sm font-semibold hover:bg-[#FFF0F4] disabled:opacity-50 transition"
+                  >
+                    {savingProducto ? "Creando producto…" : "Guardar como producto"}
+                  </button>
                 )}
                 <div className="flex gap-3">
                 <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition">

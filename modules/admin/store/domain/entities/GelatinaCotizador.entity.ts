@@ -21,11 +21,22 @@ function norm(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
+export type TipoBaseGelatina = "agua" | "leche" | "tres_leches" | "queso_crema" | "yogurt";
+
 export function findCostoGelatina(
   catalogo: GelatinaCatalogo[],
   categoria: CategoriaGelatina,
-  tipo: "agua" | "leche" | "tres_leches" | "queso_crema" | "yogurt",
+  tipo: TipoBaseGelatina,
 ): number {
+  return findGelatina(catalogo, categoria, tipo)?.costoTotal ?? 0;
+}
+
+/** Base de gelatina del catálogo (raws) que corresponde a la categoría + tipo. */
+export function findGelatina(
+  catalogo: GelatinaCatalogo[],
+  categoria: CategoriaGelatina,
+  tipo: TipoBaseGelatina,
+): GelatinaCatalogo | undefined {
   const matchesTipo = (nombre: string): boolean => {
     const n = norm(nombre);
     switch (tipo) {
@@ -46,9 +57,8 @@ export function findCostoGelatina(
     return !isHealthy && !isSinAzucar;
   };
 
-  return (
-    catalogo.find((g) => g.activo && matchesTipo(g.nombre) && matchesCategoria(g.nombre))
-      ?.costoTotal ?? 0
+  return catalogo.find(
+    (g) => g.activo && matchesTipo(g.nombre) && matchesCategoria(g.nombre),
   );
 }
 

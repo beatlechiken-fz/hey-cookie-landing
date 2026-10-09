@@ -17,6 +17,9 @@ import {
   type PastelConfiguracion,
 } from "../../../domain/entities/PastelPersonalizado.entity";
 import { personasDesdeDiametro } from "../../../domain/entities/PastelMedida.entity";
+import type { CreateProductoDTO } from "../../../domain/entities/Producto.entity";
+import type { Bizcocho } from "@/modules/admin/raws/domain/entities/Bizcocho.entity";
+import { productoDesdePastel } from "../../../domain/usecases/ProductoDesdePersonalizado.usecase";
 
 interface Props {
   open: boolean;
@@ -29,9 +32,21 @@ interface Props {
    * carrito — pásalo junto con `editItem` y se usa en su lugar.
    */
   onSave?: (payload: Omit<CartItem, "id" | "origen">) => Promise<void> | void;
+  /**
+   * Si viene, muestra "Guardar como producto": crea un producto del catálogo
+   * con esta combinación. Quien lo pasa se encarga de abrir el editor del
+   * producto creado; este modal se cierra al terminar.
+   */
+  onGuardarComoProducto?: (dto: CreateProductoDTO) => Promise<void>;
 }
 
-export function PastelConfiguradorModal({ open, onClose, editItem, onSave }: Props) {
+export function PastelConfiguradorModal({
+  open,
+  onClose,
+  editItem,
+  onSave,
+  onGuardarComoProducto,
+}: Props) {
   const { catalogo, loading, error, config, setConfig, update, reset, desglose } =
     usePastelConfigurador();
   const addItem = useCartStore((s) => s.addItem);
@@ -39,6 +54,7 @@ export function PastelConfiguradorModal({ open, onClose, editItem, onSave }: Pro
   const [added, setAdded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [savingProducto, setSavingProducto] = useState(false);
 
   const inputCls =
     "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
@@ -53,7 +69,29 @@ export function PastelConfiguradorModal({ open, onClose, editItem, onSave }: Pro
   function handleClose() {
     reset();
     setAdded(false);
+    setSaveError(null);
     onClose();
+  }
+
+  async function handleGuardarComoProducto() {
+    if (!onGuardarComoProducto) return;
+    setSaveError(null);
+    setSavingProducto(true);
+    try {
+      let bizcocho: Bizcocho | null = null;
+      if (config.bizcochoId) {
+        const res = await fetch(`/api/admin/bizcochos/${config.bizcochoId}`);
+        if (!res.ok) throw new Error("No se pudo cargar la receta del bizcocho");
+        bizcocho = await res.json();
+      }
+      await onGuardarComoProducto(productoDesdePastel(config, bizcocho));
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "No se pudo crear el producto");
+      setSavingProducto(false);
+      return;
+    }
+    setSavingProducto(false);
+    handleClose();
   }
 
   async function handleAddToCart() {
@@ -490,6 +528,16 @@ export function PastelConfiguradorModal({ open, onClose, editItem, onSave }: Pro
               <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
                 {saveError && (
                   <p className="text-[12px] text-[#C0392B] text-center">{saveError}</p>
+                )}
+                {onGuardarComoProducto && !editItem && (
+                  <button
+                    type="button"
+                    onClick={handleGuardarComoProducto}
+                    disabled={loading || savingProducto || saving}
+                    className="w-full py-2.5 rounded-xl border border-[#c0607a] text-[#c0607a] text-sm font-semibold hover:bg-[#FFF0F4] disabled:opacity-50 transition"
+                  >
+                    {savingProducto ? "Creando producto…" : "Guardar como producto"}
+                  </button>
                 )}
                 <div className="flex gap-3">
                 <button
