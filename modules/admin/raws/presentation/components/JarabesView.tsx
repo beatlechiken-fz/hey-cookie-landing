@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { RawThumb } from "./RawThumb";
 import { useJarabes, useSaboresJarabe } from "../hooks/useJarabes";
 import { JarabeModal } from "./JarabeModal";
 import type {
@@ -638,7 +639,10 @@ function JarabesTab() {
             {jarabes.map((j) => (
               <tr key={j.id} className="hover:bg-[#FFF7F0]/60 transition group">
                 <td className="px-4 py-3 font-semibold text-[#3d1a24]">
-                  {j.nombre}
+                  <div className="flex items-center gap-3">
+                    <RawThumb src={j.imagenUrl} alt={j.nombre} />
+                    <span>{j.nombre}</span>
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-[#AA6A42]/70 text-sm max-w-xs">
                   <p className="truncate">{j.descripcion ?? "—"}</p>
@@ -698,7 +702,10 @@ function JarabesTab() {
           >
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-[#3d1a24]">{j.nombre}</p>
+                <div className="flex items-center gap-3">
+                  <RawThumb src={j.imagenUrl} alt={j.nombre} size="sm" />
+                  <p className="font-semibold text-[#3d1a24]">{j.nombre}</p>
+                </div>
                 {j.descripcion && (
                   <p className="text-sm text-[#6B3E26] mt-0.5 line-clamp-2">
                     {j.descripcion}

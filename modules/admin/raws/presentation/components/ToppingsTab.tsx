@@ -3,6 +3,7 @@
 
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { RawThumb } from "./RawThumb";
 import { useToppings, type ToppingItem } from "../hooks/useIngredientes";
 import { ToppingCantidadModal } from "./ToppingCantidadModal";
 import type { UpsertToppingCantidadDTO } from "../../domain/entities/Ingrediente.entity";
@@ -231,12 +232,17 @@ export function ToppingsTab() {
                   className="hover:bg-[#FFF7F0]/60 transition group"
                 >
                   <td className="px-4 py-3">
-                    <p className="font-medium text-[#3d1a24]">
-                      {ingrediente.nombre}
-                    </p>
-                    <p className="text-[11px] text-[#6B3E26]">
-                      {ingrediente.unidadBase}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <RawThumb src={ingrediente.imagenUrl} alt={ingrediente.nombre} />
+                      <div>
+                        <p className="font-medium text-[#3d1a24]">
+                          {ingrediente.nombre}
+                        </p>
+                        <p className="text-[11px] text-[#6B3E26]">
+                          {ingrediente.unidadBase}
+                        </p>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-center">
                     {cantidad?.cantidad != null ? (
@@ -319,6 +325,7 @@ export function ToppingsTab() {
               className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
+                <RawThumb src={ingrediente.imagenUrl} alt={ingrediente.nombre} size="sm" />
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-[#3d1a24]">
                     {ingrediente.nombre}

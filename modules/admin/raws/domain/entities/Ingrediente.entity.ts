@@ -88,6 +88,7 @@ export interface LicorCantidad {
   ingredienteId: string;
   ingredienteNombre: string;
   ingredienteUnidad: string;
+  ingredienteImagenUrl: string | null;
   costoUnidadMinima: number | null;
   cantidad: number | null;
   notas: string | null;

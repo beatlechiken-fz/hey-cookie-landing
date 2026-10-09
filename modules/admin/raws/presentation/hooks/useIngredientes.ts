@@ -216,6 +216,7 @@ export interface LicorItem {
   ingredienteId: string;
   ingredienteNombre: string;
   ingredienteUnidad: string;
+  ingredienteImagenUrl: string | null;
   costoUnidadMinima: number | null;
   cantidad: number | null;
   notas: string | null;
@@ -236,6 +237,7 @@ export function useLicores() {
             ingredienteId: d.ingredienteId,
             ingredienteNombre: d.ingredienteNombre,
             ingredienteUnidad: d.ingredienteUnidad,
+            ingredienteImagenUrl: d.ingredienteImagenUrl ?? null,
             costoUnidadMinima: d.costoUnidadMinima,
             cantidad: d.cantidad,
             notas: d.notas,

@@ -253,6 +253,7 @@ function toLicorEntity(row: any): LicorCantidad {
     ingredienteId: row.ingrediente_id,
     ingredienteNombre: row.ingredientes?.nombre ?? "",
     ingredienteUnidad: row.ingredientes?.unidad_base ?? "",
+    ingredienteImagenUrl: row.ingredientes?.imagen_url ?? null,
     costoUnidadMinima: row.ingredientes?.costo_unidad_minima
       ? Number(row.ingredientes.costo_unidad_minima)
       : null,
@@ -273,7 +274,7 @@ export class LicorCantidadSupabaseDatasource {
     // Fetch all licores_bebidas ingredients
     const { data: ings, error: ingErr } = await this.db
       .from("ingredientes")
-      .select("id, nombre, unidad_base, costo_unidad_minima")
+      .select("id, nombre, unidad_base, costo_unidad_minima, imagen_url")
       .eq("categoria", "licores_bebidas")
       .eq("activo", true)
       .order("nombre");
@@ -299,6 +300,7 @@ export class LicorCantidadSupabaseDatasource {
         ingredienteId: ing.id,
         ingredienteNombre: ing.nombre,
         ingredienteUnidad: ing.unidad_base,
+        ingredienteImagenUrl: ing.imagen_url ?? null,
         costoUnidadMinima: ing.costo_unidad_minima
           ? Number(ing.costo_unidad_minima)
           : null,
@@ -340,7 +342,7 @@ export class LicorCantidadSupabaseDatasource {
     // Fetch con join
     const { data, error: fetchErr } = await db
       .from(TABLE_LICORES)
-      .select("*, ingredientes(nombre, unidad_base, costo_unidad_minima)")
+      .select("*, ingredientes(nombre, unidad_base, costo_unidad_minima, imagen_url)")
       .eq("ingrediente_id", dto.ingredienteId)
       .single();
     if (fetchErr) throw new Error(`upsertLicor fetch: ${fetchErr.message}`);

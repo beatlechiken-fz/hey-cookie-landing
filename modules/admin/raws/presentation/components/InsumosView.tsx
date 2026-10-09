@@ -4,6 +4,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { RawThumb } from "./RawThumb";
 import { useIngredientes } from "../hooks/useIngredientes";
 import { ToppingsTab } from "./ToppingsTab";
 import { LicoresTab } from "./LicoresTab";
@@ -1026,7 +1027,10 @@ function InsumosTab() {
                 className="hover:bg-[#FFF7F0]/60 transition group"
               >
                 <td className="px-4 py-3 font-medium text-[#3d1a24]">
-                  {ing.nombre}
+                  <div className="flex items-center gap-3">
+                    <RawThumb src={ing.imagenUrl} alt={ing.nombre} />
+                    <span>{ing.nombre}</span>
+                  </div>
                 </td>
                 <td className="px-4 py-3">
                   <CategoriaBadge categoria={ing.categoria} />
@@ -1119,11 +1123,14 @@ function InsumosTab() {
             className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-2 mb-3">
-              <div className="flex flex-col gap-1.5">
-                <p className="font-semibold text-[#3d1a24]">{ing.nombre}</p>
-                <div className="flex gap-1.5 flex-wrap">
-                  <CategoriaBadge categoria={ing.categoria} />
-                  <UnidadBadge unidad={ing.unidadBase} />
+              <div className="flex items-start gap-3 min-w-0">
+                <RawThumb src={ing.imagenUrl} alt={ing.nombre} size="sm" />
+                <div className="flex flex-col gap-1.5 min-w-0">
+                  <p className="font-semibold text-[#3d1a24]">{ing.nombre}</p>
+                  <div className="flex gap-1.5 flex-wrap">
+                    <CategoriaBadge categoria={ing.categoria} />
+                    <UnidadBadge unidad={ing.unidadBase} />
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">

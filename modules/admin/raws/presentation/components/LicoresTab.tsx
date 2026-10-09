@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { RawThumb } from "./RawThumb";
 import { useLicores, type LicorItem } from "../hooks/useIngredientes";
 import type { UpsertLicorCantidadDTO } from "../../domain/entities/Ingrediente.entity";
 
@@ -336,7 +337,10 @@ export function LicoresTab() {
                   className="hover:bg-[#FFF7F0]/60 transition group"
                 >
                   <td className="px-4 py-3 font-medium text-[#3d1a24]">
-                    {item.ingredienteNombre}
+                    <div className="flex items-center gap-3">
+                      <RawThumb src={item.ingredienteImagenUrl} alt={item.ingredienteNombre} />
+                      <span>{item.ingredienteNombre}</span>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-center">
                     {item.cantidad != null ? (
@@ -399,6 +403,7 @@ export function LicoresTab() {
               className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
+                <RawThumb src={item.ingredienteImagenUrl} alt={item.ingredienteNombre} size="sm" />
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-[#3d1a24]">
                     {item.ingredienteNombre}

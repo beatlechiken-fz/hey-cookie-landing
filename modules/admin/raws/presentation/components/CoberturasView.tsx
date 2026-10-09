@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { RawThumb } from "./RawThumb";
 import { useCoberturas, useSabores } from "../hooks/useCoberturas";
 import { CoberturaModal } from "./CoberturaModal";
 import { SaborModal } from "./SaborModal";
@@ -359,7 +360,10 @@ function CoberturasTab() {
             {coberturas.map((c) => (
               <tr key={c.id} className="hover:bg-[#FFF7F0]/60 transition group">
                 <td className="px-4 py-3 font-semibold text-[#3d1a24]">
-                  {c.nombre}
+                  <div className="flex items-center gap-3">
+                    <RawThumb src={c.imagenUrl} alt={c.nombre} />
+                    <span>{c.nombre}</span>
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-[#AA6A42]/70 text-sm max-w-xs truncate">
                   {c.descripcion ?? "—"}
@@ -444,7 +448,10 @@ function CoberturasTab() {
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <p className="font-semibold text-[#3d1a24]">{c.nombre}</p>
+                <div className="flex items-center gap-3">
+                  <RawThumb src={c.imagenUrl} alt={c.nombre} size="sm" />
+                  <p className="font-semibold text-[#3d1a24]">{c.nombre}</p>
+                </div>
                 {c.descripcion && (
                   <p className="text-sm text-[#6B3E26] mt-0.5">
                     {c.descripcion}
