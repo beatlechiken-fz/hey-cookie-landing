@@ -124,6 +124,9 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
         opciones: opcionesLimpias,
         diametroCm: producto.permiteMedidaPersonalizada ? diametroCm : null,
         tamanoFijoId: tamanoFijo ? tamanoFijo.id : null,
+        // La promo (ej. viernes 2×$40) solo aplica cobrando el precio establecido.
+        promo:
+          usarPrecioEstablecido && tieneEstablecido ? producto.promo : null,
       },
       cantidad,
       costoUnitario: desglose.costoProduccionTotal,

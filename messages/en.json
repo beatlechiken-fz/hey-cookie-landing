@@ -51,7 +51,9 @@
       "name": "Rose",
       "description": "Our cookie for love and friendship, made with rose water, filled with almonds, and topped with white chocolate and rose petals."
     },
-    "title": "Sweet Cookies"
+    "title": "Sweet Cookies",
+    "titleFiness": "Fitness & Healthy Cookies",
+    "titleHalloween": "Halloween & Day of the Dead"
   },
   "cakes": {
     "title": "Cakes",
@@ -60,6 +62,9 @@
     "sweetCategory": "Sweet",
     "healthyCategory": "Healthy",
     "gfCategory": "Gluten-Free",
+    "collections": {
+      "halloween-muertos": "Halloween & Day of the Dead"
+    },
     "lines": {
       "sweet": "Sweet Line",
       "fitness": "Fitness Line",

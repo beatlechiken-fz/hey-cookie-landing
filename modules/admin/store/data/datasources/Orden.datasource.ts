@@ -1,6 +1,7 @@
 // src/modules/admin/store/data/datasources/Orden.datasource.ts
 
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
+import { descuentoPromosDeItems } from "../../domain/entities/Promocion.entity";
 import type {
   Orden,
   OrdenItem,
@@ -179,10 +180,9 @@ export class OrdenSupabaseDatasource {
     const db = this.db;
 
     const subtotal = dto.items.reduce((s, i) => s + i.subtotal, 0);
-    const descuentoTotal = dto.cupones.reduce(
-      (s, c) => s + c.montoDescontado,
-      0,
-    );
+    const descuentoTotal =
+      dto.cupones.reduce((s, c) => s + c.montoDescontado, 0) +
+      descuentoPromosDeItems(dto.items);
     const total = Math.max(0, subtotal - descuentoTotal);
 
     const { data: orden, error } = await db
@@ -299,28 +299,46 @@ export class OrdenSupabaseDatasource {
   /**
    * Recalcula subtotal/descuento_total/total de la orden a partir de sus
    * orden_items y orden_cupones actuales — misma fórmula que create():
-   * subtotal = Σ item.subtotal, descuentoTotal = Σ cupón.monto_descontado.
+   * subtotal = Σ item.subtotal, descuentoTotal = Σ cupón.monto_descontado
+   * + promociones (evaluadas con el día en que se creó la orden).
    * Se llama después de editar/quitar una partida.
    */
   private async recalcularTotales(ordenId: string): Promise<void> {
     const db = this.db;
-    const [{ data: itemRows, error: ie }, { data: cupRows, error: ce }] =
-      await Promise.all([
-        db.from(TABLE_ITEMS).select("subtotal").eq("orden_id", ordenId),
-        db.from(TABLE_CUPONS).select("monto_descontado").eq("orden_id", ordenId),
-      ]);
+    const [
+      { data: itemRows, error: ie },
+      { data: cupRows, error: ce },
+      { data: ordenRow, error: oe },
+    ] = await Promise.all([
+      db
+        .from(TABLE_ITEMS)
+        .select("subtotal, cantidad, precio_unitario, configuracion")
+        .eq("orden_id", ordenId),
+      db.from(TABLE_CUPONS).select("monto_descontado").eq("orden_id", ordenId),
+      db.from(TABLE).select("created_at").eq("id", ordenId).single(),
+    ]);
     if (ie) throw new Error(`recalcularTotales items: ${ie.message}`);
     if (ce) throw new Error(`recalcularTotales cupones: ${ce.message}`);
+    if (oe) throw new Error(`recalcularTotales orden: ${oe.message}`);
 
     // any: filas crudas de Supabase, mismo patrón que toItemEntity/toCuponEntity arriba.
     const subtotal = (itemRows ?? []).reduce(
       (s, r: any) => s + Number(r.subtotal),
       0,
     );
-    const descuentoTotal = (cupRows ?? []).reduce(
-      (s, r: any) => s + Number(r.monto_descontado),
-      0,
+    const descuentoPromos = descuentoPromosDeItems(
+      (itemRows ?? []).map((r: any) => ({
+        cantidad: Number(r.cantidad),
+        precioUnitario: Number(r.precio_unitario),
+        configuracion: r.configuracion,
+      })),
+      new Date(ordenRow.created_at),
     );
+    const descuentoTotal =
+      (cupRows ?? []).reduce(
+        (s, r: any) => s + Number(r.monto_descontado),
+        0,
+      ) + descuentoPromos;
     const total = Math.max(0, subtotal - descuentoTotal);
 
     const { error } = await db

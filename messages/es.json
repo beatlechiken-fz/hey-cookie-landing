@@ -69,7 +69,8 @@
       "description": "Creada para quienes buscan equilibrio entre nutrición y placer. Elaborada con vainilla, nibs de cacao y trozos de dátil, con 10g de proteína, baja en azúcar y alta en fibra."
     },
     "title": "Sweet Cookies",
-    "titleFiness": "Fitness & Healthy Cookies"
+    "titleFiness": "Fitness & Healthy Cookies",
+    "titleHalloween": "Halloween & Día de muertos"
   },
   "cakes": {
     "title": "Pasteles",
@@ -78,6 +79,9 @@
     "sweetCategory": "Dulce",
     "healthyCategory": "Saludable",
     "gfCategory": "Libre de gluten",
+    "collections": {
+      "halloween-muertos": "Halloween & Día de muertos"
+    },
     "lines": {
       "sweet": "Línea Dulce",
       "fitness": "Línea Fitness",

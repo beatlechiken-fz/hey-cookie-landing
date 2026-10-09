@@ -17,7 +17,7 @@ async function fetchPasteles(): Promise<Producto[]> {
         id, nombre, descripcion, imagen_url, linea, categoria, elaboracion,
         ingredientes_base, opciones_default, medida_base_cm,
         permite_medida_personalizada, tamanos_fijos, factor_opciones,
-        mano_de_obra_minimo, mano_de_obra_modo, precio_establecido, activo, orden, stock_actual,
+        mano_de_obra_minimo, mano_de_obra_modo, precio_establecido, coleccion, activo, orden, stock_actual,
         created_at, updated_at
       `)
       .eq("categoria", "pastel")
@@ -43,6 +43,8 @@ async function fetchPasteles(): Promise<Producto[]> {
       manoDeObraMinimo: row.mano_de_obra_minimo != null ? Number(row.mano_de_obra_minimo) : null,
       manoDeObraModo: row.mano_de_obra_modo === "fijo" ? "fijo" : "dinamico",
       precioEstablecido: row.precio_establecido != null ? Number(row.precio_establecido) : null,
+      promo: null, // promociones solo aplican a galletas (CookieModal)
+      coleccion: row.coleccion ?? null,
       activo: row.activo,
       stockActual: row.stock_actual != null ? Number(row.stock_actual) : 0,
       orden: row.orden ?? 0,

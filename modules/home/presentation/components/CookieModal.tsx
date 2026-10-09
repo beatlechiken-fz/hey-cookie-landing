@@ -7,6 +7,10 @@ import { useCartStore, type CartItem } from "@/modules/admin/store/presentation/
 import type { GalletaPublica } from "./Cookies";
 import type { Cupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
 import { calcularDescuentoCupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
+import {
+  promoAplica,
+  promoEtiqueta,
+} from "@/modules/admin/store/domain/entities/Promocion.entity";
 
 interface Props {
   producto: GalletaPublica;
@@ -103,7 +107,11 @@ export default function CookieModal({ producto, onClose, editItem }: Props) {
 
     const payload = {
       nombre: producto.nombre,
-      configuracion: { productoId: producto.id, tipo: "cookie" },
+      configuracion: {
+        productoId: producto.id,
+        tipo: "cookie",
+        promo: producto.promo ?? null,
+      },
       cantidad: qty,
       costoUnitario: 0,
       precioUnitario: precio,
@@ -182,6 +190,16 @@ export default function CookieModal({ producto, onClose, editItem }: Props) {
               </span>
               <span className="text-sm text-[#AA6A42]/70">por pieza</span>
             </div>
+            {producto.promo && (
+              <p className="-mt-2 text-sm text-[#7b2d42]">
+                <span className="inline-block mr-2 text-xs font-bold text-white bg-[#DA6C94] rounded-full px-2.5 py-0.5">
+                  {promoEtiqueta(producto.promo)}
+                </span>
+                {promoAplica(producto.promo)
+                  ? "¡Hoy aplica! Combínala con otros sabores de la promo; se descuenta en el carrito."
+                  : "Combínala con otros sabores de la promo; se descuenta en el carrito el día de la promoción."}
+              </p>
+            )}
 
             {/* DIVIDER */}
             <hr className="border-[#f0e0d0]" />

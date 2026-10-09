@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import Icons from "@/core/assets/Icons";
 import dynamic from "next/dynamic";
 import type { GalletaPublica } from "./Cookies";
+import { promoEtiqueta } from "@/modules/admin/store/domain/entities/Promocion.entity";
 
 const CookieModal = dynamic(() => import("./CookieModal"), { ssr: false });
 
@@ -118,6 +119,11 @@ function FitnessCard({ producto, onOpen }: CardProps) {
       {precio != null && (
         <span className="inline-block mt-2 text-xs font-semibold text-[#8A5535] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
           ${precio.toFixed(0)} / pz
+        </span>
+      )}
+      {producto.promo && (
+        <span className="inline-block mt-2 ml-1 text-xs font-bold text-white bg-[#DA6C94] rounded-full px-3 py-0.5">
+          {promoEtiqueta(producto.promo)}
         </span>
       )}
     </article>

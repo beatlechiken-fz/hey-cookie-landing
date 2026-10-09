@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { PastelConfiguracion } from "../../domain/entities/PastelPersonalizado.entity";
 import type { OrdenCuponAplicado } from "../../domain/entities/Orden.entity";
+import { descuentoPromosDeItems } from "../../domain/entities/Promocion.entity";
 
 /**
  * De dónde salió este item — determina qué modal/flujo reabrir para editarlo.
@@ -89,9 +90,11 @@ interface CartState {
   itemDescuento: (itemId: string) => number;
   /** Suma de todos los descuentos por item */
   totalItemDescuentos: () => number;
-  /** Descuento de cupones globales (se aplican sobre subtotal - descuentos por item) */
+  /** Descuento por promociones (ej. viernes 2×$40) vigentes hoy */
+  promoDescuento: () => number;
+  /** Descuento de cupones globales (se aplican sobre subtotal - descuentos por item - promos) */
   globalDescuentoTotal: () => number;
-  /** Descuento total = por item + global */
+  /** Descuento total = por item + promos + global */
   descuentoTotal: () => number;
   total: () => number;
 }
@@ -218,15 +221,19 @@ export const useCartStore = create<CartState>()(
           );
         }, 0),
 
+      promoDescuento: () => descuentoPromosDeItems(get().items),
+
       globalDescuentoTotal: () => {
         const subtotal = get().subtotal();
-        const itemDisc = get().totalItemDescuentos();
+        const itemDisc = get().totalItemDescuentos() + get().promoDescuento();
         const base = Math.max(0, subtotal - itemDisc);
         return get().cupones.reduce((sum, c) => sum + calcCuponMonto(c, base), 0);
       },
 
       descuentoTotal: () =>
-        get().totalItemDescuentos() + get().globalDescuentoTotal(),
+        get().totalItemDescuentos() +
+        get().promoDescuento() +
+        get().globalDescuentoTotal(),
 
       total: () => Math.max(0, get().subtotal() - get().descuentoTotal()),
     }),

@@ -7,9 +7,11 @@ import type {
   Producto,
   CreateProductoDTO,
   LineaProducto,
+  ColeccionProducto,
   IngredienteBaseItem,
   TamanoFijo,
 } from "../../domain/entities/Producto.entity";
+import { COLECCIONES } from "../../domain/entities/Producto.entity";
 import type { Ingrediente } from "@/modules/admin/raws/domain/entities/Ingrediente.entity";
 import { usePastelConfigCatalogo } from "@/modules/admin/store/presentation/hooks/usePastelConfig";
 import {
@@ -20,6 +22,11 @@ import {
   MultiCoberturaField,
   type CoberturaFieldItem,
 } from "./configurador/MultiCoberturaField";
+import {
+  DIAS_SEMANA,
+  parsePromo,
+  promoEtiqueta,
+} from "../../domain/entities/Promocion.entity";
 
 // ── Internal types ────────────────────────────────────────────────────────────
 
@@ -100,6 +107,7 @@ export function ProductoEditorModal({
   const [imgUploading, setImgUploading] = useState(false);
   const [descripcion, setDescripcion] = useState("");
   const [linea, setLinea] = useState<LineaProducto>("sweet");
+  const [coleccion, setColeccion] = useState<ColeccionProducto | null>(null);
   const [elaboracion, setElaboracion] = useState("");
   const [permiteMedida, setPermiteMedida] = useState(false);
   const [medidaBaseCm, setMedidaBaseCm] = useState<number | "">(24);
@@ -111,6 +119,10 @@ export function ProductoEditorModal({
     "dinamico",
   );
   const [precioEstablecido, setPrecioEstablecido] = useState<number | "">("");
+  const [promoActiva, setPromoActiva] = useState(false);
+  const [promoCantidad, setPromoCantidad] = useState<number | "">(2);
+  const [promoPrecio, setPromoPrecio] = useState<number | "">("");
+  const [promoDias, setPromoDias] = useState<number[]>([]);
 
   // Ingredientes
   const [lineas, setLineas] = useState<IngLineaRow[]>([]);
@@ -146,6 +158,7 @@ export function ProductoEditorModal({
       setImagenUrl(producto.imagenUrl ?? null);
       setDescripcion(producto.descripcion ?? "");
       setLinea(producto.linea);
+      setColeccion(producto.coleccion ?? null);
       setElaboracion(producto.elaboracion ?? "");
       setPermiteMedida(producto.permiteMedidaPersonalizada);
       setMedidaBaseCm(producto.medidaBaseCm ?? 24);
@@ -153,6 +166,10 @@ export function ProductoEditorModal({
       setManoDeObraMinimo(producto.manoDeObraMinimo ?? "");
       setManoDeObraModo(producto.manoDeObraModo ?? "dinamico");
       setPrecioEstablecido(producto.precioEstablecido ?? "");
+      setPromoActiva(!!producto.promo);
+      setPromoCantidad(producto.promo?.cantidad ?? 2);
+      setPromoPrecio(producto.promo?.precio ?? "");
+      setPromoDias(producto.promo?.dias ?? []);
       setLineas(
         producto.ingredientesBase.map((ing) => ({
           ingredienteId: ing.ingredienteId,
@@ -206,6 +223,7 @@ export function ProductoEditorModal({
       setImagenUrl(null);
       setDescripcion("");
       setLinea("sweet");
+      setColeccion(null);
       setElaboracion("");
       setPermiteMedida(false);
       setMedidaBaseCm(24);
@@ -215,6 +233,10 @@ export function ProductoEditorModal({
       setManoDeObraMinimo("");
       setManoDeObraModo("dinamico");
       setPrecioEstablecido("");
+      setPromoActiva(false);
+      setPromoCantidad(2);
+      setPromoPrecio("");
+      setPromoDias([]);
       setLineas([]);
       setDefCoberturas([]);
       setDefRellenos([]);
@@ -358,6 +380,18 @@ export function ProductoEditorModal({
       setTab("receta");
       return;
     }
+    const promo = promoActiva
+      ? parsePromo({
+          cantidad: promoCantidad,
+          precio: promoPrecio,
+          dias: promoDias,
+        })
+      : null;
+    if (promoActiva && !promo) {
+      setError("La promoción necesita al menos 2 piezas y un precio mayor a 0");
+      setTab("ajustes");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
@@ -429,6 +463,8 @@ export function ProductoEditorModal({
         manoDeObraModo,
         precioEstablecido:
           precioEstablecido !== "" ? Number(precioEstablecido) : null,
+        promo,
+        coleccion,
         activo: true,
       };
       await onSave(dto, producto?.id);
@@ -654,6 +690,27 @@ export function ProductoEditorModal({
                           </button>
                         ))}
                       </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className={labelCls}>Colección / temporada</label>
+                      <div className="flex gap-2">
+                        {[{ value: null, label: "Ninguna" }, ...COLECCIONES].map(
+                          (c) => (
+                            <button
+                              key={c.value ?? "ninguna"}
+                              type="button"
+                              onClick={() => setColeccion(c.value)}
+                              className={`flex-1 py-2 rounded-xl text-[13px] font-semibold border transition ${coleccion === c.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
+                            >
+                              {c.label}
+                            </button>
+                          ),
+                        )}
+                      </div>
+                      <p className="text-[11px] text-[#AA6A42]/70">
+                        Las galletas con colección se muestran en su propia
+                        sección del inicio, conservando la etiqueta de su línea.
+                      </p>
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <label className={labelCls}>Descripción</label>
@@ -1427,6 +1484,114 @@ export function ProductoEditorModal({
                           {Number(precioEstablecido).toFixed(2)} (establecido) y
                           el precio calculado.
                         </p>
+                      )}
+                    </div>
+                    <div className={sectionCls}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <label className={labelCls}>Promoción</label>
+                          <p className="text-[11px] text-[#6B3E26] mt-1">
+                            Paquete de varias piezas a precio especial (ej. 2
+                            por $40). Productos con la misma promoción se
+                            combinan entre sí en el carrito.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setPromoActiva((v) => !v)}
+                          className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${
+                            promoActiva ? "bg-[#c0607a]" : "bg-[#e8c4a0]"
+                          }`}
+                          aria-label="Activar promoción"
+                        >
+                          <span
+                            className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ${
+                              promoActiva ? "translate-x-5" : "translate-x-0"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                      {promoActiva && (
+                        <>
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-[#6B3E26]">
+                            <input
+                              type="number"
+                              min="2"
+                              step="1"
+                              value={promoCantidad}
+                              onChange={(e) =>
+                                setPromoCantidad(
+                                  e.target.value === ""
+                                    ? ""
+                                    : Number(e.target.value),
+                                )
+                              }
+                              className={inputCls + " max-w-[80px]"}
+                            />
+                            <span>piezas por $</span>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={promoPrecio}
+                              onChange={(e) =>
+                                setPromoPrecio(
+                                  e.target.value === ""
+                                    ? ""
+                                    : Number(e.target.value),
+                                )
+                              }
+                              placeholder="Ej: 40"
+                              className={inputCls + " max-w-[110px]"}
+                            />
+                          </div>
+                          <div>
+                            <p className="text-[11px] text-[#6B3E26] mb-1.5">
+                              Días en que aplica (ninguno = todos los días)
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {DIAS_SEMANA.map((dia, i) => {
+                                const on = promoDias.includes(i);
+                                return (
+                                  <button
+                                    key={dia}
+                                    type="button"
+                                    onClick={() =>
+                                      setPromoDias((p) =>
+                                        on
+                                          ? p.filter((d) => d !== i)
+                                          : [...p, i].sort(),
+                                      )
+                                    }
+                                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition cursor-pointer ${
+                                      on
+                                        ? "bg-[#c0607a] border-[#c0607a] text-white"
+                                        : "bg-white border-[#e8c4a0] text-[#6B3E26] hover:bg-[#FFF7F0]"
+                                    }`}
+                                  >
+                                    {dia.slice(0, 3)}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          {(() => {
+                            const preview = parsePromo({
+                              cantidad: promoCantidad,
+                              precio: promoPrecio,
+                              dias: promoDias,
+                            });
+                            return preview ? (
+                              <p className="text-[11px] text-[#c0607a] font-semibold">
+                                Se mostrará como: {promoEtiqueta(preview)}
+                              </p>
+                            ) : (
+                              <p className="text-[11px] text-red-500">
+                                Mínimo 2 piezas y un precio mayor a 0.
+                              </p>
+                            );
+                          })()}
+                        </>
                       )}
                     </div>
                     <div className={sectionCls}>

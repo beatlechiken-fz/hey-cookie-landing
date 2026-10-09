@@ -5,6 +5,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import Icons from "@/core/assets/Icons";
 import dynamic from "next/dynamic";
+import {
+  promoEtiqueta,
+  type ProductoPromo,
+} from "@/modules/admin/store/domain/entities/Promocion.entity";
 
 const CookieModal = dynamic(() => import("./CookieModal"), { ssr: false });
 
@@ -15,13 +19,16 @@ export interface GalletaPublica {
   imagenUrl: string | null;
   precioEstablecido: number | null;
   linea: "sweet" | "fitness" | "healthy";
+  promo: ProductoPromo | null;
 }
 
 interface Props {
   productos: GalletaPublica[];
+  /** Clave del título dentro de `cookies` en messages (default "title"). */
+  titleKey?: "title" | "titleHalloween";
 }
 
-export default function Cookies({ productos }: Props) {
+export default function Cookies({ productos, titleKey = "title" }: Props) {
   const t = useTranslations("cookies");
   const [selected, setSelected] = useState<GalletaPublica | null>(null);
 
@@ -30,7 +37,7 @@ export default function Cookies({ productos }: Props) {
       {/* HEADER */}
       <div className="relative z-10 pt-16 px-6 md:px-12">
         <h2 className="text-5xl text-[#DA6C94] text-center font-title">
-          {t("title")}
+          {t(titleKey)}
         </h2>
         <div className="w-full flex justify-center pt-4">
           <Image src={Icons.wavesPink} alt="" width={120} height={20} />
@@ -125,6 +132,11 @@ function CookieCard({ producto, onOpen }: CardProps) {
       {precio != null && (
         <span className="inline-block mt-2 text-xs font-semibold text-[#8A5535] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
           ${precio.toFixed(0)} / pz
+        </span>
+      )}
+      {producto.promo && (
+        <span className="inline-block mt-2 ml-1 text-xs font-bold text-white bg-[#DA6C94] rounded-full px-3 py-0.5">
+          {promoEtiqueta(producto.promo)}
         </span>
       )}
     </article>

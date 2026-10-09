@@ -6,11 +6,13 @@ import type {
   CreateProductoDTO,
   UpdateProductoDTO,
   LineaProducto,
+  ColeccionProducto,
 } from "../../domain/entities/Producto.entity";
 import type {
   ProductoFilters,
   PaginatedResult,
 } from "../../domain/repositories/Producto.repository";
+import { parsePromo } from "../../domain/entities/Promocion.entity";
 
 const TABLE = "productos";
 
@@ -36,6 +38,8 @@ function toEntity(row: any): Producto {
     manoDeObraModo: row.mano_de_obra_modo === "fijo" ? "fijo" : "dinamico",
     precioEstablecido:
       row.precio_establecido != null ? Number(row.precio_establecido) : null,
+    promo: parsePromo(row.promo),
+    coleccion: (row.coleccion as ColeccionProducto | null) ?? null,
     activo: row.activo,
     orden: row.orden ?? 0,
     stockActual: row.stock_actual != null ? Number(row.stock_actual) : 0,
@@ -68,6 +72,8 @@ function toRow(dto: Partial<CreateProductoDTO>) {
     row.mano_de_obra_modo = dto.manoDeObraModo;
   if (dto.precioEstablecido !== undefined)
     row.precio_establecido = dto.precioEstablecido;
+  if (dto.promo !== undefined) row.promo = parsePromo(dto.promo);
+  if (dto.coleccion !== undefined) row.coleccion = dto.coleccion;
   if (dto.activo !== undefined) row.activo = dto.activo;
   if (dto.orden !== undefined) row.orden = dto.orden;
   return row;

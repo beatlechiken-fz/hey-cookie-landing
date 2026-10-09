@@ -76,6 +76,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   const removeItemCupon = useCartStore((s) => s.removeItemCupon);
   const subtotal        = useCartStore((s) => s.subtotal());
   const descuentoTotal  = useCartStore((s) => s.descuentoTotal());
+  const promoDisc       = useCartStore((s) => s.promoDescuento());
   const total           = useCartStore((s) => s.total());
 
   // ── Editar item del carrito: reabre el modal/flujo correcto con la config precargada ──
@@ -329,7 +330,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   /* ── Global discounts over subtotal after item discounts ── */
   const totalItemDisc = items.reduce((s, i) =>
     s + itemDescuentoCalc(i.precioUnitario, i.cantidad, i.cuponesItem), 0);
-  const baseGlobal = Math.max(0, subtotal - totalItemDisc);
+  const baseGlobal = Math.max(0, subtotal - totalItemDisc - promoDisc);
   const globalDisc = cupones.reduce((s, c) => s + cuponMonto(c, baseGlobal), 0);
 
   return (
@@ -666,6 +667,12 @@ export function CartDrawerPublic({ open, onClose }: Props) {
                           <span>−${totalItemDisc.toFixed(0)}</span>
                         </div>
                       )}
+                      {promoDisc > 0 && (
+                        <div className="flex justify-between text-sm text-[#27ae60]">
+                          <span>Promoción</span>
+                          <span>−${promoDisc.toFixed(0)}</span>
+                        </div>
+                      )}
                       {globalDisc > 0 && (
                         <div className="flex justify-between text-sm text-[#27ae60]">
                           <span>Descuento cupón</span>
@@ -755,6 +762,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
           imagenUrl: editProducto.imagenUrl ?? null,
           precioEstablecido: editProducto.precioEstablecido,
           linea: editProducto.linea as GalletaPublica["linea"],
+          promo: editProducto.promo ?? null,
         }}
         onClose={closeEdit}
         editItem={editItem}

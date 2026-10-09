@@ -1,9 +1,21 @@
 // src/modules/admin/productos/domain/entities/Producto.entity.ts
 
 import type { PastelConfiguracion } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
+import type { ProductoPromo } from "@/modules/admin/store/domain/entities/Promocion.entity";
 
 export type LineaProducto = "sweet" | "fitness" | "healthy";
 export type CategoriaProducto = "cookie" | "pastel" | "gelatina" | "dessert";
+
+/**
+ * Colección / temporada en la que se muestra un producto en el sitio público.
+ * Es independiente de la línea: una galleta de la colección de Halloween sigue
+ * siendo "sweet" (y así se etiqueta), pero sale en su propia sección.
+ */
+export type ColeccionProducto = "halloween-muertos";
+
+export const COLECCIONES: { value: ColeccionProducto; label: string }[] = [
+  { value: "halloween-muertos", label: "🎃 Halloween & Día de muertos" },
+];
 
 /** Línea de receta congelada (snapshot) que representa el "bizcocho" del producto */
 export interface IngredienteBaseItem {
@@ -113,6 +125,10 @@ export interface Producto {
    */
   manoDeObraModo: "fijo" | "dinamico";
   precioEstablecido: number | null;
+  /** Promoción por volumen (ej. viernes 2×$40). null = sin promoción. */
+  promo: ProductoPromo | null;
+  /** Colección de temporada. null = catálogo regular. */
+  coleccion: ColeccionProducto | null;
 
   activo: boolean;
   orden: number;
@@ -140,6 +156,8 @@ export interface CreateProductoDTO {
   manoDeObraMinimo?: number | null;
   manoDeObraModo?: "fijo" | "dinamico";
   precioEstablecido?: number | null;
+  promo?: ProductoPromo | null;
+  coleccion?: ColeccionProducto | null;
   activo?: boolean;
   orden?: number;
 }
