@@ -11,6 +11,7 @@ import MobileMenu from "./MobileMenu";
 import { useSession, signOut } from "next-auth/react";
 import { useCartStore } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import { CartDrawerPublic } from "@/modules/home/presentation/components/CartDrawerPublic";
+import { useCartDrawer } from "@/core/hooks/useCartDrawer";
 
 function getInitials(name?: string | null, email?: string | null): string {
   if (name) {
@@ -149,7 +150,9 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
 
 export default function AppBar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  const cartOpen = useCartDrawer((s) => s.open);
+  const abrirCarrito = useCartDrawer((s) => s.abrir);
+  const cerrarCarrito = useCartDrawer((s) => s.cerrar);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -170,12 +173,12 @@ export default function AppBar() {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     if (params.get("cart") === "1") {
-      setCartOpen(true);
+      abrirCarrito();
       const url = new URL(window.location.href);
       url.searchParams.delete("cart");
       window.history.replaceState({}, "", url.toString());
     }
-  }, []);
+  }, [abrirCarrito]);
 
   const handleSetLang = (value: string) => {
     router.push(pathname, { locale: value });
@@ -238,7 +241,7 @@ export default function AppBar() {
 
           {/* Cart button */}
           <button
-            onClick={() => setCartOpen(true)}
+            onClick={abrirCarrito}
             className="relative mr-2 mt-1 p-3 rounded-lg hover:bg-[#AA6A42]/10 text-[#3A1F14] transition-colors cursor-pointer"
             aria-label="Carrito de compras"
           >
@@ -283,7 +286,7 @@ export default function AppBar() {
       </AnimatePresence>
 
       {/* Cart Drawer */}
-      <CartDrawerPublic open={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartDrawerPublic open={cartOpen} onClose={cerrarCarrito} />
     </header>
   );
 }

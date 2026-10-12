@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { useCartDrawer } from "@/core/hooks/useCartDrawer";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
@@ -381,9 +382,20 @@ function ToppingCantidadInput({
 
 // ── Success banner ───────────────────────────────────────────────────────────
 
-function SuccessBanner({ onDismiss, edited }: { onDismiss: () => void; edited?: boolean }) {
+function SuccessBanner({
+  onAgregarOtro,
+  onIrAlCarrito,
+  edited,
+}: {
+  onAgregarOtro: () => void;
+  onIrAlCarrito: () => void;
+  edited?: boolean;
+}) {
   return (
-    <div className="mb-8 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 p-8 text-center shadow-sm">
+    <div
+      role="status"
+      className="mb-8 rounded-3xl bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 p-8 text-center shadow-sm"
+    >
       <div className="flex justify-center mb-4">
         <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center shadow-lg shadow-green-200">
           <svg viewBox="0 0 24 24" className="w-9 h-9 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -396,16 +408,25 @@ function SuccessBanner({ onDismiss, edited }: { onDismiss: () => void; edited?: 
       </h2>
       <p className="text-green-700 text-sm leading-relaxed max-w-sm mx-auto">
         {edited
-          ? "El producto se actualizó en tu carrito. Puedes seguir editándolo desde ahí o proceder a generar tu pedido."
-          : "Si deseas puedes agregar más productos o proceder a generar tu pedido accediendo a tu carrito en la parte superior derecha del sitio."}
+          ? "El producto se actualizó en tu carrito. Puedes revisarlo ahí y generar tu pedido, o seguir armando otro producto."
+          : "Puedes ir a tu carrito para generar tu pedido, o seguir armando otro producto."}
       </p>
-      <button
-        type="button"
-        onClick={onDismiss}
-        className="mt-5 px-6 py-2 rounded-full border border-green-300 text-green-700 text-sm font-medium hover:bg-green-100 transition"
-      >
-        {edited ? "Seguir comprando" : "Agregar otro producto"}
-      </button>
+      <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={onIrAlCarrito}
+          className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#AA6A42] hover:bg-[#8a5535] text-white text-sm font-bold transition"
+        >
+          Ir al carrito de compras
+        </button>
+        <button
+          type="button"
+          onClick={onAgregarOtro}
+          className="w-full sm:w-auto px-6 py-2.5 rounded-full border border-green-300 text-green-700 text-sm font-medium hover:bg-green-100 transition"
+        >
+          {edited ? "Seguir comprando" : "Agregar otro producto"}
+        </button>
+      </div>
     </div>
   );
 }
@@ -575,7 +596,7 @@ export function CustomPipeline() {
   const [tipo, setTipo] = useState<TipoProducto>("pastel");
   const [added, setAdded] = useState(false);
   const [justEdited, setJustEdited] = useState(false);
-  const addedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abrirCarrito = useCartDrawer((st) => st.abrir);
 
   const [datos, setDatos] = useState<DatosCliente>({ nombre: "", telefono: "", direccion: "", alergias: "" });
   const [personas, setPersonas] = useState(18);
@@ -619,7 +640,6 @@ export function CustomPipeline() {
       .finally(() => setLoadingCatalog(false));
   }, []);
 
-  useEffect(() => () => { if (addedTimerRef.current) clearTimeout(addedTimerRef.current); }, []);
 
   // Precarga la config guardada del item del carrito que se está editando.
   // Salta directo al Resumen — todo ya está lleno, solo falta ajustar y guardar.
@@ -850,9 +870,9 @@ export function CustomPipeline() {
       setJustEdited(true);
     }
     resetForm();
+    // Mensaje fijo: el wizard se oculta hasta que elija "Agregar otro producto".
     setAdded(true);
-    if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
-    addedTimerRef.current = setTimeout(() => setAdded(false), 10000);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // ── Toggle "para compartir" (shared pastel/gelatina) ──────────────────────
@@ -1795,25 +1815,28 @@ export function CustomPipeline() {
           : "Personaliza cada detalle — te contactaremos para confirmar"}
       </p>
 
-      {added && (
+      {added ? (
         <SuccessBanner
           edited={justEdited}
-          onDismiss={() => { setAdded(false); setJustEdited(false); }}
+          onIrAlCarrito={abrirCarrito}
+          onAgregarOtro={() => { setAdded(false); setJustEdited(false); }}
         />
+      ) : (
+        <>
+          <Timeline steps={steps} current={step} />
+
+          {step >= 1 && step < steps.length - 1 && precioBase > 0 && (
+            <div className="flex items-center justify-between bg-[#FFF0E6] border border-[#e8c4a0] rounded-2xl px-4 py-2.5 mb-4 sticky top-2 z-10">
+              <span className="text-xs font-semibold text-[#6B3E26] uppercase tracking-wider">Precio estimado</span>
+              <span className="text-base font-bold text-[#3A1F14]">${precioBase.toFixed(0)}</span>
+            </div>
+          )}
+
+          <div className="bg-[#FFFAF5] rounded-3xl p-6 shadow-sm border border-[#f0e0d0]">
+            {renderStep()}
+          </div>
+        </>
       )}
-
-      <Timeline steps={steps} current={step} />
-
-      {step >= 1 && step < steps.length - 1 && precioBase > 0 && (
-        <div className="flex items-center justify-between bg-[#FFF0E6] border border-[#e8c4a0] rounded-2xl px-4 py-2.5 mb-4 sticky top-2 z-10">
-          <span className="text-xs font-semibold text-[#6B3E26] uppercase tracking-wider">Precio estimado</span>
-          <span className="text-base font-bold text-[#3A1F14]">${precioBase.toFixed(0)}</span>
-        </div>
-      )}
-
-      <div className="bg-[#FFFAF5] rounded-3xl p-6 shadow-sm border border-[#f0e0d0]">
-        {renderStep()}
-      </div>
     </div>
   );
 }
