@@ -1,17 +1,22 @@
 // Página de registro de usuario — pública.
-// Si ya hay sesión activa de usuario, redirige a /user/servicios.
+// Si ya hay sesión activa, manda directo a su destino (carrito o dashboard).
 
-import { getUserSession } from "@/core/helpers/auth";
-import { redirect } from "@/i18n/navigation";
-import { RegisterForm } from "@/modules/user/auth/presentation/components/RegisterForm";
+import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
+import { getUserSession } from "@/core/helpers/auth";
+import { destinoTrasLogin } from "@/core/helpers/redireccion";
+import { RegisterForm } from "@/modules/user/auth/presentation/components/RegisterForm";
 
-export default async function UserSigninPage() {
+export default async function UserSigninPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
   const session = await getUserSession();
 
   if (session) {
-    const locale = await getLocale();
-    redirect({ href: "/", locale });
+    const [locale, params] = await Promise.all([getLocale(), searchParams]);
+    redirect(destinoTrasLogin(locale, { from: params.from }));
   }
 
   return <RegisterForm />;

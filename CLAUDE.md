@@ -104,7 +104,8 @@ Solo `role: "user"`. Login en `/user/login`.
 | Ruta | Descripción |
 |------|-------------|
 | `/user/login` | Login público (tabla `user_accounts`) |
-| `/user/servicios` | Acceso a servicios del cliente (en desarrollo) |
+| `/user/signin` | Registro público |
+| `/user/dashboard` | Pedidos y datos del cliente |
 
 ---
 

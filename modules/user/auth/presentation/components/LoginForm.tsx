@@ -2,20 +2,21 @@
 
 import { useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
 import { PasswordInput } from "@/core/components/PasswordInput";
+import { destinoTrasLogin } from "@/core/helpers/redireccion";
 
 export function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const locale = useLocale();
   const fromCart = searchParams.get("from") === "cart";
   const justRegistered = searchParams.get("registered") === "1";
   const justChangedPassword = searchParams.get("changed") === "1";
-  const callbackUrl = fromCart
-    ? `/${locale}?cart=1`
-    : searchParams.get("callbackUrl") ?? `/${locale}`;
+  const callbackUrl = destinoTrasLogin(locale, {
+    from: searchParams.get("from"),
+    callbackUrl: searchParams.get("callbackUrl"),
+  });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,8 +39,9 @@ export function LoginForm() {
         return;
       }
 
-      router.push(callbackUrl);
-      router.refresh();
+      // Navegación completa: así todo el sitio (carrito incluido) arranca con
+      // la sesión nueva en lugar de la que tenía en memoria el cliente.
+      window.location.assign(callbackUrl);
     });
   }
 

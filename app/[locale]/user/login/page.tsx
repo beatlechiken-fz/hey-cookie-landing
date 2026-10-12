@@ -1,17 +1,22 @@
 // Página de LOGIN de usuario — pública, no requiere sesión.
-// Si ya hay sesión activa, redirige directo a servicios.
+// Si ya hay sesión activa, manda directo a su destino (carrito, callbackUrl o dashboard).
 
-import { getUserSession } from "@/core/helpers/auth";
-import { redirect } from "@/i18n/navigation";
-import { LoginForm } from "@/modules/user/auth/presentation/components/LoginForm";
+import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
+import { getUserSession } from "@/core/helpers/auth";
+import { destinoTrasLogin } from "@/core/helpers/redireccion";
+import { LoginForm } from "@/modules/user/auth/presentation/components/LoginForm";
 
-export default async function UserLoginPage() {
+export default async function UserLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; callbackUrl?: string }>;
+}) {
   const session = await getUserSession();
 
   if (session) {
-    const locale = await getLocale();
-    redirect({ href: "/user/servicios", locale });
+    const [locale, params] = await Promise.all([getLocale(), searchParams]);
+    redirect(destinoTrasLogin(locale, params));
   }
 
   return <LoginForm />;

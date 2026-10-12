@@ -25,9 +25,7 @@ export function RegisterForm() {
   const [_hp, set_hp] = useState("");
   const formOpenedAt  = useRef(Date.now());
 
-  const callbackUrl = fromCart
-    ? `/${locale}?cart=1`
-    : `/${locale}`;
+  const callbackUrl = fromCart ? `/${locale}?cart=1` : `/${locale}`;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -72,8 +70,9 @@ export function RegisterForm() {
         return;
       }
 
-      router.push(callbackUrl);
-      router.refresh();
+      // Navegación completa: así el carrito y el resto del sitio arrancan con la
+      // sesión recién creada (con router.push se quedaban con la anterior).
+      window.location.assign(callbackUrl);
     });
   }
 
