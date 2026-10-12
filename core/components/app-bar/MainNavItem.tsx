@@ -127,11 +127,19 @@ export default function MainNavItem({
   // =========================
   // DESKTOP
   // =========================
+  // La onda del activo va en posición absoluta bajo el texto: no ocupa espacio,
+  // así todos los textos (y la flecha de Bake Lab) quedan en la misma línea.
   const labelBlock = (
-    <span className="flex flex-col">
-      <span className="whitespace-nowrap">{label}</span>
+    <span className="relative whitespace-nowrap leading-tight">
+      {label}
       {active && (
-        <Image src={Icons.wavesPink} alt="" width={60} height={10} className="ml-auto mr-auto" />
+        <Image
+          src={Icons.wavesPink}
+          alt=""
+          width={60}
+          height={10}
+          className="pointer-events-none absolute left-1/2 top-full mt-0.5 -translate-x-1/2"
+        />
       )}
     </span>
   );
