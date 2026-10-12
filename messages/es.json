@@ -333,6 +333,7 @@
   },
   "halloween": {
     "title": "Halloween & Día de muertos",
+    "descargarMenu": "Descargar menú",
     "proximamente": "Próximamente…",
     "sections": {
       "pasteles": "Pasteles & Roscas",

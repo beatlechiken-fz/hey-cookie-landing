@@ -14,6 +14,9 @@ import { getPastelConfigCatalogoPublico } from "@/modules/admin/store/data/datas
 import { precioPublicoProducto } from "@/modules/admin/store/domain/usecases/PrecioPublico.usecase";
 import type { CategoriaProducto } from "@/modules/admin/store/domain/entities/Producto.entity";
 
+// Menú de temporada en PDF (public/menus). El QR impreso apunta a esta misma URL.
+const MENU_PDF = "/menus/menu-halloween-dia-de-muertos.pdf";
+
 // Orden de las secciones y la categoría de producto que muestra cada una.
 const SECCIONES: { key: HalloweenBand["key"]; categoria: CategoriaProducto }[] = [
   { key: "pasteles", categoria: "pastel" },
@@ -75,6 +78,19 @@ export default async function HalloweenPage() {
       </div>
 
       <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8EDE3" />
+
+      <div className="bg-[#F8EDE3] flex justify-center px-6 pt-8">
+        <a
+          href={MENU_PDF}
+          download
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#AA6A42] hover:bg-[#8a5535] text-white text-sm font-bold shadow-sm transition-colors"
+        >
+          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 3v12M7 10l5 5 5-5M5 21h14" />
+          </svg>
+          {t("descargarMenu")}
+        </a>
+      </div>
 
       <section>
         <HalloweenSections bands={bands} />
