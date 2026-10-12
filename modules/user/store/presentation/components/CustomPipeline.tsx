@@ -582,6 +582,9 @@ export function CustomPipeline() {
   const [config, setConfig] = useState<PastelConfiguracion>({ ...CONFIGURACION_VACIA });
   const [gCfg, setGCfg] = useState<GelatinaCustomConfig>({ ...GELATINA_VACIA });
   const [notasPastel, setNotasPastel] = useState("");
+  // "Para compartir": el admin podrá generar un enlace/QR para que otras
+  // personas se sumen y repartir el pago entre todos.
+  const [compartir, setCompartir] = useState(false);
   const [toppingSearch, setToppingSearch] = useState("");
 
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
@@ -637,6 +640,7 @@ export function CustomPipeline() {
       setGCfg(conf as unknown as GelatinaCustomConfig);
       setStep(STEPS_GELATINA.length - 1);
     }
+    setCompartir(!!conf.compartir);
     if (conf.fotoRef) { setFotoRef(conf.fotoRef); setFotoPreview(conf.fotoRef); }
     if (conf.datos) setDatos(conf.datos);
     if (editItem.cuponesItem?.[0]) {
@@ -652,6 +656,7 @@ export function CustomPipeline() {
     setGCfg({ ...GELATINA_VACIA });
     setPersonas(18);
     setNotasPastel("");
+    setCompartir(false);
     setFotoPreview(null);
     setFotoRef(null);
     setFotoError("");
@@ -806,7 +811,7 @@ export function CustomPipeline() {
     if (tipo === "pastel") {
       const payload = {
         nombre: `Pastel personalizado (${personasDesdeDiametro(config.diametroCm)} personas)`,
-        configuracion: { tipo: "pastel-custom", ...config, notas: notasPastel, fotoRef, datos },
+        configuracion: { tipo: "pastel-custom", ...config, notas: notasPastel, fotoRef, datos, compartir },
         cantidad: 1,
         costoUnitario: desgloseP?.costoProduccionTotal ?? 0,
         precioUnitario: (desgloseP?.precioSugerido ?? 0) + CARGO_DECORACION + CARGO_EMPAQUE,
@@ -826,7 +831,7 @@ export function CustomPipeline() {
       const catLabel = gCfg.categoria === "clasica" ? "Clásica" : gCfg.categoria === "healthy" ? "Healthy" : "Sin Azúcar";
       const payload = {
         nombre: `Gelatina ${catLabel} personalizada (${totalLitros}L)`,
-        configuracion: { tipo: "gelatina-custom", ...gCfg, fotoRef, datos },
+        configuracion: { tipo: "gelatina-custom", ...gCfg, fotoRef, datos, compartir },
         cantidad: 1,
         costoUnitario: 0,
         precioUnitario: calcPrecioGelatina(gCfg, catalogo!) + CARGO_EMPAQUE,
@@ -849,6 +854,32 @@ export function CustomPipeline() {
     if (addedTimerRef.current) clearTimeout(addedTimerRef.current);
     addedTimerRef.current = setTimeout(() => setAdded(false), 10000);
   };
+
+  // ── Toggle "para compartir" (shared pastel/gelatina) ──────────────────────
+
+  const compartirToggle = (
+    <label className="flex items-start justify-between gap-4 rounded-2xl border border-[#e0c9b0] bg-white px-4 py-3 cursor-pointer select-none">
+      <span>
+        <span className="block text-sm font-semibold text-[#3A1F14]">
+          {tipo === "pastel" ? "Pastel para compartir" : "Gelatina para compartir"}
+        </span>
+        <span className="block text-xs text-[#6B3E26]/70 mt-0.5">
+          Te enviaremos un enlace y un QR para invitar a quienes quieran sumarse; el pago se divide en partes iguales entre los participantes.
+        </span>
+      </span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={compartir}
+        onClick={() => setCompartir((v) => !v)}
+        className={`relative mt-0.5 inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors ${compartir ? "bg-[#AA6A42]" : "bg-[#e0c9b0]"}`}
+      >
+        <span
+          className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${compartir ? "translate-x-5" : "translate-x-0"}`}
+        />
+      </button>
+    </label>
+  );
 
   // ── Foto upload section (shared pastel/gelatina) ───────────────────────────
 
@@ -1360,6 +1391,7 @@ export function CustomPipeline() {
                 />
               </div>
               {fotoSection}
+              {compartirToggle}
             </div>
             <NavButtons onBack={() => setStep(7)} onNext={() => setStep(9)} />
           </div>
@@ -1411,6 +1443,7 @@ export function CustomPipeline() {
         if (licor) rows.push({ label: "Licor", value: licor.nombre });
         if (ornamentosSel.length) rows.push({ label: "Ornamentos", value: ornamentosSel.join(", ") });
         if (notasPastel) rows.push({ label: "Notas", value: notasPastel });
+        if (compartir) rows.push({ label: "Para compartir", value: "Sí — recibirás un enlace para invitar" });
         if (datos.alergias.trim()) rows.push({ label: "Alergias", value: datos.alergias.trim() });
 
         return (
@@ -1674,6 +1707,7 @@ export function CustomPipeline() {
                 />
               </div>
               {fotoSection}
+              {compartirToggle}
             </div>
             <NavButtons onBack={() => setStep(5)} onNext={() => setStep(7)} />
           </div>
@@ -1722,6 +1756,7 @@ export function CustomPipeline() {
         if (toppingsSel.length) rows.push({ label: "Toppings", value: toppingsSel.join(", ") });
         if (ornamentosSel.length) rows.push({ label: "Ornamentos", value: ornamentosSel.join(", ") });
         if (gCfg.notas) rows.push({ label: "Notas", value: gCfg.notas });
+        if (compartir) rows.push({ label: "Para compartir", value: "Sí — recibirás un enlace para invitar" });
         if (datos.alergias.trim()) rows.push({ label: "Alergias", value: datos.alergias.trim() });
 
         return (

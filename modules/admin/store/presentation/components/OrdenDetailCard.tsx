@@ -1,7 +1,7 @@
 "use client";
 // src/modules/admin/clientes/presentation/components/OrdenDetailCard.tsx
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
   Orden,
@@ -15,7 +15,9 @@ import {
 } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { FinanzasToggle } from "./FinanzasToggle";
 import { OrdenPipeline } from "./OrdenPipeline";
-import { OrdenPagosSection } from "./OrdenPagosSection";
+import { OrdenPagosSection, type PagoCompartido } from "./OrdenPagosSection";
+import { PastelCompartidoSection } from "./PastelCompartidoSection";
+import type { PastelCompartido } from "@/modules/admin/store/domain/entities/PastelCompartido.entity";
 import {
   generarCotizacionPdf,
   generarComandaPdf,
@@ -124,6 +126,29 @@ export function OrdenDetailCard({
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [itemError, setItemError] = useState<string | null>(null);
+
+  // ── Pasteles para compartir (Arma tu pedido) ──────────────────────────────
+  const itemsCompartir = orden.items.filter(
+    (i) => i.id && (i.configuracion as { compartir?: boolean } | null)?.compartir,
+  );
+  const [compartidos, setCompartidos] = useState<PastelCompartido[]>([]);
+  const cargarCompartidos = useCallback(async () => {
+    const res = await fetch(`/api/admin/ordenes/${orden.id}/compartir`);
+    if (res.ok) setCompartidos(await res.json());
+  }, [orden.id]);
+  useEffect(() => {
+    if (expanded && itemsCompartir.length > 0) cargarCompartidos();
+  }, [expanded, itemsCompartir.length, cargarCompartidos]);
+
+  // Cada enlace cubre la parte proporcional del total que le toca a su partida
+  // (si el pastel es lo único en la orden, es el total completo).
+  const pagosCompartidos: PagoCompartido[] = compartidos.flatMap((c) => {
+    const item = orden.items.find((i) => i.id === c.ordenItemId);
+    if (!item) return [];
+    const monto =
+      orden.subtotal > 0 ? (item.subtotal / orden.subtotal) * orden.total : orden.total;
+    return [{ compartido: c, monto }];
+  });
 
   function closeEditModal() {
     setEditingOrdenItem(null);
@@ -744,6 +769,17 @@ export function OrdenDetailCard({
                           )}
                         </>
                       )}
+                      {item.id &&
+                        (item.configuracion as { compartir?: boolean } | null)?.compartir && (
+                          <PastelCompartidoSection
+                            ordenId={orden.id}
+                            ordenItemId={item.id}
+                            compartido={
+                              compartidos.find((c) => c.ordenItemId === item.id) ?? null
+                            }
+                            onChange={cargarCompartidos}
+                          />
+                        )}
                       {confirming && (
                         <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#e8c4a0]">
                           <span className="text-[12px] text-[#6B3E26]">
@@ -845,6 +881,7 @@ export function OrdenDetailCard({
                 ordenId={orden.id}
                 ordenTotal={orden.total}
                 status={orden.status}
+                compartidos={pagosCompartidos}
               />
 
               {error && (

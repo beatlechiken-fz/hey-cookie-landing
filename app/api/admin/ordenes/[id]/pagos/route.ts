@@ -12,7 +12,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const db = getSupabaseAdmin();
   const { data, error } = await db
     .from("orden_pagos")
-    .select("id, fecha, monto, observaciones, created_at")
+    .select("id, fecha, monto, observaciones, participante_id, created_at")
     .eq("orden_id", id)
     .order("fecha", { ascending: false })
     .order("created_at", { ascending: false });
@@ -23,6 +23,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
       fecha: r.fecha,
       monto: Number(r.monto),
       observaciones: r.observaciones ?? null,
+      participanteId: r.participante_id ?? null,
       createdAt: r.created_at,
     })),
   );
@@ -45,11 +46,24 @@ export async function POST(req: NextRequest, { params }: Params) {
       { error: "La observación no puede pasar de 500 caracteres" },
       { status: 400 },
     );
+  // Pago de un participante de un pastel compartido (opcional).
+  const participanteId: string | null =
+    typeof body.participanteId === "string" ? body.participanteId : null;
   const db = getSupabaseAdmin();
+  if (participanteId) {
+    const { data: part } = await db
+      .from("pastel_participantes")
+      .select("id, pastel_compartido!inner(orden_id)")
+      .eq("id", participanteId)
+      .maybeSingle();
+    const embebido = part as unknown as { pastel_compartido?: { orden_id?: string } | null } | null;
+    if (!embebido || embebido.pastel_compartido?.orden_id !== id)
+      return NextResponse.json({ error: "Participante inválido" }, { status: 400 });
+  }
   const { data, error } = await db
     .from("orden_pagos")
-    .insert({ orden_id: id, fecha, monto, observaciones })
-    .select("id, fecha, monto, observaciones, created_at")
+    .insert({ orden_id: id, fecha, monto, observaciones, participante_id: participanteId })
+    .select("id, fecha, monto, observaciones, participante_id, created_at")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(
@@ -58,6 +72,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       fecha: data.fecha,
       monto: Number(data.monto),
       observaciones: data.observaciones ?? null,
+      participanteId: data.participante_id ?? null,
       createdAt: data.created_at,
     },
     { status: 201 },

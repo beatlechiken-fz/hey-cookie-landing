@@ -1,19 +1,33 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import {
+  participantesActivos,
+  repartirMonto,
+  type PastelCompartido,
+} from "../../domain/entities/PastelCompartido.entity";
 
 interface OrdenPago {
   id: string;
   fecha: string;
   monto: number;
   observaciones: string | null;
+  participanteId: string | null;
   createdAt: string;
+}
+
+/** Pastel compartido de la orden y el monto total que se reparte entre sus participantes. */
+export interface PagoCompartido {
+  compartido: PastelCompartido;
+  monto: number;
 }
 
 interface Props {
   ordenId: string;
   ordenTotal: number;
   status: string;
+  /** Si la orden tiene pasteles para compartir, un pago precargado por participante. */
+  compartidos?: PagoCompartido[];
 }
 
 const hoy = () => new Date().toISOString().slice(0, 10);
@@ -26,7 +40,7 @@ function fmtDate(iso: string) {
   });
 }
 
-export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
+export function OrdenPagosSection({ ordenId, ordenTotal, status, compartidos = [] }: Props) {
   const [pagos, setPagos]       = useState<OrdenPago[]>([]);
   const [loading, setLoading]   = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -37,6 +51,8 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [errMsg, setErrMsg]     = useState<string | null>(null);
+  const [confirmPartId, setConfirmPartId] = useState<string | null>(null);
+  const [pagandoPartId, setPagandoPartId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -83,6 +99,33 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
       setErrMsg(e.message);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handlePagoParticipante(participanteId: string, nombre: string, m: number) {
+    setPagandoPartId(participanteId);
+    setErrMsg(null);
+    try {
+      const res = await fetch(`/api/admin/ordenes/${ordenId}/pagos`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fecha: hoy(),
+          monto: m,
+          observaciones: `Pago de ${nombre} (pastel compartido)`,
+          participanteId,
+        }),
+      });
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({}));
+        throw new Error(e.error ?? "Error al guardar");
+      }
+      setConfirmPartId(null);
+      await load();
+    } catch (e) {
+      setErrMsg(e instanceof Error ? e.message : "Error al guardar");
+    } finally {
+      setPagandoPartId(null);
     }
   }
 
@@ -146,6 +189,71 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status }: Props) {
           </span>
         </div>
       </div>
+
+      {/* Pagos por participante (pasteles para compartir) */}
+      {compartidos.map(({ compartido, monto: montoCompartido }) => {
+        const activos = participantesActivos(compartido.participantes);
+        if (activos.length === 0) return null;
+        const montos = repartirMonto(montoCompartido, activos.length);
+        return (
+          <div key={compartido.id} className="flex flex-col gap-1.5">
+            <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              Por participante · {compartido.productoNombre ?? "Pastel compartido"}
+            </p>
+            <p className="text-[11px] text-[#6B3E26]">
+              ${montoCompartido.toFixed(2)} entre {activos.length}{" "}
+              {activos.length === 1 ? "persona" : "personas"}
+            </p>
+            {activos.map((p, i) => {
+              const nombre = p.nombre ?? "Participante";
+              const pagado = pagos.some((pg) => pg.participanteId === p.id);
+              return (
+                <div
+                  key={p.id}
+                  className="flex items-center justify-between gap-2 rounded-lg bg-white border border-[#f0e0d0] px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <p className="text-[12px] font-semibold text-[#3d1a24] truncate">{nombre}</p>
+                    <p className="text-[11px] text-[#6B3E26] tabular-nums">${montos[i].toFixed(2)}</p>
+                  </div>
+                  {pagado ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">
+                      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                      PAGADO
+                    </span>
+                  ) : confirmPartId === p.id ? (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-[#6B3E26]">¿Registrar?</span>
+                      <button
+                        onClick={() => handlePagoParticipante(p.id, nombre, montos[i])}
+                        disabled={pagandoPartId === p.id}
+                        className="px-2 py-0.5 rounded-md bg-[#c0607a] text-white text-[10px] font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                      >
+                        {pagandoPartId === p.id ? "…" : "Sí"}
+                      </button>
+                      <button
+                        onClick={() => setConfirmPartId(null)}
+                        className="px-2 py-0.5 rounded-md border border-[#e8c4a0] text-[#6B3E26] text-[10px] hover:bg-[#f0e0d0] transition"
+                      >
+                        No
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmPartId(p.id)}
+                      className="px-2.5 py-1 rounded-lg border border-[#e8c4a0] text-[#c0607a] text-[11px] font-semibold hover:bg-[#FFF7F0] transition"
+                    >
+                      Registrar ${montos[i].toFixed(2)}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
 
       {/* Lista de pagos */}
       {loading ? (
