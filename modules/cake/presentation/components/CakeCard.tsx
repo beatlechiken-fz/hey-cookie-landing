@@ -12,9 +12,11 @@ const LINE_TAG: Record<LineaProducto, { label: string; cls: string }> = {
 interface Props {
   producto: Producto;
   onClick: (producto: Producto) => void;
+  /** Precio a mostrar en la tarjeta (opcional). */
+  precio?: number | null;
 }
 
-export default function CakeCard({ producto, onClick }: Props) {
+export default function CakeCard({ producto, onClick, precio }: Props) {
   const imageSrc = producto.imagenUrl ?? "/img/cake-cafe-sm.webp";
   const tag = LINE_TAG[producto.linea];
 
@@ -54,6 +56,15 @@ export default function CakeCard({ producto, onClick }: Props) {
         <p className="text-[#6B3E26] text-sm mt-1 line-clamp-3">
           {producto.descripcion}
         </p>
+      )}
+
+      {precio != null && (
+        <span className="inline-block mt-3 text-xs font-semibold text-[#8A5535] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
+          ${precio.toFixed(0)}
+          {producto.permiteMedidaPersonalizada && producto.medidaBaseCm
+            ? ` · ${Number(producto.medidaBaseCm).toFixed(0)} cm`
+            : ""}
+        </span>
       )}
     </div>
   );

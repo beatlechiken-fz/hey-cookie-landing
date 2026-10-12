@@ -292,6 +292,8 @@
     }
   },
   "mainnav": {
+    "bakeLab": "Bake Lab",
+    "halloween": "Halloween & Day of the Dead",
     "home": "Cookies",
     "cake": "Cakes & Sweet Breads",
     "desserts": "Pastry",
@@ -312,5 +314,15 @@
   },
   "footer": {
     "rights": "Hey Cookies, MX. 2026"
+  },
+  "halloween": {
+    "title": "Halloween & Day of the Dead",
+    "proximamente": "Coming soon…",
+    "sections": {
+      "pasteles": "Cakes & Sweet Breads",
+      "reposteria": "Pastry",
+      "gelatinas": "Jellies",
+      "galletas": "Cookies"
+    }
   }
 }

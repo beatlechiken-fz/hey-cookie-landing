@@ -16,7 +16,7 @@ import { parsePromo } from "../../domain/entities/Promocion.entity";
 
 const TABLE = "productos";
 
-function toEntity(row: any): Producto {
+export function toEntity(row: any): Producto {
   return {
     id: row.id,
     nombre: row.nombre,

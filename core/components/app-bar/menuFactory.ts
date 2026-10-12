@@ -29,25 +29,21 @@ export type MenuNavEntry = keyof MenuNavElement;
 // Función para crear el menú dinámicamente con traducciones
 export function createMenuNavElement(t: TType): MenuNavElement {
   return {
-    home: {
-      id: "home",
-      label: t("home"),
-      url: "/",
+    bakeLab: {
+      id: "bakeLab",
+      label: t("bakeLab"),
+      url: "",
+      submenu: [
+        { id: "home", label: t("home"), url: "/" },
+        { id: "cake", label: t("cake"), url: "/cake" },
+        { id: "desserts", label: t("desserts"), url: "/desserts" },
+        { id: "jelly", label: t("jelly"), url: "/jelly" },
+      ],
     },
-    cake: {
-      id: "cake",
-      label: t("cake"),
-      url: "/cake",
-    },
-    desserts: {
-      id: "desserts",
-      label: t("desserts"),
-      url: "/desserts",
-    },
-    other: {
-      id: "jelly",
-      label: t("jelly"),
-      url: "/jelly",
+    halloween: {
+      id: "halloween",
+      label: t("halloween"),
+      url: "/halloween",
     },
     custom: {
       id: "custom",

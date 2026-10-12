@@ -19,22 +19,23 @@ export default function MainNav({ isMobile = false, onSelect }: any) {
 
   const menu = createMenuNavElement(t);
 
-  const items = Object.values(menu).map((item) => {
-    const isHome = item.url === "/";
-
-    const active = isHome
+  const isActive = (url: string) =>
+    url === "/"
       ? normalizedPath === ""
-      : normalizedPath === item.url ||
-        normalizedPath.startsWith(item.url + "/");
+      : !!url && (normalizedPath === url || normalizedPath.startsWith(url + "/"));
 
+  const items = Object.values(menu).map((item) => {
+    const submenu = (item.submenu ?? []).map((s) => ({ ...s, active: isActive(s.url) }));
     return {
       ...item,
-      active,
+      submenu,
+      // Un grupo (Bake Lab) está activo si alguna de sus secciones lo está.
+      active: submenu.length > 0 ? submenu.some((s) => s.active) : isActive(item.url),
     };
   });
 
   return (
-    <nav className={`flex ${isMobile ? "flex-col gap-4" : "gap-4"}`}>
+    <nav className={`flex ${isMobile ? "flex-col gap-4" : "items-center gap-2 xl:gap-4"}`}>
       {items.map((item) => (
         <MainNavItem
           key={item.id}
@@ -44,7 +45,11 @@ export default function MainNav({ isMobile = false, onSelect }: any) {
           onToggle={() =>
             setOpenSubmenuId(openSubmenuId === item.id ? null : item.id)
           }
-          onSelect={onSelect}
+          onSelect={() => {
+            setOpenSubmenuId(null);
+            onSelect?.();
+          }}
+          onClose={() => setOpenSubmenuId(null)}
         />
       ))}
     </nav>

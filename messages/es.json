@@ -308,6 +308,8 @@
     }
   },
   "mainnav": {
+    "bakeLab": "Bake Lab",
+    "halloween": "Halloween & Día de muertos",
     "home": "Galletas",
     "cake": "Pasteles & Roscas",
     "desserts": "Repostería",
@@ -328,5 +330,15 @@
   },
   "footer": {
     "rights": "Hey Cookies, MX. 2026"
+  },
+  "halloween": {
+    "title": "Halloween & Día de muertos",
+    "proximamente": "Próximamente…",
+    "sections": {
+      "pasteles": "Pasteles & Roscas",
+      "reposteria": "Repostería",
+      "gelatinas": "Gelatinas",
+      "galletas": "Galletas"
+    }
   }
 }

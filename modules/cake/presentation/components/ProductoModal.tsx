@@ -13,6 +13,7 @@ import {
   type Producto,
 } from "@/modules/admin/store/domain/entities/Producto.entity";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
+import { redondearPrecioCerrado } from "@/modules/admin/store/domain/usecases/PrecioPublico.usecase";
 import type { Cupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
 import { calcularDescuentoCupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
 
@@ -260,10 +261,12 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
   }, [onClose, reset]);
 
   // ── Precio final ────────────────────────────────────────────────────────────
+  // Misma regla que las tarjetas del catálogo: precio fijo (del producto o del
+  // tamaño elegido) si lo tiene; si no, el sugerido redondeado al siguiente
+  // múltiplo de $5.
   const precioBase =
-    desglose?.precioSugerido ??
     getPrecioEstablecidoEfectivo(producto, tamanoFijoId) ??
-    0;
+    (desglose ? redondearPrecioCerrado(desglose.precioSugerido) : 0);
   const subtotal = precioBase * cantidad;
   const descuento = cuponAplicado ? calcularDescuentoCupon(cuponAplicado.cupon, subtotal) : 0;
   const total = Math.max(0, subtotal - descuento);
