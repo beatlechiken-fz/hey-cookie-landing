@@ -19,6 +19,14 @@ interface Props {
 export default function CakeCard({ producto, onClick, precio }: Props) {
   const imageSrc = producto.imagenUrl ?? "/img/cake-cafe-sm.webp";
   const tag = LINE_TAG[producto.linea];
+  // Medida visible en la tarjeta: tamaño fijo único (p. ej. panqués "Molde 23 × 13 cm")
+  // o la medida base de los productos personalizables (solo junto al precio).
+  const medida =
+    producto.tamanosFijos.length === 1
+      ? producto.tamanosFijos[0].nombre
+      : precio != null && producto.permiteMedidaPersonalizada && producto.medidaBaseCm
+        ? `${Number(producto.medidaBaseCm).toFixed(0)} cm`
+        : null;
 
   return (
     <div
@@ -58,12 +66,9 @@ export default function CakeCard({ producto, onClick, precio }: Props) {
         </p>
       )}
 
-      {precio != null && (
+      {(precio != null || medida) && (
         <span className="inline-block mt-3 text-xs font-semibold text-[#8A5535] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
-          ${precio.toFixed(0)}
-          {producto.permiteMedidaPersonalizada && producto.medidaBaseCm
-            ? ` · ${Number(producto.medidaBaseCm).toFixed(0)} cm`
-            : ""}
+          {[precio != null ? `$${precio.toFixed(0)}` : null, medida].filter(Boolean).join(" · ")}
         </span>
       )}
     </div>
