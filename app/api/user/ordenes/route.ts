@@ -323,21 +323,12 @@ export async function POST(req: NextRequest) {
 
     const clienteNombre = cliente?.nombre ?? session.user.name ?? "Cliente";
 
-    // Calcular siguiente número de orden
-    const { data: ultimaOrden } = await db
-      .from("ordenes")
-      .select("numero")
-      .order("numero", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    const numero = (ultimaOrden?.numero ?? 0) + 1;
-
-    // Crear la orden
+    // Crear la orden. El número lo asigna la secuencia de la BD (ordenes_numero_seq),
+    // igual que en las órdenes del admin: calcularlo aquí como max+1 dejaba la
+    // secuencia atrasada y la siguiente orden del admin chocaba (ordenes_numero_key).
     const { data: orden, error: ordenError } = await db
       .from("ordenes")
       .insert({
-        numero,
         cliente_id: cliente?.id ?? null,
         cliente_nombre: clienteNombre,
         status: "cotizacion",
@@ -354,6 +345,7 @@ export async function POST(req: NextRequest) {
     if (ordenError || !orden) {
       throw new Error(ordenError?.message ?? "Error al crear la orden");
     }
+    const numero = Number(orden.numero);
 
     // Crear los items de la orden
     const ordenItems = items.map((item) => ({
