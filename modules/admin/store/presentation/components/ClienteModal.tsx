@@ -21,6 +21,7 @@ const EMPTY: CreateClienteDTO = {
   email: "",
   direccion: "",
   notas: "",
+  fechaNacimiento: "",
 };
 
 export function ClienteModal({ open, cliente, onClose, onSave }: Props) {
@@ -39,6 +40,7 @@ export function ClienteModal({ open, cliente, onClose, onSave }: Props) {
               email: cliente.email ?? "",
               direccion: cliente.direccion ?? "",
               notas: cliente.notas ?? "",
+              fechaNacimiento: cliente.fechaNacimiento ?? "",
             }
           : EMPTY,
       );
@@ -55,7 +57,7 @@ export function ClienteModal({ open, cliente, onClose, onSave }: Props) {
     setSaving(true);
     setError(null);
     try {
-      await onSave(form);
+      await onSave({ ...form, fechaNacimiento: form.fechaNacimiento || null });
       onClose();
     } catch (e: any) {
       setError(e.message);
@@ -169,6 +171,21 @@ export function ClienteModal({ open, cliente, onClose, onSave }: Props) {
                       setForm((f) => ({ ...f, direccion: e.target.value }))
                     }
                     placeholder="Calle, número, colonia, ciudad"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    Fecha de nacimiento
+                  </label>
+                  <input
+                    type="date"
+                    className={inputCls}
+                    value={form.fechaNacimiento ?? ""}
+                    max={new Date().toISOString().slice(0, 10)}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, fechaNacimiento: e.target.value }))
+                    }
                   />
                 </div>
 

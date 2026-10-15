@@ -27,4 +27,9 @@ export interface ClienteRepository {
   create(dto: CreateClienteDTO): Promise<Cliente>;
   update(id: string, dto: UpdateClienteDTO): Promise<Cliente>;
   delete(id: string): Promise<void>;
+  /** ¿Otro cliente activo ya usa este email o teléfono? Devuelve el campo en conflicto. */
+  findContactoDuplicado(
+    contacto: { email: string | null; telefono: string | null },
+    excludeId: string,
+  ): Promise<"email" | "telefono" | null>;
 }

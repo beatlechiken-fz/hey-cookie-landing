@@ -7,6 +7,7 @@ export interface Cliente {
   email: string | null;
   direccion: string | null;
   notas: string | null;
+  fechaNacimiento: string | null; // YYYY-MM-DD
   authUserId: string | null; // null = sin cuenta de acceso todavía
   activo: boolean;
   createdAt: string;
@@ -19,6 +20,7 @@ export interface CreateClienteDTO {
   email?: string | null;
   direccion?: string | null;
   notas?: string | null;
+  fechaNacimiento?: string | null;
 }
 
 export type UpdateClienteDTO = Partial<CreateClienteDTO>;

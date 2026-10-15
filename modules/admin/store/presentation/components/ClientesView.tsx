@@ -5,6 +5,7 @@ import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "@/i18n/navigation";
 import { useClientes } from "../hooks/useClientes";
+import { useEnlacesMasivos } from "../hooks/useClienteEnlaceEdicion";
 import { ClienteModal } from "./ClienteModal";
 import type {
   Cliente,
@@ -106,6 +107,7 @@ export function ClientesView() {
     remove,
   } = useClientes();
   const router = useRouter();
+  const enlacesMasivos = useEnlacesMasivos();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Cliente | null>(null);
@@ -188,9 +190,21 @@ export function ClientesView() {
             ? "Cargando…"
             : `${total} cliente${total !== 1 ? "s" : ""}`}
         </p>
-        {(error || actionError) && (
-          <p className="text-sm text-red-600">{error ?? actionError}</p>
-        )}
+        <div className="flex items-center gap-3">
+          {(error || actionError || enlacesMasivos.error) && (
+            <p className="text-sm text-red-600">
+              {error ?? actionError ?? enlacesMasivos.error}
+            </p>
+          )}
+          <button
+            onClick={enlacesMasivos.descargarCsv}
+            disabled={enlacesMasivos.working}
+            title="Genera un enlace por cliente para que actualicen sus datos y descarga el CSV con mensajes de WhatsApp"
+            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[13px] font-semibold hover:bg-[#FFF7F0] disabled:opacity-50 transition"
+          >
+            {enlacesMasivos.working ? "Generando…" : "Enlaces de actualización (CSV)"}
+          </button>
+        </div>
       </div>
 
       {/* Tabla desktop */}

@@ -9,6 +9,7 @@ import { useUpdateOrdenStatus } from "@/modules/admin/store/presentation/hooks/u
 import { OrdenDetailCard } from "./OrdenDetailCard";
 import { ClienteCuponesSection } from "./ClienteCuponesSection";
 import { ClienteModal } from "./ClienteModal";
+import { ClienteEnlaceEdicionSection } from "./ClienteEnlaceEdicionSection";
 import type { CreateClienteDTO } from "../../domain/entities/Cliente.entity";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
 
@@ -185,6 +186,16 @@ export function ClienteDetailView({ clienteId }: Props) {
           </div>
         </div>
 
+        {cliente.fechaNacimiento && (
+          <p className="text-sm text-[#3d1a24]">
+            <span className="text-[#AA6A42]">Cumpleaños:</span>{" "}
+            {new Date(`${cliente.fechaNacimiento}T12:00:00`).toLocaleDateString(
+              "es-MX",
+              { day: "numeric", month: "long", year: "numeric" },
+            )}
+          </p>
+        )}
+
         {cliente.notas && (
           <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
             <p className="text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider mb-1">
@@ -196,6 +207,9 @@ export function ClienteDetailView({ clienteId }: Props) {
           </div>
         )}
       </div>
+
+      {/* Enlace para que el cliente actualice sus datos */}
+      <ClienteEnlaceEdicionSection clienteId={cliente.id} />
 
       {/* Cupones asignados */}
       <ClienteCuponesSection clienteId={cliente.id} />

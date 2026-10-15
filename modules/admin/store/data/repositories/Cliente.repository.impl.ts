@@ -30,4 +30,10 @@ export class ClienteRepositoryImpl implements ClienteRepository {
   delete(id: string): Promise<void> {
     return this.ds.delete(id);
   }
+  findContactoDuplicado(
+    contacto: { email: string | null; telefono: string | null },
+    excludeId: string,
+  ) {
+    return this.ds.findContactoDuplicado(contacto, excludeId);
+  }
 }
