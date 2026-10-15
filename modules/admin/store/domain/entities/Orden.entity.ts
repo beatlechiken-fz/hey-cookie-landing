@@ -49,6 +49,8 @@ export interface Orden {
   status: OrdenStatus;
   subtotal: number;
   descuentoTotal: number;
+  /** Cashback del cliente usado como descuento (ya incluido en descuentoTotal). */
+  cashbackAplicado: number;
   total: number;
   notas: string | null;
   fechaEntrega: string | null;

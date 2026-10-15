@@ -50,6 +50,12 @@ const TagIcon = ({ className }: { className?: string }) => (
 
 const COSTO_ENVIO = 30;
 
+/** Montos del carrito: sin decimales si son enteros, con centavos si no (p. ej. cashback). */
+function montoCarrito(n: number): string {
+  const r = Math.round(n * 100) / 100;
+  return Number.isInteger(r) ? r.toFixed(0) : r.toFixed(2);
+}
+
 /* ── helpers de descuento ──────────────────────────────────── */
 function cuponMonto(c: OrdenCuponAplicado, base: number): number {
   return c.tipoDescuento === "porcentaje"
@@ -151,6 +157,17 @@ export function CartDrawerPublic({ open, onClose }: Props) {
     fechaEntrega: string | null;
     direccionEntrega: string | null;
   } | null>(null);
+
+  // ── Cashback: saldo del cliente y si lo usa en esta orden ──
+  const [saldoCashback, setSaldoCashback] = useState(0);
+  const [usarCashback, setUsarCashback] = useState(false);
+  useEffect(() => {
+    if (!open || !isUser) return;
+    fetch("/api/user/beneficios")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setSaldoCashback(Math.max(0, Number(d?.cashback?.saldo ?? 0))))
+      .catch(() => null);
+  }, [open, isUser]);
 
   // Cargar direcciones del cliente al abrir el carrito
   useEffect(() => {
@@ -265,6 +282,8 @@ export function CartDrawerPublic({ open, onClose }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items, cupones, subtotal, descuentoTotal, total: total + COSTO_ENVIO,
+          // El servidor decide cuánto cashback aplica según el saldo real.
+          usarCashback: usarCashback && saldoCashback > 0,
           fechaEntrega: fechaEntrega || null,
           direccionEntrega,
           notas: getAlergiasTexto(),
@@ -273,11 +292,16 @@ export function CartDrawerPublic({ open, onClose }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "No se pudo generar la orden");
       setOrdenSnapshot({
-        items: [...items], subtotal, descuentoTotal, total: total + COSTO_ENVIO,
+        items: [...items], subtotal,
+        descuentoTotal: descuentoTotal + Number(data.cashbackAplicado ?? 0),
+        total: Number(data.total ?? total + COSTO_ENVIO),
         fechaEntrega: fechaEntrega || null,
         direccionEntrega,
       });
       setOrdenNum(data.numero);
+      // El cashback usado ya salió del saldo.
+      setSaldoCashback((v) => Math.max(0, v - Number(data.cashbackAplicado ?? 0)));
+      setUsarCashback(false);
       clearCart();
     } catch (e: any) {
       setOrdenError(e.message);
@@ -326,6 +350,11 @@ export function CartDrawerPublic({ open, onClose }: Props) {
     const base = precioUnitario * cantidad;
     return (cuponsItem ?? []).reduce((s, c) => s + cuponMonto(c, base), 0);
   }
+
+  /* ── Cashback como descuento sobre el total con envío ── */
+  const totalConEnvio = total + COSTO_ENVIO;
+  const cashbackUsado = isUser && usarCashback ? Math.min(saldoCashback, totalConEnvio) : 0;
+  const totalAPagar = Math.max(0, totalConEnvio - cashbackUsado);
 
   /* ── Global discounts over subtotal after item discounts ── */
   const totalItemDisc = items.reduce((s, i) =>
@@ -683,9 +712,32 @@ export function CartDrawerPublic({ open, onClose }: Props) {
                         <span>Envío</span>
                         <span>${COSTO_ENVIO}</span>
                       </div>
+                      {isUser && saldoCashback > 0 && (
+                        <label className="flex items-center justify-between gap-3 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2 mt-1 cursor-pointer select-none">
+                          <span className="text-sm text-[#6B3E26]">
+                            Usar mi cashback
+                            <span className="block text-xs text-[#AA6A42]/70">Disponible: ${montoCarrito(saldoCashback)}</span>
+                          </span>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={usarCashback}
+                            onClick={() => setUsarCashback((v) => !v)}
+                            className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors cursor-pointer ${usarCashback ? "bg-[#27ae60]" : "bg-[#e0c9b0]"}`}
+                          >
+                            <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${usarCashback ? "translate-x-5" : "translate-x-0"}`} />
+                          </button>
+                        </label>
+                      )}
+                      {cashbackUsado > 0 && (
+                        <div className="flex justify-between text-sm text-[#27ae60]">
+                          <span>Cashback</span>
+                          <span>−${montoCarrito(cashbackUsado)}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between font-bold text-base text-[#3A1F14] border-t border-[#f0e0d0] pt-2 mt-1">
                         <span>Total</span>
-                        <span>${(total + COSTO_ENVIO).toFixed(0)}</span>
+                        <span>${montoCarrito(totalAPagar)}</span>
                       </div>
                     </div>
 

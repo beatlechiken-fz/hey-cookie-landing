@@ -837,11 +837,19 @@ export function OrdenDetailCard({
                     ${orden.subtotal.toFixed(2)}
                   </span>
                 </div>
-                {orden.descuentoTotal > 0 && (
+                {orden.descuentoTotal - orden.cashbackAplicado > 0.005 && (
                   <div className="flex items-center justify-between text-[13px]">
                     <span className="text-green-600">Descuento</span>
                     <span className="text-green-600">
-                      −${orden.descuentoTotal.toFixed(2)}
+                      −${(orden.descuentoTotal - orden.cashbackAplicado).toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                {orden.cashbackAplicado > 0 && (
+                  <div className="flex items-center justify-between text-[13px]">
+                    <span className="text-green-600">Cashback del cliente</span>
+                    <span className="text-green-600">
+                      −${orden.cashbackAplicado.toFixed(2)}
                     </span>
                   </div>
                 )}

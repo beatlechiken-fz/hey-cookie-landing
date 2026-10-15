@@ -8,6 +8,8 @@ import { getSupabaseAdmin } from "@/core/helpers/supabase";
 import { Resend } from "resend";
 import type { CartItem } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
+import { CashbackRepositoryImpl } from "@/modules/admin/store/data/repositories/Cashback.repository.impl";
+import { AplicarCashbackOrdenUseCase } from "@/modules/admin/store/domain/usecases/Cashback.usecase";
 
 // ── Telegram ────────────────────────────────────────────────────────────────
 
@@ -287,7 +289,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, cupones, subtotal, descuentoTotal, total, fechaEntrega, direccionEntrega, notas } = (await req.json()) as {
+    const { items, cupones, subtotal, descuentoTotal: descuentoSinCashback, total: totalSinCashback, fechaEntrega, direccionEntrega, notas, usarCashback } = (await req.json()) as {
       items: CartItem[];
       cupones: OrdenCuponAplicado[];
       subtotal: number;
@@ -296,6 +298,8 @@ export async function POST(req: NextRequest) {
       fechaEntrega?: string | null;
       direccionEntrega?: string | null;
       notas?: string | null;
+      /** El cliente eligió pagar parte (o todo) con su saldo de cashback. */
+      usarCashback?: boolean;
     };
 
     if (!items?.length) {
@@ -333,8 +337,8 @@ export async function POST(req: NextRequest) {
         cliente_nombre: clienteNombre,
         status: "cotizacion",
         subtotal: Math.round(subtotal * 100) / 100,
-        descuento_total: Math.round(descuentoTotal * 100) / 100,
-        total: Math.round(total * 100) / 100,
+        descuento_total: Math.round(descuentoSinCashback * 100) / 100,
+        total: Math.round(totalSinCashback * 100) / 100,
         notas: notas?.trim() || null,
         ...(fechaEntrega ? { fecha_entrega: fechaEntrega } : {}),
         ...(direccionEntrega ? { direccion_entrega: direccionEntrega } : {}),
@@ -376,6 +380,15 @@ export async function POST(req: NextRequest) {
       await db.from("orden_cupones").insert(cuponesRows).then(() => null);
     }
 
+    // ── Cashback: se aplica en la BD contra el saldo real (atómico) ─────────
+    let cashbackAplicado = 0;
+    if (usarCashback && cliente?.id) {
+      cashbackAplicado = await new AplicarCashbackOrdenUseCase(new CashbackRepositoryImpl())
+        .execute(cliente.id, orden.id, Math.round(totalSinCashback * 100) / 100);
+    }
+    const descuentoTotal = Math.round((descuentoSinCashback + cashbackAplicado) * 100) / 100;
+    const total = Math.max(0, Math.round((totalSinCashback - cashbackAplicado) * 100) / 100);
+
     // ── Notificaciones (awaiteadas para que no las mate el runtime serverless) ──
     const telegramMsg = buildTelegramMsg(numero, clienteNombre, userEmail, items, subtotal, descuentoTotal, total);
     const chatId1 = process.env.TELEGRAM_CHAT_ID ?? "";
@@ -405,7 +418,7 @@ export async function POST(req: NextRequest) {
         : Promise.resolve(),
     ]);
 
-    return NextResponse.json({ ordenId: orden.id, numero: orden.numero });
+    return NextResponse.json({ ordenId: orden.id, numero: orden.numero, cashbackAplicado, total });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }

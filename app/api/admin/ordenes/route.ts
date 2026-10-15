@@ -10,6 +10,8 @@ import {
   resolveItemsInventario,
 } from "@/modules/admin/store/domain/usecases/Orden.usecase";
 import { InventarioRepositoryImpl } from "@/modules/admin/store/data/repositories/Inventario.repository.impl";
+import { CashbackRepositoryImpl } from "@/modules/admin/store/data/repositories/Cashback.repository.impl";
+import { SincronizarCashbackOrdenUseCase } from "@/modules/admin/store/domain/usecases/Cashback.usecase";
 import { DescontarInventarioOrdenUseCase } from "@/modules/admin/store/domain/usecases/Inventario.usecase";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { ORDEN_STATUS_LABELS } from "@/modules/admin/store/domain/entities/Orden.entity";
@@ -57,6 +59,11 @@ export async function POST(req: NextRequest) {
         await repo.setInventarioDescontado(created.id, true);
       }
     }
+
+    // Si se crea directamente como pagada, abona el cashback del cliente.
+    await new SincronizarCashbackOrdenUseCase(new CashbackRepositoryImpl())
+      .execute(created)
+      .catch(console.error);
 
     return NextResponse.json(created, { status: 201 });
   } catch (e: any) {

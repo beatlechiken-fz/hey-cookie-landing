@@ -184,7 +184,7 @@ const locale = useLocale();
 `ingredientes`, `bizcochos`, `bizcocho_ingredientes`, `coberturas`, `cobertura_ingredientes`, `sabores_cobertura`, `jarabes`, `jarabe_ingredientes`, `sabores_jarabe`, `licores`, `empaques`
 
 **Store:**
-`productos`, `ordenes`, `orden_items`, `clientes`, `cupones`, `cupon_clientes`
+`productos`, `ordenes`, `orden_items`, `clientes`, `cupones`, `cupon_clientes`, `cashback_movimientos` (libro de cashback: 3% de cada orden pagada; el saldo es la suma de `monto`; se usa con la función `cashback_aplicar_a_orden`)
 
 **Finanzas:**
 `finanzas_registros`, `finanzas_movimientos`, `finanzas_compras`

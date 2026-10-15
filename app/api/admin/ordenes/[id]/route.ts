@@ -17,6 +17,8 @@ import {
   RestaurarInventarioOrdenUseCase,
 } from "@/modules/admin/store/domain/usecases/Inventario.usecase";
 import { FinanzasDatasource } from "@/modules/admin/store/data/datasources/Finanzas.datasource";
+import { CashbackRepositoryImpl } from "@/modules/admin/store/data/repositories/Cashback.repository.impl";
+import { SincronizarCashbackOrdenUseCase } from "@/modules/admin/store/domain/usecases/Cashback.usecase";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
 import { desgloseItem, sumarDesgloses } from "@/core/helpers/finanzasFiltros";
 import type { Orden } from "@/modules/admin/store/domain/entities/Orden.entity";
@@ -82,6 +84,11 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
         await repo.setInventarioDescontado(ord.id, false);
         updated = { ...ord, inventarioDescontado: false };
       }
+
+      // ── Cashback: abona 3% al pagar; revierte/devuelve si se cancela ──────
+      await new SincronizarCashbackOrdenUseCase(new CashbackRepositoryImpl())
+        .execute(ord)
+        .catch(console.error);
 
       // ── Auto-crear registro financiero al marcar como pagado ──────────────
       if (body.status === "pagado") {

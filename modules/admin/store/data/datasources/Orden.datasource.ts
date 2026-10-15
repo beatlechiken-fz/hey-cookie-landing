@@ -61,6 +61,7 @@ function toEntity(
     status: row.status,
     subtotal: Number(row.subtotal),
     descuentoTotal: Number(row.descuento_total),
+    cashbackAplicado: Number(row.cashback_aplicado ?? 0),
     total: Number(row.total),
     notas: row.notas ?? null,
     fechaEntrega: row.fecha_entrega ?? null,
@@ -300,7 +301,7 @@ export class OrdenSupabaseDatasource {
    * Recalcula subtotal/descuento_total/total de la orden a partir de sus
    * orden_items y orden_cupones actuales — misma fórmula que create():
    * subtotal = Σ item.subtotal, descuentoTotal = Σ cupón.monto_descontado
-   * + promociones (evaluadas con el día en que se creó la orden).
+   * + promociones (evaluadas con el día en que se creó la orden) + cashback usado.
    * Se llama después de editar/quitar una partida.
    */
   private async recalcularTotales(ordenId: string): Promise<void> {
@@ -315,7 +316,7 @@ export class OrdenSupabaseDatasource {
         .select("subtotal, cantidad, precio_unitario, configuracion")
         .eq("orden_id", ordenId),
       db.from(TABLE_CUPONS).select("monto_descontado").eq("orden_id", ordenId),
-      db.from(TABLE).select("created_at").eq("id", ordenId).single(),
+      db.from(TABLE).select("created_at, cashback_aplicado").eq("id", ordenId).single(),
     ]);
     if (ie) throw new Error(`recalcularTotales items: ${ie.message}`);
     if (ce) throw new Error(`recalcularTotales cupones: ${ce.message}`);
@@ -334,11 +335,13 @@ export class OrdenSupabaseDatasource {
       })),
       new Date(ordenRow.created_at),
     );
+    // El cashback ya usado se respeta tal cual (no se vuelve a calcular contra el saldo).
+    const cashback = Number(ordenRow.cashback_aplicado ?? 0);
     const descuentoTotal =
       (cupRows ?? []).reduce(
         (s, r: any) => s + Number(r.monto_descontado),
         0,
-      ) + descuentoPromos;
+      ) + descuentoPromos + cashback;
     const total = Math.max(0, subtotal - descuentoTotal);
 
     const { error } = await db
