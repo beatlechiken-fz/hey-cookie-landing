@@ -38,6 +38,16 @@ export default function SectionChips() {
     };
   }, []);
 
+  // En móvil la barra se desliza de lado: mantiene visible el chip activo.
+  useEffect(() => {
+    if (!activa) return;
+    const chip = document.querySelector<HTMLElement>(`[data-chip="${activa}"]`);
+    const lista = chip?.parentElement?.parentElement;
+    if (chip && lista && lista.scrollWidth > lista.clientWidth) {
+      lista.scrollLeft = chip.offsetLeft - 16;
+    }
+  }, [activa]);
+
   return (
     <nav
       aria-label={t("label")}
@@ -50,6 +60,7 @@ export default function SectionChips() {
             <li key={id} className="shrink-0">
               <a
                 href={`#${id}`}
+                data-chip={id}
                 aria-current={on ? "true" : undefined}
                 className={`block rounded-full px-4 py-2 font-body text-sm font-semibold transition-colors ${
                   on

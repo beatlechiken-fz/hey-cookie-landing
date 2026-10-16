@@ -313,7 +313,18 @@
     "back": "Back"
   },
   "footer": {
-    "rights": "Hey Cookies, MX. 2026"
+    "rights": "Hey Cookies, MX. 2026",
+    "tagline": "A bake lab for handcrafted cookies, cakes and desserts.",
+    "explora": "Explore",
+    "pedidos": "Orders",
+    "contacto": "Contact",
+    "galletas": "Cookies",
+    "temporada": "Seasonal",
+    "custom": "Build your cake",
+    "cuenta": "My account",
+    "menuPdf": "Seasonal menu (PDF)",
+    "whatsapp": "Message us on WhatsApp",
+    "instagram": "Follow us on Instagram"
   },
   "halloween": {
     "title": "Halloween & Day of the Dead",

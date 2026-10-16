@@ -329,7 +329,18 @@
     "back": "Anterior"
   },
   "footer": {
-    "rights": "Hey Cookies, MX. 2026"
+    "rights": "Hey Cookies, MX. 2026",
+    "tagline": "Bake Lab de galletas, pasteles y postres artesanales.",
+    "explora": "Explora",
+    "pedidos": "Pedidos",
+    "contacto": "Contacto",
+    "galletas": "Galletas",
+    "temporada": "Temporada",
+    "custom": "Arma tu pastel",
+    "cuenta": "Mi cuenta",
+    "menuPdf": "Menú de temporada (PDF)",
+    "whatsapp": "Escríbenos por WhatsApp",
+    "instagram": "Síguenos en Instagram"
   },
   "halloween": {
     "title": "Halloween & Día de muertos",

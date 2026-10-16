@@ -2,6 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
+import { Link } from "@/i18n/navigation";
+
+const MENU_PDF = "/menus/menu-halloween-dia-de-muertos.pdf";
 
 interface FooterBarProps {
   appearance?: "dark" | "light";
@@ -9,6 +12,7 @@ interface FooterBarProps {
 
 export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
   const t = useTranslations("footer");
+  const tm = useTranslations("mainnav");
 
   // Redes sociales
   const socialLinks = [
@@ -46,47 +50,112 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
     },
   ];
 
+  if (appearance === "light") {
+    // Variante compacta (menú móvil): solo redes y créditos.
+    return (
+      <footer className="w-full px-6 py-6">
+        <div className="mx-auto flex w-[80%] flex-col gap-4">
+          <div className="flex items-center justify-center gap-6">
+            {socialLinks.map((s) => (
+              <a
+                key={s.id}
+                href={s.href}
+                target="_blank"
+                aria-label={s.id}
+                rel="noopener noreferrer"
+                className="-m-2.5 p-2.5 transition hover:scale-110"
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
+          <p className="text-center text-xs text-[#261102] opacity-80">{t("rights")}</p>
+        </div>
+      </footer>
+    );
+  }
+
+  const columnas: { titulo: string; links: { label: string; href: string; externo?: boolean }[] }[] = [
+    {
+      titulo: t("explora"),
+      links: [
+        { label: t("galletas"), href: "/" },
+        { label: tm("cake"), href: "/cake" },
+        { label: tm("desserts"), href: "/desserts" },
+        { label: tm("jelly"), href: "/jelly" },
+        { label: t("temporada"), href: "/halloween" },
+      ],
+    },
+    {
+      titulo: t("pedidos"),
+      links: [
+        { label: t("custom"), href: "/custom" },
+        { label: t("menuPdf"), href: MENU_PDF, externo: true },
+        { label: t("cuenta"), href: "/user/login" },
+      ],
+    },
+  ];
+
+  const linkCls =
+    "font-body text-sm text-crema/75 transition-colors hover:text-crema focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-crema rounded";
+
   return (
     <>
-      {/* Onda de firma del sitio — separa lo que venga antes del footer
-          oscuro, siempre, en cualquier página que use este componente.
-          topFill = fondo base de página (#FAF3E0), lo que hay justo antes
-          del footer en todas las páginas que lo usan. */}
-      {appearance === "dark" && (
-        <HeaderWaveRibbon topFill="#FAF3E0" bottomFill="#261102" />
-      )}
+      {/* Onda de firma del sitio: separa el contenido (crema) del footer oscuro. */}
+      <HeaderWaveRibbon topFill="#FAF3E0" bottomFill="#261102" />
 
-      <footer
-        className="w-full text-white px-6 py-6"
-        style={{
-          backgroundColor: appearance === "dark" ? "#261102" : "transparent",
-        }}
-      >
-      <div className="w-[80%] mx-auto flex flex-col gap-4">
-        {/* ROW 2 — Redes sociales */}
-        <div className="flex items-center gap-6 justify-center">
-          {socialLinks.map((s) => (
-            <a
-              key={s.id}
-              href={s.href}
-              target="_blank"
-              aria-label={s.id}
-              rel="noopener noreferrer"
-              className="p-2.5 -m-2.5 hover:scale-110 transition"
-            >
-              {s.icon}
-            </a>
+      <footer className="w-full bg-cafe-footer px-6 pb-8 pt-10 text-crema">
+        <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <p className="font-title text-3xl text-crema">Hey Cookie</p>
+            <p className="mt-1 font-body text-xs font-semibold uppercase tracking-[0.25em] text-crema/60">
+              Bake Lab
+            </p>
+            <p className="mt-4 max-w-[30ch] font-body text-sm leading-relaxed text-crema/75">{t("tagline")}</p>
+          </div>
+
+          {columnas.map((col) => (
+            <nav key={col.titulo} aria-label={col.titulo}>
+              <h2 className="font-title-light text-lg text-crema">{col.titulo}</h2>
+              <ul className="mt-3 flex flex-col gap-2">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    {l.externo ? (
+                      <a href={l.href} download className={linkCls}>{l.label}</a>
+                    ) : (
+                      <Link href={l.href} className={linkCls}>{l.label}</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
           ))}
+
+          <div>
+            <h2 className="font-title-light text-lg text-crema">{t("contacto")}</h2>
+            <ul className="mt-3 flex flex-col gap-3">
+              {socialLinks.map((s) => (
+                <li key={s.id}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-3 ${linkCls}`}
+                  >
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-crema/10 [&>svg]:h-5 [&>svg]:w-5">
+                      {s.icon}
+                    </span>
+                    {s.id === "whatsapp" ? t("whatsapp") : t("instagram")}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        {/* ROW 3 — Texto final */}
-        <div
-          className="text-xs text-center opacity-80"
-          style={{ color: appearance === "dark" ? "white" : "#261102" }}
-        >
+        <p className="mx-auto mt-10 max-w-6xl border-t border-crema/10 pt-6 text-center font-body text-xs text-crema/60">
           {t("rights")}
-        </div>
-      </div>
+        </p>
       </footer>
     </>
   );
