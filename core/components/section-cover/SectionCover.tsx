@@ -62,11 +62,11 @@ export default function SectionCover({
       className="relative scroll-mt-20"
       style={{ backgroundColor: TONO_HEX[tono] }}
     >
-      {/* Plato primero y luego el texto. El plato es grande y baja más allá de
-          la banda: ~90% queda en la portada y ~10% toca el contenido. */}
+      {/* Plato primero y luego el texto, centrados verticalmente dentro de
+          la portada (pedido del cliente: el círculo no debe bajar al contenido). */}
       <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-5 px-6 pb-20 pt-12 sm:gap-8 md:gap-12 md:pb-24 md:pt-16">
         {imagen && (
-          <div className="relative w-32 shrink-0 self-end -mb-[93px] sm:w-40 sm:-mb-[96px] md:w-64 md:-mb-[122px]">
+          <div className="relative w-32 shrink-0 sm:w-40 md:w-64">
             <div
               aria-hidden="true"
               className="absolute inset-x-[12%] -bottom-3 h-[12%] rounded-full bg-espresso/25 blur-lg"
