@@ -91,31 +91,33 @@ export default function ProductCard({
     <article
       className={`group relative flex h-full flex-col rounded-[20px] ${TONO[tono].bg} px-3 pb-3 pt-4 sm:px-5 sm:pb-4 sm:pt-5 transition-transform duration-300 ease-out hover:-translate-y-1 focus-within:-translate-y-1`}
     >
-      {(etiqueta || promo) && (
-        <div className="absolute inset-x-2.5 top-2.5 z-10 flex items-start justify-between gap-1 pointer-events-none">
-          {etiqueta ? (
-            <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${etiqueta.cls}`}>
-              {etiqueta.label}
-            </span>
-          ) : (
-            <span />
-          )}
-          {promo && (
-            <span className="rounded-full bg-espresso px-2 py-0.5 text-[11px] font-bold text-crema">
-              {promo}
-            </span>
-          )}
-        </div>
-      )}
+      {/* Fila de etiquetas: siempre ocupa su lugar (aunque esté vacía) para que
+          todas las cards alineen título, plato y precio a la misma altura. */}
+      <div className="-mx-1 -mt-1.5 flex h-5 items-start justify-between gap-1">
+        {etiqueta ? (
+          <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-4 ${etiqueta.cls}`}>
+            {etiqueta.label}
+          </span>
+        ) : (
+          <span />
+        )}
+        {promo && (
+          <span className="truncate rounded-full bg-espresso px-2 py-0.5 text-[11px] font-bold leading-4 text-crema">
+            {promo}
+          </span>
+        )}
+      </div>
 
+      {/* Título con alto fijo de 2 renglones, centrado: uno o dos renglones
+          ocupan lo mismo. */}
       <h3
-        className={`font-subtitle font-medium ${TONO[tono].titulo} text-center text-base sm:text-xl leading-tight line-clamp-2 min-h-[2.5em] ${etiqueta || promo ? "mt-5" : ""}`}
+        className={`mt-1.5 flex h-[2.5em] items-center justify-center font-subtitle font-medium ${TONO[tono].titulo} text-center text-base sm:text-xl leading-tight`}
       >
         {/* Botón "estirado": toda la card es clicable sin meter un heading dentro de un botón. */}
         <button
           type="button"
           onClick={onOpen}
-          className="after:absolute after:inset-0 after:rounded-[20px] after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current cursor-pointer"
+          className="line-clamp-2 after:absolute after:inset-0 after:rounded-[20px] after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current cursor-pointer"
         >
           {nombre}
         </button>
