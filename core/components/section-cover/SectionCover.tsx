@@ -18,6 +18,8 @@ const TONO_HEX = {
   durazno: "#F9E1D2",
   lila: "#E9DFF0",
   calabaza: "#F8DCC4",
+  // Fondo base de la página (bloques que no son de categoría, p. ej. Eventos).
+  crema: "#FAF3E0",
   // Temporada Halloween & Día de muertos (fondo oscuro, texto claro).
   noche: "#34203F",
 } as const;
