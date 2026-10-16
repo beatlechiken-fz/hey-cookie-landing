@@ -1,11 +1,14 @@
 {
   "hero": {
-    "title1": "Un bocado",
-    "title2": "al corazón",
-    "titleDescription": "Bake Lab",
-    "titleDescription2": "Sweet & Healthy",
-    "cookiesButton": "Galletas",
-    "quoteButton": "Cotizar"
+    "kicker": "Hey Cookie · Bake Lab",
+    "title1": "Un bocado al",
+    "title2": "corazón",
+    "subtitle": "Galletas, pasteles y postres artesanales para consentirte y compartir.",
+    "ctaCustom": "Arma tu pastel",
+    "ctaCookies": "Ver galletas",
+    "imageAlt": "Pastel con goteo de chocolate, galletas y tartaleta de zarzamora de Hey Cookie",
+    "quoteButton": "Cotizar",
+    "cookiesButton": "Galletas"
   },
   "cookies": {
     "vainilla": {
@@ -273,14 +276,11 @@
       "sweetnessTitle": "Dulzor",
       "sweetnessDesc": "Cada pastel tiene su nivel de dulzor para que elijas justo lo que te gusta.",
       "sweetnessScale": "Escala: nada dulce → muy dulce",
-
       "portionsTitle": "Porciones",
       "portionsDesc": "Todos nuestros pasteles miden entre 9 y 10 cm de alto. Las porciones varían según el diámetro: desde 15 cm para una reunión íntima hasta 24 cm para eventos más grandes.",
       "height": "Altura: 9 – 10 cm",
-
       "ingredientsTitle": "Ingredientes de calidad",
       "ingredientsDesc": "Elaboramos cada pastel con mantequilla real, huevos frescos y materias primas de primera calidad. Todo es hecho en casa con técnicas artesanales — sin premezclas ni atajos.",
-
       "orderTitle": "Pedido con anticipación",
       "orderDesc": "Para garantizar sabor, textura fresca y una presentación perfecta, los pedidos deben realizarse con al menos 2 días de anticipación.",
       "diameter": "Diámetro:",

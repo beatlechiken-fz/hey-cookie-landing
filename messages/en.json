@@ -1,10 +1,14 @@
 {
   "hero": {
-    "title1": "A bite",
-    "title2": "to the heart",
-    "titleDescription": "Sweet & Healthy Bakery",
-    "cookiesButton": "Cookies",
-    "quoteButton": "Get a quote"
+    "kicker": "Hey Cookie · Bake Lab",
+    "title1": "A bite to the",
+    "title2": "heart",
+    "subtitle": "Handcrafted cookies, cakes and desserts to treat yourself and share.",
+    "ctaCustom": "Build your cake",
+    "ctaCookies": "See cookies",
+    "imageAlt": "Chocolate drip cake, cookies and blackberry tart by Hey Cookie",
+    "quoteButton": "Get a quote",
+    "cookiesButton": "Cookies"
   },
   "cookies": {
     "vainilla": {
@@ -92,7 +96,6 @@
     "licorPrice": "Liquor",
     "syrupPrice": "Syrup",
     "coveragePrice": "Coverage",
-
     "cafe": {
       "name": "Coffee Cake",
       "description": "Moist and aromatic cake with a deep coffee flavor, filled and covered with a smooth and elegant cream that enhances its toasted notes and fluffy texture."
@@ -257,14 +260,11 @@
       "sweetnessTitle": "Sweetness",
       "sweetnessDesc": "Each cake has its own sweetness level so you can choose exactly what you like.",
       "sweetnessScale": "Scale: not sweet → very sweet",
-
       "portionsTitle": "Portions",
       "portionsDesc": "All our cakes are 9 to 10 cm tall. Portions vary by diameter: from 15 cm for an intimate gathering to 24 cm for larger events.",
       "height": "Height: 9 – 10 cm",
-
       "ingredientsTitle": "Quality Ingredients",
       "ingredientsDesc": "We make every cake with real butter, fresh eggs, and premium ingredients. Everything is handcrafted in-house — no premixes, no shortcuts.",
-
       "orderTitle": "Order in Advance",
       "orderDesc": "To guarantee fresh flavor, texture, and perfect presentation, orders must be placed at least 2 days in advance.",
       "diameter": "Diameter:",

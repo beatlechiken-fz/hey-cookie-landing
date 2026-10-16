@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { CustomBreakpoint } from "@/core/types/general";
 import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 import AppBar from "@/core/components/app-bar/AppBar";
-import HeroDesktop from "./HeroDesktop";
+import HeroSplash from "./HeroSplash";
 import { Link } from "@/i18n/navigation";
 
 export default function Hero() {
@@ -45,7 +45,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <HeroDesktop />
+      <HeroSplash />
 
       <svg
         viewBox="0 0 1440 100"
