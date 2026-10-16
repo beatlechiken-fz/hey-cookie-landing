@@ -53,7 +53,7 @@ async function fetchGalletas(
   }
 }
 
-const CONTENIDO = "mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 md:pt-20";
+const CONTENIDO = "mx-auto max-w-6xl px-4 pb-10 pt-16 sm:px-6 md:pt-28";
 
 export default async function Home() {
   const [halloween, sweet, fitness, pasteles, t, tc] = await Promise.all([

@@ -62,12 +62,28 @@ export default function SectionCover({
       className="relative scroll-mt-20"
       style={{ backgroundColor: TONO_HEX[tono] }}
     >
-      <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-6 px-6 pb-20 pt-12 md:pb-24 md:pt-16">
+      {/* Plato primero y luego el texto. El plato es grande y baja más allá de
+          la banda: ~70% queda en la portada y ~30% "flota" sobre el contenido. */}
+      <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-5 px-6 pb-20 pt-12 sm:gap-8 md:gap-12 md:pb-24 md:pt-16">
+        {imagen && (
+          <div className="relative w-32 shrink-0 self-end -mb-[118px] sm:w-40 sm:-mb-[128px] md:w-64 md:-mb-[173px]">
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-[12%] -bottom-3 h-[12%] rounded-full bg-espresso/25 blur-lg"
+            />
+            <div className={`relative aspect-square rounded-full ${oscuro ? "bg-crema" : "bg-white"} p-[2.5%] shadow-[0_18px_36px_-14px_rgba(58,31,20,0.5)]`}>
+              <div className="relative h-full w-full overflow-hidden rounded-full">
+                <Image src={imagen} alt="" fill sizes="(max-width: 640px) 128px, (max-width: 768px) 160px, 256px" className="object-cover" />
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="min-w-0 flex-1">
           <p className={`font-body text-xs font-semibold uppercase tracking-[0.25em] ${oscuro ? "text-calabaza-texto" : "text-cacao"}`}>
             {kicker}
           </p>
-          <Heading className={`mt-2 font-title-light text-[clamp(2rem,4.2vw,3.5rem)] leading-[1.05] ${oscuro ? "text-crema" : "text-espresso"}`}>
+          <Heading className={`mt-2 font-title-light text-[clamp(1.6rem,4.2vw,3.5rem)] leading-[1.05] ${oscuro ? "text-crema" : "text-espresso"}`}>
             {titulo}
           </Heading>
           {descripcion && (
@@ -77,21 +93,6 @@ export default function SectionCover({
           )}
           {acciones && <div className="mt-5 flex flex-wrap gap-3">{acciones}</div>}
         </div>
-
-        {imagen && (
-          // El plato baja más allá de la banda y queda montado sobre la onda.
-          <div className="relative w-28 shrink-0 translate-y-10 sm:w-40 md:w-56 md:translate-y-14">
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-[12%] -bottom-2 h-[12%] rounded-full bg-espresso/25 blur-lg"
-            />
-            <div className={`relative aspect-square rounded-full ${oscuro ? "bg-crema" : "bg-white"} p-[5%] shadow-[0_14px_30px_-12px_rgba(58,31,20,0.45)]`}>
-              <div className="relative h-full w-full overflow-hidden rounded-full">
-                <Image src={imagen} alt="" fill sizes="(max-width: 768px) 160px, 224px" className="object-cover" />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       <svg
@@ -134,7 +135,7 @@ export function BandaTemporada({ children, anterior, siguiente = "#FAF3E0", ...c
         </svg>
       )}
       <SectionCover {...cover} tono="noche" siguiente={NOCHE} />
-      <div className="mx-auto max-w-6xl px-4 pb-24 pt-14 sm:px-6 md:pb-28 md:pt-20">{children}</div>
+      <div className="mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-6 md:pb-28 md:pt-28">{children}</div>
       <svg viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true" className="absolute -bottom-px left-0 h-14 w-full md:h-20 pointer-events-none">
         <path d={ONDA} fill={siguiente} />
       </svg>

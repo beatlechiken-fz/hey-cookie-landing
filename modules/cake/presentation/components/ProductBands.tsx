@@ -73,7 +73,7 @@ export default function ProductBands({ productos, precios = {}, kicker, portada 
             tono={TONO_LINEA[band.key]}
             imagen={(i === 0 && portada) || band.items[0]?.imagenUrl || null}
           />
-          <div className="mx-auto max-w-6xl px-4 pb-16 pt-14 sm:px-6 md:pt-20">
+          <div className="mx-auto max-w-6xl px-4 pb-16 pt-16 sm:px-6 md:pt-28">
             <ProductGrid items={conPrecio(band.items)} />
           </div>
         </section>

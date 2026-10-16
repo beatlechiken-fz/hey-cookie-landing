@@ -35,7 +35,7 @@ export default function CategoryCards() {
               </h3>
               <div className="relative mx-auto mt-4 w-[72%] aspect-square">
                 <div aria-hidden="true" className="absolute inset-x-[14%] -bottom-1 h-[12%] rounded-full bg-espresso/20 blur-md" />
-                <div className="relative h-full w-full rounded-full bg-white p-[5%] shadow-[0_8px_20px_-10px_rgba(58,31,20,0.4)] transition-transform duration-300 ease-out group-hover:-translate-y-2">
+                <div className="relative h-full w-full rounded-full bg-white p-[2.5%] shadow-[0_8px_20px_-10px_rgba(58,31,20,0.4)] transition-transform duration-300 ease-out group-hover:-translate-y-2">
                   <div className="relative h-full w-full overflow-hidden rounded-full">
                     <Image src={c.img} alt="" fill sizes="(max-width: 1024px) 34vw, 200px" className="object-cover" />
                   </div>

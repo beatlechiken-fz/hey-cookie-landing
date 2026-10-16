@@ -129,7 +129,7 @@ export default function ProductCard({
           aria-hidden="true"
           className="absolute inset-x-[14%] -bottom-1 h-[12%] rounded-full bg-espresso/20 blur-md transition-all duration-300 group-hover:inset-x-[20%] group-hover:bg-espresso/15"
         />
-        <div className={`relative h-full w-full rounded-full ${TONO[tono].plato} p-[5%] shadow-[0_6px_18px_-8px_rgba(58,31,20,0.35)] transition-transform duration-300 ease-out group-hover:-translate-y-1.5`}>
+        <div className={`relative h-full w-full rounded-full ${TONO[tono].plato} p-[2.5%] shadow-[0_6px_18px_-8px_rgba(58,31,20,0.35)] transition-transform duration-300 ease-out group-hover:-translate-y-1.5`}>
           <div className="relative h-full w-full overflow-hidden rounded-full">
             <Image
               src={imagenUrl ?? imagenFallback}

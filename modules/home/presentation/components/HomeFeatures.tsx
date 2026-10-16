@@ -14,7 +14,7 @@ function Plato({ src, className = "" }: { src: string; className?: string }) {
   return (
     <div className={`relative aspect-square ${className}`}>
       <div aria-hidden="true" className="absolute inset-x-[12%] -bottom-3 h-[12%] rounded-full bg-espresso/25 blur-xl" />
-      <div className="relative h-full w-full rounded-full bg-white p-[4%] shadow-[0_24px_50px_-20px_rgba(58,31,20,0.5)]">
+      <div className="relative h-full w-full rounded-full bg-white p-[2%] shadow-[0_24px_50px_-20px_rgba(58,31,20,0.5)]">
         <div className="relative h-full w-full overflow-hidden rounded-full">
           <Image src={src} alt="" fill sizes="(max-width: 768px) 70vw, 420px" className="object-cover" />
         </div>
