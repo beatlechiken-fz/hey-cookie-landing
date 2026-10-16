@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import styles from "./Hero.module.scss";
-import FloatingIngredients from "@/core/components/floating-ingredients/FloatingIngredients";
 
 /**
  * Splash de la home: foto de producto sobre pared rosa con el texto a la
@@ -39,18 +38,6 @@ export default function HeroSplash() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-[1] hidden xl:block bg-[radial-gradient(ellipse_70%_60%_at_18%_38%,rgba(255,241,236,0.6),transparent_70%)]"
         />
-
-        {/* Ingredientes flotando sobre la pared (solo con el diseño de escritorio). */}
-        <div className="hidden xl:block">
-          <FloatingIngredients
-            eager
-            items={[
-              { nombre: "chocolate", pos: "left-[40%] top-[20%]", size: "w-24", rot: -14, depth: 0.6 },
-              { nombre: "fresa", pos: "right-[5%] top-[19%]", size: "w-24 2xl:w-28", rot: 10, depth: 0.75 },
-              { nombre: "nuez", pos: "left-[2%] bottom-[22%]", size: "w-24", rot: -8, depth: 0.3 },
-            ]}
-          />
-        </div>
 
         {/* TEXTO */}
         <div className="relative z-10 px-6 pt-32 md:px-12 xl:absolute xl:inset-y-0 xl:left-0 xl:max-w-[50vw] xl:pl-[6vw] xl:pr-0 xl:pt-[max(8.5vw,120px)]">

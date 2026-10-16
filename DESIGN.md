@@ -33,6 +33,11 @@ colors:
   tinte-durazno: "#F9E1D2"
   tinte-lila: "#E9DFF0"
   tinte-calabaza: "#F8DCC4"
+  noche: "#1E1517"
+  noche-morado: "#34203F"
+  calabaza: "#E8782A"
+  calabaza-hover: "#F08C42"
+  calabaza-texto: "#F5A04A"
 typography:
   display:
     fontFamily: "Pacifico, cursive"
@@ -47,13 +52,13 @@ typography:
     lineHeight: 1.2
     letterSpacing: "normal"
   nav:
-    fontFamily: "Playfair Display, Georgia, serif"
+    fontFamily: "Fredoka, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 500
     lineHeight: 1.25
     letterSpacing: "normal"
   nav-mobile:
-    fontFamily: "Playfair Display, Georgia, serif"
+    fontFamily: "Fredoka, sans-serif"
     fontSize: "1rem"
     fontWeight: 500
     lineHeight: 1.25
@@ -200,7 +205,10 @@ Present in real ad creative and in the codebase's own unused `.vintage-bg` utili
 - **Café Footer** (`#261102`): the one deliberately dark neutral in the system — `FooterBar`'s own background, and the fill every Wave Divider transitions into right before the footer. Never used as a text or border color; reserved for that one structural role.
 
 ### Pastel tints (cards and section bands, 2026-10)
-Each tint is a background, never text. Text on any tint is always Espresso (all pass AA). Mapping: **Rosa** = Sweet cookies; **Olivo** = Fitness (the vintage olive, finally in use); **Menta** = Healthy; **Caramelo** = pasteles; **Lila** = gelatinas; **Durazno** = repostería; **Calabaza** = seasonal collection (Halloween & Día de Muertos). **Pared** (`#EFC3BD`) is the splash wall color, sampled from the photo.
+Each tint is a background, never text. Text on any tint is always Espresso (all pass AA). **Line rule (confirmed 2026-10-16):** every Sweet product, card and line band is **Rosa**; every Fitness *and* Healthy product, card and band is **Olivo** (green), everywhere on the site, regardless of category. Caramelo / Lila / Durazno only tint non-line surfaces (category cards, the home "Pasteles" cover).
+
+### Season palette (Halloween & Día de Muertos)
+The one sanctioned break from the light palette. Any seasonal collection section uses `BandaTemporada`: cover in **Noche Morado** (`#34203F`) with Crema title and **Calabaza Texto** (`#F5A04A`) kicker, products on **Noche** (`#1E1517`), cards in Noche Morado with Crema titles, orange prices and a **Calabaza** (`#E8782A`) round button. Seasonal CTAs are Calabaza fill with Noche text. Same structure, radii, type and waves as the rest of the site; only the colors change. **Pared** (`#EFC3BD`) is the splash wall color, sampled from the photo.
 
 **Frambuesa Acción** (`#A84D66`, hover `#933F57`) is the single fill for primary CTAs with white text (5.5:1). **Frambuesa Texto** (`#A8386A`) is the accent for large display words on light backgrounds.
 
@@ -221,7 +229,8 @@ The `Contact` "Te escuchamos" satisfaction survey uses a standalone red→green 
 ## Typography
 
 **Display Font:** Pacifico (with fallback `cursive`), accent word only
-**Display-Serif Font:** Playfair Display (with fallback `Georgia, serif`), headlines, nav, card titles (`font-title-light` and `font-subtitle` both resolve to it)
+**Display-Serif Font:** Playfair Display (with fallback `Georgia, serif`), headlines and card titles (`font-title-light` and `font-subtitle` both resolve to it)
+**Nav Font:** Fredoka (rounded, `font-nav`), main menu only; chosen 2026-10-16 because the serif nav did not read as "cute"
 **Body Font:** Montserrat (with fallback `sans-serif`)
 
 **Character:** Hand-set and celebratory — the three display faces are used the way a bakery uses hand-lettered signage, each for a distinct role, never interchangeably. Montserrat is the only workhorse: everything a customer reads to make a decision (descriptions, prices, form labels, buttons) is Montserrat, so the script faces stay legible-by-contrast rather than competing with each other.
@@ -229,7 +238,7 @@ The `Contact` "Te escuchamos" satisfaction survey uses a standalone red→green 
 ### Hierarchy
 - **Display** (Pacifico 400, `clamp(2.3rem, 5vw, 5rem)`, line-height 1.15): the Hero's primary wordmark line ("Un bocado al corazón") — reserved for the single biggest brand moment on the site.
 - **Display-Serif** (Playfair Display 400/600/700, `clamp(1.7rem, 4vw, 4rem)`, line-height 1.2): the Hero's secondary line ("Bake Lab · Sweet & Healthy") and other large editorial headlines that need weight without competing with the Display script.
-- **Nav** (Playfair 500, 16px mobile / 18px desktop): top-level public navigation and submenus.
+- **Nav** (Fredoka 500, 16px mobile / 18px desktop): top-level public navigation and submenus.
 - **Card title** (Playfair 500, 20px): product and category card names.
 - **Body** (Montserrat 400/600, 14px, line-height 1.5): all paragraph copy, descriptions, table cells, and form values.
 - **Label** (Montserrat 600, 11px, letter-spacing 0.05em, uppercase): field labels, section eyebrows, tag/chip text — the system's only uppercase-tracked type.
@@ -281,9 +290,6 @@ Fully rounded, no sharp corners anywhere an interactive surface exists. The scal
 - Footer row: price (Montserrat semibold) on the left, a round white `+` / arrow button on the right.
 - Hover: the plated product lifts and the button turns Frambuesa Acción. Line tags only appear where lines are mixed.
 
-### Floating ingredients (2026-10)
-Real ingredient cut-outs (`public/img/ingredientes/*.webp`, transparent, under 20 KB each) float around the splash, section covers and the "Arma tu pastel" block via `FloatingIngredients`. Max 2–3 per section, placed on empty wall/edges, never over text. They bob gently and drift with scroll by depth (far ones slightly blurred); both stop under `prefers-reduced-motion`. Decorative only (`aria-hidden`). Never use watermarked stock images.
-
 ### Cards / Containers (modals, admin)
 - **Corner Style:** `rounded-3xl` for product cards, `rounded-2xl` for modal panels and inner content blocks.
 - **Background:** white for product cards sitting on a cream page; Crema Suave for content blocks sitting inside white modals.
@@ -297,11 +303,11 @@ Real ingredient cut-outs (`public/img/ingredientes/*.webp`, transparent, under 2
 - **Error:** border and helper text shift to Rojo Error; the field itself never changes shape or shadow.
 
 ### Navigation
-- Public `AppBar`: transparent-over-Hero, then solid on scroll/other pages. Top-level nav labels (`MainNavItem`) are set in the **Nav** style (Playfair 500, 18px desktop / 16px mobile). Active/hover state shifts to Caramelo Tostado (`#AA5A32`/`#9A4A22`), with an underline wave-icon flourish under the active item. Submenu links and secondary nav chrome (account dropdown, login button) use Montserrat as normal. User avatar is a `rounded-full` initials badge in Caramelo Tostado with a ring that appears on hover/open.
+- Public `AppBar`: transparent-over-Hero, then solid on scroll/other pages. Top-level nav labels (`MainNavItem`) are set in the **Nav** style (Fredoka 500, 18px desktop / 16px mobile), vertically centered on the logo (AppBar row is 84px, the logo's height). Active/hover state shifts to Caramelo Tostado (`#AA5A32`/`#9A4A22`), with an underline wave-icon flourish under the active item. Submenu links and secondary nav chrome (account dropdown, login button) use Montserrat as normal. User avatar is a `rounded-full` initials badge in Caramelo Tostado with a ring that appears on hover/open.
 - Admin `AppBarAdmin`: same light warm-chrome bar as public (Crema/Lino tones, not a dark bar), same Caramelo Tostado active/hover state, same Montserrat nav labels (Operate mode skips the Headline-Script treatment — nav labels here are functional wayfinding, not brand moments) and the same `rounded-full` initials avatar pattern as public. Structurally distinct only in that its menu items are operational (Raws, Store, Finanzas) rather than product-catalog links.
 
 ### Named Rules
-**The Serif-Nav Rule.** Public navigation uses the Nav serif style, never Montserrat and never a script face; it should read as the same voice as the headlines.
+**The Rounded-Nav Rule.** Public navigation uses Fredoka (rounded, friendly), never Montserrat and never a script face. Floating decorative ingredients were tried and rejected (2026-10-16); don't reintroduce them.
 
 ### Wave Dividers (signature component)
 Section boundaries — most visibly Hero-to-body — are drawn as a hand-curved SVG path (`viewBox="0 0 1440 100"`, a repeating sine-like curve) filled with the next section's background color, rather than a straight `<hr>` or hard color block edge. This is the system's most distinctive structural signature: read it as the bakery's own scalloped pastry-bag edge, not a generic wave-divider trend.

@@ -1,19 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import SectionCover, { type TonoPortada } from "@/core/components/section-cover/SectionCover";
-import type { Ingrediente } from "@/core/components/floating-ingredients/FloatingIngredients";
-
-// Ingredientes flotantes por tono de franja (el primero solo en la primera franja).
-const INGREDIENTES: Record<TonoPortada, [Ingrediente, Ingrediente]> = {
-  calabaza: ["canela", "nuez"],
-  caramelo: ["fresa", "chocolate"],
-  lila: ["fresa", "mango"],
-  durazno: ["mango", "almendra"],
-  rosa: ["chocolate", "fresa"],
-  olivo: ["pistache", "almendra"],
-  menta: ["almendra", "pistache"],
-};
+import SectionCover, {
+  BandaTemporada,
+  type TonoPortada,
+} from "@/core/components/section-cover/SectionCover";
 import ProductGrid from "./ProductGrid";
 import {
   COLECCIONES,
@@ -23,14 +14,19 @@ import {
 
 const LINE_ORDER: LineaProducto[] = ["sweet", "fitness", "healthy"];
 
+// Sweet siempre rosa; Fitness y Healthy siempre verde (igual que en la home).
+const TONO_LINEA: Record<LineaProducto, TonoPortada> = {
+  sweet: "rosa",
+  fitness: "olivo",
+  healthy: "olivo",
+};
+
 interface Props {
   productos: Producto[];
   /** Precio público por id de producto (precio fijo o sugerido redondeado). */
   precios?: Record<string, number | null>;
   /** Texto pequeño sobre cada título ("Pasteles", "Gelatinas"…). */
   kicker: string;
-  /** Tono de las franjas del catálogo regular (las colecciones van en calabaza). */
-  tono: TonoPortada;
   /** Imagen de portada propia de la sección (core/data/portadas.ts). */
   portada?: string | null;
 }
@@ -38,48 +34,47 @@ interface Props {
 /**
  * Franjas de productos para pasteles / repostería / gelatinas: primero una
  * franja por colección de temporada (siempre visible; "Próximamente…" si está
- * vacía) y luego una por línea con los productos del catálogo regular. Cada
- * franja abre con su portada corta y debajo muestra todos sus productos.
+ * vacía) con colores de Halloween, y luego una por línea con los productos del
+ * catálogo regular. Cada franja abre con su portada corta y muestra todos sus
+ * productos.
  */
-export default function ProductBands({ productos, precios = {}, kicker, tono, portada }: Props) {
+export default function ProductBands({ productos, precios = {}, kicker, portada }: Props) {
   const t = useTranslations();
+  const conPrecio = (items: Producto[]) =>
+    items.map((producto) => ({ producto, precio: precios[producto.id] ?? null }));
 
-  const bands = [
-    ...COLECCIONES.map((c) => ({
-      key: c.value,
-      title: t(`cakes.collections.${c.value}`),
-      tono: "calabaza" as TonoPortada,
-      items: productos.filter((p) => p.coleccion === c.value),
-    })),
-    ...LINE_ORDER.map((line) => ({
-      key: line,
-      title: t(`cakes.lines.${line}`),
-      tono,
-      items: productos.filter((p) => !p.coleccion && p.linea === line),
-    })).filter((b) => b.items.length > 0),
-  ];
+  const lineas = LINE_ORDER.map((line) => ({
+    key: line,
+    title: t(`cakes.lines.${line}`),
+    items: productos.filter((p) => !p.coleccion && p.linea === line),
+  })).filter((b) => b.items.length > 0);
 
   return (
     <div className="relative">
-      {bands.map((band, i) => (
+      {COLECCIONES.map((c) => {
+        const items = productos.filter((p) => p.coleccion === c.value);
+        return (
+          <BandaTemporada
+            key={c.value}
+            kicker={kicker}
+            titulo={t(`cakes.collections.${c.value}`)}
+            imagen={items[0]?.imagenUrl ?? null}
+          >
+            <ProductGrid items={conPrecio(items)} mostrarLinea oscuro />
+          </BandaTemporada>
+        );
+      })}
+
+      {lineas.map((band, i) => (
         <section key={band.key} aria-label={band.title}>
           <SectionCover
             kicker={kicker}
             titulo={band.title}
-            tono={band.tono}
+            tono={TONO_LINEA[band.key]}
             imagen={(i === 0 && portada) || band.items[0]?.imagenUrl || null}
-            ingredientes={
-              i === 0 ? INGREDIENTES[band.tono] : [INGREDIENTES[band.tono][1]]
-            }
           />
           <div className="mx-auto max-w-6xl px-4 pb-16 pt-14 sm:px-6 md:pt-20">
-            <ProductGrid
-              items={band.items.map((producto) => ({
-                producto,
-                precio: precios[producto.id] ?? null,
-              }))}
-              mostrarLinea={band.tono === "calabaza"}
-            />
+            <ProductGrid items={conPrecio(band.items)} />
           </div>
         </section>
       ))}

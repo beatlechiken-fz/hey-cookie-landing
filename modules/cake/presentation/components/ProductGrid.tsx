@@ -33,18 +33,22 @@ interface Props {
   items: ProductoConPrecio[];
   mostrarLinea?: boolean;
   vacio?: string;
+  /** Sobre fondo oscuro (temporada): texto claro en el estado vacío. */
+  oscuro?: boolean;
 }
 
 /**
  * Cuadrícula de productos del catálogo (pasteles, repostería, gelatinas y
  * galletas de colección). Abre el modal que corresponde a cada categoría.
  */
-export default function ProductGrid({ items, mostrarLinea, vacio = "Próximamente…" }: Props) {
+export default function ProductGrid({ items, mostrarLinea, vacio = "Próximamente…", oscuro }: Props) {
   const [selected, setSelected] = useState<Producto | null>(null);
   const [selectedCookie, setSelectedCookie] = useState<GalletaPublica | null>(null);
 
   if (items.length === 0) {
-    return <p className="py-10 text-center font-body text-lg text-cacao/70">{vacio}</p>;
+    return (
+      <p className={`py-10 text-center font-body text-lg ${oscuro ? "text-crema/70" : "text-cacao/70"}`}>{vacio}</p>
+    );
   }
 
   return (

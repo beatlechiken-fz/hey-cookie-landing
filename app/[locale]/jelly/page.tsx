@@ -35,14 +35,13 @@ export default async function JellyPage() {
         </div>
       </div>
 
-      {/* La primera franja siempre es la colección de temporada (tono calabaza). */}
-      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8DCC4" />
+      {/* La primera franja siempre es la colección de temporada (morado noche). */}
+      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#34203F" />
 
       <ProductBands
         productos={productos}
         precios={precios}
         kicker={t("jelly")}
-        tono="lila"
         portada={portadaDe("gelatinas")}
       />
 

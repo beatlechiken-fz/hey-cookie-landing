@@ -93,7 +93,7 @@ export default function MainNavItem({
           className={`
             px-4 py-2 rounded-xl transition
             flex justify-between items-center
-            font-subtitle font-medium text-left text-lg
+            font-nav font-medium text-left text-lg
             ${active ? "text-[#AA5A32]" : "text-[#3A1F14] hover:text-[#9A4A22]"}
           `}
         >
@@ -110,7 +110,7 @@ export default function MainNavItem({
                 onClick={onSelect}
                 aria-current={s.active ? "page" : undefined}
                 className={`
-                  px-3 py-2 rounded-lg text-base font-subtitle font-medium
+                  px-3 py-2 rounded-lg text-base font-nav font-medium
                   hover:text-[#9A4A22] hover:bg-[#6B3E26]/10
                   ${s.active ? "text-[#AA5A32]" : "text-[#3A1F14]/80"}
                 `}
@@ -147,7 +147,7 @@ export default function MainNavItem({
   const itemCls = `
     px-3 xl:px-4 py-1 rounded-xl transition text-base xl:text-lg
     flex items-center gap-1
-    font-subtitle font-medium cursor-pointer
+    font-nav font-medium cursor-pointer
     ${active ? "text-[#AA5A32]" : "text-[#3A1F14] hover:text-[#9A4A22]"}
   `;
 
@@ -191,7 +191,7 @@ export default function MainNavItem({
               aria-current={s.active ? "page" : undefined}
               className={`
                 block px-3 py-2 rounded-lg whitespace-nowrap
-                font-subtitle font-medium text-base
+                font-nav font-medium text-base
                 hover:text-[#9A4A22] hover:bg-[#6B3E26]/10
                 ${s.active ? "text-[#AA5A32]" : "text-[#3A1F14]/85"}
               `}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {
+  Fredoka,
   Pacifico,
   Montserrat,
   Playfair_Display,
@@ -23,6 +24,13 @@ const playfair = Playfair_Display({
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-playfair",
+});
+
+// Menú principal: redondeada y "cute", en línea con la marca.
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-fredoka",
 });
 
 const montserrat = Montserrat({
@@ -67,7 +75,7 @@ export default async function RootLayout({ children, params }: Props) {
   return (
     <html
       lang={locale}
-      className={`overflow-x-hidden ${pacifico.variable} ${montserrat.variable} ${playfair.variable}`}
+      className={`overflow-x-hidden ${pacifico.variable} ${fredoka.variable} ${montserrat.variable} ${playfair.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden">
         <SessionProvider>

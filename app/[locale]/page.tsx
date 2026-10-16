@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
-import SectionCover from "@/core/components/section-cover/SectionCover";
+import SectionCover, { BandaTemporada } from "@/core/components/section-cover/SectionCover";
 import { portadaDe } from "@/core/data/portadas";
 import { Link } from "@/i18n/navigation";
 import Hero from "@/modules/home/presentation/components/Hero";
@@ -73,42 +73,38 @@ export default async function Home() {
 
       <SectionChips />
 
-      <section aria-label={tc("titleHalloween")}>
-        <SectionCover
-          id="temporada"
-          ingredientes={["canela", "nuez"]}
-          kicker={t("temporada.kicker")}
-          titulo={tc("titleHalloween")}
-          descripcion={t("temporada.desc")}
-          tono="calabaza"
-          imagen={portadaDe("temporada", halloween[0]?.imagenUrl)}
-          acciones={
-            <>
-              <Link
-                href="/halloween"
-                className="inline-flex rounded-full bg-frambuesa px-5 py-2.5 font-body text-sm font-semibold text-white transition-colors hover:bg-frambuesa-hover"
-              >
-                {t("temporada.verMenu")}
-              </Link>
-              <a
-                href={MENU_PDF}
-                download
-                className="inline-flex rounded-full border-2 border-espresso/70 px-5 py-2 font-body text-sm font-semibold text-espresso transition-colors hover:bg-espresso hover:text-crema"
-              >
-                PDF
-              </a>
-            </>
-          }
-        />
-        <div className={CONTENIDO}>
-          <Cookies productos={halloween} tono="calabaza" mostrarLinea />
-        </div>
-      </section>
+      <BandaTemporada
+        id="temporada"
+        kicker={t("temporada.kicker")}
+        titulo={tc("titleHalloween")}
+        descripcion={t("temporada.desc")}
+        imagen={portadaDe("temporada", halloween[0]?.imagenUrl)}
+        anterior="#FAF3E0"
+        siguiente="#F6DDE4"
+        acciones={
+          <>
+            <Link
+              href="/halloween"
+              className="inline-flex rounded-full bg-calabaza px-5 py-2.5 font-body text-sm font-semibold text-noche transition-colors hover:bg-calabaza-hover"
+            >
+              {t("temporada.verMenu")}
+            </Link>
+            <a
+              href={MENU_PDF}
+              download
+              className="inline-flex rounded-full border-2 border-crema/70 px-5 py-2 font-body text-sm font-semibold text-crema transition-colors hover:bg-crema hover:text-noche"
+            >
+              PDF
+            </a>
+          </>
+        }
+      >
+        <Cookies productos={halloween} tono="noche" mostrarLinea oscuro />
+      </BandaTemporada>
 
       <section aria-label={tc("title")}>
         <SectionCover
           id="galletas"
-          ingredientes={["chocolate", "fresa"]}
           kicker={t("galletas.kicker")}
           titulo={tc("title")}
           descripcion={t("galletas.desc")}
@@ -123,7 +119,6 @@ export default async function Home() {
       <section aria-label={tc("titleFiness")}>
         <SectionCover
           id="fitness"
-          ingredientes={["pistache", "almendra"]}
           kicker={t("fitness.kicker")}
           titulo={tc("titleFiness")}
           descripcion={t("fitness.desc")}
@@ -138,7 +133,6 @@ export default async function Home() {
       <section aria-label={t("pasteles.kicker")}>
         <SectionCover
           id="pasteles"
-          ingredientes={["fresa", "chocolate"]}
           kicker={t("pasteles.kicker")}
           titulo={t("chips.pasteles")}
           descripcion={t("pasteles.desc")}

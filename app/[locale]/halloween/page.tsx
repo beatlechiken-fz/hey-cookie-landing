@@ -77,7 +77,7 @@ export default async function HalloweenPage() {
         </div>
       </div>
 
-      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8DCC4" />
+      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#34203F" />
 
       <HalloweenSections bands={bands} menuPdf={MENU_PDF} />
 

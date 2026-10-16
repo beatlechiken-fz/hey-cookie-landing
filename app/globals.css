@@ -11,6 +11,7 @@
      serif de títulos, así menú y encabezados quedan en una sola voz. */
   --font-subtitle: var(--font-playfair);
   --font-body: var(--font-montserrat);
+  --font-nav: var(--font-fredoka);
 }
 
 /* Tokens de marca (DESIGN.md). Generan utilidades: bg-espresso, text-frambuesa… */
@@ -33,6 +34,14 @@
   --color-tinte-lila: #E9DFF0;
   --color-tinte-calabaza: #F8DCC4;
   --color-pared: #EFC3BD;
+
+  /* Temporada Halloween & Día de muertos: único lugar donde el sitio se
+     oscurece. Negro cálido + morado noche + naranja calabaza. */
+  --color-noche: #1E1517;
+  --color-noche-morado: #34203F;
+  --color-calabaza: #E8782A;
+  --color-calabaza-hover: #F08C42;
+  --color-calabaza-texto: #F5A04A;
 }
 
 html,
@@ -66,20 +75,11 @@ body {
   font-family: var(--font-subtitle);
 }
 
+.font-nav {
+  font-family: var(--font-nav);
+}
+
 .font-body {
   font-family: var(--font-body);
 }
 
-/* Ingredientes flotantes (FloatingIngredients): vaivén suave. */
-@keyframes hc-flotar {
-  from { transform: translateY(0) rotate(0deg); }
-  to { transform: translateY(-10px) rotate(4deg); }
-}
-
-.hc-flotar {
-  animation: hc-flotar 5.5s ease-in-out infinite alternate;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hc-flotar { animation: none; }
-}

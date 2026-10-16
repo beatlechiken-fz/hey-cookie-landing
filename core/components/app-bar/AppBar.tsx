@@ -189,13 +189,13 @@ export default function AppBar() {
       <motion.section
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="mx-auto flex h-[96px] items-center pr-4 lg:px-10 bg-transparent"
+        className="mx-auto flex h-[84px] items-center pr-4 lg:px-10 bg-transparent"
       >
         {/* LEFT ZONE — hamburger + desktop nav */}
         <div className="flex items-center gap-4 order-1 lg:order-1">
           <button
             onClick={() => setMenuOpen(true)}
-            className="lg:hidden flex items-center mb-6 justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
+            className="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
           >
             <svg viewBox="0 0 24 24" className="w-6 h-6">
               <path
@@ -213,7 +213,7 @@ export default function AppBar() {
         </div>
 
         {/* RIGHT ZONE */}
-        <div className="flex items-center gap-3 ml-auto order-2 lg:order-2 mb-6">
+        <div className="flex items-center gap-3 ml-auto order-2 lg:order-2">
           {/*
             Order left→right:
             - Not logged in: [login]  [cart]  [lang]
@@ -246,7 +246,7 @@ export default function AppBar() {
           {/* Cart button */}
           <button
             onClick={abrirCarrito}
-            className="relative mr-2 mt-1 p-3 rounded-lg hover:bg-[#AA6A42]/10 text-[#3A1F14] transition-colors cursor-pointer"
+            className="relative mr-2 p-3 rounded-lg hover:bg-[#AA6A42]/10 text-[#3A1F14] transition-colors cursor-pointer"
             aria-label="Carrito de compras"
           >
             <svg

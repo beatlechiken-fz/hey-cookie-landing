@@ -7,44 +7,53 @@ import Image from "next/image";
  * catálogo público (galletas, pasteles, repostería, gelatinas, temporada).
  */
 
-export type TonoCard =
-  | "rosa"
-  | "olivo"
-  | "menta"
-  | "caramelo"
-  | "durazno"
-  | "lila"
-  | "calabaza";
+export type TonoCard = "rosa" | "olivo" | "noche";
 
-const TONO_BG: Record<TonoCard, string> = {
-  rosa: "bg-tinte-rosa",
-  olivo: "bg-tinte-olivo",
-  menta: "bg-tinte-menta",
-  caramelo: "bg-tinte-caramelo",
-  durazno: "bg-tinte-durazno",
-  lila: "bg-tinte-lila",
-  calabaza: "bg-tinte-calabaza",
+/**
+ * Colores por tono. Sweet = rosa, Fitness/Healthy = olivo (verde), y la
+ * temporada (Halloween & Día de muertos) = noche: morado oscuro con naranja.
+ */
+const TONO: Record<
+  TonoCard,
+  { bg: string; titulo: string; precio: string; detalle: string; boton: string; plato: string }
+> = {
+  rosa: {
+    bg: "bg-tinte-rosa",
+    titulo: "text-espresso",
+    precio: "text-espresso",
+    detalle: "text-cacao",
+    boton: "bg-white text-espresso group-hover:bg-frambuesa group-hover:text-white",
+    plato: "bg-white",
+  },
+  olivo: {
+    bg: "bg-tinte-olivo",
+    titulo: "text-espresso",
+    precio: "text-espresso",
+    detalle: "text-cacao",
+    boton: "bg-white text-espresso group-hover:bg-frambuesa group-hover:text-white",
+    plato: "bg-white",
+  },
+  noche: {
+    bg: "bg-noche-morado",
+    titulo: "text-crema",
+    precio: "text-calabaza-texto",
+    detalle: "text-crema/70",
+    boton: "bg-calabaza text-noche group-hover:bg-calabaza-hover",
+    plato: "bg-crema",
+  },
 };
 
-/** Tono por defecto: galletas por línea, el resto por categoría. */
-export function tonoProducto(p: {
-  categoria?: string | null;
-  linea?: string | null;
-  coleccion?: string | null;
-}): TonoCard {
-  if (p.coleccion) return "calabaza";
-  if (p.categoria === "pastel") return "caramelo";
-  if (p.categoria === "gelatina") return "lila";
-  if (p.categoria === "dessert") return "durazno";
-  if (p.linea === "fitness") return "olivo";
-  if (p.linea === "healthy") return "menta";
+/** Tono de un producto: temporada → noche; si no, por línea. */
+export function tonoProducto(p: { linea?: string | null; coleccion?: string | null }): TonoCard {
+  if (p.coleccion) return "noche";
+  if (p.linea === "fitness" || p.linea === "healthy") return "olivo";
   return "rosa";
 }
 
 export const LINEA_ETIQUETA: Record<string, { label: string; cls: string }> = {
   sweet: { label: "Sweet", cls: "bg-frambuesa text-white" },
   fitness: { label: "Fitness", cls: "bg-[#4A7B35] text-white" },
-  healthy: { label: "Healthy", cls: "bg-[#1B7A43] text-white" },
+  healthy: { label: "Healthy", cls: "bg-[#4A7B35] text-white" },
 };
 
 interface Props {
@@ -80,7 +89,7 @@ export default function ProductCard({
 }: Props) {
   return (
     <article
-      className={`group relative flex h-full flex-col rounded-[20px] ${TONO_BG[tono]} px-3 pb-3 pt-4 sm:px-5 sm:pb-4 sm:pt-5 transition-transform duration-300 ease-out hover:-translate-y-1 focus-within:-translate-y-1`}
+      className={`group relative flex h-full flex-col rounded-[20px] ${TONO[tono].bg} px-3 pb-3 pt-4 sm:px-5 sm:pb-4 sm:pt-5 transition-transform duration-300 ease-out hover:-translate-y-1 focus-within:-translate-y-1`}
     >
       {(etiqueta || promo) && (
         <div className="absolute inset-x-2.5 top-2.5 z-10 flex items-start justify-between gap-1 pointer-events-none">
@@ -100,13 +109,13 @@ export default function ProductCard({
       )}
 
       <h3
-        className={`font-subtitle font-medium text-espresso text-center text-base sm:text-xl leading-tight line-clamp-2 min-h-[2.5em] ${etiqueta || promo ? "mt-5" : ""}`}
+        className={`font-subtitle font-medium ${TONO[tono].titulo} text-center text-base sm:text-xl leading-tight line-clamp-2 min-h-[2.5em] ${etiqueta || promo ? "mt-5" : ""}`}
       >
         {/* Botón "estirado": toda la card es clicable sin meter un heading dentro de un botón. */}
         <button
           type="button"
           onClick={onOpen}
-          className="after:absolute after:inset-0 after:rounded-[20px] after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-espresso cursor-pointer"
+          className="after:absolute after:inset-0 after:rounded-[20px] after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-current cursor-pointer"
         >
           {nombre}
         </button>
@@ -118,7 +127,7 @@ export default function ProductCard({
           aria-hidden="true"
           className="absolute inset-x-[14%] -bottom-1 h-[12%] rounded-full bg-espresso/20 blur-md transition-all duration-300 group-hover:inset-x-[20%] group-hover:bg-espresso/15"
         />
-        <div className="relative h-full w-full rounded-full bg-white p-[5%] shadow-[0_6px_18px_-8px_rgba(58,31,20,0.35)] transition-transform duration-300 ease-out group-hover:-translate-y-1.5">
+        <div className={`relative h-full w-full rounded-full ${TONO[tono].plato} p-[5%] shadow-[0_6px_18px_-8px_rgba(58,31,20,0.35)] transition-transform duration-300 ease-out group-hover:-translate-y-1.5`}>
           <div className="relative h-full w-full overflow-hidden rounded-full">
             <Image
               src={imagenUrl ?? imagenFallback}
@@ -134,12 +143,12 @@ export default function ProductCard({
 
       <div className="mt-auto flex items-end justify-between gap-2 pt-4">
         <div className="min-w-0 font-body leading-tight">
-          {precio && <p className="text-base sm:text-lg font-semibold text-espresso">{precio}</p>}
-          {detalle && <p className="text-xs text-cacao truncate">{detalle}</p>}
+          {precio && <p className={`text-base sm:text-lg font-semibold ${TONO[tono].precio}`}>{precio}</p>}
+          {detalle && <p className={`text-xs ${TONO[tono].detalle} truncate`}>{detalle}</p>}
         </div>
         <span
           aria-hidden="true"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-espresso shadow-sm transition-colors duration-300 group-hover:bg-frambuesa group-hover:text-white"
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full shadow-sm transition-colors duration-300 ${TONO[tono].boton}`}
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M12 5v14M5 12h14" />

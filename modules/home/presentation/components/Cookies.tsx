@@ -30,7 +30,7 @@ export const GRID_PRODUCTOS =
 const TONO_LINEA: Record<GalletaPublica["linea"], TonoCard> = {
   sweet: "rosa",
   fitness: "olivo",
-  healthy: "menta",
+  healthy: "olivo",
 };
 
 interface Props {
@@ -41,14 +41,18 @@ interface Props {
   mostrarLinea?: boolean;
   /** Texto cuando la sección aún no tiene galletas. */
   vacio?: string;
+  /** Sobre fondo oscuro (temporada): texto claro en el estado vacío. */
+  oscuro?: boolean;
 }
 
 /** Cuadrícula de galletas con su modal de detalle. */
-export default function Cookies({ productos, tono, mostrarLinea, vacio = "Próximamente…" }: Props) {
+export default function Cookies({ productos, tono, mostrarLinea, vacio = "Próximamente…", oscuro }: Props) {
   const [selected, setSelected] = useState<GalletaPublica | null>(null);
 
   if (productos.length === 0) {
-    return <p className="py-10 text-center font-body text-lg text-cacao/70">{vacio}</p>;
+    return (
+      <p className={`py-10 text-center font-body text-lg ${oscuro ? "text-crema/70" : "text-cacao/70"}`}>{vacio}</p>
+    );
   }
 
   return (
