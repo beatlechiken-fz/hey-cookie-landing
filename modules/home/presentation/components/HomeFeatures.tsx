@@ -42,7 +42,7 @@ export function ArmaTuPastelBlock() {
 
 /**
  * Bloque "Eventos y regalos": misma composición y tamaño de círculo que las
- * portadas, sobre el fondo crema.
+ * portadas pero en espejo (imagen y texto a la derecha), sobre el fondo crema.
  */
 export function EventosBlock() {
   const t = useTranslations("home.eventos");
@@ -56,12 +56,13 @@ export function EventosBlock() {
         descripcion={tc("description")}
         tono="crema"
         imagen="/img/ci-product-splash.webp"
+        espejo
         acciones={
           <a
             href={WHATSAPP_EVENTOS}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex rounded-full border-2 border-espresso/80 px-6 py-2.5 font-body font-semibold text-espresso transition-colors hover:bg-espresso hover:text-crema focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-espresso"
+            className="inline-flex justify-center text-center rounded-full border-2 border-espresso/80 px-6 py-2.5 font-body font-semibold text-espresso transition-colors hover:bg-espresso hover:text-crema focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-espresso"
           >
             {t("cta")}
           </a>

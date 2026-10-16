@@ -43,6 +43,8 @@ interface Props {
   siguiente?: string;
   /** Usa h1 en páginas propias (/cake, /jelly…); h2 dentro de la home. */
   nivel?: "h1" | "h2";
+  /** Versión en espejo: imagen a la derecha y texto alineado a la derecha. */
+  espejo?: boolean;
 }
 
 export default function SectionCover({
@@ -55,6 +57,7 @@ export default function SectionCover({
   acciones,
   siguiente = "#FAF3E0",
   nivel = "h2",
+  espejo = false,
 }: Props) {
   const Heading = nivel;
   const oscuro = tono === "noche";
@@ -66,7 +69,7 @@ export default function SectionCover({
     >
       {/* Plato primero y luego el texto, centrados verticalmente dentro de
           la portada (pedido del cliente: el círculo no debe bajar al contenido). */}
-      <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-5 px-6 pb-20 pt-12 sm:gap-8 md:gap-12 md:pb-24 md:pt-16">
+      <div className={`relative z-10 mx-auto flex max-w-6xl items-center ${espejo ? "flex-row-reverse text-right" : ""} gap-5 px-6 pb-20 pt-12 sm:gap-8 md:gap-12 md:pb-24 md:pt-16`}>
         {imagen && (
           <div className="relative w-32 shrink-0 sm:w-40 md:w-64">
             <div
@@ -89,11 +92,13 @@ export default function SectionCover({
             {titulo}
           </Heading>
           {descripcion && (
-            <p className={`mt-3 max-w-[46ch] font-body text-sm md:text-base leading-relaxed ${oscuro ? "text-crema/80" : "text-espresso/80"}`}>
+            <p className={`mt-3 max-w-[46ch] ${espejo ? "ml-auto" : ""} font-body text-sm md:text-base leading-relaxed ${oscuro ? "text-crema/80" : "text-espresso/80"}`}>
               {descripcion}
             </p>
           )}
-          {acciones && <div className="mt-5 flex flex-wrap gap-3">{acciones}</div>}
+          {acciones && (
+            <div className={`mt-5 flex flex-wrap gap-3 ${espejo ? "justify-end" : ""}`}>{acciones}</div>
+          )}
         </div>
       </div>
 
