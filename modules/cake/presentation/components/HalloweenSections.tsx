@@ -34,6 +34,7 @@ export default function HalloweenSections({ bands, menuPdf }: Props) {
             titulo={t(`sections.${band.key}`)}
             tono={TONOS[i % TONOS.length]}
             imagen={band.items[0]?.producto.imagenUrl ?? null}
+            ingredientes={i === 0 ? ["canela", "nuez"] : [i % 2 ? "canela" : "nuez"]}
             acciones={
               i === 0 && menuPdf ? (
                 <a

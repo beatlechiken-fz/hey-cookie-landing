@@ -69,3 +69,17 @@ body {
 .font-body {
   font-family: var(--font-body);
 }
+
+/* Ingredientes flotantes (FloatingIngredients): vaivén suave. */
+@keyframes hc-flotar {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(-10px) rotate(4deg); }
+}
+
+.hc-flotar {
+  animation: hc-flotar 5.5s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-flotar { animation: none; }
+}

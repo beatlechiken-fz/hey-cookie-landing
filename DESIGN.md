@@ -281,6 +281,9 @@ Fully rounded, no sharp corners anywhere an interactive surface exists. The scal
 - Footer row: price (Montserrat semibold) on the left, a round white `+` / arrow button on the right.
 - Hover: the plated product lifts and the button turns Frambuesa Acción. Line tags only appear where lines are mixed.
 
+### Floating ingredients (2026-10)
+Real ingredient cut-outs (`public/img/ingredientes/*.webp`, transparent, under 20 KB each) float around the splash, section covers and the "Arma tu pastel" block via `FloatingIngredients`. Max 2–3 per section, placed on empty wall/edges, never over text. They bob gently and drift with scroll by depth (far ones slightly blurred); both stop under `prefers-reduced-motion`. Decorative only (`aria-hidden`). Never use watermarked stock images.
+
 ### Cards / Containers (modals, admin)
 - **Corner Style:** `rounded-3xl` for product cards, `rounded-2xl` for modal panels and inner content blocks.
 - **Background:** white for product cards sitting on a cream page; Crema Suave for content blocks sitting inside white modals.

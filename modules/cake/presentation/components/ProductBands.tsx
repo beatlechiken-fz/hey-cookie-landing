@@ -2,6 +2,18 @@
 
 import { useTranslations } from "next-intl";
 import SectionCover, { type TonoPortada } from "@/core/components/section-cover/SectionCover";
+import type { Ingrediente } from "@/core/components/floating-ingredients/FloatingIngredients";
+
+// Ingredientes flotantes por tono de franja (el primero solo en la primera franja).
+const INGREDIENTES: Record<TonoPortada, [Ingrediente, Ingrediente]> = {
+  calabaza: ["canela", "nuez"],
+  caramelo: ["fresa", "chocolate"],
+  lila: ["fresa", "mango"],
+  durazno: ["mango", "almendra"],
+  rosa: ["chocolate", "fresa"],
+  olivo: ["pistache", "almendra"],
+  menta: ["almendra", "pistache"],
+};
 import ProductGrid from "./ProductGrid";
 import {
   COLECCIONES,
@@ -56,6 +68,9 @@ export default function ProductBands({ productos, precios = {}, kicker, tono, po
             titulo={band.title}
             tono={band.tono}
             imagen={(i === 0 && portada) || band.items[0]?.imagenUrl || null}
+            ingredientes={
+              i === 0 ? INGREDIENTES[band.tono] : [INGREDIENTES[band.tono][1]]
+            }
           />
           <div className="mx-auto max-w-6xl px-4 pb-16 pt-14 sm:px-6 md:pt-20">
             <ProductGrid

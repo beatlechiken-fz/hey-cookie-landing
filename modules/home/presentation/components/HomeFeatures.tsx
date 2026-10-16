@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Icons from "@/core/assets/Icons";
+import FloatingIngredients from "@/core/components/floating-ingredients/FloatingIngredients";
 
 const WAVE =
   "M0,60 C120,100 240,20 360,60 C480,100 600,20 720,60 C840,100 960,20 1080,60 C1200,100 1320,20 1440,60 L1440,140 L0,140 Z";
@@ -35,6 +36,13 @@ export function ArmaTuPastelBlock() {
       <svg viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true" className="absolute left-0 top-0 h-14 w-full rotate-180 md:h-20">
         <path d={WAVE} fill="#FAF3E0" />
       </svg>
+
+      <FloatingIngredients
+        items={[
+          { nombre: "mango", pos: "right-[6%] top-6 md:right-auto md:left-[38%] md:-top-10", size: "w-16 md:w-24", rot: 10, depth: 0.7 },
+          { nombre: "fresa", pos: "left-[3%] top-[38%] md:top-auto md:bottom-20", size: "w-12 md:w-20", rot: -16, depth: 0.4, soloDesktop: true },
+        ]}
+      />
 
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-8 px-6 pb-24 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-14 md:pb-28">
         <Plato src="/img/cake-moka-md.webp" className="mx-auto -mt-16 w-[70%] max-w-[420px] md:-mt-24 md:w-full" />

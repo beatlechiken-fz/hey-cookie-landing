@@ -76,6 +76,7 @@ export default async function Home() {
       <section aria-label={tc("titleHalloween")}>
         <SectionCover
           id="temporada"
+          ingredientes={["canela", "nuez"]}
           kicker={t("temporada.kicker")}
           titulo={tc("titleHalloween")}
           descripcion={t("temporada.desc")}
@@ -107,6 +108,7 @@ export default async function Home() {
       <section aria-label={tc("title")}>
         <SectionCover
           id="galletas"
+          ingredientes={["chocolate", "fresa"]}
           kicker={t("galletas.kicker")}
           titulo={tc("title")}
           descripcion={t("galletas.desc")}
@@ -121,6 +123,7 @@ export default async function Home() {
       <section aria-label={tc("titleFiness")}>
         <SectionCover
           id="fitness"
+          ingredientes={["pistache", "almendra"]}
           kicker={t("fitness.kicker")}
           titulo={tc("titleFiness")}
           descripcion={t("fitness.desc")}
@@ -135,6 +138,7 @@ export default async function Home() {
       <section aria-label={t("pasteles.kicker")}>
         <SectionCover
           id="pasteles"
+          ingredientes={["fresa", "chocolate"]}
           kicker={t("pasteles.kicker")}
           titulo={t("chips.pasteles")}
           descripcion={t("pasteles.desc")}

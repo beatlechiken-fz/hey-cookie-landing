@@ -1,5 +1,8 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import FloatingIngredients, {
+  type Ingrediente,
+} from "@/core/components/floating-ingredients/FloatingIngredients";
 
 /**
  * Portada corta de sección (rediseño 2026-10): banda pastel con título serif
@@ -35,6 +38,8 @@ interface Props {
   siguiente?: string;
   /** Usa h1 en páginas propias (/cake, /jelly…); h2 dentro de la home. */
   nivel?: "h1" | "h2";
+  /** Hasta 2 ingredientes flotantes: uno junto al plato y otro sobre la onda. */
+  ingredientes?: [Ingrediente, Ingrediente?];
 }
 
 export default function SectionCover({
@@ -47,6 +52,7 @@ export default function SectionCover({
   acciones,
   siguiente = "#FAF3E0",
   nivel = "h2",
+  ingredientes,
 }: Props) {
   const Heading = nivel;
   return (
@@ -55,6 +61,32 @@ export default function SectionCover({
       className="relative scroll-mt-20"
       style={{ backgroundColor: TONO_HEX[tono] }}
     >
+      {ingredientes && (
+        <FloatingIngredients
+          items={[
+            {
+              nombre: ingredientes[0],
+              pos: "right-[30%] top-8 lg:right-[24%]",
+              size: "w-16 lg:w-24",
+              rot: -12,
+              depth: 0.7,
+              soloDesktop: true,
+            },
+            ...(ingredientes[1]
+              ? [
+                  {
+                    nombre: ingredientes[1],
+                    pos: "left-[4%] -bottom-6 md:left-[44%] md:-bottom-8",
+                    size: "w-12 md:w-16",
+                    rot: 16,
+                    depth: 0.35,
+                  },
+                ]
+              : []),
+          ]}
+        />
+      )}
+
       <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-6 px-6 pb-20 pt-12 md:pb-24 md:pt-16">
         <div className="min-w-0 flex-1">
           <p className="font-body text-xs font-semibold uppercase tracking-[0.25em] text-cacao">
