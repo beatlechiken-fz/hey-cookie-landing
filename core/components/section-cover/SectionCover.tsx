@@ -63,10 +63,10 @@ export default function SectionCover({
       style={{ backgroundColor: TONO_HEX[tono] }}
     >
       {/* Plato primero y luego el texto. El plato es grande y baja más allá de
-          la banda: ~70% queda en la portada y ~30% "flota" sobre el contenido. */}
+          la banda: ~90% queda en la portada y ~10% toca el contenido. */}
       <div className="relative z-10 mx-auto flex max-w-6xl items-center gap-5 px-6 pb-20 pt-12 sm:gap-8 md:gap-12 md:pb-24 md:pt-16">
         {imagen && (
-          <div className="relative w-32 shrink-0 self-end -mb-[118px] sm:w-40 sm:-mb-[128px] md:w-64 md:-mb-[173px]">
+          <div className="relative w-32 shrink-0 self-end -mb-[93px] sm:w-40 sm:-mb-[96px] md:w-64 md:-mb-[122px]">
             <div
               aria-hidden="true"
               className="absolute inset-x-[12%] -bottom-3 h-[12%] rounded-full bg-espresso/25 blur-lg"
@@ -135,7 +135,7 @@ export function BandaTemporada({ children, anterior, siguiente = "#FAF3E0", ...c
         </svg>
       )}
       <SectionCover {...cover} tono="noche" siguiente={NOCHE} />
-      <div className="mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-6 md:pb-28 md:pt-28">{children}</div>
+      <div className="mx-auto max-w-6xl px-4 pb-24 pt-14 sm:px-6 md:pb-28 md:pt-20">{children}</div>
       <svg viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true" className="absolute -bottom-px left-0 h-14 w-full md:h-20 pointer-events-none">
         <path d={ONDA} fill={siguiente} />
       </svg>
