@@ -112,6 +112,20 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
               Bake Lab
             </p>
             <p className="mt-4 max-w-[30ch] font-body text-sm leading-relaxed text-crema/75">{t("tagline")}</p>
+            <ul className="mt-5 flex flex-col gap-2 font-body text-sm text-crema/85">
+              {[
+                { key: "entrega", d: "M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" },
+                { key: "anticipacion", d: "M8 2v4M16 2v4M3 9h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" },
+                { key: "horario", d: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2" },
+              ].map((i) => (
+                <li key={i.key} className="flex items-start gap-2.5">
+                  <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-crema/60" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d={i.d} />
+                  </svg>
+                  {t(i.key)}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {columnas.map((col) => (

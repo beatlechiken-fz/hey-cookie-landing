@@ -324,7 +324,10 @@
     "cuenta": "My account",
     "menuPdf": "Seasonal menu (PDF)",
     "whatsapp": "Message us on WhatsApp",
-    "instagram": "Follow us on Instagram"
+    "instagram": "Follow us on Instagram",
+    "entrega": "Delivery in Morelia",
+    "anticipacion": "Order 3 days in advance",
+    "horario": "Monday to Saturday, 8 am to 7 pm"
   },
   "halloween": {
     "title": "Halloween & Day of the Dead",
