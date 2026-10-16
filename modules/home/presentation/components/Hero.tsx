@@ -1,29 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { CustomBreakpoint } from "@/core/types/general";
-import { useBreakpoint } from "@/core/hooks/useBreakpoint";
 import AppBar from "@/core/components/app-bar/AppBar";
 import HeroSplash from "./HeroSplash";
 import { Link } from "@/i18n/navigation";
 
 export default function Hero() {
-  const t = useTranslations("hero");
-
-  const breakpointsConfig: Record<
-    CustomBreakpoint,
-    { min?: number; max?: number }
-  > = {
-    cxxs: { max: 1 },
-    cxs: { min: 2, max: 839 },
-    csm: { min: 840, max: 1022 },
-    cmd: { min: 1023, max: 1199 },
-    clg: { min: 1200 },
-  };
-
-  const breakpoint = useBreakpoint(breakpointsConfig);
-
   return (
     <section className="relative overflow-x-hidden">
       {/* ------------------ APP BAR ------------------ */}
@@ -50,7 +32,8 @@ export default function Hero() {
       <svg
         viewBox="0 0 1440 100"
         preserveAspectRatio="none"
-        className="absolute bottom-0 left-0 w-full h-[140px] z-20"
+        aria-hidden="true"
+        className="absolute bottom-0 left-0 w-full h-[70px] md:h-[110px] z-20 pointer-events-none"
       >
         <path
           d="

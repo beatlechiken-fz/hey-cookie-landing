@@ -32,8 +32,16 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Hey Cookie",
-  description: "Cookies & Bakery",
+  metadataBase: new URL("https://www.heycookie.mx"),
+  title: "Hey Cookie · Bake Lab",
+  description:
+    "Galletas, pasteles y postres artesanales. Arma tu pastel con precio al instante y pide en línea.",
+  openGraph: {
+    title: "Hey Cookie · Bake Lab",
+    description: "Galletas, pasteles y postres artesanales para consentirte y compartir.",
+    images: [{ url: "/img/splash-home-mobile.webp", width: 1672, height: 940 }],
+    type: "website",
+  },
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
