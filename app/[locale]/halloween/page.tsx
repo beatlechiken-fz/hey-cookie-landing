@@ -77,24 +77,9 @@ export default async function HalloweenPage() {
         </div>
       </div>
 
-      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8EDE3" />
+      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8DCC4" />
 
-      <div className="bg-[#F8EDE3] flex justify-center px-6 pt-8">
-        <a
-          href={MENU_PDF}
-          download
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#AA6A42] hover:bg-[#8a5535] text-white text-sm font-bold shadow-sm transition-colors"
-        >
-          <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 3v12M7 10l5 5 5-5M5 21h14" />
-          </svg>
-          {t("descargarMenu")}
-        </a>
-      </div>
-
-      <section>
-        <HalloweenSections bands={bands} />
-      </section>
+      <HalloweenSections bands={bands} menuPdf={MENU_PDF} />
 
       <FooterBar />
     </main>

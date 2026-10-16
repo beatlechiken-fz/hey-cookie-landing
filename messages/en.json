@@ -325,5 +325,62 @@
       "gelatinas": "Jellies",
       "galletas": "Cookies"
     }
+  },
+  "home": {
+    "antojo": {
+      "kicker": "Bake Lab",
+      "title": "Pick your treat",
+      "galletas": {
+        "title": "Cookies",
+        "tag": "Sweet, fitness and seasonal"
+      },
+      "pasteles": {
+        "title": "Cakes",
+        "tag": "Made for celebrating"
+      },
+      "gelatinas": {
+        "title": "Jellies",
+        "tag": "Light and full of color"
+      },
+      "custom": {
+        "title": "Build your cake",
+        "tag": "Flavor, filling and decoration your way"
+      }
+    },
+    "chips": {
+      "label": "Jump to section",
+      "temporada": "Seasonal",
+      "galletas": "Cookies",
+      "fitness": "Fitness",
+      "pasteles": "Cakes"
+    },
+    "temporada": {
+      "kicker": "Seasonal",
+      "desc": "Pumpkin, café de olla and chocolate: the flavors of Halloween and Day of the Dead.",
+      "verMenu": "See full menu"
+    },
+    "galletas": {
+      "kicker": "Cookies",
+      "desc": "Our classic cookies, to treat yourself or to share."
+    },
+    "fitness": {
+      "kicker": "Cookies",
+      "desc": "Protein-packed and gluten-free options."
+    },
+    "pasteles": {
+      "kicker": "Cakes",
+      "desc": "Price shown is for the base size; pick another size in the details.",
+      "verTodos": "See all cakes"
+    },
+    "arma": {
+      "kicker": "Build your order",
+      "title": "Your cake, your way",
+      "desc": "Choose the sponge, filling, frosting and decoration. The price updates instantly as you build it.",
+      "cta": "Build your cake"
+    },
+    "eventos": {
+      "kicker": "Events and gifts",
+      "cta": "Quote on WhatsApp"
+    }
   }
 }

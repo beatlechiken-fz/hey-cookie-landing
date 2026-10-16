@@ -63,7 +63,7 @@ export default function Hero() {
             L0,140
             Z
           "
-          fill="#F8EDE3"
+          fill="#FAF3E0"
         />
       </svg>
     </section>

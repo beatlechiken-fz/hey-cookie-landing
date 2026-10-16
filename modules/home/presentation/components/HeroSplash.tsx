@@ -70,7 +70,7 @@ export default function HeroSplash() {
               {t("ctaCustom")}
             </Link>
             <a
-              href="#cookies"
+              href="#galletas"
               className="rounded-full border-2 border-[#3A1F14]/80 px-6 py-3 font-body font-semibold text-[#3A1F14] transition hover:bg-[#3A1F14] hover:text-[#FAF3E0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3A1F14]"
             >
               {t("ctaCookies")}

@@ -1,69 +1,24 @@
 import AppBar from "@/core/components/app-bar/AppBar";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
 import CakeInfoSection from "@/modules/cake/presentation/components/CakeInfoSection";
-import CakesSection from "@/modules/cake/presentation/components/CakesSection";
+import ProductBands from "@/modules/cake/presentation/components/ProductBands";
+import { fetchCatalogoPublico } from "@/modules/cake/data/datasources/CatalogoPublico.datasource";
+import { portadaDe } from "@/core/data/portadas";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import Images from "@/core/assets/Images";
-import { getSupabaseAdmin } from "@/core/helpers/supabase";
 import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
-import type { Producto, LineaProducto } from "@/modules/admin/store/domain/entities/Producto.entity";
-
-async function fetchPasteles(): Promise<Producto[]> {
-  try {
-    const { data, error } = await getSupabaseAdmin()
-      .from("productos")
-      .select(`
-        id, nombre, descripcion, imagen_url, linea, categoria, elaboracion,
-        ingredientes_base, opciones_default, medida_base_cm,
-        permite_medida_personalizada, tamanos_fijos, factor_opciones,
-        mano_de_obra_minimo, mano_de_obra_modo, precio_establecido, coleccion, activo, orden, stock_actual,
-        created_at, updated_at
-      `)
-      .eq("categoria", "pastel")
-      .eq("activo", true)
-      .order("nombre");
-
-    if (error) return [];
-
-    return (data ?? []).map((row: any): Producto => ({
-      id: row.id,
-      nombre: row.nombre,
-      descripcion: row.descripcion ?? null,
-      imagenUrl: row.imagen_url ?? null,
-      linea: row.linea as LineaProducto,
-      categoria: row.categoria ?? null,
-      elaboracion: row.elaboracion ?? null,
-      ingredientesBase: row.ingredientes_base ?? [],
-      opcionesDefault: row.opciones_default ?? {},
-      medidaBaseCm: row.medida_base_cm != null ? Number(row.medida_base_cm) : null,
-      permiteMedidaPersonalizada: row.permite_medida_personalizada ?? false,
-      tamanosFijos: row.tamanos_fijos ?? [],
-      factorOpciones: row.factor_opciones != null ? Number(row.factor_opciones) : null,
-      manoDeObraMinimo: row.mano_de_obra_minimo != null ? Number(row.mano_de_obra_minimo) : null,
-      manoDeObraModo: row.mano_de_obra_modo === "fijo" ? "fijo" : "dinamico",
-      precioEstablecido: row.precio_establecido != null ? Number(row.precio_establecido) : null,
-      promo: null, // promociones solo aplican a galletas (CookieModal)
-      coleccion: row.coleccion ?? null,
-      activo: row.activo,
-      stockActual: row.stock_actual != null ? Number(row.stock_actual) : 0,
-      orden: row.orden ?? 0,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    }));
-  } catch {
-    return [];
-  }
-}
+import { getTranslations } from "next-intl/server";
 
 export default async function CakePage() {
-  const pasteles = await fetchPasteles();
+  const [{ productos, precios }, t] = await Promise.all([
+    fetchCatalogoPublico("pastel"),
+    getTranslations("mainnav"),
+  ]);
 
   return (
     <main className="bg-[#FAF3E0]">
-      <h1 className="sr-only">Pasteles y Roscas — Hey Cookie</h1>
-      {/* APP BAR — fondo propio para que la onda de abajo tenga contraste real
-          contra el contenido, en vez de mezclarse con el mismo fondo pálido. */}
+      <h1 className="sr-only">{t("cake")} — Hey Cookie</h1>
       <div className="relative z-9 bg-[#F1DCC9]">
         <div className="flex h-[60px] md:h-[70px]">
           <div className="relative w-[100px] h-[86px] ml-3 lg:ml-8 md:-mt-1 overflow-visible">
@@ -81,11 +36,16 @@ export default async function CakePage() {
         </div>
       </div>
 
-      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8EDE3" />
+      {/* La primera franja siempre es la colección de temporada (tono calabaza). */}
+      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#F8DCC4" />
 
-      <section>
-        <CakesSection pasteles={pasteles} />
-      </section>
+      <ProductBands
+        productos={productos}
+        precios={precios}
+        kicker={t("cake")}
+        tono="caramelo"
+        portada={portadaDe("pasteles")}
+      />
 
       <section>
         <CakeInfoSection />

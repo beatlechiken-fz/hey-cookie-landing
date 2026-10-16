@@ -341,5 +341,62 @@
       "gelatinas": "Gelatinas",
       "galletas": "Galletas"
     }
+  },
+  "home": {
+    "antojo": {
+      "kicker": "Bake Lab",
+      "title": "Elige tu antojo",
+      "galletas": {
+        "title": "Galletas",
+        "tag": "Sweet, fitness y de temporada"
+      },
+      "pasteles": {
+        "title": "Pasteles",
+        "tag": "Para celebrar en grande"
+      },
+      "gelatinas": {
+        "title": "Gelatinas",
+        "tag": "Ligeras y llenas de color"
+      },
+      "custom": {
+        "title": "Arma tu pastel",
+        "tag": "Sabor, relleno y decoración a tu gusto"
+      }
+    },
+    "chips": {
+      "label": "Ir a la sección",
+      "temporada": "Temporada",
+      "galletas": "Galletas",
+      "fitness": "Fitness",
+      "pasteles": "Pasteles"
+    },
+    "temporada": {
+      "kicker": "Temporada",
+      "desc": "Calabaza, café de olla y chocolate: los sabores de Halloween y Día de muertos.",
+      "verMenu": "Ver menú completo"
+    },
+    "galletas": {
+      "kicker": "Galletas",
+      "desc": "Nuestras galletas clásicas, para consentirte o para compartir."
+    },
+    "fitness": {
+      "kicker": "Galletas",
+      "desc": "Opciones con proteína y sin gluten."
+    },
+    "pasteles": {
+      "kicker": "Pasteles",
+      "desc": "El precio es por el tamaño base; en el detalle eliges otra medida.",
+      "verTodos": "Ver todos los pasteles"
+    },
+    "arma": {
+      "kicker": "Arma tu pedido",
+      "title": "Tu pastel, a tu manera",
+      "desc": "Elige el bizcocho, el relleno, la cobertura y la decoración. El precio se calcula al instante, mientras lo armas.",
+      "cta": "Arma tu pastel"
+    },
+    "eventos": {
+      "kicker": "Eventos y regalos",
+      "cta": "Cotizar por WhatsApp"
+    }
   }
 }

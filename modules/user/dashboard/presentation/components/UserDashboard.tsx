@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
 import { MisBeneficios } from "./MisBeneficios";
+import { TuOpinion } from "./TuOpinion";
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -258,6 +259,8 @@ export function UserDashboard() {
       {/* Órdenes */}
       <div className="max-w-3xl mx-auto px-4 py-6">
         <MisBeneficios />
+
+        {!loading && stats.entregadas > 0 && <TuOpinion />}
 
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-[#3A1F14]">Mis pedidos</h2>

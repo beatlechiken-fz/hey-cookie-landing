@@ -1,12 +1,22 @@
+import { getTranslations } from "next-intl/server";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
-import Contact from "@/modules/home/presentation/components/Contact";
-import Cookies from "@/modules/home/presentation/components/Cookies";
-import CookiesFitness from "@/modules/home/presentation/components/CookiesFitness";
+import SectionCover from "@/core/components/section-cover/SectionCover";
+import { portadaDe } from "@/core/data/portadas";
+import { Link } from "@/i18n/navigation";
 import Hero from "@/modules/home/presentation/components/Hero";
+import Cookies from "@/modules/home/presentation/components/Cookies";
+import CategoryCards from "@/modules/home/presentation/components/CategoryCards";
+import SectionChips from "@/modules/home/presentation/components/SectionChips";
+import { ArmaTuPastelBlock, EventosBlock } from "@/modules/home/presentation/components/HomeFeatures";
+import ProductGrid from "@/modules/cake/presentation/components/ProductGrid";
+import { fetchCatalogoPublico } from "@/modules/cake/data/datasources/CatalogoPublico.datasource";
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
 import type { GalletaPublica } from "@/modules/home/presentation/components/Cookies";
 import { parsePromo } from "@/modules/admin/store/domain/entities/Promocion.entity";
 import type { ColeccionProducto } from "@/modules/admin/store/domain/entities/Producto.entity";
+
+// Menú de temporada en PDF (public/menus), el mismo que enlaza /halloween.
+const MENU_PDF = "/menus/menu-halloween-dia-de-muertos.pdf";
 
 /**
  * Galletas activas de una línea (sweet/fitness) del catálogo regular, o de una
@@ -43,34 +53,115 @@ async function fetchGalletas(
   }
 }
 
+const CONTENIDO = "mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 md:pt-20";
+
 export default async function Home() {
-  const [halloween, sweet, fitness] = await Promise.all([
+  const [halloween, sweet, fitness, pasteles, t, tc] = await Promise.all([
     fetchGalletas({ coleccion: "halloween-muertos" }),
     fetchGalletas({ linea: "sweet" }),
     fetchGalletas({ linea: "fitness" }),
+    fetchCatalogoPublico("pastel", { soloRegulares: true }),
+    getTranslations("home"),
+    getTranslations("cookies"),
   ]);
 
   return (
-    <main className="bg-[#FAF3E0] min-h-full">
-      <section>
-        <Hero />
+    <main className="bg-crema min-h-full">
+      <Hero />
+
+      <CategoryCards />
+
+      <SectionChips />
+
+      <section aria-label={tc("titleHalloween")}>
+        <SectionCover
+          id="temporada"
+          kicker={t("temporada.kicker")}
+          titulo={tc("titleHalloween")}
+          descripcion={t("temporada.desc")}
+          tono="calabaza"
+          imagen={portadaDe("temporada", halloween[0]?.imagenUrl)}
+          acciones={
+            <>
+              <Link
+                href="/halloween"
+                className="inline-flex rounded-full bg-frambuesa px-5 py-2.5 font-body text-sm font-semibold text-white transition-colors hover:bg-frambuesa-hover"
+              >
+                {t("temporada.verMenu")}
+              </Link>
+              <a
+                href={MENU_PDF}
+                download
+                className="inline-flex rounded-full border-2 border-espresso/70 px-5 py-2 font-body text-sm font-semibold text-espresso transition-colors hover:bg-espresso hover:text-crema"
+              >
+                PDF
+              </a>
+            </>
+          }
+        />
+        <div className={CONTENIDO}>
+          <Cookies productos={halloween} tono="calabaza" mostrarLinea />
+        </div>
       </section>
 
-      <section id="cookies-halloween" className="relative z-20 w-full overflow-x-hidden">
-        <Cookies productos={halloween} titleKey="titleHalloween" />
+      <section aria-label={tc("title")}>
+        <SectionCover
+          id="galletas"
+          kicker={t("galletas.kicker")}
+          titulo={tc("title")}
+          descripcion={t("galletas.desc")}
+          tono="rosa"
+          imagen={portadaDe("galletas", sweet[0]?.imagenUrl)}
+        />
+        <div className={CONTENIDO}>
+          <Cookies productos={sweet} />
+        </div>
       </section>
 
-      <section id="cookies" className="relative z-20 w-full overflow-x-hidden">
-        <Cookies productos={sweet} />
+      <section aria-label={tc("titleFiness")}>
+        <SectionCover
+          id="fitness"
+          kicker={t("fitness.kicker")}
+          titulo={tc("titleFiness")}
+          descripcion={t("fitness.desc")}
+          tono="olivo"
+          imagen={portadaDe("fitness", fitness[0]?.imagenUrl)}
+        />
+        <div className={CONTENIDO}>
+          <Cookies productos={fitness} />
+        </div>
       </section>
 
-      <section id="cookies-fitness" className="relative z-20 w-full overflow-x-hidden">
-        <CookiesFitness productos={fitness} />
+      <section aria-label={t("pasteles.kicker")}>
+        <SectionCover
+          id="pasteles"
+          kicker={t("pasteles.kicker")}
+          titulo={t("chips.pasteles")}
+          descripcion={t("pasteles.desc")}
+          tono="caramelo"
+          imagen={portadaDe("pasteles", pasteles.productos[0]?.imagenUrl)}
+          acciones={
+            <Link
+              href="/cake"
+              className="inline-flex rounded-full border-2 border-espresso/70 px-5 py-2 font-body text-sm font-semibold text-espresso transition-colors hover:bg-espresso hover:text-crema"
+            >
+              {t("pasteles.verTodos")}
+            </Link>
+          }
+        />
+        <div className={CONTENIDO}>
+          <ProductGrid
+            items={pasteles.productos.map((producto) => ({
+              producto,
+              precio: pasteles.precios[producto.id] ?? null,
+            }))}
+          />
+        </div>
       </section>
 
-      <section className="w-full">
-        <Contact />
-      </section>
+      <ArmaTuPastelBlock />
+
+      <EventosBlock />
 
       <FooterBar />
     </main>

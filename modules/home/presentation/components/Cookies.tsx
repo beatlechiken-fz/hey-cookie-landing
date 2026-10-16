@@ -1,10 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
-import Icons from "@/core/assets/Icons";
 import dynamic from "next/dynamic";
+import ProductCard, {
+  LINEA_ETIQUETA,
+  type TonoCard,
+} from "@/core/components/product-card/ProductCard";
 import {
   promoEtiqueta,
   type ProductoPromo,
@@ -22,123 +23,54 @@ export interface GalletaPublica {
   promo: ProductoPromo | null;
 }
 
-interface Props {
-  productos: GalletaPublica[];
-  /** Clave del título dentro de `cookies` en messages (default "title"). */
-  titleKey?: "title" | "titleHalloween";
-}
+/** Cuadrícula común del catálogo: todo visible, sin carrusel. */
+export const GRID_PRODUCTOS =
+  "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5";
 
-export default function Cookies({ productos, titleKey = "title" }: Props) {
-  const t = useTranslations("cookies");
-  const [selected, setSelected] = useState<GalletaPublica | null>(null);
-
-  return (
-    <main className="relative w-full overflow-x-hidden bg-gradient-to-b from-[#F8EDE3] via-[#F1DCC9] to-[#E6C7A5]">
-      {/* HEADER */}
-      <div className="relative z-10 pt-16 px-6 md:px-12">
-        <h2 className="text-5xl text-[#DA6C94] text-center font-title">
-          {t(titleKey)}
-        </h2>
-        <div className="w-full flex justify-center pt-4">
-          <Image src={Icons.wavesPink} alt="" width={120} height={20} />
-        </div>
-      </div>
-
-      {/* GRID */}
-      <section className="relative z-10 px-6 md:px-12 pt-10 pb-36">
-        {productos.length === 0 ? (
-          <p className="text-center text-[#AA6A42]/60 py-16 text-lg">
-            Próximamente…
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
-            {productos.map((p) => (
-              <CookieCard key={p.id} producto={p} onOpen={() => setSelected(p)} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* BOTTOM ORGANIC SHAPE */}
-      <svg
-        viewBox="0 0 1440 140"
-        preserveAspectRatio="none"
-        className="absolute bottom-0 left-0 w-full h-[140px] pointer-events-none"
-      >
-        <path
-          d="M0,60 C120,100 240,20 360,60 C480,100 600,20 720,60 C840,100 960,20 1080,60 C1200,100 1320,20 1440,60 L1440,140 L0,140 Z"
-          fill="#FAF3E0"
-        />
-      </svg>
-
-      {/* MODAL */}
-      {selected && (
-        <CookieModal producto={selected} onClose={() => setSelected(null)} />
-      )}
-    </main>
-  );
-}
-
-const LINE_TAG: Record<string, { label: string; cls: string }> = {
-  sweet:   { label: "Sweet",   cls: "bg-[#A84D66] text-white" },
-  fitness: { label: "Fitness", cls: "bg-[#4A7B35] text-white" },
-  healthy: { label: "Healthy", cls: "bg-[#1B7A43] text-white" },
+const TONO_LINEA: Record<GalletaPublica["linea"], TonoCard> = {
+  sweet: "rosa",
+  fitness: "olivo",
+  healthy: "menta",
 };
 
-interface CardProps {
-  producto: GalletaPublica;
-  onOpen: () => void;
+interface Props {
+  productos: GalletaPublica[];
+  /** Fuerza un tono (p. ej. "calabaza" en temporada); si no, va por línea. */
+  tono?: TonoCard;
+  /** Muestra la etiqueta de línea (secciones que mezclan Sweet y Fitness). */
+  mostrarLinea?: boolean;
+  /** Texto cuando la sección aún no tiene galletas. */
+  vacio?: string;
 }
 
-function CookieCard({ producto, onOpen }: CardProps) {
-  const imageSrc = producto.imagenUrl ?? "/img/vc-product-splash.webp";
-  const precio = producto.precioEstablecido;
-  const tag = LINE_TAG[producto.linea];
+/** Cuadrícula de galletas con su modal de detalle. */
+export default function Cookies({ productos, tono, mostrarLinea, vacio = "Próximamente…" }: Props) {
+  const [selected, setSelected] = useState<GalletaPublica | null>(null);
+
+  if (productos.length === 0) {
+    return <p className="py-10 text-center font-body text-lg text-cacao/70">{vacio}</p>;
+  }
 
   return (
-    <article
-      onClick={onOpen}
-      className="cursor-pointer group rounded-3xl bg-white shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 p-4"
-    >
-      {/* IMAGE */}
-      <div className="overflow-hidden rounded-2xl relative aspect-[4/3]">
-        <Image
-          src={imageSrc}
-          alt={producto.nombre}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
-        />
-        {tag && (
-          <span className={`absolute top-3 left-3 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${tag.cls}`}>
-            {tag.label}
-          </span>
-        )}
+    <>
+      <div className={GRID_PRODUCTOS}>
+        {productos.map((p) => (
+          <ProductCard
+            key={p.id}
+            nombre={p.nombre}
+            imagenUrl={p.imagenUrl}
+            imagenFallback={p.linea === "sweet" ? "/img/vc-product-splash.webp" : "/img/prt-product-splash.webp"}
+            tono={tono ?? TONO_LINEA[p.linea]}
+            precio={p.precioEstablecido != null ? `$${p.precioEstablecido.toFixed(0)}` : null}
+            detalle={p.precioEstablecido != null ? "por pieza" : null}
+            etiqueta={mostrarLinea ? LINEA_ETIQUETA[p.linea] : null}
+            promo={p.promo ? promoEtiqueta(p.promo) : null}
+            onOpen={() => setSelected(p)}
+          />
+        ))}
       </div>
 
-      {/* NAME */}
-      <h3 className="text-xl font-semibold mt-4 text-[#A8386A] group-hover:text-[#8f2f56] transition-colors line-clamp-2">
-        {producto.nombre}
-      </h3>
-
-      {/* DESCRIPTION */}
-      {producto.descripcion && (
-        <p className="text-[#6B3E26] text-sm mt-1 line-clamp-2">
-          {producto.descripcion}
-        </p>
-      )}
-
-      {/* PRICE */}
-      {precio != null && (
-        <span className="inline-block mt-2 text-xs font-semibold text-[#8A5535] bg-[#FFF0E6] border border-[#e8c4a0] rounded-full px-3 py-0.5">
-          ${precio.toFixed(0)} / pz
-        </span>
-      )}
-      {producto.promo && (
-        <span className="inline-block mt-2 ml-1 text-xs font-bold text-white bg-[#DA6C94] rounded-full px-3 py-0.5">
-          {promoEtiqueta(producto.promo)}
-        </span>
-      )}
-    </article>
+      {selected && <CookieModal producto={selected} onClose={() => setSelected(null)} />}
+    </>
   );
 }
