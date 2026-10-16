@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import {
-  Dancing_Script,
   Pacifico,
   Montserrat,
   Playfair_Display,
@@ -21,14 +20,9 @@ const pacifico = Pacifico({
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-playfair",
-});
-
-const dancingScript = Dancing_Script({
-  subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-dancing",
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
 });
 
 const montserrat = Montserrat({
@@ -65,7 +59,7 @@ export default async function RootLayout({ children, params }: Props) {
   return (
     <html
       lang={locale}
-      className={`overflow-x-hidden ${pacifico.variable} ${dancingScript.variable} ${montserrat.variable} ${playfair.variable}`}
+      className={`overflow-x-hidden ${pacifico.variable} ${montserrat.variable} ${playfair.variable}`}
     >
       <body className="font-body antialiased overflow-x-hidden">
         <SessionProvider>

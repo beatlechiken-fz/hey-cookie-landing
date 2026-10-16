@@ -7,8 +7,32 @@
 :root {
   --font-title: var(--font-pacifico);
   --font-title-light: var(--font-playfair);
-  --font-subtitle: var(--font-dancing);
+  /* Dancing Script se retiró (rediseño 2026-10): el "subtítulo" ahora es la
+     serif de títulos, así menú y encabezados quedan en una sola voz. */
+  --font-subtitle: var(--font-playfair);
   --font-body: var(--font-montserrat);
+}
+
+/* Tokens de marca (DESIGN.md). Generan utilidades: bg-espresso, text-frambuesa… */
+@theme {
+  --color-espresso: #3A1F14;
+  --color-cacao: #6B3E26;
+  --color-crema: #FAF3E0;
+  --color-caramelo: #AA6A42;
+  --color-frambuesa: #A84D66;
+  --color-frambuesa-hover: #933F57;
+  --color-frambuesa-texto: #A8386A;
+  --color-cafe-footer: #261102;
+
+  /* Tintes pastel: fondos de cards y secciones (texto siempre espresso). */
+  --color-tinte-rosa: #F6DDE4;
+  --color-tinte-olivo: #E4E8D3;
+  --color-tinte-menta: #DCEBDD;
+  --color-tinte-caramelo: #F1DCC9;
+  --color-tinte-durazno: #F9E1D2;
+  --color-tinte-lila: #E9DFF0;
+  --color-tinte-calabaza: #F8DCC4;
+  --color-pared: #EFC3BD;
 }
 
 html,

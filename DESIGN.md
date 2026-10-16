@@ -22,6 +22,17 @@ colors:
   verde-exito: "#27AE60"
   rojo-error: "#C0392B"
   cafe-footer: "#261102"
+  frambuesa-accion: "#A84D66"
+  frambuesa-accion-hover: "#933F57"
+  frambuesa-texto: "#A8386A"
+  pared: "#EFC3BD"
+  tinte-rosa: "#F6DDE4"
+  tinte-olivo: "#E4E8D3"
+  tinte-menta: "#DCEBDD"
+  tinte-caramelo: "#F1DCC9"
+  tinte-durazno: "#F9E1D2"
+  tinte-lila: "#E9DFF0"
+  tinte-calabaza: "#F8DCC4"
 typography:
   display:
     fontFamily: "Pacifico, cursive"
@@ -35,11 +46,23 @@ typography:
     fontWeight: 400
     lineHeight: 1.2
     letterSpacing: "normal"
-  headline-script:
-    fontFamily: "Dancing Script, cursive"
+  nav:
+    fontFamily: "Playfair Display, Georgia, serif"
     fontSize: "1.125rem"
-    fontWeight: 700
-    lineHeight: 1.3
+    fontWeight: 500
+    lineHeight: 1.25
+    letterSpacing: "normal"
+  nav-mobile:
+    fontFamily: "Playfair Display, Georgia, serif"
+    fontSize: "1rem"
+    fontWeight: 500
+    lineHeight: 1.25
+    letterSpacing: "normal"
+  card-title:
+    fontFamily: "Playfair Display, Georgia, serif"
+    fontSize: "1.25rem"
+    fontWeight: 500
+    lineHeight: 1.2
     letterSpacing: "normal"
   body:
     fontFamily: "Montserrat, sans-serif"
@@ -98,10 +121,18 @@ components:
     textColor: "{colors.crema}"
     rounded: "{rounded.full}"
     padding: "16px 32px"
+  button-cta:
+    backgroundColor: "{colors.frambuesa-accion}"
+    textColor: "{colors.blanco}"
+    typography: "{typography.body}"
+    rounded: "{rounded.full}"
+    padding: "12px 24px"
   card-product:
-    backgroundColor: "{colors.blanco}"
+    backgroundColor: "{colors.tinte-rosa}"
+    textColor: "{colors.espresso}"
+    typography: "{typography.card-title}"
     rounded: "{rounded.xl}"
-    padding: "16px"
+    padding: "20px"
   input-field:
     backgroundColor: "{colors.crema-suave}"
     textColor: "{colors.espresso}"
@@ -127,7 +158,7 @@ components:
 
 Hey Cookie reads as a bakery run with lab-grade precision: every customization — bizcocho, cobertura, relleno, jarabe, toppings, ornamentos — recalculates its price the instant it's touched, but nothing about the surface feels clinical. The interface stays warm, hand-set, and celebratory throughout; the precision lives in the pricing engine, not in the visual language. Buttons are soft and pill-shaped, cards lift gently on hover, and three different script/serif display faces rotate through headlines like a bakery that hand-letters its own signage.
 
-The public Hero opens cinematic and moody — a full-bleed product photo under a dark brown-to-black radial gradient, headlines rendered in gradient text (warm gold-to-cream for the wordmark line, soft green for "Bake Lab · Sweet & Healthy") — then hands off to a warm cream daytime register for everything after it, stitched together with organic SVG wave dividers instead of hard section breaks. The admin zone (Operate mode) is **the same room** as the storefront (confirmed 2026-08-07, retiring the earlier plum-wine admin identity): identical Caramelo Tostado primary, Espresso/Cacao text, warm Lino/Arena borders, and the shared raspberry action color. Admin doesn't borrow the Hero's cinematic drama or the wave dividers — Operate mode still means dense tables, forms, and modals — but every color, radius, shadow, and type choice comes from the exact same token set the public site uses. A staff member should feel like they never left the brand when they log into `/admin`, not like they've walked into a different, more utilitarian product.
+**Boutique redesign (2026-10).** The public site moved from a cinematic dark Hero to a light "pastelería boutique" register: the splash is a static product photograph on a blush wall (`/img/splash-home.webp`, no video, for speed) with an espresso serif headline on the photo's lightest side and Pacifico used for a single accent word ("corazón"). Product and category cards sit on pastel tints keyed to line/category, products are plated in a round frame (cut-out photography is the target), and the page then hands off to a warm cream daytime register for everything after it, stitched together with organic SVG wave dividers instead of hard section breaks. The admin zone (Operate mode) is **the same room** as the storefront (confirmed 2026-08-07, retiring the earlier plum-wine admin identity): identical Caramelo Tostado primary, Espresso/Cacao text, warm Lino/Arena borders, and the shared raspberry action color. Admin doesn't borrow the Hero's cinematic drama or the wave dividers — Operate mode still means dense tables, forms, and modals — but every color, radius, shadow, and type choice comes from the exact same token set the public site uses. A staff member should feel like they never left the brand when they log into `/admin`, not like they've walked into a different, more utilitarian product.
 
 A confirmed brand tension sits on top of this: the storybook charm of *Charlie and the Chocolate Factory* — cute, whimsical, inviting — held together with an elegant "Bake Lab" polish. Neither side is allowed to erase the other. The site's organic SVG wave dividers are the confirmed carrier of that Wonka-esque playfulness and are explicitly protected (see Layout and the Wave Dividers component); elegance is added through typography, color restraint, and finish — never by flattening the waves into straight edges or muting the site into seriousness.
 
@@ -137,7 +168,7 @@ Real marketing collateral (an Instagram-style ad for "Galletas NY") makes this t
 - Warm and artisanal, never corporate or clinical — the explicit anti-reference.
 - Playful-storybook charm (the Wonka reference) held in tension with elegant Bake Lab polish — both required, neither dominant.
 - Soft, fully rounded geometry everywhere; no sharp corners on any interactive surface.
-- Layered script/serif typography (three display faces) treated as hand-lettered signage, not a single locked headline font.
+- Two display voices only: Playfair Display (headlines, nav, card titles) and Pacifico as a one-word accent. Dancing Script was retired in the 2026-10 redesign.
 - Real product photography throughout (genuine studio photos, never stock); no customer testimonials exist yet — don't fabricate any.
 - Ambient, diffuse shadows only; elevation communicates focus (modals), never decoration.
 - A confirmed but not-yet-implemented "vintage" palette (olive + terracotta + cream) exists in both real ad creative and dormant CSS — a live candidate for the next elegance pass.
@@ -168,6 +199,11 @@ Present in real ad creative and in the codebase's own unused `.vintage-bg` utili
 - **Blanco** (`#FFFFFF`): card surfaces that need to pop off a cream page (product cards, elevated panels).
 - **Café Footer** (`#261102`): the one deliberately dark neutral in the system — `FooterBar`'s own background, and the fill every Wave Divider transitions into right before the footer. Never used as a text or border color; reserved for that one structural role.
 
+### Pastel tints (cards and section bands, 2026-10)
+Each tint is a background, never text. Text on any tint is always Espresso (all pass AA). Mapping: **Rosa** = Sweet cookies; **Olivo** = Fitness (the vintage olive, finally in use); **Menta** = Healthy; **Caramelo** = pasteles; **Lila** = gelatinas; **Durazno** = repostería; **Calabaza** = seasonal collection (Halloween & Día de Muertos). **Pared** (`#EFC3BD`) is the splash wall color, sampled from the photo.
+
+**Frambuesa Acción** (`#A84D66`, hover `#933F57`) is the single fill for primary CTAs with white text (5.5:1). **Frambuesa Texto** (`#A8386A`) is the accent for large display words on light backgrounds.
+
 ### Functional
 - **Verde Éxito** (`#27AE60`, plus `#6ab04c` for the "Fitness" line tag): success states, applied-coupon confirmation, "Healthy"/"Fitness" catalog tags.
 - **Rojo Error** (`#C0392B`): form and validation errors only.
@@ -184,9 +220,8 @@ The `Contact` "Te escuchamos" satisfaction survey uses a standalone red→green 
 
 ## Typography
 
-**Display Font:** Pacifico (with fallback `cursive`)
-**Display-Serif Font:** Playfair Display (with fallback `Georgia, serif`)
-**Headline-Script Font:** Dancing Script (with fallback `cursive`)
+**Display Font:** Pacifico (with fallback `cursive`), accent word only
+**Display-Serif Font:** Playfair Display (with fallback `Georgia, serif`), headlines, nav, card titles (`font-title-light` and `font-subtitle` both resolve to it)
 **Body Font:** Montserrat (with fallback `sans-serif`)
 
 **Character:** Hand-set and celebratory — the three display faces are used the way a bakery uses hand-lettered signage, each for a distinct role, never interchangeably. Montserrat is the only workhorse: everything a customer reads to make a decision (descriptions, prices, form labels, buttons) is Montserrat, so the script faces stay legible-by-contrast rather than competing with each other.
@@ -194,7 +229,8 @@ The `Contact` "Te escuchamos" satisfaction survey uses a standalone red→green 
 ### Hierarchy
 - **Display** (Pacifico 400, `clamp(2.3rem, 5vw, 5rem)`, line-height 1.15): the Hero's primary wordmark line ("Un bocado al corazón") — reserved for the single biggest brand moment on the site.
 - **Display-Serif** (Playfair Display 400/600/700, `clamp(1.7rem, 4vw, 4rem)`, line-height 1.2): the Hero's secondary line ("Bake Lab · Sweet & Healthy") and other large editorial headlines that need weight without competing with the Display script.
-- **Headline-Script** (Dancing Script 400–700, ~18px, line-height 1.3): product names and modal/card titles (`font-subtitle`) — a smaller, friendlier cursive used throughout the storefront, not just the Hero.
+- **Nav** (Playfair 500, 16px mobile / 18px desktop): top-level public navigation and submenus.
+- **Card title** (Playfair 500, 20px): product and category card names.
 - **Body** (Montserrat 400/600, 14px, line-height 1.5): all paragraph copy, descriptions, table cells, and form values.
 - **Label** (Montserrat 600, 11px, letter-spacing 0.05em, uppercase): field labels, section eyebrows, tag/chip text — the system's only uppercase-tracked type.
 - **Caption** (Montserrat 400, 10–13px, line-height 1.3): the system's micro-copy tier — short product descriptions inside cards/modals, size-selector button text, per-unit price notes, coupon/login helper text. Sits below Body; used wherever space is tight and the copy is secondary to the decision at hand.
@@ -239,7 +275,13 @@ Fully rounded, no sharp corners anywhere an interactive surface exists. The scal
 - **Selected:** solid Rosa Frambuesa Profundo (or Rosa Frambuesa for line tags like "Sweet"/"Healthy"), white text, no border — the fill itself is the selected-state signal, no checkmark needed.
 - **Shape:** `rounded-xl`, optional 32px thumbnail image inset on the leading edge when the chip represents a real product (topping, ornamento).
 
-### Cards / Containers
+### Product & category cards (boutique, 2026-10)
+- Pastel tint background by line/category, `rounded-[20px]`, no border, no box shadow.
+- Title in Card-title serif, centered at the top; product plated in a round frame with a soft drop shadow (or a transparent cut-out once available).
+- Footer row: price (Montserrat semibold) on the left, a round white `+` / arrow button on the right.
+- Hover: the plated product lifts and the button turns Frambuesa Acción. Line tags only appear where lines are mixed.
+
+### Cards / Containers (modals, admin)
 - **Corner Style:** `rounded-3xl` for product cards, `rounded-2xl` for modal panels and inner content blocks.
 - **Background:** white for product cards sitting on a cream page; Crema Suave for content blocks sitting inside white modals.
 - **Shadow Strategy:** see Elevation & Depth — ambient rest → ambient hover.
@@ -252,11 +294,11 @@ Fully rounded, no sharp corners anywhere an interactive surface exists. The scal
 - **Error:** border and helper text shift to Rojo Error; the field itself never changes shape or shadow.
 
 ### Navigation
-- Public `AppBar`: transparent-over-Hero, then solid on scroll/other pages. Top-level nav labels (`MainNavItem`) are set in **Headline-Script (Dancing Script)**, not Montserrat — 24px desktop / 20px mobile, larger than the card/modal-title use of the same face documented under Typography. Active/hover state shifts to Caramelo Tostado (`#AA5A32`/`#9A4A22`), with an underline wave-icon flourish under the active item. Submenu links and secondary nav chrome (account dropdown, login button) use Montserrat as normal. User avatar is a `rounded-full` initials badge in Caramelo Tostado with a ring that appears on hover/open.
+- Public `AppBar`: transparent-over-Hero, then solid on scroll/other pages. Top-level nav labels (`MainNavItem`) are set in the **Nav** style (Playfair 500, 18px desktop / 16px mobile). Active/hover state shifts to Caramelo Tostado (`#AA5A32`/`#9A4A22`), with an underline wave-icon flourish under the active item. Submenu links and secondary nav chrome (account dropdown, login button) use Montserrat as normal. User avatar is a `rounded-full` initials badge in Caramelo Tostado with a ring that appears on hover/open.
 - Admin `AppBarAdmin`: same light warm-chrome bar as public (Crema/Lino tones, not a dark bar), same Caramelo Tostado active/hover state, same Montserrat nav labels (Operate mode skips the Headline-Script treatment — nav labels here are functional wayfinding, not brand moments) and the same `rounded-full` initials avatar pattern as public. Structurally distinct only in that its menu items are operational (Raws, Store, Finanzas) rather than product-catalog links.
 
 ### Named Rules
-**The Script-Nav Scale Rule.** Headline-Script scales up to 24px specifically for top-level public navigation — a deliberate second size step beyond the 18px card/modal-title use documented under Typography. Don't shrink nav labels to a Montserrat/body size to "fix" a type-ramp mismatch; the script nav is the intended treatment.
+**The Serif-Nav Rule.** Public navigation uses the Nav serif style, never Montserrat and never a script face; it should read as the same voice as the headlines.
 
 ### Wave Dividers (signature component)
 Section boundaries — most visibly Hero-to-body — are drawn as a hand-curved SVG path (`viewBox="0 0 1440 100"`, a repeating sine-like curve) filled with the next section's background color, rather than a straight `<hr>` or hard color block edge. This is the system's most distinctive structural signature: read it as the bakery's own scalloped pastry-bag edge, not a generic wave-divider trend.
