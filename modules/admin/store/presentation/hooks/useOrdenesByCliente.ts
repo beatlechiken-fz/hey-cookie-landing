@@ -46,12 +46,16 @@ export function useOrdenesByCliente(clienteId: string | null) {
   const ordenes = result?.data ?? [];
   // Cotizaciones y órdenes son la misma entidad, diferenciadas por status
   const cotizaciones = ordenes.filter((o) => o.status === "cotizacion");
-  const ordenesActivas = ordenes.filter((o) => o.status !== "cotizacion");
+  const ordenesActivas = ordenes.filter(
+    (o) => o.status !== "cotizacion" && o.status !== "cancelado",
+  );
+  const canceladas = ordenes.filter((o) => o.status === "cancelado");
 
   return {
     ordenes,
     cotizaciones,
     ordenesActivas,
+    canceladas,
     isLoading: isPending,
     error,
     reload: load,

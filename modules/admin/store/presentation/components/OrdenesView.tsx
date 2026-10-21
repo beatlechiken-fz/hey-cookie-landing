@@ -13,28 +13,7 @@ import { resumenProductos } from "@/core/helpers/ordenesResumen";
 import { ORDEN_STATUS_FINANZAS } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { useOrdenesGlobal } from "@/modules/admin/store/presentation/hooks/useOrdenesGlobal";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
-import { ORDEN_STATUS_LABELS } from "@/modules/admin/store/domain/entities/Orden.entity";
-
-// ── Badge de status ───────────────────────────────────────────────────────────
-
-const STATUS_STYLES: Record<string, string> = {
-  cotizacion: "bg-blue-50   text-blue-700   border-blue-200",
-  en_proceso: "bg-amber-50  text-amber-700  border-amber-200",
-  listo_entregar: "bg-purple-50 text-purple-700 border-purple-200",
-  pagado: "bg-green-50  text-green-700  border-green-200",
-  entregado: "bg-teal-50   text-teal-700   border-teal-200",
-  cancelado: "bg-red-50    text-red-600    border-red-200",
-};
-
-function StatusBadge({ status }: { status: OrdenStatus }) {
-  return (
-    <span
-      className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${STATUS_STYLES[status] ?? ""}`}
-    >
-      {ORDEN_STATUS_LABELS[status] ?? status}
-    </span>
-  );
-}
+import { OrdenStatusBadge } from "./OrdenStatusBadge";
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("es-MX", {
@@ -272,7 +251,7 @@ export function OrdenesView() {
                   </td>
                   {tab === "ordenes" && (
                     <td className="px-4 py-3">
-                      <StatusBadge status={o.status} />
+                      <OrdenStatusBadge status={o.status} />
                     </td>
                   )}
                   <td className="px-4 py-3 text-hc-soft/70 text-[13px]">
@@ -352,7 +331,7 @@ export function OrdenesView() {
                   <span className="font-bold text-hc-rose text-sm">
                     {fmtMoney(o.total)}
                   </span>
-                  {tab === "ordenes" && <StatusBadge status={o.status} />}
+                  {tab === "ordenes" && <OrdenStatusBadge status={o.status} />}
                 </div>
               </div>
               <div className="flex items-center justify-between text-[11px] text-hc-muted">

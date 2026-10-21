@@ -24,6 +24,7 @@ export function ClienteDetailView({ clienteId }: Props) {
     ordenes,
     cotizaciones,
     ordenesActivas,
+    canceladas,
     isLoading: ordenesLoading,
     error: ordenesError,
     reload,
@@ -31,7 +32,7 @@ export function ClienteDetailView({ clienteId }: Props) {
   const { updateStatus } = useUpdateOrdenStatus();
 
   const [editOpen, setEditOpen] = useState(false);
-  const [tab, setTab] = useState<"todas" | "cotizaciones" | "ordenes">("todas");
+  const [tab, setTab] = useState<"todas" | "cotizaciones" | "ordenes" | "canceladas">("todas");
 
   const handleSave = useCallback(
     async (dto: CreateClienteDTO) => {
@@ -64,7 +65,9 @@ export function ClienteDetailView({ clienteId }: Props) {
       ? ordenes
       : tab === "cotizaciones"
         ? cotizaciones
-        : ordenesActivas;
+        : tab === "canceladas"
+          ? canceladas
+          : ordenesActivas;
 
   return (
     <div className="flex flex-col gap-6">
@@ -226,7 +229,7 @@ export function ClienteDetailView({ clienteId }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-hc-line">
+        <div className="flex overflow-x-auto border-b border-hc-line">
           {[
             { value: "todas" as const, label: `Todas (${ordenes.length})` },
             {
@@ -237,12 +240,16 @@ export function ClienteDetailView({ clienteId }: Props) {
               value: "ordenes" as const,
               label: `Órdenes (${ordenesActivas.length})`,
             },
+            {
+              value: "canceladas" as const,
+              label: `Canceladas (${canceladas.length})`,
+            },
           ].map((t) => (
             <button
               key={t.value}
               onClick={() => setTab(t.value)}
               className={
-                "relative px-4 py-2.5 text-sm font-semibold transition " +
+                "relative shrink-0 whitespace-nowrap px-4 py-2.5 text-sm font-semibold transition " +
                 (tab === t.value
                   ? "text-hc-rose"
                   : "text-hc-muted hover:text-hc-soft")

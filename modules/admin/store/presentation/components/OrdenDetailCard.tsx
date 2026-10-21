@@ -14,6 +14,8 @@ import {
   ORDEN_STATUS_FINANZAS,
 } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { FinanzasToggle } from "./FinanzasToggle";
+import { OrdenStatusBadge } from "./OrdenStatusBadge";
+import { resumenProductos } from "@/core/helpers/ordenesResumen";
 import { OrdenPipeline } from "./OrdenPipeline";
 import { OrdenPagosSection, type PagoCompartido } from "./OrdenPagosSection";
 import { PastelCompartidoSection } from "./PastelCompartidoSection";
@@ -395,6 +397,8 @@ export function OrdenDetailCard({
   }
 
   const nextStatus = NEXT_STATUS[orden.status];
+  // Productos en una línea para ubicar la orden sin expandirla (igual que en la lista de órdenes).
+  const productos = resumenProductos(orden.items);
 
   async function handleAdvance() {
     if (!nextStatus) return;
@@ -433,23 +437,32 @@ export function OrdenDetailCard({
         onClick={() => setExpanded((v) => !v)}
         className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-hc-hover/60 transition"
       >
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <p className="font-bold text-hc-ink text-sm">
               {orden.status === "cotizacion" ? "Cotización" : "Orden"} #
               {orden.numero}
             </p>
-            <p className="text-[11px] text-hc-muted">
-              {formatDate(orden.createdAt)}
-            </p>
-            {orden.fechaEntrega && (
-              <p className="text-[11px] text-hc-rose font-medium mt-0.5">
-                🎂 Entrega: {formatDate(orden.fechaEntrega)}
-              </p>
-            )}
+            <OrdenStatusBadge status={orden.status} />
           </div>
+          {productos && (
+            <p
+              className="mt-1 truncate text-[12.5px] text-hc-ink/80"
+              title={productos}
+            >
+              {productos}
+            </p>
+          )}
+          <p className="mt-0.5 text-[11px] text-hc-muted">
+            {formatDate(orden.createdAt)}
+            {orden.fechaEntrega && (
+              <span className="text-hc-rose font-medium">
+                {" · "}🎂 Entrega: {formatDate(orden.fechaEntrega)}
+              </span>
+            )}
+          </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-3">
           <p className="font-bold text-hc-rose text-sm">
             ${orden.total.toFixed(2)}
           </p>
