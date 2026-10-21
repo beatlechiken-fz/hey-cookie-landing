@@ -1,7 +1,8 @@
 "use client";
 // src/modules/admin/store/presentation/components/CartDrawer.tsx
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCartStore, resolveOrigen, type CartItem } from "../hooks/useCartStore";
 import { useOrdenes, useValidarCupon } from "../hooks/useOrdenes";
@@ -21,7 +22,12 @@ interface Props {
   onClose: () => void;
 }
 
+const noSuscribir = () => () => {};
+
 export function CartDrawer({ open, onClose }: Props) {
+  // Se monta en <body> con un portal: dentro de la topbar (que usa
+  // backdrop-blur) un `fixed` queda confinado a la barra y no cubre la página.
+  const enCliente = useSyncExternalStore(noSuscribir, () => true, () => false);
   const items = useCartStore((s) => s.items);
   const cupones = useCartStore((s) => s.cupones);
   const clienteId = useCartStore((s) => s.clienteId);
@@ -235,7 +241,9 @@ export function CartDrawer({ open, onClose }: Props) {
     </svg>
   );
 
-  return (
+  if (!enCliente) return null;
+
+  return createPortal(
     <>
     <AnimatePresence>
       {open && (
@@ -247,7 +255,7 @@ export function CartDrawer({ open, onClose }: Props) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-sm z-40"
           />
 
           <motion.div
@@ -748,6 +756,7 @@ export function CartDrawer({ open, onClose }: Props) {
       onClose={closeEdit}
       editItem={editItem?.origen === "producto-configurador" ? editItem : null}
     />
-    </>
+    </>,
+    document.body,
   );
 }
