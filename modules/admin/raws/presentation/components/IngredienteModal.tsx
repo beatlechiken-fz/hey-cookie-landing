@@ -106,12 +106,12 @@ export function IngredienteModal({
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
 
   function field(label: string, children: React.ReactNode) {
     return (
       <div className="flex flex-col gap-1.5">
-        <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+        <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
           {label}
         </label>
         {children}
@@ -129,7 +129,7 @@ export function IngredienteModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
 
           <motion.div
@@ -140,15 +140,15 @@ export function IngredienteModal({
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-lg bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
-                <h2 className="font-bold text-[#AA6A42] text-lg">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover">
+                <h2 className="font-bold text-hc-soft text-lg">
                   {isEdit ? "Editar ingrediente" : "Nuevo ingrediente"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -169,11 +169,11 @@ export function IngredienteModal({
               >
                 {/* Imagen */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Imagen
                   </label>
                   <div className="flex items-center gap-4">
-                    <div className="w-24 h-24 rounded-xl border border-[#f0e0d0] bg-[#FFF7F0] overflow-hidden flex items-center justify-center shrink-0">
+                    <div className="w-24 h-24 rounded-xl border border-hc-line bg-hc-hover overflow-hidden flex items-center justify-center shrink-0">
                       {form.imagenUrl ? (
                         <img
                           src={form.imagenUrl}
@@ -183,7 +183,7 @@ export function IngredienteModal({
                       ) : (
                         <svg
                           viewBox="0 0 24 24"
-                          className="w-8 h-8 text-[#e8c4a0]"
+                          className="w-8 h-8 text-hc-line-strong"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="1.5"
@@ -208,7 +208,7 @@ export function IngredienteModal({
                       <label
                         htmlFor="ingrediente-image-upload"
                         className={
-                          "cursor-pointer text-center py-2 px-3 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-[13px] font-semibold hover:bg-[#FFF7F0] transition " +
+                          "cursor-pointer text-center py-2 px-3 rounded-lg border border-hc-line-strong text-hc-soft text-[13px] font-semibold hover:bg-hc-hover transition " +
                           (uploading ? "opacity-50 cursor-not-allowed" : "")
                         }
                       >
@@ -218,7 +218,7 @@ export function IngredienteModal({
                             ? "Cambiar imagen"
                             : "Subir imagen"}
                       </label>
-                      <p className="text-[11px] text-[#6B3E26]">
+                      <p className="text-[11px] text-hc-muted">
                         JPG, PNG, WEBP o GIF · máx. 5MB
                       </p>
                     </div>
@@ -302,7 +302,7 @@ export function IngredienteModal({
                 {field(
                   "Costo base (MXN)",
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B3E26] text-sm">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-hc-muted text-sm">
                       $
                     </span>
                     <input
@@ -323,12 +323,12 @@ export function IngredienteModal({
                 )}
 
                 {/* Toggle topping */}
-                <label className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-[#f0e0d0] bg-[#FFF7F0] cursor-pointer">
+                <label className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-hc-line bg-hc-hover cursor-pointer">
                   <div>
-                    <p className="text-sm font-semibold text-[#AA6A42]">
+                    <p className="text-sm font-semibold text-hc-soft">
                       Es topping
                     </p>
-                    <p className="text-[11px] text-[#6B3E26]">
+                    <p className="text-[11px] text-hc-muted">
                       Aparecerá en el listado de toppings
                     </p>
                   </div>
@@ -341,7 +341,7 @@ export function IngredienteModal({
                     }
                     className={
                       "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors " +
-                      (form.topping ? "bg-[#c0607a]" : "bg-gray-200")
+                      (form.topping ? "bg-hc-rose" : "bg-gray-200")
                     }
                   >
                     <span
@@ -354,26 +354,26 @@ export function IngredienteModal({
                 </label>
 
                 {(costoKgL || costoUnidad) && (
-                  <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-4 py-3 flex gap-6">
+                  <div className="rounded-xl bg-hc-hover border border-hc-line px-4 py-3 flex gap-6">
                     {costoKgL && (
                       <div>
-                        <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                        <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                           Costo / {form.unidadBase === "gr" ? "Kg" : "L"}
                         </p>
-                        <p className="text-[15px] font-bold text-[#AA6A42]">
+                        <p className="text-[15px] font-bold text-hc-soft">
                           ${costoKgL}
                         </p>
                       </div>
                     )}
                     {costoUnidad && (
                       <div>
-                        <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                        <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                           Costo /{" "}
                           {form.unidadBase === "piezas"
                             ? "pieza"
                             : form.unidadBase}
                         </p>
-                        <p className="text-[15px] font-bold text-[#AA6A42]">
+                        <p className="text-[15px] font-bold text-hc-soft">
                           ${costoUnidad}
                         </p>
                       </div>
@@ -391,14 +391,14 @@ export function IngredienteModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                    className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={saving || uploading}
-                    className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 disabled:cursor-not-allowed transition"
                   >
                     {saving
                       ? "Guardando…"

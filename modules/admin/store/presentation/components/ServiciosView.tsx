@@ -23,7 +23,7 @@ export function ServiciosView() {
     <div className="flex flex-col gap-8">
       {/* Sección: Productos personalizados */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-[#AA6A42]">
+        <h2 className="text-lg font-bold text-hc-soft">
           Productos personalizados
         </h2>
 
@@ -31,12 +31,12 @@ export function ServiciosView() {
           {/* Tarjeta Pastel personalizado */}
           <button
             onClick={() => setConfiguradorOpen(true)}
-            className="group bg-white rounded-2xl border border-[#f0e0d0] overflow-hidden shadow-sm hover:border-[#e8c4a0] hover:shadow-md transition text-left"
+            className="group bg-white rounded-2xl border border-hc-line overflow-hidden shadow-sm hover:border-hc-line-strong hover:shadow-md transition text-left"
           >
-            <div className="aspect-square bg-[#FFF7F0] flex items-center justify-center">
+            <div className="aspect-square bg-hc-hover flex items-center justify-center">
               <svg
                 viewBox="0 0 24 24"
-                className="w-16 h-16 text-[#e8c4a0] group-hover:text-[#dba8b7] transition"
+                className="w-16 h-16 text-hc-line-strong group-hover:text-hc-rose-soft transition"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
@@ -49,10 +49,10 @@ export function ServiciosView() {
               </svg>
             </div>
             <div className="p-3 flex flex-col items-center gap-2">
-              <p className="font-semibold text-[#3d1a24] text-[13px] text-center leading-tight">
+              <p className="font-semibold text-hc-ink text-[13px] text-center leading-tight">
                 Pastel personalizado
               </p>
-              <span className="w-full text-center py-2 rounded-xl bg-[#c0607a] text-white text-[12px] font-bold group-hover:bg-[#a84d66] transition">
+              <span className="w-full text-center py-2 rounded-xl bg-hc-rose text-white text-[12px] font-bold group-hover:bg-hc-rose-hover transition">
                 Configurar
               </span>
             </div>
@@ -61,7 +61,7 @@ export function ServiciosView() {
           {/* Tarjeta Gelatina personalizada */}
           <button
             onClick={() => setGelatinaOpen(true)}
-            className="group bg-white rounded-2xl border border-[#f0e0d0] overflow-hidden shadow-sm hover:border-[#e8c4a0] hover:shadow-md transition text-left"
+            className="group bg-white rounded-2xl border border-hc-line overflow-hidden shadow-sm hover:border-hc-line-strong hover:shadow-md transition text-left"
           >
             <div className="aspect-square bg-[#f0f9fd] flex items-center justify-center">
               <svg
@@ -94,7 +94,7 @@ export function ServiciosView() {
               </svg>
             </div>
             <div className="p-3 flex flex-col items-center gap-2">
-              <p className="font-semibold text-[#3d1a24] text-[13px] text-center leading-tight">
+              <p className="font-semibold text-hc-ink text-[13px] text-center leading-tight">
                 Gelatina personalizada
               </p>
               <span className="w-full text-center py-2 rounded-xl bg-[#5badd0] text-white text-[12px] font-bold group-hover:bg-[#4090b0] transition">
@@ -107,7 +107,7 @@ export function ServiciosView() {
 
       {/* Sección: Productos */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-[#AA6A42]">Productos</h2>
+        <h2 className="text-lg font-bold text-hc-soft">Productos</h2>
         <ProductosView ref={productosRef} />
       </div>
 

@@ -121,12 +121,12 @@ export function OrdenesView() {
   }
 
   const inputCls =
-    "w-full pl-4 pr-4 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]";
+    "w-full pl-4 pr-4 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft";
 
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs horizontales */}
-      <div className="flex bg-[#FFF7F0] border border-[#f0e0d0] rounded-xl p-1 gap-1 w-fit">
+      <div className="flex bg-hc-hover border border-hc-line rounded-xl p-1 gap-1 w-fit">
         {[
           { key: "ordenes" as Tab, label: "Órdenes", icon: "📦" },
           { key: "cotizaciones" as Tab, label: "Cotizaciones", icon: "📋" },
@@ -137,8 +137,8 @@ export function OrdenesView() {
             onClick={() => handleTabChange(t.key)}
             className={`flex items-center gap-1.5 px-5 py-2 rounded-lg text-[13px] font-semibold transition ${
               tab === t.key
-                ? "bg-white text-[#AA6A42] shadow-sm border border-[#f0e0d0]"
-                : "text-[#6B3E26] hover:text-[#AA6A42]"
+                ? "bg-white text-hc-soft shadow-sm border border-hc-line"
+                : "text-hc-muted hover:text-hc-soft"
             }`}
           >
             <span>{t.icon}</span>
@@ -172,7 +172,7 @@ export function OrdenesView() {
           }
           className={inputCls}
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
           <svg
             viewBox="0 0 24 24"
             className="w-4 h-4"
@@ -188,7 +188,7 @@ export function OrdenesView() {
       </div>
 
       {/* Contador */}
-      <p className="text-sm text-[#6B3E26]">
+      <p className="text-sm text-hc-muted">
         {isLoading
           ? "Cargando…"
           : `${total} ${total === 1 ? sing : plur}`}
@@ -199,49 +199,49 @@ export function OrdenesView() {
 
       {/* Tabla desktop */}
       {!isLoading && (
-        <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
+        <div className="hidden md:block rounded-2xl border border-hc-line overflow-hidden bg-white shadow-sm">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <tr className="bg-hc-hover border-b border-hc-line">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   {tab === "cotizaciones" ? "Cotización" : "Orden"}
                 </th>
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Cliente
                 </th>
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Fecha
                 </th>
                 {tab === "ordenes" && (
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                     Estado
                   </th>
                 )}
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Entrega
                 </th>
-                <th className="px-4 py-3 text-right  text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-4 py-3 text-right  text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Total
                 </th>
-                <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Productos
                 </th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Items
                 </th>
                 {tab === "ordenes" && (
-                  <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                     Finanzas
                   </th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f9eef2]">
+            <tbody className="divide-y divide-hc-line">
               {ordenes.length === 0 && (
                 <tr>
                   <td
                     colSpan={9}
-                    className="py-12 text-center text-[#AA6A42] text-sm"
+                    className="py-12 text-center text-hc-soft text-sm"
                   >
                     No hay {plur}{" "}
                     {search ? "con ese criterio" : "aún"}
@@ -254,20 +254,20 @@ export function OrdenesView() {
                   onClick={() =>
                     router.push(`/admin/dashboard/store/ordenes/${o.id}`)
                   }
-                  className="hover:bg-[#FFF7F0]/60 transition cursor-pointer group"
+                  className="hover:bg-hc-hover/60 transition cursor-pointer group"
                 >
                   <td className="px-4 py-3">
-                    <p className="font-bold text-[#3d1a24]">#{o.numero}</p>
-                    <p className="text-[11px] text-[#6B3E26]">
+                    <p className="font-bold text-hc-ink">#{o.numero}</p>
+                    <p className="text-[11px] text-hc-muted">
                       {fmtDate(o.createdAt)}
                     </p>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-[#3d1a24]">
+                    <p className="font-medium text-hc-ink">
                       {o.clienteNombre ?? "Sin cliente"}
                     </p>
                   </td>
-                  <td className="px-4 py-3 text-[#AA6A42]/70 text-[13px]">
+                  <td className="px-4 py-3 text-hc-soft/70 text-[13px]">
                     {fmtDate(o.createdAt)}
                   </td>
                   {tab === "ordenes" && (
@@ -275,17 +275,17 @@ export function OrdenesView() {
                       <StatusBadge status={o.status} />
                     </td>
                   )}
-                  <td className="px-4 py-3 text-[#AA6A42]/70 text-[13px]">
+                  <td className="px-4 py-3 text-hc-soft/70 text-[13px]">
                     {o.fechaEntrega ? (
                       fmtDate(o.fechaEntrega)
                     ) : (
-                      <span className="text-[#AA6A42]">—</span>
+                      <span className="text-hc-soft">—</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-right font-bold text-[#c0607a]">
+                  <td className="px-4 py-3 text-right font-bold text-hc-rose">
                     {fmtMoney(o.total)}
                   </td>
-                  <td className="px-4 py-3 text-[#3d1a24] text-[12px] max-w-[18rem]">
+                  <td className="px-4 py-3 text-hc-ink text-[12px] max-w-[18rem]">
                     <p
                       className="line-clamp-3 break-words"
                       title={resumenProductos(o.items)}
@@ -293,7 +293,7 @@ export function OrdenesView() {
                       {resumenProductos(o.items) || "—"}
                     </p>
                   </td>
-                  <td className="px-4 py-3 text-center text-[#6B3E26] text-[13px]">
+                  <td className="px-4 py-3 text-center text-hc-muted text-[13px]">
                     {o.items.length}
                   </td>
                   {tab === "ordenes" && (
@@ -305,7 +305,7 @@ export function OrdenesView() {
                           showLabel={false}
                         />
                       ) : (
-                        <span className="text-[#AA6A42]/50">—</span>
+                        <span className="text-hc-soft/50">—</span>
                       )}
                     </td>
                   )}
@@ -320,7 +320,7 @@ export function OrdenesView() {
       {!isLoading && (
         <div className="flex md:hidden flex-col gap-3">
           {ordenes.length === 0 && (
-            <p className="text-center text-[#AA6A42] text-sm py-8">
+            <p className="text-center text-hc-soft text-sm py-8">
               No hay {plur}{" "}
               {search ? "con ese criterio" : "aún"}
             </p>
@@ -331,31 +331,31 @@ export function OrdenesView() {
               onClick={() =>
                 router.push(`/admin/dashboard/store/ordenes/${o.id}`)
               }
-              className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm cursor-pointer active:bg-[#FFF7F0]/60 transition"
+              className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm cursor-pointer active:bg-hc-hover/60 transition"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
-                  <p className="font-bold text-[#3d1a24]">
+                  <p className="font-bold text-hc-ink">
                     {tab === "cotizaciones" ? "Cotización" : "Orden"} #
                     {o.numero}
                   </p>
-                  <p className="text-[12px] text-[#6B3E26]">
+                  <p className="text-[12px] text-hc-muted">
                     {o.clienteNombre ?? "Sin cliente"}
                   </p>
                   {o.items.length > 0 && (
-                    <p className="mt-1 text-[12px] text-[#3d1a24] line-clamp-3 break-words">
+                    <p className="mt-1 text-[12px] text-hc-ink line-clamp-3 break-words">
                       {resumenProductos(o.items)}
                     </p>
                   )}
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="font-bold text-[#c0607a] text-sm">
+                  <span className="font-bold text-hc-rose text-sm">
                     {fmtMoney(o.total)}
                   </span>
                   {tab === "ordenes" && <StatusBadge status={o.status} />}
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-[#6B3E26]">
+              <div className="flex items-center justify-between text-[11px] text-hc-muted">
                 <span>{fmtDate(o.createdAt)}</span>
                 {o.fechaEntrega ? (
                   <span>Entrega: {fmtDate(o.fechaEntrega)}</span>
@@ -366,8 +366,8 @@ export function OrdenesView() {
                 )}
               </div>
               {tab === "ordenes" && ORDEN_STATUS_FINANZAS.includes(o.status) && (
-                <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#f0e0d0]">
-                  <span className="text-[11px] text-[#6B3E26]">
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-hc-line">
+                  <span className="text-[11px] text-hc-muted">
                     Cuenta en finanzas
                   </span>
                   <FinanzasToggle
@@ -388,17 +388,17 @@ export function OrdenesView() {
           <button
             onClick={() => setPage((p) => p - 1)}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             ← Anterior
           </button>
-          <span className="text-sm text-[#6B3E26]">
+          <span className="text-sm text-hc-muted">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             Siguiente →
           </button>

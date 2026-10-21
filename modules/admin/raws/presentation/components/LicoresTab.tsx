@@ -57,7 +57,7 @@ function LicorCantidadModal({
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
 
   return (
     <AnimatePresence>
@@ -69,7 +69,7 @@ function LicorCantidadModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="modal"
@@ -79,19 +79,19 @@ function LicorCantidadModal({
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover">
                 <div>
-                  <h2 className="font-bold text-[#AA6A42] text-base">
+                  <h2 className="font-bold text-hc-soft text-base">
                     Cantidad de licor
                   </h2>
-                  <p className="text-[12px] text-[#6B3E26] mt-0.5">
+                  <p className="text-[12px] text-hc-muted mt-0.5">
                     {item.ingredienteNombre}
                   </p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -129,7 +129,7 @@ function LicorCantidadModal({
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Cantidad (ml)
                   </label>
                   <input
@@ -145,20 +145,20 @@ function LicorCantidadModal({
                 </div>
 
                 {costoEst && (
-                  <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-4 py-2.5 flex items-center justify-between">
-                    <span className="text-[12px] text-[#6B3E26]">
+                  <div className="rounded-xl bg-hc-hover border border-hc-line px-4 py-2.5 flex items-center justify-between">
+                    <span className="text-[12px] text-hc-muted">
                       Costo estimado
                     </span>
-                    <span className="font-bold text-[#c0607a]">
+                    <span className="font-bold text-hc-rose">
                       ${costoEst}
                     </span>
                   </div>
                 )}
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Notas{" "}
-                    <span className="text-[#AA6A42] normal-case font-normal">
+                    <span className="text-hc-soft normal-case font-normal">
                       (opcional)
                     </span>
                   </label>
@@ -181,14 +181,14 @@ function LicorCantidadModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                    className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                    className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                   >
                     {saving ? "Guardando…" : "Guardar"}
                   </button>
@@ -235,9 +235,9 @@ export function LicoresTab() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar licor…"
-          className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+          className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
           <svg
             viewBox="0 0 24 24"
             className="w-4 h-4"
@@ -275,7 +275,7 @@ export function LicoresTab() {
 
       {/* Meta */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#6B3E26]">
+        <p className="text-sm text-hc-muted">
           {isLoading
             ? "Cargando…"
             : `${filtered.length} licor${filtered.length !== 1 ? "es" : ""}`}
@@ -286,31 +286,31 @@ export function LicoresTab() {
       </div>
 
       {/* Tabla desktop */}
-      <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
+      <div className="hidden md:block rounded-2xl border border-hc-line overflow-hidden bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+            <tr className="bg-hc-hover border-b border-hc-line">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Licor
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Cantidad (24cm)
               </th>
-              <th className="px-4 py-3 text-right  text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-right  text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Costo estimado
               </th>
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Notas
               </th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f9eef2]">
+          <tbody className="divide-y divide-hc-line">
             {isLoading && (
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   Cargando…
                 </td>
@@ -320,7 +320,7 @@ export function LicoresTab() {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   No se encontraron licores
                 </td>
@@ -334,9 +334,9 @@ export function LicoresTab() {
               return (
                 <tr
                   key={item.ingredienteId}
-                  className="hover:bg-[#FFF7F0]/60 transition group"
+                  className="hover:bg-hc-hover/60 transition group"
                 >
-                  <td className="px-4 py-3 font-medium text-[#3d1a24]">
+                  <td className="px-4 py-3 font-medium text-hc-ink">
                     <div className="flex items-center gap-3">
                       <RawThumb src={item.ingredienteImagenUrl} alt={item.ingredienteNombre} />
                       <span>{item.ingredienteNombre}</span>
@@ -344,26 +344,26 @@ export function LicoresTab() {
                   </td>
                   <td className="px-4 py-3 text-center">
                     {item.cantidad != null ? (
-                      <span className="font-semibold text-[#AA6A42]">
+                      <span className="font-semibold text-hc-soft">
                         {item.cantidad} ml
                       </span>
                     ) : (
-                      <span className="text-[#AA6A42] text-xs">
+                      <span className="text-hc-soft text-xs">
                         Sin definir
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-[#c0607a]">
+                  <td className="px-4 py-3 text-right font-medium text-hc-rose">
                     {costoEst ? `$${costoEst}` : "—"}
                   </td>
-                  <td className="px-4 py-3 text-[#AA6A42]/70 text-sm max-w-xs">
+                  <td className="px-4 py-3 text-hc-soft/70 text-sm max-w-xs">
                     <p className="truncate">{item.notas ?? "—"}</p>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                       <button
                         onClick={() => setEditItem(item)}
-                        className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                        className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                         title="Editar cantidad"
                       >
                         <svg
@@ -390,7 +390,7 @@ export function LicoresTab() {
       {/* Cards mobile */}
       <div className="flex md:hidden flex-col gap-3">
         {isLoading && (
-          <p className="text-center text-[#AA6A42] text-sm py-8">Cargando…</p>
+          <p className="text-center text-hc-soft text-sm py-8">Cargando…</p>
         )}
         {filtered.map((item) => {
           const costoEst =
@@ -400,35 +400,35 @@ export function LicoresTab() {
           return (
             <div
               key={item.ingredienteId}
-              className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
+              className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
                 <RawThumb src={item.ingredienteImagenUrl} alt={item.ingredienteNombre} size="sm" />
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[#3d1a24]">
+                  <p className="font-semibold text-hc-ink">
                     {item.ingredienteNombre}
                   </p>
                   <div className="flex gap-3 mt-1.5">
-                    <span className="text-[12px] text-[#6B3E26]">
+                    <span className="text-[12px] text-hc-muted">
                       {item.cantidad != null
                         ? `${item.cantidad} ml`
                         : "Sin cantidad"}
                     </span>
                     {costoEst && (
-                      <span className="text-[12px] font-bold text-[#c0607a]">
+                      <span className="text-[12px] font-bold text-hc-rose">
                         ${costoEst}
                       </span>
                     )}
                   </div>
                   {item.notas && (
-                    <p className="text-[11px] text-[#6B3E26] mt-1">
+                    <p className="text-[11px] text-hc-muted mt-1">
                       {item.notas}
                     </p>
                   )}
                 </div>
                 <button
                   onClick={() => setEditItem(item)}
-                  className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition shrink-0"
+                  className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition shrink-0"
                 >
                   <svg
                     viewBox="0 0 24 24"

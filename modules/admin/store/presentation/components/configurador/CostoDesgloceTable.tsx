@@ -23,73 +23,73 @@ export function CostoDesgloseTable({ desglose, cantidad }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+        <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
           Resumen de costos
         </p>
-        <span className="text-[11px] text-[#6B3E26]">
+        <span className="text-[11px] text-hc-muted">
           Factor volumen: {factorVolumen.toFixed(4)}
         </span>
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-xl border border-[#f0e0d0] bg-[#FFF7F0] py-8 text-center text-[#AA6A42] text-sm">
+        <div className="rounded-xl border border-hc-line bg-hc-hover py-8 text-center text-hc-soft text-sm">
           Selecciona las opciones del pastel para ver el desglose de costos
         </div>
       ) : (
-        <div className="rounded-xl border border-[#f0e0d0] overflow-hidden bg-white">
+        <div className="rounded-xl border border-hc-line overflow-hidden bg-white">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-                <th className="px-3 py-2 text-left  text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <tr className="bg-hc-hover border-b border-hc-line">
+                <th className="px-3 py-2 text-left  text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                   Concepto
                 </th>
-                <th className="px-3 py-2 text-right text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                   Costo base
                 </th>
-                <th className="px-3 py-2 text-center text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-3 py-2 text-center text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                   Factor
                 </th>
-                <th className="px-3 py-2 text-right text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                   Costo final
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f9eef2]">
+            <tbody className="divide-y divide-hc-line">
               {items.map((item, i) => (
                 <tr key={i}>
                   <td className="px-3 py-2">
-                    <p className="font-medium text-[#3d1a24] text-[13px]">
+                    <p className="font-medium text-hc-ink text-[13px]">
                       {item.concepto}
                     </p>
                     {item.detalle && (
-                      <p className="text-[11px] text-[#6B3E26]">
+                      <p className="text-[11px] text-hc-muted">
                         {item.detalle}
                       </p>
                     )}
                   </td>
-                  <td className="px-3 py-2 text-right text-[#AA6A42]/70">
+                  <td className="px-3 py-2 text-right text-hc-soft/70">
                     ${item.costoBase.toFixed(2)}
                   </td>
-                  <td className="px-3 py-2 text-center text-[#6B3E26]">
+                  <td className="px-3 py-2 text-center text-hc-muted">
                     {item.factorAplicado === 1
                       ? "fijo"
                       : item.factorAplicado.toFixed(3)}
                   </td>
-                  <td className="px-3 py-2 text-right font-medium text-[#AA6A42]">
+                  <td className="px-3 py-2 text-right font-medium text-hc-soft">
                     ${item.costoFinal.toFixed(2)}
                   </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr className="bg-[#FFF7F0]/60 border-t border-[#f0e0d0]">
+              <tr className="bg-hc-hover/60 border-t border-hc-line">
                 <td
                   colSpan={3}
-                  className="px-3 py-1.5 text-right text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider"
+                  className="px-3 py-1.5 text-right text-[11px] font-semibold text-hc-muted uppercase tracking-wider"
                 >
                   Costo de insumos
                 </td>
-                <td className="px-3 py-1.5 text-right font-semibold text-[#AA6A42]">
+                <td className="px-3 py-1.5 text-right font-semibold text-hc-soft">
                   ${costoInsumos.toFixed(2)}
                 </td>
               </tr>
@@ -100,47 +100,47 @@ export function CostoDesgloseTable({ desglose, cantidad }: Props) {
 
       {/* Cargos adicionales */}
       {cargosAdicionales.length > 0 && (
-        <div className="rounded-xl border border-[#f0e0d0] overflow-hidden bg-white">
+        <div className="rounded-xl border border-hc-line overflow-hidden bg-white">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-                <th className="px-3 py-2 text-left  text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <tr className="bg-hc-hover border-b border-hc-line">
+                <th className="px-3 py-2 text-left  text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                   Cargo adicional
                 </th>
-                <th className="px-3 py-2 text-right text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                   Base
                 </th>
-                <th className="px-3 py-2 text-right text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <th className="px-3 py-2 text-right text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                   Monto
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f9eef2]">
+            <tbody className="divide-y divide-hc-line">
               {cargosAdicionales.map((c, i) => (
                 <tr key={i}>
                   <td className="px-3 py-2">
-                    <p className="font-medium text-[#3d1a24] text-[13px]">
+                    <p className="font-medium text-hc-ink text-[13px]">
                       {c.concepto}
                     </p>
                   </td>
-                  <td className="px-3 py-2 text-right text-[#AA6A42]/70">
+                  <td className="px-3 py-2 text-right text-hc-soft/70">
                     ${c.base.toFixed(2)}
                   </td>
-                  <td className="px-3 py-2 text-right font-medium text-[#AA6A42]">
+                  <td className="px-3 py-2 text-right font-medium text-hc-soft">
                     ${c.monto.toFixed(2)}
                   </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr className="bg-[#FFF7F0] border-t border-[#f0e0d0]">
+              <tr className="bg-hc-hover border-t border-hc-line">
                 <td
                   colSpan={2}
-                  className="px-3 py-2 text-right text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider"
+                  className="px-3 py-2 text-right text-[11px] font-semibold text-hc-muted uppercase tracking-wider"
                 >
                   Costo de producción (× {cantidad})
                 </td>
-                <td className="px-3 py-2 text-right font-bold text-[#AA6A42]">
+                <td className="px-3 py-2 text-right font-bold text-hc-soft">
                   ${costoFinal.toFixed(2)}
                 </td>
               </tr>
@@ -150,7 +150,7 @@ export function CostoDesgloseTable({ desglose, cantidad }: Props) {
       )}
 
       {/* Precio final destacado */}
-      <div className="rounded-2xl bg-gradient-to-br from-[#c0607a] to-[#AA6A42] px-5 py-4 flex items-center justify-between">
+      <div className="rounded-2xl bg-gradient-to-br from-hc-rose to-hc-soft px-5 py-4 flex items-center justify-between">
         <div>
           <p className="text-[11px] font-semibold text-white/70 uppercase tracking-wider">
             Precio sugerido

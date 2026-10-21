@@ -42,7 +42,7 @@ export function FinanzasToggle({ checked, onChange, showLabel = true }: Props) {
       <span
         className={
           "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors " +
-          (checked ? "bg-[#c0607a]" : "bg-[#e8c4a0]")
+          (checked ? "bg-hc-rose" : "bg-hc-line-strong")
         }
       >
         <span
@@ -53,7 +53,7 @@ export function FinanzasToggle({ checked, onChange, showLabel = true }: Props) {
         />
       </span>
       {showLabel && (
-        <span className="text-[12px] font-semibold text-[#6B3E26]">Finanzas</span>
+        <span className="text-[12px] font-semibold text-hc-muted">Finanzas</span>
       )}
     </button>
   );

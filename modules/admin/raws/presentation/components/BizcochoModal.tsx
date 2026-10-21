@@ -175,7 +175,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
 
   return (
     <AnimatePresence>
@@ -187,7 +187,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
 
           <motion.div
@@ -198,15 +198,15 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] flex flex-col overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
-                <h2 className="font-bold text-[#AA6A42] text-lg">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover shrink-0">
+                <h2 className="font-bold text-hc-soft text-lg">
                   {isEdit ? "Editar bizcocho" : "Nuevo bizcocho"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -228,11 +228,11 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
               >
                 {/* Imagen */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Imagen
                   </label>
                   <div className="flex items-center gap-4">
-                    <div className="w-24 h-24 rounded-xl border border-[#f0e0d0] bg-[#FFF7F0] overflow-hidden flex items-center justify-center shrink-0">
+                    <div className="w-24 h-24 rounded-xl border border-hc-line bg-hc-hover overflow-hidden flex items-center justify-center shrink-0">
                       {imagenUrl ? (
                         <img
                           src={imagenUrl}
@@ -242,7 +242,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                       ) : (
                         <svg
                           viewBox="0 0 24 24"
-                          className="w-8 h-8 text-[#e8c4a0]"
+                          className="w-8 h-8 text-hc-line-strong"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="1.5"
@@ -267,7 +267,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                       <label
                         htmlFor="bizcocho-image-upload"
                         className={
-                          "cursor-pointer text-center py-2 px-3 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-[13px] font-semibold hover:bg-[#FFF7F0] transition " +
+                          "cursor-pointer text-center py-2 px-3 rounded-lg border border-hc-line-strong text-hc-soft text-[13px] font-semibold hover:bg-hc-hover transition " +
                           (uploading ? "opacity-50 cursor-not-allowed" : "")
                         }
                       >
@@ -277,7 +277,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                             ? "Cambiar imagen"
                             : "Subir imagen"}
                       </label>
-                      <p className="text-[11px] text-[#6B3E26]">
+                      <p className="text-[11px] text-hc-muted">
                         JPG, PNG, WEBP o GIF · máx. 5MB
                       </p>
                     </div>
@@ -286,7 +286,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
 
                 {/* Nombre */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Nombre
                   </label>
                   <input
@@ -300,9 +300,9 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
 
                 {/* Descripción */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Descripción{" "}
-                    <span className="text-[#AA6A42] normal-case font-normal">
+                    <span className="text-hc-soft normal-case font-normal">
                       (visible para clientes)
                     </span>
                   </label>
@@ -317,9 +317,9 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
 
                 {/* Elaboración */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Elaboración{" "}
-                    <span className="text-[#AA6A42] normal-case font-normal">
+                    <span className="text-hc-soft normal-case font-normal">
                       (procedimiento interno)
                     </span>
                   </label>
@@ -355,10 +355,10 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                 {/* Ingredientes */}
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                       Ingredientes
                     </label>
-                    <span className="text-[11px] text-[#6B3E26]">
+                    <span className="text-[11px] text-hc-muted">
                       {lineas.length} agregado{lineas.length !== 1 ? "s" : ""}
                     </span>
                   </div>
@@ -372,11 +372,11 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                       placeholder="Buscar y agregar ingrediente…"
                     />
                     {ingLoading ? (
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-[#c0607a] border-t-transparent rounded-full animate-spin" />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-hc-rose border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <svg
                         viewBox="0 0 24 24"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#AA6A42] pointer-events-none"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-hc-soft pointer-events-none"
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="2"
@@ -387,7 +387,7 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                       </svg>
                     )}
                     {showDropdown && ingResults.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#f0e0d0] rounded-xl shadow-lg z-10 overflow-hidden">
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-hc-line rounded-xl shadow-lg z-10 overflow-hidden">
                         {ingResults.map((ing) => (
                           <button
                             key={ing.id}
@@ -396,12 +396,12 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                             disabled={lineas.some(
                               (l) => l.ingredienteId === ing.id,
                             )}
-                            className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition border-b border-[#f9eef2] last:border-0"
+                            className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition border-b border-hc-line last:border-0"
                           >
-                            <span className="text-[#3d1a24] font-medium">
+                            <span className="text-hc-ink font-medium">
                               {ing.nombre}
                             </span>
-                            <span className="text-[11px] text-[#6B3E26]">
+                            <span className="text-[11px] text-hc-muted">
                               ${ing.costoUnidadMinima?.toFixed(4)} /{" "}
                               {ing.unidadBase}
                             </span>
@@ -413,30 +413,30 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
 
                   {/* Tabla */}
                   {lineas.length > 0 && (
-                    <div className="rounded-xl border border-[#f0e0d0] overflow-hidden">
+                    <div className="rounded-xl border border-hc-line overflow-hidden">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-                            <th className="px-3 py-2 text-left   text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                          <tr className="bg-hc-hover border-b border-hc-line">
+                            <th className="px-3 py-2 text-left   text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                               Ingrediente
                             </th>
-                            <th className="px-3 py-2 text-center text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                            <th className="px-3 py-2 text-center text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                               Cantidad
                             </th>
-                            <th className="px-3 py-2 text-right  text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                            <th className="px-3 py-2 text-right  text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                               Costo
                             </th>
                             <th className="px-3 py-2 w-8" />
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#f9eef2]">
+                        <tbody className="divide-y divide-hc-line">
                           {lineas.map((l) => (
                             <tr key={l.ingredienteId}>
                               <td className="px-3 py-2">
-                                <p className="font-medium text-[#3d1a24] text-[13px]">
+                                <p className="font-medium text-hc-ink text-[13px]">
                                   {l._nombre}
                                 </p>
-                                <p className="text-[11px] text-[#6B3E26]">
+                                <p className="text-[11px] text-hc-muted">
                                   ${l._costoUnidad.toFixed(4)}/{l._unidad}
                                 </p>
                               </td>
@@ -453,21 +453,21 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                                         Number(e.target.value),
                                       )
                                     }
-                                    className="w-20 text-center px-2 py-1 rounded-lg border border-[#e8c4a0] text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] transition"
+                                    className="w-20 text-center px-2 py-1 rounded-lg border border-hc-line-strong text-sm text-hc-ink focus:outline-none focus:border-hc-rose transition"
                                   />
-                                  <span className="text-[11px] text-[#6B3E26]">
+                                  <span className="text-[11px] text-hc-muted">
                                     {l._unidad}
                                   </span>
                                 </div>
                               </td>
-                              <td className="px-3 py-2 text-right font-medium text-[#AA6A42] text-[13px]">
+                              <td className="px-3 py-2 text-right font-medium text-hc-soft text-[13px]">
                                 ${(l.cantidad * l._costoUnidad).toFixed(2)}
                               </td>
                               <td className="px-3 py-2">
                                 <button
                                   type="button"
                                   onClick={() => removeLinea(l.ingredienteId)}
-                                  className="p-1 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
+                                  className="p-1 rounded-lg hover:bg-red-50 text-hc-soft hover:text-red-500 transition"
                                 >
                                   <svg
                                     viewBox="0 0 24 24"
@@ -485,14 +485,14 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
                           ))}
                         </tbody>
                         <tfoot>
-                          <tr className="bg-[#FFF7F0] border-t border-[#f0e0d0]">
+                          <tr className="bg-hc-hover border-t border-hc-line">
                             <td
                               colSpan={2}
-                              className="px-3 py-2 text-right text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider"
+                              className="px-3 py-2 text-right text-[11px] font-semibold text-hc-muted uppercase tracking-wider"
                             >
                               Total
                             </td>
-                            <td className="px-3 py-2 text-right font-bold text-[#c0607a] text-base">
+                            <td className="px-3 py-2 text-right font-bold text-hc-rose text-base">
                               ${costoTotal.toFixed(2)}
                             </td>
                             <td />
@@ -511,18 +511,18 @@ export function BizcochoModal({ open, bizcocho, onClose, onSave, onUploadImage }
               </form>
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+              <div className="flex gap-3 px-6 py-4 border-t border-hc-line bg-white shrink-0">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSubmit as any}
                   disabled={saving || uploading}
-                  className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                  className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                 >
                   {saving
                     ? "Guardando…"

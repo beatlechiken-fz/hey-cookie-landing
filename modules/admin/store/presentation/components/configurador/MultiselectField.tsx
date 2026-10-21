@@ -39,18 +39,18 @@ export function MultiSelectField({
 
   const chipBase =
     "px-3 py-1.5 rounded-full text-[12px] font-medium border transition cursor-pointer select-none";
-  const chipActive = "bg-[#c0607a] text-white border-[#c0607a]";
+  const chipActive = "bg-hc-rose text-white border-hc-rose";
   const chipInactive =
-    "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]";
+    "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover";
 
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
-        <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+        <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
           {label}
         </label>
         {!isNinguno && (
-          <span className="text-[11px] text-[#6B3E26]">
+          <span className="text-[11px] text-hc-muted">
             {values.length} seleccionado{values.length !== 1 ? "s" : ""}
           </span>
         )}
@@ -78,7 +78,7 @@ export function MultiSelectField({
           );
         })}
         {options.length === 0 && (
-          <span className="text-[12px] text-[#AA6A42] py-1.5">
+          <span className="text-[12px] text-hc-soft py-1.5">
             Sin opciones disponibles
           </span>
         )}

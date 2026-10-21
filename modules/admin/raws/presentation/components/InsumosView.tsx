@@ -81,11 +81,11 @@ function ActiveFilterChip({
   onRemove: () => void;
 }) {
   return (
-    <span className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-[#c0607a]/10 text-[#c0607a] text-[12px] font-semibold border border-[#c0607a]/20">
+    <span className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 rounded-full bg-hc-rose/10 text-hc-rose text-[12px] font-semibold border border-hc-rose/20">
       {label}
       <button
         onClick={onRemove}
-        className="hover:bg-[#c0607a]/20 rounded-full p-0.5 transition"
+        className="hover:bg-hc-rose/20 rounded-full p-0.5 transition"
       >
         <svg
           viewBox="0 0 24 24"
@@ -136,14 +136,14 @@ function Tab({
       onClick={onClick}
       className={
         "relative px-5 py-2.5 text-sm font-semibold transition " +
-        (active ? "text-[#c0607a]" : "text-[#6B3E26] hover:text-[#AA6A42]")
+        (active ? "text-hc-rose" : "text-hc-muted hover:text-hc-soft")
       }
     >
       {label}
       {active && (
         <motion.div
           layoutId="insumos-tab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#c0607a] rounded-full"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-hc-rose rounded-full"
         />
       )}
     </button>
@@ -252,7 +252,7 @@ function IngredienteModal({
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
 
   return (
     <AnimatePresence>
@@ -264,7 +264,7 @@ function IngredienteModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="modal"
@@ -274,14 +274,14 @@ function IngredienteModal({
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
-                <h2 className="font-bold text-[#AA6A42] text-lg">
+            <div className="pointer-events-auto w-full max-w-lg bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover">
+                <h2 className="font-bold text-hc-soft text-lg">
                   {isEdit ? "Editar ingrediente" : "Nuevo ingrediente"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -301,15 +301,15 @@ function IngredienteModal({
               >
                 {/* Imagen */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Imagen
                   </label>
                   <div className="flex items-center gap-4">
-                    <div className="w-24 h-24 rounded-xl border border-[#f0e0d0] bg-[#FFF7F0] overflow-hidden flex items-center justify-center shrink-0">
+                    <div className="w-24 h-24 rounded-xl border border-hc-line bg-hc-hover overflow-hidden flex items-center justify-center shrink-0">
                       {form.imagenUrl ? (
                         <img src={form.imagenUrl} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <svg viewBox="0 0 24 24" className="w-8 h-8 text-[#e8c4a0]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg viewBox="0 0 24 24" className="w-8 h-8 text-hc-line-strong" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="3" y="3" width="18" height="18" rx="2" />
                           <circle cx="9" cy="9" r="2" />
                           <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
@@ -327,17 +327,17 @@ function IngredienteModal({
                       />
                       <label
                         htmlFor="ingrediente-image-upload"
-                        className={"cursor-pointer text-center py-2 px-3 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-[13px] font-semibold hover:bg-[#FFF7F0] transition " + (uploading ? "opacity-50 cursor-not-allowed" : "")}
+                        className={"cursor-pointer text-center py-2 px-3 rounded-lg border border-hc-line-strong text-hc-soft text-[13px] font-semibold hover:bg-hc-hover transition " + (uploading ? "opacity-50 cursor-not-allowed" : "")}
                       >
                         {uploading ? "Subiendo…" : form.imagenUrl ? "Cambiar imagen" : "Subir imagen"}
                       </label>
-                      <p className="text-[11px] text-[#6B3E26]">JPG, PNG, WEBP o GIF · máx. 5MB</p>
+                      <p className="text-[11px] text-hc-muted">JPG, PNG, WEBP o GIF · máx. 5MB</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Nombre
                   </label>
                   <input
@@ -351,7 +351,7 @@ function IngredienteModal({
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Categoría
                   </label>
                   <select
@@ -373,7 +373,7 @@ function IngredienteModal({
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                       Cantidad base
                     </label>
                     <input
@@ -394,7 +394,7 @@ function IngredienteModal({
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                       Unidad base
                     </label>
                     <select
@@ -416,11 +416,11 @@ function IngredienteModal({
                   </div>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Costo base (MXN)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B3E26] text-sm">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-hc-muted text-sm">
                       $
                     </span>
                     <input
@@ -441,12 +441,12 @@ function IngredienteModal({
                 </div>
 
                 {/* Toggle topping */}
-                <label className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-[#f0e0d0] bg-[#FFF7F0] cursor-pointer">
+                <label className="flex items-center justify-between px-3 py-2.5 rounded-xl border border-hc-line bg-hc-hover cursor-pointer">
                   <div>
-                    <p className="text-sm font-semibold text-[#AA6A42]">
+                    <p className="text-sm font-semibold text-hc-soft">
                       Es topping
                     </p>
-                    <p className="text-[11px] text-[#6B3E26]">
+                    <p className="text-[11px] text-hc-muted">
                       Aparecerá en el listado de toppings
                     </p>
                   </div>
@@ -459,7 +459,7 @@ function IngredienteModal({
                     }
                     className={
                       "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors " +
-                      (form.topping ? "bg-[#c0607a]" : "bg-gray-200")
+                      (form.topping ? "bg-hc-rose" : "bg-gray-200")
                     }
                   >
                     <span
@@ -472,26 +472,26 @@ function IngredienteModal({
                 </label>
 
                 {(costoKgL || costoUnidad) && (
-                  <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-4 py-3 flex gap-6">
+                  <div className="rounded-xl bg-hc-hover border border-hc-line px-4 py-3 flex gap-6">
                     {costoKgL && (
                       <div>
-                        <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                        <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                           Costo / {form.unidadBase === "gr" ? "Kg" : "L"}
                         </p>
-                        <p className="text-[15px] font-bold text-[#AA6A42]">
+                        <p className="text-[15px] font-bold text-hc-soft">
                           ${costoKgL}
                         </p>
                       </div>
                     )}
                     {costoUnidad && (
                       <div>
-                        <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                        <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                           Costo /{" "}
                           {form.unidadBase === "piezas"
                             ? "pieza"
                             : form.unidadBase}
                         </p>
-                        <p className="text-[15px] font-bold text-[#AA6A42]">
+                        <p className="text-[15px] font-bold text-hc-soft">
                           ${costoUnidad}
                         </p>
                       </div>
@@ -509,14 +509,14 @@ function IngredienteModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                    className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={saving || uploading}
-                    className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 disabled:cursor-not-allowed transition"
                   >
                     {saving
                       ? "Guardando…"
@@ -581,7 +581,7 @@ function FilterDrawer({
   const checkIcon = (
     <svg
       viewBox="0 0 24 24"
-      className="w-4 h-4 text-[#c0607a] shrink-0"
+      className="w-4 h-4 text-hc-rose shrink-0"
       fill="none"
       stroke="currentColor"
       strokeWidth="2.5"
@@ -612,18 +612,18 @@ function FilterDrawer({
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
             className="fixed left-0 top-0 h-full w-[320px] z-50 flex flex-col bg-white"
             style={{
-              borderRight: "1px solid #f0e0d0",
+              borderRight: "1px solid #EFE6E2",
               boxShadow: "4px 0 32px rgba(123,45,66,0.10)",
             }}
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[#f0e0d0] bg-[#FFF7F0]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-hc-line bg-hc-hover">
               <div className="flex items-center gap-2.5">
-                <SlidersIcon className="w-4 h-4 text-[#c0607a]" />
-                <h2 className="font-bold text-[#AA6A42] text-base">Filtros</h2>
+                <SlidersIcon className="w-4 h-4 text-hc-rose" />
+                <h2 className="font-bold text-hc-soft text-base">Filtros</h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -639,7 +639,7 @@ function FilterDrawer({
             </div>
             <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-7">
               <div>
-                <p className="text-[11px] font-semibold text-[#6B3E26] uppercase tracking-widest mb-3">
+                <p className="text-[11px] font-semibold text-hc-muted uppercase tracking-widest mb-3">
                   Categoría
                 </p>
                 <div className="flex flex-col gap-0.5">
@@ -655,8 +655,8 @@ function FilterDrawer({
                         className={
                           "flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-[13px] font-medium text-left transition border " +
                           (active
-                            ? "bg-[#FFF7F0] border-[#e8c4a0] text-[#AA6A42] font-semibold"
-                            : "bg-transparent border-transparent text-[#AA6A42]/70 hover:bg-[#FFF7F0] hover:border-[#f0e0d0]")
+                            ? "bg-hc-hover border-hc-line-strong text-hc-soft font-semibold"
+                            : "bg-transparent border-transparent text-hc-soft/70 hover:bg-hc-hover hover:border-hc-line")
                         }
                       >
                         {c.label}
@@ -666,9 +666,9 @@ function FilterDrawer({
                   })}
                 </div>
               </div>
-              <div className="h-px bg-[#f0e0d0]" />
+              <div className="h-px bg-hc-sunken" />
               <div>
-                <p className="text-[11px] font-semibold text-[#6B3E26] uppercase tracking-widest mb-3">
+                <p className="text-[11px] font-semibold text-hc-muted uppercase tracking-widest mb-3">
                   Unidad base
                 </p>
                 <div className="flex flex-col gap-0.5">
@@ -684,8 +684,8 @@ function FilterDrawer({
                         className={
                           "flex items-center justify-between w-full px-3 py-2.5 rounded-xl text-[13px] font-medium text-left transition border " +
                           (active
-                            ? "bg-[#FFF7F0] border-[#e8c4a0] text-[#AA6A42] font-semibold"
-                            : "bg-transparent border-transparent text-[#AA6A42]/70 hover:bg-[#FFF7F0] hover:border-[#f0e0d0]")
+                            ? "bg-hc-hover border-hc-line-strong text-hc-soft font-semibold"
+                            : "bg-transparent border-transparent text-hc-soft/70 hover:bg-hc-hover hover:border-hc-line")
                         }
                       >
                         {u.label}
@@ -696,14 +696,14 @@ function FilterDrawer({
                 </div>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-[#f0e0d0] bg-[#FFF7F0] flex flex-col gap-2">
+            <div className="px-6 py-4 border-t border-hc-line bg-hc-hover flex flex-col gap-2">
               {hasChanges && (
                 <button
                   onClick={() => {
                     setDraftCat("");
                     setDraftUnidad("");
                   }}
-                  className="w-full py-2 rounded-xl text-[13px] font-semibold text-[#6B3E26] hover:bg-[#f0e0d0] transition"
+                  className="w-full py-2 rounded-xl text-[13px] font-semibold text-hc-muted hover:bg-hc-sunken transition"
                 >
                   Limpiar filtros
                 </button>
@@ -714,7 +714,7 @@ function FilterDrawer({
                   onUnidadBaseChange(draftUnidad);
                   onClose();
                 }}
-                className="w-full py-3 rounded-xl bg-[#c0607a] text-white text-[14px] font-bold hover:bg-[#a84d66] transition"
+                className="w-full py-3 rounded-xl bg-hc-rose text-white text-[14px] font-bold hover:bg-hc-rose-hover transition"
               >
                 Ver resultados
               </button>
@@ -749,7 +749,7 @@ function DeleteDialog({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="dlg"
@@ -759,7 +759,7 @@ function DeleteDialog({
             transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 flex flex-col gap-4">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                   <svg
@@ -774,21 +774,21 @@ function DeleteDialog({
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#3d1a24] text-base">
+                  <h3 className="font-bold text-hc-ink text-base">
                     Eliminar ingrediente
                   </h3>
-                  <p className="text-sm text-[#6B3E26]">
+                  <p className="text-sm text-hc-muted">
                     Esta acción no se puede deshacer
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[#AA6A42]">
+              <p className="text-sm text-hc-soft">
                 ¿Confirmas que deseas eliminar <strong>"{nombre}"</strong>?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                 >
                   Cancelar
                 </button>
@@ -886,13 +886,13 @@ function InsumosTab() {
             className={
               "relative flex items-center justify-center w-10 h-10 rounded-xl border transition shrink-0 " +
               (hasFilters
-                ? "bg-[#c0607a] text-white border-[#c0607a]"
-                : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]")
+                ? "bg-hc-rose text-white border-hc-rose"
+                : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover")
             }
           >
             <SlidersIcon className="w-4 h-4" />
             {hasFilters && (
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#c0607a]" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-hc-rose" />
             )}
           </button>
           <div className="relative flex-1">
@@ -901,9 +901,9 @@ function InsumosTab() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar ingrediente…"
-              className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+              className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
             />
-            <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+            <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
               <svg
                 viewBox="0 0 24 24"
                 className="w-4 h-4"
@@ -918,7 +918,7 @@ function InsumosTab() {
             </div>
             <button
               onClick={openCreate}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] transition"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover transition"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -956,7 +956,7 @@ function InsumosTab() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#6B3E26]">
+        <p className="text-sm text-hc-muted">
           {isLoading
             ? "Cargando…"
             : `${total} ingrediente${total !== 1 ? "s" : ""}`}
@@ -967,10 +967,10 @@ function InsumosTab() {
       </div>
 
       {/* Tabla desktop */}
-      <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
+      <div className="hidden md:block rounded-2xl border border-hc-line overflow-hidden bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
+            <tr className="bg-hc-hover border-b border-hc-line">
               {[
                 "Ingrediente",
                 "Categoría",
@@ -985,7 +985,7 @@ function InsumosTab() {
                 <th
                   key={i}
                   className={
-                    "px-4 py-3 text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider " +
+                    "px-4 py-3 text-[11px] font-semibold text-hc-muted uppercase tracking-wider " +
                     (i === 0 || i === 1
                       ? "text-left"
                       : i === 3 || i === 7
@@ -1000,12 +1000,12 @@ function InsumosTab() {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f9eef2]">
+          <tbody className="divide-y divide-hc-line">
             {isLoading && (
               <tr>
                 <td
                   colSpan={9}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   Cargando…
                 </td>
@@ -1015,7 +1015,7 @@ function InsumosTab() {
               <tr>
                 <td
                   colSpan={9}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   No se encontraron ingredientes
                 </td>
@@ -1024,9 +1024,9 @@ function InsumosTab() {
             {ingredientes.map((ing) => (
               <tr
                 key={ing.id}
-                className="hover:bg-[#FFF7F0]/60 transition group"
+                className="hover:bg-hc-hover/60 transition group"
               >
-                <td className="px-4 py-3 font-medium text-[#3d1a24]">
+                <td className="px-4 py-3 font-medium text-hc-ink">
                   <div className="flex items-center gap-3">
                     <RawThumb src={ing.imagenUrl} alt={ing.nombre} />
                     <span>{ing.nombre}</span>
@@ -1035,19 +1035,19 @@ function InsumosTab() {
                 <td className="px-4 py-3">
                   <CategoriaBadge categoria={ing.categoria} />
                 </td>
-                <td className="px-4 py-3 text-right text-[#AA6A42]">
+                <td className="px-4 py-3 text-right text-hc-soft">
                   {ing.cantidadBase ?? "—"}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <UnidadBadge unidad={ing.unidadBase} />
                 </td>
-                <td className="px-4 py-3 text-right text-[#AA6A42] font-medium">
+                <td className="px-4 py-3 text-right text-hc-soft font-medium">
                   {fmt(ing.costoBase)}
                 </td>
-                <td className="px-4 py-3 text-right text-[#6B3E26]">
+                <td className="px-4 py-3 text-right text-hc-muted">
                   {fmt(ing.costoKgL)}
                 </td>
-                <td className="px-4 py-3 text-right text-[#6B3E26]">
+                <td className="px-4 py-3 text-right text-hc-muted">
                   {fmt(ing.costoUnidadMinima, 4)}
                 </td>
                 {/* Toggle topping */}
@@ -1057,7 +1057,7 @@ function InsumosTab() {
                     disabled={togglingId === ing.id}
                     className={
                       "relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors disabled:opacity-50 " +
-                      (ing.topping ? "bg-[#c0607a]" : "bg-gray-200")
+                      (ing.topping ? "bg-hc-rose" : "bg-gray-200")
                     }
                     title={
                       ing.topping ? "Quitar de toppings" : "Marcar como topping"
@@ -1075,7 +1075,7 @@ function InsumosTab() {
                   <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                     <button
                       onClick={() => openEdit(ing)}
-                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                      className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -1091,7 +1091,7 @@ function InsumosTab() {
                     </button>
                     <button
                       onClick={() => setDeleteTarget(ing)}
-                      className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                      className="p-1.5 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -1120,13 +1120,13 @@ function InsumosTab() {
         {ingredientes.map((ing) => (
           <div
             key={ing.id}
-            className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
+            className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-2 mb-3">
               <div className="flex items-start gap-3 min-w-0">
                 <RawThumb src={ing.imagenUrl} alt={ing.nombre} size="sm" />
                 <div className="flex flex-col gap-1.5 min-w-0">
-                  <p className="font-semibold text-[#3d1a24]">{ing.nombre}</p>
+                  <p className="font-semibold text-hc-ink">{ing.nombre}</p>
                   <div className="flex gap-1.5 flex-wrap">
                     <CategoriaBadge categoria={ing.categoria} />
                     <UnidadBadge unidad={ing.unidadBase} />
@@ -1139,7 +1139,7 @@ function InsumosTab() {
                   disabled={togglingId === ing.id}
                   className={
                     "relative inline-flex h-5 w-9 rounded-full border-2 border-transparent transition-colors disabled:opacity-50 " +
-                    (ing.topping ? "bg-[#c0607a]" : "bg-gray-200")
+                    (ing.topping ? "bg-hc-rose" : "bg-gray-200")
                   }
                 >
                   <span
@@ -1151,7 +1151,7 @@ function InsumosTab() {
                 </button>
                 <button
                   onClick={() => openEdit(ing)}
-                  className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                  className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -1167,7 +1167,7 @@ function InsumosTab() {
                 </button>
                 <button
                   onClick={() => setDeleteTarget(ing)}
-                  className="p-2 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                  className="p-2 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -1193,11 +1193,11 @@ function InsumosTab() {
                   ["Costo unit.", fmt(ing.costoUnidadMinima, 4)],
                 ] as [string, string][]
               ).map(([label, val]) => (
-                <div key={label} className="bg-[#FFF7F0] rounded-lg px-3 py-2">
-                  <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <div key={label} className="bg-hc-hover rounded-lg px-3 py-2">
+                  <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                     {label}
                   </p>
-                  <p className="text-sm font-bold text-[#AA6A42]">{val}</p>
+                  <p className="text-sm font-bold text-hc-soft">{val}</p>
                 </div>
               ))}
             </div>
@@ -1210,17 +1210,17 @@ function InsumosTab() {
           <button
             onClick={() => setPage(page - 1)}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             ← Anterior
           </button>
-          <span className="text-sm text-[#6B3E26]">
+          <span className="text-sm text-hc-muted">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => setPage(page + 1)}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             Siguiente →
           </button>
@@ -1262,7 +1262,7 @@ export function InsumosView() {
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs */}
-      <div className="flex border-b border-[#f0e0d0]">
+      <div className="flex border-b border-hc-line">
         <Tab
           label="Insumos"
           active={activeTab === "insumos"}

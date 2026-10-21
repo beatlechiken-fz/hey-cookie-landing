@@ -49,7 +49,7 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
   }, [desde, hasta, categoria, proveedor, filtros]);
 
   const inputCls =
-    "px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+    "px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition";
 
   const costoPorProductoFiltrado =
     data?.costoPorProducto.filter((p) =>
@@ -57,14 +57,14 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
     ) ?? [];
 
   if (loading && !data)
-    return <p className="text-center text-[#AA6A42]/50 text-sm py-12">Cargando…</p>;
+    return <p className="text-center text-hc-soft/50 text-sm py-12">Cargando…</p>;
   if (!data) return null;
 
   return (
     <div className="flex flex-col gap-4">
       {/* ── Filtros ── */}
-      <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-4 flex flex-wrap items-center gap-3">
-        <span className="text-[11px] font-semibold text-[#6B3E26]/60 uppercase tracking-wide">
+      <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-4 flex flex-wrap items-center gap-3">
+        <span className="text-[11px] font-semibold text-hc-muted/60 uppercase tracking-wide">
           Filtros
         </span>
         <select
@@ -91,7 +91,7 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
               setCategoria("");
               setProveedor("");
             }}
-            className="text-[12px] font-semibold text-[#AA6A42] hover:text-red-500 transition"
+            className="text-[12px] font-semibold text-hc-soft hover:text-red-500 transition"
           >
             Limpiar
           </button>
@@ -100,27 +100,27 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
 
       {/* ── KPIs ── */}
       <div className="grid sm:grid-cols-3 gap-3">
-        <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-4">
-          <p className="text-[11px] font-semibold text-[#6B3E26]/55 uppercase tracking-wide">
+        <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-4">
+          <p className="text-[11px] font-semibold text-hc-muted/55 uppercase tracking-wide">
             Compras a proveedores
           </p>
-          <p className="text-xl font-bold text-[#3A1F14] mt-1">
+          <p className="text-xl font-bold text-hc-ink mt-1">
             {fmt(data.totalCompras)}
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-4">
-          <p className="text-[11px] font-semibold text-[#6B3E26]/55 uppercase tracking-wide">
+        <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-4">
+          <p className="text-[11px] font-semibold text-hc-muted/55 uppercase tracking-wide">
             Costo de producción (COGS)
           </p>
-          <p className="text-xl font-bold text-[#3A1F14] mt-1">
+          <p className="text-xl font-bold text-hc-ink mt-1">
             {fmt(data.totalCostoProduccion)}
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-4">
-          <p className="text-[11px] font-semibold text-[#6B3E26]/55 uppercase tracking-wide">
+        <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-4">
+          <p className="text-[11px] font-semibold text-hc-muted/55 uppercase tracking-wide">
             Gasto total del período
           </p>
-          <p className="text-xl font-bold text-[#c0607a] mt-1">
+          <p className="text-xl font-bold text-hc-rose mt-1">
             {fmt(data.totalCompras + data.totalCostoProduccion)}
           </p>
         </div>
@@ -128,12 +128,12 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
 
       <div className="grid lg:grid-cols-2 gap-4">
         {/* ── Compras por categoría ── */}
-        <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-5">
-          <h3 className="text-sm font-bold text-[#AA6A42] mb-4">
+        <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
+          <h3 className="text-sm font-bold text-hc-soft mb-4">
             Compras por categoría
           </h3>
           {data.porCategoriaCompra.length === 0 ? (
-            <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+            <p className="text-center text-hc-soft/50 text-sm py-8">
               Sin compras en este período
             </p>
           ) : (
@@ -146,17 +146,17 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
                   return (
                     <div key={c.categoria}>
                       <div className="flex items-center justify-between text-xs mb-1">
-                        <span className="text-[#6B3E26]/70 capitalize">
+                        <span className="text-hc-muted/70 capitalize">
                           {CATEGORIA_COMPRA_LABELS[c.categoria as CategoriaCompra] ??
                             c.categoria}
                         </span>
-                        <span className="font-semibold text-[#3A1F14]">
+                        <span className="font-semibold text-hc-ink">
                           {fmt(c.total)}
                         </span>
                       </div>
-                      <div className="h-1.5 bg-[#f5e8db] rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-hc-sunken rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-[#c0607a]"
+                          className="h-full rounded-full bg-hc-rose"
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -168,12 +168,12 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
         </div>
 
         {/* ── Costo por línea ── */}
-        <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-5">
-          <h3 className="text-sm font-bold text-[#AA6A42] mb-4">
+        <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
+          <h3 className="text-sm font-bold text-hc-soft mb-4">
             Costo de producción por línea
           </h3>
           {data.costoPorLinea.length === 0 ? (
-            <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+            <p className="text-center text-hc-soft/50 text-sm py-8">
               Sin ventas de catálogo en este período
             </p>
           ) : (
@@ -186,12 +186,12 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
                 return (
                   <div key={l.linea}>
                     <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="text-[#6B3E26]/70 capitalize">{l.linea}</span>
-                      <span className="font-semibold text-[#3A1F14]">
+                      <span className="text-hc-muted/70 capitalize">{l.linea}</span>
+                      <span className="font-semibold text-hc-ink">
                         {fmt(l.costoTotal)}
                       </span>
                     </div>
-                    <div className="h-1.5 bg-[#f5e8db] rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-hc-sunken rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full bg-emerald-500"
                         style={{ width: `${pct}%` }}
@@ -206,9 +206,9 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
       </div>
 
       {/* ── Costo por producto ── */}
-      <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-5">
+      <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-[#AA6A42]">
+          <h3 className="text-sm font-bold text-hc-soft">
             Costo de producción por producto
           </h3>
           <input
@@ -219,18 +219,18 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
           />
         </div>
         {costoPorProductoFiltrado.length === 0 ? (
-          <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+          <p className="text-center text-hc-soft/50 text-sm py-8">
             Sin resultados
           </p>
         ) : (
           <div className="overflow-x-auto -mx-1">
             <table className="w-full text-sm min-w-[420px]">
               <thead>
-                <tr className="border-b border-[#f5e8db]">
+                <tr className="border-b border-hc-sunken">
                   {["Producto", "Unidades vendidas", "Costo total"].map((h, i) => (
                     <th
                       key={h}
-                      className={`pb-2.5 text-[10px] font-semibold text-[#6B3E26]/50 uppercase tracking-wider ${
+                      className={`pb-2.5 text-[10px] font-semibold text-hc-muted/50 uppercase tracking-wider ${
                         i > 0 ? "text-right pr-4" : "text-left pr-3"
                       }`}
                     >
@@ -241,14 +241,14 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
               </thead>
               <tbody>
                 {costoPorProductoFiltrado.map((p) => (
-                  <tr key={p.productoId} className="border-b border-[#f5e8db] last:border-0">
-                    <td className="py-2.5 pr-3 text-[#3A1F14] font-medium">
+                  <tr key={p.productoId} className="border-b border-hc-sunken last:border-0">
+                    <td className="py-2.5 pr-3 text-hc-ink font-medium">
                       {p.productoNombre}
                     </td>
-                    <td className="py-2.5 pr-4 text-right text-[#6B3E26]/70 tabular-nums">
+                    <td className="py-2.5 pr-4 text-right text-hc-muted/70 tabular-nums">
                       {p.cantidadVendida}
                     </td>
-                    <td className="py-2.5 pr-4 text-right font-bold text-[#3A1F14] tabular-nums">
+                    <td className="py-2.5 pr-4 text-right font-bold text-hc-ink tabular-nums">
                       {fmt(p.costoTotal)}
                     </td>
                   </tr>
@@ -260,24 +260,24 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
       </div>
 
       {/* ── Detalle de compras ── */}
-      <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-5">
-        <h3 className="text-sm font-bold text-[#AA6A42] mb-4">
+      <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
+        <h3 className="text-sm font-bold text-hc-soft mb-4">
           Compras del período{categoria || proveedor ? " (filtradas)" : ""}
         </h3>
         {data.compras.length === 0 ? (
-          <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+          <p className="text-center text-hc-soft/50 text-sm py-8">
             Sin compras que coincidan con los filtros
           </p>
         ) : (
           <div className="overflow-x-auto -mx-1">
             <table className="w-full text-sm min-w-[480px]">
               <thead>
-                <tr className="border-b border-[#f5e8db]">
+                <tr className="border-b border-hc-sunken">
                   {["Fecha", "Concepto", "Proveedor", "Categoría", "Monto"].map(
                     (h, i) => (
                       <th
                         key={h}
-                        className={`pb-2.5 text-[10px] font-semibold text-[#6B3E26]/50 uppercase tracking-wider ${
+                        className={`pb-2.5 text-[10px] font-semibold text-hc-muted/50 uppercase tracking-wider ${
                           i === 4 ? "text-right pr-4" : "text-left pr-3"
                         }`}
                       >
@@ -289,18 +289,18 @@ export function GastosTab({ desde, hasta, filtros = FILTROS_VACIOS }: Props) {
               </thead>
               <tbody>
                 {data.compras.map((c) => (
-                  <tr key={c.id} className="border-b border-[#f5e8db] last:border-0">
-                    <td className="py-2.5 pr-3 text-[#6B3E26]/70 whitespace-nowrap">
+                  <tr key={c.id} className="border-b border-hc-sunken last:border-0">
+                    <td className="py-2.5 pr-3 text-hc-muted/70 whitespace-nowrap">
                       {fmtD(c.fecha)}
                     </td>
-                    <td className="py-2.5 pr-3 text-[#3A1F14]">{c.concepto}</td>
-                    <td className="py-2.5 pr-3 text-[#6B3E26]/70">
+                    <td className="py-2.5 pr-3 text-hc-ink">{c.concepto}</td>
+                    <td className="py-2.5 pr-3 text-hc-muted/70">
                       {c.proveedor ?? "—"}
                     </td>
                     <td className="py-2.5 pr-3">
                       {c.categoria ? CATEGORIA_COMPRA_LABELS[c.categoria] : "—"}
                     </td>
-                    <td className="py-2.5 pr-4 text-right font-semibold text-[#3A1F14] tabular-nums">
+                    <td className="py-2.5 pr-4 text-right font-semibold text-hc-ink tabular-nums">
                       {fmt(c.monto)}
                     </td>
                   </tr>

@@ -66,10 +66,10 @@ export function OrdenDetailView({ ordenId }: Props) {
   return (
     <div className="flex flex-col gap-5">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-[#6B3E26]">
+      <div className="flex items-center gap-2 text-sm text-hc-muted">
         <button
           onClick={() => router.push("/admin/dashboard/store/ordenes")}
-          className="hover:text-[#c0607a] transition font-medium"
+          className="hover:text-hc-rose transition font-medium"
         >
           {label}
         </button>
@@ -83,7 +83,7 @@ export function OrdenDetailView({ ordenId }: Props) {
         >
           <path d="m9 18 6-6-6-6" />
         </svg>
-        <span className="text-[#AA6A42] font-semibold">
+        <span className="text-hc-soft font-semibold">
           {orden ? `#${orden.numero}` : "Cargando…"}
         </span>
         {orden?.clienteNombre && (
@@ -98,14 +98,14 @@ export function OrdenDetailView({ ordenId }: Props) {
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
-            <span className="text-[#6B3E26]">{orden.clienteNombre}</span>
+            <span className="text-hc-muted">{orden.clienteNombre}</span>
           </>
         )}
       </div>
 
       {/* Estado de carga */}
       {isPending && (
-        <div className="rounded-2xl border border-[#f0e0d0] bg-white p-8 text-center text-[#AA6A42] text-sm">
+        <div className="rounded-2xl border border-hc-line bg-white p-8 text-center text-hc-soft text-sm">
           Cargando detalle…
         </div>
       )}
@@ -115,7 +115,7 @@ export function OrdenDetailView({ ordenId }: Props) {
           <p className="text-red-600 font-medium">{error}</p>
           <button
             onClick={() => router.push("/admin/dashboard/store/ordenes")}
-            className="mt-3 text-sm text-[#c0607a] hover:underline"
+            className="mt-3 text-sm text-hc-rose hover:underline"
           >
             ← Volver a la lista
           </button>

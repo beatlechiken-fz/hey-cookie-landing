@@ -56,10 +56,10 @@ export function OrdenPipeline({ status }: Props) {
                 className={
                   "w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold border-2 transition " +
                   (isDone
-                    ? "bg-[#c0607a] border-[#c0607a] text-white"
+                    ? "bg-hc-rose border-hc-rose text-white"
                     : isCurrent
-                      ? "bg-white border-[#c0607a] text-[#c0607a]"
-                      : "bg-white border-[#e8c4a0] text-[#AA6A42]")
+                      ? "bg-white border-hc-rose text-hc-rose"
+                      : "bg-white border-hc-line-strong text-hc-soft")
                 }
               >
                 {isDone ? (
@@ -82,10 +82,10 @@ export function OrdenPipeline({ status }: Props) {
                 className={
                   "text-[10px] font-medium whitespace-nowrap " +
                   (isCurrent
-                    ? "text-[#c0607a]"
+                    ? "text-hc-rose"
                     : isDone
-                      ? "text-[#AA6A42]"
-                      : "text-[#AA6A42]")
+                      ? "text-hc-soft"
+                      : "text-hc-soft")
                 }
               >
                 {step.label}
@@ -95,7 +95,7 @@ export function OrdenPipeline({ status }: Props) {
               <div
                 className={
                   "h-0.5 w-8 sm:w-12 -mt-4 " +
-                  (isDone ? "bg-[#c0607a]" : "bg-[#f0e0d0]")
+                  (isDone ? "bg-hc-rose" : "bg-hc-sunken")
                 }
               />
             )}

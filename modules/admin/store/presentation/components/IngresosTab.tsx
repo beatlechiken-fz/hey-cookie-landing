@@ -75,23 +75,23 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
   }
 
   const inputCls =
-    "w-full px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] transition text-right";
+    "w-full px-2 py-1 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose transition text-right";
 
   return (
     <div className="flex flex-col gap-4">
       {isLoading && (
-        <p className="text-center text-[#AA6A42] text-sm py-8">
+        <p className="text-center text-hc-soft text-sm py-8">
           Cargando registros…
         </p>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {!isLoading && registros.length === 0 && (
-        <div className="rounded-2xl border border-[#f0e0d0] bg-[#FFF7F0] py-12 text-center">
-          <p className="text-[#AA6A42] text-sm">
+        <div className="rounded-2xl border border-hc-line bg-hc-hover py-12 text-center">
+          <p className="text-hc-soft text-sm">
             Sin ventas registradas en el período
           </p>
-          <p className="text-[11px] text-[#AA6A42] mt-1">
+          <p className="text-[11px] text-hc-soft mt-1">
             Los registros se crean automáticamente al marcar una orden como{" "}
             <strong>Pagado</strong>
           </p>
@@ -99,10 +99,10 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
       )}
 
       {registros.length > 0 && (
-        <div className="rounded-2xl border border-[#f0e0d0] overflow-hidden">
+        <div className="rounded-2xl border border-hc-line overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
+              <tr className="bg-hc-hover border-b border-hc-line">
                 {[
                   "Fecha",
                   "Orden",
@@ -117,23 +117,23 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                 ].map((h) => (
                   <th
                     key={h}
-                    className="px-3 py-2.5 text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider text-right first:text-left"
+                    className="px-3 py-2.5 text-[10px] font-semibold text-hc-muted uppercase tracking-wider text-right first:text-left"
                   >
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f9eef2]">
+            <tbody className="divide-y divide-hc-line">
               {registros.map((r) =>
                 editId === r.id ? (
                   // ── Fila de edición ─────────────────────────────────────
-                  <tr key={r.id} className="bg-[#FFF7F0]">
+                  <tr key={r.id} className="bg-hc-hover">
                     <td className="px-3 py-2" colSpan={3}>
-                      <div className="font-medium text-[#3d1a24] text-[13px]">
+                      <div className="font-medium text-hc-ink text-[13px]">
                         {fmtD(r.fechaVenta)}
                       </div>
-                      <div className="text-[11px] text-[#6B3E26]">
+                      <div className="text-[11px] text-hc-muted">
                         #{r.ordenNumero} · {r.clienteNombre ?? "Sin cliente"}
                       </div>
                       {editError && (
@@ -191,13 +191,13 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                         <button
                           onClick={handleSave}
                           disabled={saving}
-                          className="px-2 py-1 rounded-lg bg-[#c0607a] text-white text-[11px] font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                          className="px-2 py-1 rounded-lg bg-hc-rose text-white text-[11px] font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                         >
                           {saving ? "…" : "✓"}
                         </button>
                         <button
                           onClick={() => setEditId(null)}
-                          className="px-2 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-[#FFF7F0] transition"
+                          className="px-2 py-1 rounded-lg border border-hc-line-strong text-hc-muted text-[11px] hover:bg-hc-hover transition"
                         >
                           ✕
                         </button>
@@ -206,19 +206,19 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                   </tr>
                 ) : (
                   // ── Fila normal ──────────────────────────────────────────
-                  <tr key={r.id} className="hover:bg-[#fdf9fb] transition">
+                  <tr key={r.id} className="hover:bg-hc-rose-tint transition">
                     <td className="px-3 py-2.5">
-                      <p className="text-[#3d1a24] font-medium text-[13px]">
+                      <p className="text-hc-ink font-medium text-[13px]">
                         {fmtD(r.fechaVenta)}
                       </p>
                     </td>
                     <td className="px-3 py-2.5 text-right">
-                      <span className="text-[#6B3E26] text-[12px]">
+                      <span className="text-hc-muted text-[12px]">
                         #{r.ordenNumero ?? "—"}
                       </span>
                       {r.finanzas && (
                         <span
-                          className="ml-1.5 px-1.5 py-0.5 rounded bg-[#FBE9EE] text-[#c0607a] text-[10px] font-bold uppercase"
+                          className="ml-1.5 px-1.5 py-0.5 rounded bg-hc-rose-tint text-hc-rose text-[10px] font-bold uppercase"
                           title="Venta marcada para finanzas"
                         >
                           Fin
@@ -226,7 +226,7 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                       )}
                       {r.parcial && (
                         <span
-                          className="ml-1 px-1.5 py-0.5 rounded bg-[#FFF3D6] text-[#AA6A42] text-[10px] font-bold uppercase"
+                          className="ml-1 px-1.5 py-0.5 rounded bg-[#FFF3D6] text-hc-soft text-[10px] font-bold uppercase"
                           title="Montos de los productos que coinciden con el filtro, no de toda la venta"
                         >
                           Parcial
@@ -234,20 +234,20 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                       )}
                     </td>
                     <td className="px-3 py-2.5">
-                      <p className="text-[#3d1a24] text-[13px] truncate max-w-[120px]">
+                      <p className="text-hc-ink text-[13px] truncate max-w-[120px]">
                         {r.clienteNombre ?? "—"}
                       </p>
                     </td>
-                    <td className="px-3 py-2.5 text-right font-bold text-[#AA6A42]">
+                    <td className="px-3 py-2.5 text-right font-bold text-hc-soft">
                       {fmt(r.totalVenta)}
                     </td>
-                    <td className="px-3 py-2.5 text-right text-[#3d1a24]">
+                    <td className="px-3 py-2.5 text-right text-hc-ink">
                       {fmt(r.insumos)}
                     </td>
-                    <td className="px-3 py-2.5 text-right text-[#3d1a24]">
+                    <td className="px-3 py-2.5 text-right text-hc-ink">
                       {fmt(r.servicios)}
                     </td>
-                    <td className="px-3 py-2.5 text-right text-[#3d1a24]">
+                    <td className="px-3 py-2.5 text-right text-hc-ink">
                       {fmt(r.manoDeObra)}
                     </td>
                     <td className="px-3 py-2.5 text-right font-semibold text-green-700">
@@ -259,7 +259,7 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                           {fmt(r.comision)}
                         </span>
                       ) : (
-                        <span className="text-[#AA6A42] text-[11px]">—</span>
+                        <span className="text-hc-soft text-[11px]">—</span>
                       )}
                     </td>
                     <td className="px-3 py-2.5">
@@ -267,7 +267,7 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                         <button
                           onClick={() => openEdit(r)}
                           disabled={r.parcial}
-                          className="p-1.5 rounded-lg hover:bg-[#FFF7F0] text-[#6B3E26] hover:text-[#c0607a] transition disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-lg hover:bg-hc-hover text-hc-muted hover:text-hc-rose transition disabled:opacity-30 disabled:cursor-not-allowed"
                           title={
                             r.parcial
                               ? "Quita el filtro de tipo/línea para editar la venta completa"
@@ -289,7 +289,7 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
                         <button
                           onClick={() => setDeleting(r.id)}
                           disabled={r.parcial}
-                          className="p-1.5 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="p-1.5 rounded-lg hover:bg-red-50 text-hc-soft hover:text-red-500 transition disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           <svg
                             viewBox="0 0 24 24"
@@ -310,23 +310,23 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
             </tbody>
             {/* Totales */}
             <tfoot>
-              <tr className="bg-[#FFF7F0] border-t-2 border-[#f0e0d0]">
+              <tr className="bg-hc-hover border-t-2 border-hc-line">
                 <td
                   colSpan={3}
-                  className="px-3 py-2.5 text-[11px] font-bold text-[#6B3E26] uppercase tracking-wider"
+                  className="px-3 py-2.5 text-[11px] font-bold text-hc-muted uppercase tracking-wider"
                 >
                   TOTALES ({registros.length} ventas)
                 </td>
-                <td className="px-3 py-2.5 text-right font-bold text-[#AA6A42]">
+                <td className="px-3 py-2.5 text-right font-bold text-hc-soft">
                   {fmt(totalVentas)}
                 </td>
-                <td className="px-3 py-2.5 text-right font-bold text-[#3d1a24]">
+                <td className="px-3 py-2.5 text-right font-bold text-hc-ink">
                   {fmt(totalInsumos)}
                 </td>
-                <td className="px-3 py-2.5 text-right font-bold text-[#3d1a24]">
+                <td className="px-3 py-2.5 text-right font-bold text-hc-ink">
                   {fmt(totalServ)}
                 </td>
-                <td className="px-3 py-2.5 text-right font-bold text-[#3d1a24]">
+                <td className="px-3 py-2.5 text-right font-bold text-hc-ink">
                   {fmt(totalMO)}
                 </td>
                 <td className="px-3 py-2.5 text-right font-bold text-green-700">
@@ -346,20 +346,20 @@ export function IngresosTab({ desde, hasta, filtros }: Props) {
       {deleting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-hc-cacao/25 backdrop-blur-[2px]"
             onClick={() => setDeleting(null)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 max-w-sm w-full z-10">
-            <p className="font-bold text-[#3d1a24] mb-2">
+          <div className="relative bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 max-w-sm w-full z-10">
+            <p className="font-bold text-hc-ink mb-2">
               ¿Eliminar este registro?
             </p>
-            <p className="text-[13px] text-[#6B3E26] mb-5">
+            <p className="text-[13px] text-hc-muted mb-5">
               Esta acción es permanente y no puede deshacerse.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleting(null)}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
               >
                 Cancelar
               </button>

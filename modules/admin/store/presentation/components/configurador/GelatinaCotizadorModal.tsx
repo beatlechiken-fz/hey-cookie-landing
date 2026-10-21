@@ -47,7 +47,7 @@ function nombreGelatina(config: GelatinaCotizadorConfig): string {
 }
 
 const inputCls =
-  "px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm font-semibold text-center focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition w-20";
+  "px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm font-semibold text-center focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition w-20";
 
 const CATEGORIAS: { id: CategoriaGelatina; label: string; desc: string }[] = [
   { id: "clasica",    label: "Gelatina Clásica",     desc: "Agua, leche, tres leches, queso crema, yogurt" },
@@ -66,7 +66,7 @@ function LitroInput({ label, value, onChange, costoXLitro }: LitroInputProps) {
   const fmt = (n: number) => `$${n.toFixed(2)}`;
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="text-[10px] text-[#6B3E26] font-semibold uppercase tracking-wide">{label}</span>
+      <span className="text-[10px] text-hc-muted font-semibold uppercase tracking-wide">{label}</span>
       <div className="flex items-center gap-1.5">
         <input
           type="number"
@@ -76,10 +76,10 @@ function LitroInput({ label, value, onChange, costoXLitro }: LitroInputProps) {
           onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
           className={inputCls}
         />
-        <span className="text-[12px] text-[#6B3E26]">L</span>
+        <span className="text-[12px] text-hc-muted">L</span>
       </div>
       {costoXLitro > 0 && (
-        <span className="text-[10px] text-[#AA6A42]">{fmt(costoXLitro)}/L</span>
+        <span className="text-[10px] text-hc-soft">{fmt(costoXLitro)}/L</span>
       )}
     </div>
   );
@@ -247,8 +247,8 @@ export function GelatinaCotizadorModal({
 
   const Row = ({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) => (
     <div className={`flex justify-between text-[13px] py-1 ${highlight ? "font-bold" : ""}`}>
-      <span className="text-[#6B3E26]">{label}</span>
-      <span className={highlight ? "text-[#c0607a] text-[15px]" : "text-[#3d1a24]"}>{value}</span>
+      <span className="text-hc-muted">{label}</span>
+      <span className={highlight ? "text-hc-rose text-[15px]" : "text-hc-ink"}>{value}</span>
     </div>
   );
 
@@ -261,20 +261,20 @@ export function GelatinaCotizadorModal({
       {open && (
         <>
           <motion.div key="bd" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            onClick={onClose} className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40" />
+            onClick={onClose} className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40" />
 
           <motion.div key="modal" initial={{ opacity: 0, scale: 0.97, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 12 }} transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none">
-            <div className="pointer-events-auto w-full max-w-3xl max-h-[92vh] bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] flex flex-col overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-3xl max-h-[92vh] bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line flex flex-col overflow-hidden">
 
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover shrink-0">
                 <div>
-                  <h2 className="font-bold text-[#AA6A42] text-lg">{editItem ? "Editar gelatina personalizada" : "Gelatina personalizada"}</h2>
-                  <p className="text-[12px] text-[#6B3E26]">{editItem ? "Modifica tu gelatina — se actualizará en el carrito" : "Elige categoría, litros y extras"}</p>
+                  <h2 className="font-bold text-hc-soft text-lg">{editItem ? "Editar gelatina personalizada" : "Gelatina personalizada"}</h2>
+                  <p className="text-[12px] text-hc-muted">{editItem ? "Modifica tu gelatina — se actualizará en el carrito" : "Elige categoría, litros y extras"}</p>
                 </div>
-                <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]">
+                <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted">
                   <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M6 6l12 12M18 6L6 18" />
                   </svg>
@@ -284,14 +284,14 @@ export function GelatinaCotizadorModal({
               {/* Body */}
               <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5">
                 {(loadingGel || catLoading) && (
-                  <p className="text-center text-[#AA6A42] text-sm py-6">Cargando…</p>
+                  <p className="text-center text-hc-soft text-sm py-6">Cargando…</p>
                 )}
 
                 {!loadingGel && !catLoading && catalogo && (
                   <>
                     {/* Categoría */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                      <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                         Tipo de gelatina
                       </label>
                       <div className="flex flex-wrap gap-2">
@@ -300,21 +300,21 @@ export function GelatinaCotizadorModal({
                             onClick={() => update("categoria", cat.id)}
                             className={`px-4 py-2.5 rounded-xl text-[13px] font-semibold border transition ${
                               config.categoria === cat.id
-                                ? "bg-[#c0607a] text-white border-[#c0607a]"
-                                : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"
+                                ? "bg-hc-rose text-white border-hc-rose"
+                                : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"
                             }`}>
                             {cat.label}
                           </button>
                         ))}
                       </div>
-                      <p className="text-[12px] text-[#6B3E26]">
+                      <p className="text-[12px] text-hc-muted">
                         {CATEGORIAS.find((c) => c.id === config.categoria)?.desc}
                       </p>
                     </div>
 
                     {/* Litros */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                      <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                         Litros por base
                       </label>
                       <div className="flex gap-4 flex-wrap">
@@ -328,15 +328,15 @@ export function GelatinaCotizadorModal({
 
                         {totalLitros > 0 && (
                           <div className="flex flex-col justify-end pb-1">
-                            <span className="text-[11px] text-[#6B3E26]">
-                              Total: <strong className="text-[#AA6A42]">{totalLitros}L</strong>
+                            <span className="text-[11px] text-hc-muted">
+                              Total: <strong className="text-hc-soft">{totalLitros}L</strong>
                             </span>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="h-px bg-[#f0e0d0]" />
+                    <div className="h-px bg-hc-sunken" />
 
                     {/* Opciones catálogo */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -383,7 +383,7 @@ export function GelatinaCotizadorModal({
                         onChange={(v) => update("licorId", v === NINGUNO ? null : v)} />
                     </div>
 
-                    <div className="h-px bg-[#f0e0d0]" />
+                    <div className="h-px bg-hc-sunken" />
 
                     <MultiSelectField label="Toppings" values={config.toppings.map((t) => t.ingredienteId)}
                       options={catalogo.toppings.filter((t) => t.cantidad != null)
@@ -402,7 +402,7 @@ export function GelatinaCotizadorModal({
                       const overridden = sel.cantidad != null;
                       return (
                         <div key={sel.ingredienteId} className="flex items-center gap-2 -mt-1">
-                          <span className="text-[12px] text-[#6B3E26] shrink-0">{t.nombre}:</span>
+                          <span className="text-[12px] text-hc-muted shrink-0">{t.nombre}:</span>
                           <input
                             type="number"
                             min={0}
@@ -419,9 +419,9 @@ export function GelatinaCotizadorModal({
                                 ),
                               );
                             }}
-                            className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-[12px] font-semibold text-center focus:outline-none focus:border-[#c0607a]"
+                            className="w-20 px-2 py-1 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-[12px] font-semibold text-center focus:outline-none focus:border-hc-rose"
                           />
-                          <span className="text-[11px] text-[#6B3E26]">{t.unidad}</span>
+                          <span className="text-[11px] text-hc-muted">{t.unidad}</span>
                           {overridden && (
                             <button
                               type="button"
@@ -433,7 +433,7 @@ export function GelatinaCotizadorModal({
                                   ),
                                 )
                               }
-                              className="text-[11px] text-[#AA6A42] underline hover:text-[#8A5535] transition cursor-pointer"
+                              className="text-[11px] text-hc-soft underline hover:text-hc-ink transition cursor-pointer"
                             >
                               Restablecer ({t.cantidad}{t.unidad})
                             </button>
@@ -455,12 +455,12 @@ export function GelatinaCotizadorModal({
 
                     {/* Extras exclusivos */}
                     <div className="flex flex-col gap-2">
-                      <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">Extras de gelatina</label>
+                      <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">Extras de gelatina</label>
                       <div className="flex gap-3 flex-wrap">
                         {([{ key: "conTransfer" as const, label: "✨ Transfer Jelly Pop" }, { key: "conBlonda" as const, label: "🎀 Blonda" }]).map((opt) => (
                           <button key={opt.key} type="button" onClick={() => update(opt.key, !config[opt.key])}
                             className={`px-4 py-2 rounded-xl text-[13px] font-semibold border transition ${
-                              config[opt.key] ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"
+                              config[opt.key] ? "bg-hc-rose text-white border-hc-rose" : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"
                             }`}>
                             {opt.label}
                           </button>
@@ -468,21 +468,21 @@ export function GelatinaCotizadorModal({
                       </div>
                     </div>
 
-                    <div className="h-px bg-[#f0e0d0]" />
+                    <div className="h-px bg-hc-sunken" />
 
                     {/* Cantidad */}
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">Cantidad</p>
-                        <p className="text-[11px] text-[#6B3E26] mt-0.5">Número de gelatinas con esta configuración</p>
+                        <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">Cantidad</p>
+                        <p className="text-[11px] text-hc-muted mt-0.5">Número de gelatinas con esta configuración</p>
                       </div>
                       <QuantityStepper value={config.cantidad} onChange={(v) => update("cantidad", v)} />
                     </div>
 
                     {/* Desglose */}
                     {desglose && (
-                      <div className="bg-[#FFF7F0] border border-[#f0e0d0] rounded-xl p-4 flex flex-col gap-1">
-                        <p className="text-[11px] font-bold text-[#AA6A42] uppercase tracking-wider mb-2">Desglose de costos</p>
+                      <div className="bg-hc-hover border border-hc-line rounded-xl p-4 flex flex-col gap-1">
+                        <p className="text-[11px] font-bold text-hc-soft uppercase tracking-wider mb-2">Desglose de costos</p>
                         {desglose.costoBaseAgua > 0       && <Row label={`Agua (${config.litrosAgua}L)`}             value={fmt(desglose.costoBaseAgua)} />}
                         {desglose.costoBaseLeche > 0      && <Row label={`Leche (${config.litrosLeche}L)`}            value={fmt(desglose.costoBaseLeche)} />}
                         {desglose.costoBaseTresLeches > 0 && <Row label={`Tres Leches (${config.litrosTresLeches}L)`} value={fmt(desglose.costoBaseTresLeches)} />}
@@ -497,13 +497,13 @@ export function GelatinaCotizadorModal({
                         {desglose.costoOrnamentos > 0  && <Row label="Ornamentos"  value={fmt(desglose.costoOrnamentos)} />}
                         {desglose.costoTransfer > 0    && <Row label="Transfer"    value={fmt(desglose.costoTransfer)} />}
                         {desglose.costoBlonda > 0    && <Row label="Blonda"     value={fmt(desglose.costoBlonda)} />}
-                        <div className="border-t border-[#e8c4a0] my-1" />
+                        <div className="border-t border-hc-line-strong my-1" />
                         <Row label="Insumos totales"   value={fmt(desglose.costoInsumos)} />
                         <Row label="Servicios (10%)"   value={fmt(desglose.servicios)} />
                         <Row label="Mano de obra"      value={fmt(desglose.manoDeObra)} />
                         <Row label="Utilidad (90%)"    value={fmt(desglose.utilidad)} />
                         <Row label="Cargo decoración"  value={fmt(desglose.cargoDecoracion)} />
-                        <div className="border-t border-[#e8c4a0] my-1" />
+                        <div className="border-t border-hc-line-strong my-1" />
                         <Row label="Precio por gelatina" value={fmt(desglose.precioSugerido)} highlight />
                         {config.cantidad > 1 && (
                           <Row label={`Total (×${config.cantidad})`} value={fmt(desglose.precioSugerido * config.cantidad)} highlight />
@@ -515,7 +515,7 @@ export function GelatinaCotizadorModal({
               </div>
 
               {/* Footer */}
-              <div className="flex flex-col gap-2 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+              <div className="flex flex-col gap-2 px-6 py-4 border-t border-hc-line bg-white shrink-0">
                 {saveError && (
                   <p className="text-[12px] text-[#C0392B] text-center">{saveError}</p>
                 )}
@@ -524,17 +524,17 @@ export function GelatinaCotizadorModal({
                     type="button"
                     onClick={handleGuardarComoProducto}
                     disabled={!desglose || catLoading || savingProducto || saving}
-                    className="w-full py-2.5 rounded-xl border border-[#c0607a] text-[#c0607a] text-sm font-semibold hover:bg-[#FFF0F4] disabled:opacity-50 transition"
+                    className="w-full py-2.5 rounded-xl border border-hc-rose text-hc-rose text-sm font-semibold hover:bg-hc-rose-tint disabled:opacity-50 transition"
                   >
                     {savingProducto ? "Creando producto…" : "Guardar como producto"}
                   </button>
                 )}
                 <div className="flex gap-3">
-                <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition">
+                <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition">
                   Cancelar
                 </button>
                 <button onClick={handleAddToCart} disabled={!desglose || catLoading || saving}
-                  className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition flex items-center justify-center gap-2">
+                  className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition flex items-center justify-center gap-2">
                   {saving ? "Guardando…" : added ? (
                     <>
                       <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

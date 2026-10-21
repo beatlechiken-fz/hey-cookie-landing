@@ -18,7 +18,7 @@ export function RawThumb({
   const box = size === "md" ? "w-12 h-12" : "w-10 h-10";
   return (
     <div
-      className={`${box} shrink-0 rounded-xl overflow-hidden bg-[#FFF7F0] border border-[#f0e0d0] flex items-center justify-center`}
+      className={`${box} shrink-0 rounded-xl overflow-hidden bg-hc-hover border border-hc-line flex items-center justify-center`}
     >
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element -- URLs de Supabase Storage, mismo patrón que Empaques/Ornamentos
@@ -26,7 +26,7 @@ export function RawThumb({
       ) : (
         <svg
           viewBox="0 0 24 24"
-          className="w-5 h-5 text-[#e8c4a0]"
+          className="w-5 h-5 text-hc-line-strong"
           fill="none"
           stroke="currentColor"
           strokeWidth="1.5"

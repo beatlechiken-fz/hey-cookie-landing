@@ -42,6 +42,35 @@
   --color-calabaza: #E8782A;
   --color-calabaza-hover: #F08C42;
   --color-calabaza-texto: #F5A04A;
+
+  /* Admin (panel interno): neutros cálidos casi blancos + frambuesa de acción
+     y cacao para texto. Generan utilidades: bg-hc-bg, text-hc-ink, border-hc-line… */
+  --color-hc-bg: #FAF7F6;
+  --color-hc-surface: #FFFFFF;
+  --color-hc-sunken: #F4EEEB;
+  --color-hc-hover: #FAF4F2;
+  --color-hc-line: #EFE6E2;
+  --color-hc-line-strong: #E3D5CF;
+  --color-hc-ink: #2D1B16;
+  --color-hc-muted: #6E5850;
+  --color-hc-soft: #A07D6B;
+  --color-hc-rose: #C0607A;
+  --color-hc-rose-hover: #A84D66;
+  --color-hc-rose-tint: #FBEEF2;
+  --color-hc-rose-soft: #F6DDE4;
+  --color-hc-cacao: #3A1F14;
+}
+
+/* Tipografía y foco del panel admin (ver app/[locale]/admin/layout.tsx). */
+.admin-ui {
+  font-family: var(--font-admin), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.admin-ui ::selection {
+  background: var(--color-hc-rose-soft);
+}
+.admin-ui :where(input, select, textarea):focus-visible {
+  outline: none;
 }
 
 html,

@@ -27,7 +27,7 @@ export function ProductoPickerModal({ open, onClose, onSelect }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="modal"
@@ -37,14 +37,14 @@ export function ProductoPickerModal({ open, onClose, onSelect }: Props) {
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
-                <h2 className="font-bold text-[#AA6A42] text-lg">
+            <div className="pointer-events-auto w-full max-w-lg bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover">
+                <h2 className="font-bold text-hc-soft text-lg">
                   Elegir producto de catálogo
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -65,18 +65,18 @@ export function ProductoPickerModal({ open, onClose, onSelect }: Props) {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar producto…"
-                  className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]"
+                  className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft"
                 />
               </div>
 
               <div className="px-6 py-4 flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto">
                 {isLoading && (
-                  <p className="text-sm text-[#6B3E26] py-6 text-center">
+                  <p className="text-sm text-hc-muted py-6 text-center">
                     Cargando…
                   </p>
                 )}
                 {!isLoading && productos.length === 0 && (
-                  <p className="text-sm text-[#6B3E26] py-6 text-center">
+                  <p className="text-sm text-hc-muted py-6 text-center">
                     Sin resultados.
                   </p>
                 )}
@@ -85,7 +85,7 @@ export function ProductoPickerModal({ open, onClose, onSelect }: Props) {
                     key={p.id}
                     type="button"
                     onClick={() => onSelect(p)}
-                    className="flex items-center gap-3 text-left px-3 py-2.5 rounded-xl border border-[#e8c4a0] hover:bg-[#FFF7F0] hover:border-[#c0607a] transition"
+                    className="flex items-center gap-3 text-left px-3 py-2.5 rounded-xl border border-hc-line-strong hover:bg-hc-hover hover:border-hc-rose transition"
                   >
                     {p.imagenUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -95,13 +95,13 @@ export function ProductoPickerModal({ open, onClose, onSelect }: Props) {
                         className="w-10 h-10 rounded-lg object-cover shrink-0"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-lg bg-[#FFF7F0] shrink-0" />
+                      <div className="w-10 h-10 rounded-lg bg-hc-hover shrink-0" />
                     )}
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[#3d1a24] truncate">
+                      <p className="text-sm font-semibold text-hc-ink truncate">
                         {p.nombre}
                       </p>
-                      <p className="text-[11px] text-[#AA6A42] uppercase tracking-wider">
+                      <p className="text-[11px] text-hc-soft uppercase tracking-wider">
                         {p.linea}
                       </p>
                     </div>

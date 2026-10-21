@@ -29,7 +29,7 @@ function DeleteDialog({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="dlg"
@@ -39,7 +39,7 @@ function DeleteDialog({
             transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 flex flex-col gap-4">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
                   <svg
@@ -54,22 +54,22 @@ function DeleteDialog({
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#3d1a24] text-base">
+                  <h3 className="font-bold text-hc-ink text-base">
                     Quitar de toppings
                   </h3>
-                  <p className="text-sm text-[#6B3E26]">
+                  <p className="text-sm text-hc-muted">
                     El ingrediente seguirá existiendo en el catálogo
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[#AA6A42]">
+              <p className="text-sm text-hc-soft">
                 ¿Confirmas que deseas quitar <strong>"{nombre}"</strong> de la
                 lista de toppings?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                 >
                   Cancelar
                 </button>
@@ -127,9 +127,9 @@ export function ToppingsTab() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar topping…"
-            className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+            className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
           />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
             <svg
               viewBox="0 0 24 24"
               className="w-4 h-4"
@@ -167,7 +167,7 @@ export function ToppingsTab() {
 
       {/* Meta */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#6B3E26]">
+        <p className="text-sm text-hc-muted">
           {isLoading
             ? "Cargando…"
             : `${filtered.length} topping${filtered.length !== 1 ? "s" : ""}`}
@@ -178,31 +178,31 @@ export function ToppingsTab() {
       </div>
 
       {/* Tabla desktop */}
-      <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
+      <div className="hidden md:block rounded-2xl border border-hc-line overflow-hidden bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+            <tr className="bg-hc-hover border-b border-hc-line">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Topping
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Cantidad (24cm)
               </th>
-              <th className="px-4 py-3 text-right  text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-right  text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Costo estimado
               </th>
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Notas
               </th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f9eef2]">
+          <tbody className="divide-y divide-hc-line">
             {isLoading && (
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   Cargando…
                 </td>
@@ -212,7 +212,7 @@ export function ToppingsTab() {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   No se encontraron toppings
                 </td>
@@ -229,16 +229,16 @@ export function ToppingsTab() {
               return (
                 <tr
                   key={ingrediente.id}
-                  className="hover:bg-[#FFF7F0]/60 transition group"
+                  className="hover:bg-hc-hover/60 transition group"
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <RawThumb src={ingrediente.imagenUrl} alt={ingrediente.nombre} />
                       <div>
-                        <p className="font-medium text-[#3d1a24]">
+                        <p className="font-medium text-hc-ink">
                           {ingrediente.nombre}
                         </p>
-                        <p className="text-[11px] text-[#6B3E26]">
+                        <p className="text-[11px] text-hc-muted">
                           {ingrediente.unidadBase}
                         </p>
                       </div>
@@ -246,19 +246,19 @@ export function ToppingsTab() {
                   </td>
                   <td className="px-4 py-3 text-center">
                     {cantidad?.cantidad != null ? (
-                      <span className="font-semibold text-[#AA6A42]">
+                      <span className="font-semibold text-hc-soft">
                         {cantidad.cantidad} {ingrediente.unidadBase}
                       </span>
                     ) : (
-                      <span className="text-[#AA6A42] text-xs">
+                      <span className="text-hc-soft text-xs">
                         Sin definir
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-[#c0607a]">
+                  <td className="px-4 py-3 text-right font-medium text-hc-rose">
                     {costoEst ? `$${costoEst}` : "—"}
                   </td>
-                  <td className="px-4 py-3 text-[#AA6A42]/70 text-sm max-w-xs">
+                  <td className="px-4 py-3 text-hc-soft/70 text-sm max-w-xs">
                     <p className="truncate">{cantidad?.notas ?? "—"}</p>
                   </td>
                   <td className="px-4 py-3">
@@ -266,7 +266,7 @@ export function ToppingsTab() {
                       {/* Editar cantidad */}
                       <button
                         onClick={() => setEditItem(item)}
-                        className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                        className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                         title="Editar cantidad"
                       >
                         <svg
@@ -284,7 +284,7 @@ export function ToppingsTab() {
                       {/* Quitar de toppings */}
                       <button
                         onClick={() => setRemoveItem(item)}
-                        className="p-1.5 rounded-lg hover:bg-amber-50 text-[#6B3E26] hover:text-amber-600 transition"
+                        className="p-1.5 rounded-lg hover:bg-amber-50 text-hc-muted hover:text-amber-600 transition"
                         title="Quitar de toppings"
                       >
                         <svg
@@ -311,7 +311,7 @@ export function ToppingsTab() {
       {/* Cards mobile */}
       <div className="flex md:hidden flex-col gap-3">
         {isLoading && (
-          <p className="text-center text-[#AA6A42] text-sm py-8">Cargando…</p>
+          <p className="text-center text-hc-soft text-sm py-8">Cargando…</p>
         )}
         {filtered.map((item) => {
           const { ingrediente, cantidad } = item;
@@ -322,28 +322,28 @@ export function ToppingsTab() {
           return (
             <div
               key={ingrediente.id}
-              className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
+              className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2">
                 <RawThumb src={ingrediente.imagenUrl} alt={ingrediente.nombre} size="sm" />
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[#3d1a24]">
+                  <p className="font-semibold text-hc-ink">
                     {ingrediente.nombre}
                   </p>
                   <div className="flex gap-3 mt-1.5">
-                    <span className="text-[12px] text-[#6B3E26]">
+                    <span className="text-[12px] text-hc-muted">
                       {cantidad?.cantidad != null
                         ? `${cantidad.cantidad} ${ingrediente.unidadBase}`
                         : "Sin cantidad"}
                     </span>
                     {costoEst && (
-                      <span className="text-[12px] font-bold text-[#c0607a]">
+                      <span className="text-[12px] font-bold text-hc-rose">
                         ${costoEst}
                       </span>
                     )}
                   </div>
                   {cantidad?.notas && (
-                    <p className="text-[11px] text-[#6B3E26] mt-1">
+                    <p className="text-[11px] text-hc-muted mt-1">
                       {cantidad.notas}
                     </p>
                   )}
@@ -351,7 +351,7 @@ export function ToppingsTab() {
                 <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => setEditItem(item)}
-                    className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                    className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -367,7 +367,7 @@ export function ToppingsTab() {
                   </button>
                   <button
                     onClick={() => setRemoveItem(item)}
-                    className="p-2 rounded-lg hover:bg-amber-50 text-[#6B3E26] hover:text-amber-600 transition"
+                    className="p-2 rounded-lg hover:bg-amber-50 text-hc-muted hover:text-amber-600 transition"
                   >
                     <svg
                       viewBox="0 0 24 24"

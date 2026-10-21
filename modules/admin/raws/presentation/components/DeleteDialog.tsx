@@ -21,7 +21,7 @@ export function DeleteDialog({ open, nombre, onClose, onConfirm }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="dlg"
@@ -31,7 +31,7 @@ export function DeleteDialog({ open, nombre, onClose, onConfirm }: Props) {
             transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 flex flex-col gap-4">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                   <svg
@@ -46,21 +46,21 @@ export function DeleteDialog({ open, nombre, onClose, onConfirm }: Props) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#3d1a24] text-base">
+                  <h3 className="font-bold text-hc-ink text-base">
                     Eliminar
                   </h3>
-                  <p className="text-sm text-[#6B3E26]">
+                  <p className="text-sm text-hc-muted">
                     Esta acción no se puede deshacer
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[#AA6A42]">
+              <p className="text-sm text-hc-soft">
                 ¿Confirmas que deseas eliminar <strong>"{nombre}"</strong>?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                 >
                   Cancelar
                 </button>

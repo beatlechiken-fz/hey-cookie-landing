@@ -1,11 +1,17 @@
 "use client";
 // src/components/admin/LoginForm.tsx
+// Login del panel: el splash de la home de fondo (con blur) y una tarjeta translúcida.
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { PasswordInput } from "@/core/components/PasswordInput";
+import Images from "@/core/assets/Images";
+
+const inputCls =
+  "w-full rounded-xl border border-hc-line-strong bg-white/90 px-4 py-3 text-[14px] text-hc-ink placeholder:text-hc-soft/70 transition focus:border-hc-rose focus:bg-white focus:ring-4 focus:ring-hc-rose/15 disabled:opacity-60";
 
 export function LoginForm() {
   const router = useRouter();
@@ -43,30 +49,32 @@ export function LoginForm() {
   }
 
   return (
-    <div style={styles.page}>
-      <div style={styles.bg} aria-hidden />
-      <div style={styles.card}>
-        <div style={styles.iconWrap}>
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="24" fill="#f9e8ec" />
-            <text
-              x="50%"
-              y="55%"
-              dominantBaseline="middle"
-              textAnchor="middle"
-              fontSize="24"
-            >
-              🎂
-            </text>
-          </svg>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-4">
+      {/* Fondo: splash de la home desenfocado */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <picture>
+        <source media="(min-width: 1024px)" srcSet="/img/splash-home.webp" />
+        <img
+          src="/img/splash-home-mobile.webp"
+          alt=""
+          className="h-full w-full scale-110 object-cover blur-[14px] saturate-[1.1]"
+        />
+        </picture>
+      </div>
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/35 via-hc-rose-tint/25 to-hc-cacao/40" />
+
+      <div className="relative w-full max-w-[420px] rounded-[28px] border border-white/60 bg-white/75 p-8 shadow-[0_30px_80px_-20px_rgba(58,31,20,0.45)] backdrop-blur-xl sm:p-10">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <span className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-[0_8px_24px_-8px_rgba(192,96,122,0.45)] ring-1 ring-hc-rose-soft">
+            <Image src={Images.logoShortOpacity} alt="Hey Cookie" width={52} height={52} priority />
+          </span>
+          <h1 className="text-[22px] font-bold tracking-tight text-hc-ink">Hola de nuevo</h1>
+          <p className="mt-1 text-[14px] text-hc-muted">Panel de administración · Hey Cookie</p>
         </div>
 
-        <h1 style={styles.title}>Panel de administración</h1>
-        <p style={styles.subtitle}>Acceso exclusivo para el equipo</p>
-
-        <form onSubmit={handleSubmit} style={styles.form} noValidate>
-          <div style={styles.field}>
-            <label htmlFor="email" style={styles.label}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className="text-[12.5px] font-semibold text-hc-muted">
               Correo electrónico
             </label>
             <input
@@ -77,20 +85,13 @@ export function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isPending}
-              placeholder="admin@tupasteleria.com"
-              style={styles.input}
-              onFocus={(e) => Object.assign(e.target.style, styles.inputFocus)}
-              onBlur={(e) =>
-                Object.assign(e.target.style, {
-                  outline: "none",
-                  borderColor: "#e8c4a0",
-                })
-              }
+              placeholder="admin@heycookie.mx"
+              className={inputCls}
             />
           </div>
 
-          <div style={styles.field}>
-            <label htmlFor="password" style={styles.label}>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="password" className="text-[12.5px] font-semibold text-hc-muted">
               Contraseña
             </label>
             <PasswordInput
@@ -101,19 +102,12 @@ export function LoginForm() {
               required
               disabled={isPending}
               placeholder="••••••••"
-              style={styles.input}
-              onFocus={(e) => Object.assign(e.target.style, styles.inputFocus)}
-              onBlur={(e) =>
-                Object.assign(e.target.style, {
-                  outline: "none",
-                  borderColor: "#e8c4a0",
-                })
-              }
+              className={inputCls}
             />
           </div>
 
           {error && (
-            <p role="alert" style={styles.error}>
+            <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">
               {error}
             </p>
           )}
@@ -121,107 +115,19 @@ export function LoginForm() {
           <button
             type="submit"
             disabled={isPending}
-            style={{ ...styles.btn, ...(isPending ? styles.btnDisabled : {}) }}
+            className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-hc-rose py-3 text-[14px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(192,96,122,0.9)] transition hover:bg-hc-rose-hover active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-hc-rose/60 disabled:shadow-none"
           >
+            {isPending && (
+              <svg viewBox="0 0 24 24" className="h-4 w-4 animate-spin" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M21 12a9 9 0 1 1-6.22-8.56" />
+              </svg>
+            )}
             {isPending ? "Verificando…" : "Iniciar sesión"}
           </button>
         </form>
+
+        <p className="mt-8 text-center text-[11.5px] text-hc-soft">Acceso exclusivo para el equipo de Hey Cookie</p>
       </div>
     </div>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFF7F0",
-    fontFamily: "'Georgia', serif",
-    padding: "1rem",
-    position: "relative" as const,
-    overflow: "hidden",
-  },
-  bg: {
-    position: "absolute" as const,
-    inset: 0,
-    backgroundImage: `
-      radial-gradient(circle at 15% 20%, #fce4ec55 0%, transparent 45%),
-      radial-gradient(circle at 85% 80%, #f8bbd055 0%, transparent 45%)
-    `,
-    pointerEvents: "none" as const,
-  },
-  card: {
-    position: "relative" as const,
-    zIndex: 1,
-    backgroundColor: "#ffffff",
-    borderRadius: "1.5rem",
-    padding: "2.5rem 2rem",
-    width: "100%",
-    maxWidth: "400px",
-    boxShadow:
-      "0 8px 40px rgba(200, 100, 130, 0.12), 0 2px 8px rgba(0,0,0,0.06)",
-    border: "1px solid #f0e0d0",
-    textAlign: "center" as const,
-  },
-  iconWrap: { display: "inline-flex", marginBottom: "1rem" },
-  title: {
-    margin: "0 0 0.25rem",
-    fontSize: "1.4rem",
-    fontWeight: 700,
-    color: "#AA6A42",
-    letterSpacing: "-0.02em",
-  },
-  subtitle: { margin: "0 0 1.75rem", fontSize: "0.875rem", color: "#6B3E26" },
-  form: {
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: "1rem",
-    textAlign: "left" as const,
-  },
-  field: { display: "flex", flexDirection: "column" as const, gap: "0.375rem" },
-  label: {
-    fontSize: "0.8rem",
-    fontWeight: 600,
-    color: "#AA6A42",
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.05em",
-  },
-  input: {
-    padding: "0.7rem 0.9rem",
-    borderRadius: "0.75rem",
-    border: "1.5px solid #e8c4a0",
-    fontSize: "0.95rem",
-    color: "#3d1a24",
-    backgroundColor: "#fffbfc",
-    outline: "none",
-    transition: "border-color 0.2s",
-    fontFamily: "inherit",
-  },
-  inputFocus: { borderColor: "#c0607a", outline: "none" },
-  error: {
-    fontSize: "0.85rem",
-    color: "#c0392b",
-    backgroundColor: "#fdecea",
-    border: "1px solid #f5c6cb",
-    borderRadius: "0.5rem",
-    padding: "0.5rem 0.75rem",
-    margin: 0,
-  },
-  btn: {
-    marginTop: "0.5rem",
-    padding: "0.8rem",
-    borderRadius: "0.75rem",
-    border: "none",
-    backgroundColor: "#c0607a",
-    color: "#ffffff",
-    fontSize: "1rem",
-    fontWeight: 700,
-    cursor: "pointer",
-    fontFamily: "inherit",
-    letterSpacing: "0.02em",
-    transition: "background-color 0.2s, transform 0.1s",
-  },
-  btnDisabled: { backgroundColor: "#e0a0b0", cursor: "not-allowed" },
-} as const;

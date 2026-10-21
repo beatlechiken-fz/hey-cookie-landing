@@ -47,14 +47,14 @@ function Tab({
       onClick={onClick}
       className={
         "relative px-5 py-2.5 text-sm font-semibold transition " +
-        (active ? "text-[#c0607a]" : "text-[#6B3E26] hover:text-[#AA6A42]")
+        (active ? "text-hc-rose" : "text-hc-muted hover:text-hc-soft")
       }
     >
       {label}
       {active && (
         <motion.div
           layoutId="jarabe-tab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#c0607a] rounded-full"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-hc-rose rounded-full"
         />
       )}
     </button>
@@ -114,18 +114,18 @@ function FilterDrawer({
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
             className="fixed left-0 top-0 h-full w-[300px] z-50 flex flex-col bg-white"
             style={{
-              borderRight: "1px solid #f0e0d0",
+              borderRight: "1px solid #EFE6E2",
               boxShadow: "4px 0 32px rgba(123,45,66,0.10)",
             }}
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[#f0e0d0] bg-[#FFF7F0]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-hc-line bg-hc-hover">
               <div className="flex items-center gap-2.5">
-                <SlidersIcon className="w-4 h-4 text-[#c0607a]" />
-                <h2 className="font-bold text-[#AA6A42] text-base">Filtros</h2>
+                <SlidersIcon className="w-4 h-4 text-hc-rose" />
+                <h2 className="font-bold text-hc-soft text-base">Filtros</h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -140,21 +140,21 @@ function FilterDrawer({
               </button>
             </div>
             <div className="flex-1 px-6 py-5">
-              <p className="text-[11px] font-semibold text-[#6B3E26] uppercase tracking-widest mb-2">
+              <p className="text-[11px] font-semibold text-hc-muted uppercase tracking-widest mb-2">
                 Buscar por nombre
               </p>
               <input
-                className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] transition"
+                className="w-full px-3 py-2 rounded-lg border border-hc-line-strong text-sm text-hc-ink focus:outline-none focus:border-hc-rose transition"
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder={placeholder}
               />
             </div>
-            <div className="px-6 py-4 border-t border-[#f0e0d0] bg-[#FFF7F0] flex flex-col gap-2">
+            <div className="px-6 py-4 border-t border-hc-line bg-hc-hover flex flex-col gap-2">
               {draft && (
                 <button
                   onClick={() => setDraft("")}
-                  className="w-full py-2 rounded-xl text-[13px] font-semibold text-[#6B3E26] hover:bg-[#f0e0d0] transition"
+                  className="w-full py-2 rounded-xl text-[13px] font-semibold text-hc-muted hover:bg-hc-sunken transition"
                 >
                   Limpiar
                 </button>
@@ -164,7 +164,7 @@ function FilterDrawer({
                   onSearchChange(draft);
                   onClose();
                 }}
-                className="w-full py-3 rounded-xl bg-[#c0607a] text-white text-[14px] font-bold hover:bg-[#a84d66] transition"
+                className="w-full py-3 rounded-xl bg-hc-rose text-white text-[14px] font-bold hover:bg-hc-rose-hover transition"
               >
                 Ver resultados
               </button>
@@ -197,7 +197,7 @@ function DeleteDialog({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="dlg"
@@ -207,7 +207,7 @@ function DeleteDialog({
             transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 flex flex-col gap-4">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                   <svg
@@ -222,21 +222,21 @@ function DeleteDialog({
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#3d1a24] text-base">
+                  <h3 className="font-bold text-hc-ink text-base">
                     Eliminar
                   </h3>
-                  <p className="text-sm text-[#6B3E26]">
+                  <p className="text-sm text-hc-muted">
                     Esta acción no se puede deshacer
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[#AA6A42]">
+              <p className="text-sm text-hc-soft">
                 ¿Confirmas que deseas eliminar <strong>"{nombre}"</strong>?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                 >
                   Cancelar
                 </button>
@@ -300,7 +300,7 @@ function SaborJarabeModal({
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
 
   return (
     <AnimatePresence>
@@ -312,7 +312,7 @@ function SaborJarabeModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="modal"
@@ -322,14 +322,14 @@ function SaborJarabeModal({
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0]">
-                <h2 className="font-bold text-[#AA6A42] text-lg">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover">
+                <h2 className="font-bold text-hc-soft text-lg">
                   {isEdit ? "Editar sabor" : "Nuevo sabor"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -348,7 +348,7 @@ function SaborJarabeModal({
                 className="px-6 py-5 flex flex-col gap-4"
               >
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Nombre del sabor
                   </label>
                   <input
@@ -360,11 +360,11 @@ function SaborJarabeModal({
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Precio adicional (MXN)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B3E26] text-sm">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-hc-muted text-sm">
                       $
                     </span>
                     <input
@@ -377,7 +377,7 @@ function SaborJarabeModal({
                       placeholder="0.00"
                     />
                   </div>
-                  <p className="text-[11px] text-[#6B3E26]">
+                  <p className="text-[11px] text-hc-muted">
                     Dejar vacío si el precio no está definido
                   </p>
                 </div>
@@ -390,14 +390,14 @@ function SaborJarabeModal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                    className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={saving}
-                    className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                    className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                   >
                     {saving ? "Guardando…" : isEdit ? "Guardar" : "Crear sabor"}
                   </button>
@@ -537,13 +537,13 @@ function JarabesTab() {
           className={
             "relative flex items-center justify-center w-10 h-10 rounded-xl border transition shrink-0 " +
             (search
-              ? "bg-[#c0607a] text-white border-[#c0607a]"
-              : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]")
+              ? "bg-hc-rose text-white border-hc-rose"
+              : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover")
           }
         >
           <SlidersIcon className="w-4 h-4" />
           {search && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#c0607a]" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-hc-rose" />
           )}
         </button>
         <div className="relative flex-1">
@@ -552,9 +552,9 @@ function JarabesTab() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar jarabe…"
-            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
           />
-          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
             <svg
               viewBox="0 0 24 24"
               className="w-4 h-4"
@@ -569,7 +569,7 @@ function JarabesTab() {
           </div>
           <button
             onClick={openCreate}
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] transition"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover transition"
           >
             <svg
               viewBox="0 0 24 24"
@@ -587,7 +587,7 @@ function JarabesTab() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#6B3E26]">
+        <p className="text-sm text-hc-muted">
           {isLoading ? "Cargando…" : `${total} jarabe${total !== 1 ? "s" : ""}`}
         </p>
         {(error || actionError) && (
@@ -596,31 +596,31 @@ function JarabesTab() {
       </div>
 
       {/* Tabla desktop */}
-      <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
+      <div className="hidden md:block rounded-2xl border border-hc-line overflow-hidden bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+            <tr className="bg-hc-hover border-b border-hc-line">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Jarabe
               </th>
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Descripción
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Ingredientes
               </th>
-              <th className="px-4 py-3 text-right  text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-right  text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Costo total
               </th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f9eef2]">
+          <tbody className="divide-y divide-hc-line">
             {isLoading && (
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   Cargando…
                 </td>
@@ -630,42 +630,42 @@ function JarabesTab() {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   No se encontraron jarabes
                 </td>
               </tr>
             )}
             {jarabes.map((j) => (
-              <tr key={j.id} className="hover:bg-[#FFF7F0]/60 transition group">
-                <td className="px-4 py-3 font-semibold text-[#3d1a24]">
+              <tr key={j.id} className="hover:bg-hc-hover/60 transition group">
+                <td className="px-4 py-3 font-semibold text-hc-ink">
                   <div className="flex items-center gap-3">
                     <RawThumb src={j.imagenUrl} alt={j.nombre} />
                     <span>{j.nombre}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-[#AA6A42]/70 text-sm max-w-xs">
+                <td className="px-4 py-3 text-hc-soft/70 text-sm max-w-xs">
                   <p className="truncate">{j.descripcion ?? "—"}</p>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <span className="px-2 py-0.5 rounded-full bg-[#FFF7F0] border border-[#f0e0d0] text-[11px] font-semibold text-[#6B3E26]">
+                  <span className="px-2 py-0.5 rounded-full bg-hc-hover border border-hc-line text-[11px] font-semibold text-hc-muted">
                     {j.ingredientes.length}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right font-bold text-[#c0607a]">
+                <td className="px-4 py-3 text-right font-bold text-hc-rose">
                   ${j.costoTotal.toFixed(2)}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                     <button
                       onClick={() => openEdit(j)}
-                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                      className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                     >
                       {editIcon}
                     </button>
                     <button
                       onClick={() => handleDuplicate(j)}
-                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#AA6A42] transition"
+                      className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-soft transition"
                       aria-label="Duplicar"
                       title="Duplicar"
                     >
@@ -673,7 +673,7 @@ function JarabesTab() {
                     </button>
                     <button
                       onClick={() => setDeleteTarget(j)}
-                      className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                      className="p-1.5 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                     >
                       {deleteIcon}
                     </button>
@@ -688,35 +688,35 @@ function JarabesTab() {
       {/* Cards mobile */}
       <div className="flex md:hidden flex-col gap-3">
         {isLoading && (
-          <p className="text-center text-[#AA6A42] text-sm py-8">Cargando…</p>
+          <p className="text-center text-hc-soft text-sm py-8">Cargando…</p>
         )}
         {!isLoading && jarabes.length === 0 && (
-          <p className="text-center text-[#AA6A42] text-sm py-8">
+          <p className="text-center text-hc-soft text-sm py-8">
             No se encontraron jarabes
           </p>
         )}
         {jarabes.map((j) => (
           <div
             key={j.id}
-            className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
+            className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
                   <RawThumb src={j.imagenUrl} alt={j.nombre} size="sm" />
-                  <p className="font-semibold text-[#3d1a24]">{j.nombre}</p>
+                  <p className="font-semibold text-hc-ink">{j.nombre}</p>
                 </div>
                 {j.descripcion && (
-                  <p className="text-sm text-[#6B3E26] mt-0.5 line-clamp-2">
+                  <p className="text-sm text-hc-muted mt-0.5 line-clamp-2">
                     {j.descripcion}
                   </p>
                 )}
                 <div className="flex gap-3 mt-2">
-                  <span className="text-[11px] text-[#6B3E26]">
+                  <span className="text-[11px] text-hc-muted">
                     {j.ingredientes.length} ingrediente
                     {j.ingredientes.length !== 1 ? "s" : ""}
                   </span>
-                  <span className="font-bold text-[#c0607a] text-sm">
+                  <span className="font-bold text-hc-rose text-sm">
                     ${j.costoTotal.toFixed(2)}
                   </span>
                 </div>
@@ -724,20 +724,20 @@ function JarabesTab() {
               <div className="flex gap-1 shrink-0">
                 <button
                   onClick={() => openEdit(j)}
-                  className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                  className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted transition"
                 >
                   {editIcon}
                 </button>
                 <button
                   onClick={() => handleDuplicate(j)}
-                  className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                  className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted transition"
                   aria-label="Duplicar"
                 >
                   {duplicateIcon}
                 </button>
                 <button
                   onClick={() => setDeleteTarget(j)}
-                  className="p-2 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                  className="p-2 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                 >
                   {deleteIcon}
                 </button>
@@ -752,17 +752,17 @@ function JarabesTab() {
           <button
             onClick={() => setPage(page - 1)}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             ← Anterior
           </button>
-          <span className="text-sm text-[#6B3E26]">
+          <span className="text-sm text-hc-muted">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => setPage(page + 1)}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             Siguiente →
           </button>
@@ -848,9 +848,9 @@ function SaboresTab() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar sabor…"
-            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
           />
-          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
             <svg
               viewBox="0 0 24 24"
               className="w-4 h-4"
@@ -865,7 +865,7 @@ function SaboresTab() {
           </div>
           <button
             onClick={openCreate}
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] transition"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover transition"
           >
             <svg
               viewBox="0 0 24 24"
@@ -882,7 +882,7 @@ function SaboresTab() {
         </div>
       </div>
 
-      <p className="text-sm text-[#6B3E26]">
+      <p className="text-sm text-hc-muted">
         {isLoading ? "Cargando…" : `${total} sabor${total !== 1 ? "es" : ""}`}
       </p>
       {(error || actionError) && (
@@ -894,18 +894,18 @@ function SaboresTab() {
         {sabores.map((s) => (
           <div
             key={s.id}
-            className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm group relative hover:border-[#e8c4a0] transition"
+            className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm group relative hover:border-hc-line-strong transition"
           >
             <div className="flex items-start justify-between gap-1">
               <div>
-                <p className="font-semibold text-[#3d1a24] text-sm">
+                <p className="font-semibold text-hc-ink text-sm">
                   {s.nombre}
                 </p>
-                <p className="text-base font-bold text-[#c0607a] mt-1">
+                <p className="text-base font-bold text-hc-rose mt-1">
                   {s.precio != null ? (
                     `+$${s.precio}`
                   ) : (
-                    <span className="text-[#AA6A42] text-xs font-normal">
+                    <span className="text-hc-soft text-xs font-normal">
                       Sin precio
                     </span>
                   )}
@@ -914,7 +914,7 @@ function SaboresTab() {
               <div className="flex flex-col gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                 <button
                   onClick={() => openEdit(s)}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -930,7 +930,7 @@ function SaboresTab() {
                 </button>
                 <button
                   onClick={() => setDeleteTarget(s)}
-                  className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                  className="p-1.5 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -951,7 +951,7 @@ function SaboresTab() {
           </div>
         ))}
         {!isLoading && sabores.length === 0 && (
-          <div className="col-span-full py-12 text-center text-[#AA6A42] text-sm">
+          <div className="col-span-full py-12 text-center text-hc-soft text-sm">
             No se encontraron sabores
           </div>
         )}
@@ -981,7 +981,7 @@ export function JarabesView() {
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs */}
-      <div className="flex border-b border-[#f0e0d0]">
+      <div className="flex border-b border-hc-line">
         <Tab
           label="Jarabes"
           active={activeTab === "jarabes"}

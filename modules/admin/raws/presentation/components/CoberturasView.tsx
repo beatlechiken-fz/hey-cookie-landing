@@ -86,18 +86,18 @@ function CoberturaFilterDrawer({
             transition={{ type: "spring", stiffness: 300, damping: 32 }}
             className="fixed left-0 top-0 h-full w-[300px] z-50 flex flex-col bg-white"
             style={{
-              borderRight: "1px solid #f0e0d0",
+              borderRight: "1px solid #EFE6E2",
               boxShadow: "4px 0 32px rgba(123,45,66,0.10)",
             }}
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-[#f0e0d0] bg-[#FFF7F0]">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-hc-line bg-hc-hover">
               <div className="flex items-center gap-2.5">
-                <SlidersIcon className="w-4 h-4 text-[#c0607a]" />
-                <h2 className="font-bold text-[#AA6A42] text-base">Filtros</h2>
+                <SlidersIcon className="w-4 h-4 text-hc-rose" />
+                <h2 className="font-bold text-hc-soft text-base">Filtros</h2>
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -112,21 +112,21 @@ function CoberturaFilterDrawer({
               </button>
             </div>
             <div className="flex-1 px-6 py-5">
-              <p className="text-[11px] font-semibold text-[#6B3E26] uppercase tracking-widest mb-2">
+              <p className="text-[11px] font-semibold text-hc-muted uppercase tracking-widest mb-2">
                 Buscar por nombre
               </p>
               <input
-                className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] transition"
+                className="w-full px-3 py-2 rounded-lg border border-hc-line-strong text-sm text-hc-ink focus:outline-none focus:border-hc-rose transition"
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="Cobertura…"
               />
             </div>
-            <div className="px-6 py-4 border-t border-[#f0e0d0] bg-[#FFF7F0] flex flex-col gap-2">
+            <div className="px-6 py-4 border-t border-hc-line bg-hc-hover flex flex-col gap-2">
               {draft && (
                 <button
                   onClick={() => setDraft("")}
-                  className="w-full py-2 rounded-xl text-[13px] font-semibold text-[#6B3E26] hover:bg-[#f0e0d0] transition"
+                  className="w-full py-2 rounded-xl text-[13px] font-semibold text-hc-muted hover:bg-hc-sunken transition"
                 >
                   Limpiar
                 </button>
@@ -136,7 +136,7 @@ function CoberturaFilterDrawer({
                   onSearchChange(draft);
                   onClose();
                 }}
-                className="w-full py-3 rounded-xl bg-[#c0607a] text-white text-[14px] font-bold hover:bg-[#a84d66] transition"
+                className="w-full py-3 rounded-xl bg-hc-rose text-white text-[14px] font-bold hover:bg-hc-rose-hover transition"
               >
                 Ver resultados
               </button>
@@ -163,14 +163,14 @@ function Tab({
       onClick={onClick}
       className={
         "relative px-5 py-2.5 text-sm font-semibold transition " +
-        (active ? "text-[#c0607a]" : "text-[#6B3E26] hover:text-[#AA6A42]")
+        (active ? "text-hc-rose" : "text-hc-muted hover:text-hc-soft")
       }
     >
       {label}
       {active && (
         <motion.div
           layoutId="tab-indicator"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#c0607a] rounded-full"
+          className="absolute bottom-0 left-0 right-0 h-0.5 bg-hc-rose rounded-full"
         />
       )}
     </button>
@@ -256,13 +256,13 @@ function CoberturasTab() {
           className={
             "relative flex items-center justify-center w-10 h-10 rounded-xl border transition shrink-0 " +
             (search
-              ? "bg-[#c0607a] text-white border-[#c0607a]"
-              : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]")
+              ? "bg-hc-rose text-white border-hc-rose"
+              : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover")
           }
         >
           <SlidersIcon className="w-4 h-4" />
           {search && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-[#c0607a]" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-white border-2 border-hc-rose" />
           )}
         </button>
         <div className="relative flex-1">
@@ -271,9 +271,9 @@ function CoberturasTab() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar cobertura…"
-            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
           />
-          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
             <svg
               viewBox="0 0 24 24"
               className="w-4 h-4"
@@ -288,7 +288,7 @@ function CoberturasTab() {
           </div>
           <button
             onClick={openCreate}
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] transition"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover transition"
           >
             <svg
               viewBox="0 0 24 24"
@@ -306,7 +306,7 @@ function CoberturasTab() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#6B3E26]">
+        <p className="text-sm text-hc-muted">
           {isLoading
             ? "Cargando…"
             : `${total} cobertura${total !== 1 ? "s" : ""}`}
@@ -317,31 +317,31 @@ function CoberturasTab() {
       </div>
 
       {/* Tabla desktop */}
-      <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
+      <div className="hidden md:block rounded-2xl border border-hc-line overflow-hidden bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+            <tr className="bg-hc-hover border-b border-hc-line">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Cobertura
               </th>
-              <th className="px-4 py-3 text-left text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Descripción
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Ingredientes
               </th>
-              <th className="px-4 py-3 text-right text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Costo total
               </th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f9eef2]">
+          <tbody className="divide-y divide-hc-line">
             {isLoading && (
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   Cargando…
                 </td>
@@ -351,36 +351,36 @@ function CoberturasTab() {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   No se encontraron coberturas
                 </td>
               </tr>
             )}
             {coberturas.map((c) => (
-              <tr key={c.id} className="hover:bg-[#FFF7F0]/60 transition group">
-                <td className="px-4 py-3 font-semibold text-[#3d1a24]">
+              <tr key={c.id} className="hover:bg-hc-hover/60 transition group">
+                <td className="px-4 py-3 font-semibold text-hc-ink">
                   <div className="flex items-center gap-3">
                     <RawThumb src={c.imagenUrl} alt={c.nombre} />
                     <span>{c.nombre}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-[#AA6A42]/70 text-sm max-w-xs truncate">
+                <td className="px-4 py-3 text-hc-soft/70 text-sm max-w-xs truncate">
                   {c.descripcion ?? "—"}
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <span className="px-2 py-0.5 rounded-full bg-[#FFF7F0] border border-[#f0e0d0] text-[11px] font-semibold text-[#6B3E26]">
+                  <span className="px-2 py-0.5 rounded-full bg-hc-hover border border-hc-line text-[11px] font-semibold text-hc-muted">
                     {c.ingredientes.length}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right font-bold text-[#c0607a]">
+                <td className="px-4 py-3 text-right font-bold text-hc-rose">
                   ${c.costoTotal.toFixed(2)}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                     <button
                       onClick={() => openEdit(c)}
-                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                      className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -396,7 +396,7 @@ function CoberturasTab() {
                     </button>
                     <button
                       onClick={() => handleDuplicate(c)}
-                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#AA6A42] transition"
+                      className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-soft transition"
                       aria-label="Duplicar"
                       title="Duplicar"
                     >
@@ -415,7 +415,7 @@ function CoberturasTab() {
                     </button>
                     <button
                       onClick={() => openDelete(c)}
-                      className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                      className="p-1.5 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -444,32 +444,32 @@ function CoberturasTab() {
         {coberturas.map((c) => (
           <div
             key={c.id}
-            className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
+            className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-2">
               <div>
                 <div className="flex items-center gap-3">
                   <RawThumb src={c.imagenUrl} alt={c.nombre} size="sm" />
-                  <p className="font-semibold text-[#3d1a24]">{c.nombre}</p>
+                  <p className="font-semibold text-hc-ink">{c.nombre}</p>
                 </div>
                 {c.descripcion && (
-                  <p className="text-sm text-[#6B3E26] mt-0.5">
+                  <p className="text-sm text-hc-muted mt-0.5">
                     {c.descripcion}
                   </p>
                 )}
-                <p className="text-[12px] text-[#6B3E26] mt-2">
+                <p className="text-[12px] text-hc-muted mt-2">
                   {c.ingredientes.length} ingrediente
                   {c.ingredientes.length !== 1 ? "s" : ""}
                 </p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <p className="font-bold text-[#c0607a] text-lg">
+                <p className="font-bold text-hc-rose text-lg">
                   ${c.costoTotal.toFixed(2)}
                 </p>
                 <div className="flex gap-1">
                   <button
                     onClick={() => openEdit(c)}
-                    className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                    className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -485,7 +485,7 @@ function CoberturasTab() {
                   </button>
                   <button
                     onClick={() => handleDuplicate(c)}
-                    className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                    className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted transition"
                     aria-label="Duplicar"
                   >
                     <svg
@@ -503,7 +503,7 @@ function CoberturasTab() {
                   </button>
                   <button
                     onClick={() => openDelete(c)}
-                    className="p-2 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                    className="p-2 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -604,9 +604,9 @@ function SaboresTab() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar sabor…"
-            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+            className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
           />
-          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+          <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
             <svg
               viewBox="0 0 24 24"
               className="w-4 h-4"
@@ -621,7 +621,7 @@ function SaboresTab() {
           </div>
           <button
             onClick={openCreate}
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] transition"
+            className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover transition"
           >
             <svg
               viewBox="0 0 24 24"
@@ -638,7 +638,7 @@ function SaboresTab() {
         </div>
       </div>
 
-      <p className="text-sm text-[#6B3E26]">
+      <p className="text-sm text-hc-muted">
         {isLoading ? "Cargando…" : `${total} sabor${total !== 1 ? "es" : ""}`}
       </p>
       {(error || actionError) && (
@@ -650,18 +650,18 @@ function SaboresTab() {
         {sabores.map((s) => (
           <div
             key={s.id}
-            className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm group relative hover:border-[#e8c4a0] transition"
+            className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm group relative hover:border-hc-line-strong transition"
           >
             <div className="flex items-start justify-between gap-1">
               <div>
-                <p className="font-semibold text-[#3d1a24] text-sm">
+                <p className="font-semibold text-hc-ink text-sm">
                   {s.nombre}
                 </p>
-                <p className="text-base font-bold text-[#c0607a] mt-1">
+                <p className="text-base font-bold text-hc-rose mt-1">
                   {s.precio != null ? (
                     `+$${s.precio}`
                   ) : (
-                    <span className="text-[#AA6A42] text-xs font-normal">
+                    <span className="text-hc-soft text-xs font-normal">
                       Sin precio
                     </span>
                   )}
@@ -670,7 +670,7 @@ function SaboresTab() {
               <div className="flex flex-col gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                 <button
                   onClick={() => openEdit(s)}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -686,7 +686,7 @@ function SaboresTab() {
                 </button>
                 <button
                   onClick={() => setDeleteTarget(s)}
-                  className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                  className="p-1.5 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -707,7 +707,7 @@ function SaboresTab() {
           </div>
         ))}
         {!isLoading && sabores.length === 0 && (
-          <div className="col-span-full py-12 text-center text-[#AA6A42] text-sm">
+          <div className="col-span-full py-12 text-center text-hc-soft text-sm">
             No se encontraron sabores
           </div>
         )}
@@ -738,7 +738,7 @@ export function CoberturasView() {
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs */}
-      <div className="flex border-b border-[#f0e0d0] relative">
+      <div className="flex border-b border-hc-line relative">
         <Tab
           label="Coberturas"
           active={activeTab === "coberturas"}

@@ -113,11 +113,11 @@ export function ClienteCuponesSection({ clienteId }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-[#AA6A42]">Cupones asignados</h2>
+        <h2 className="text-lg font-bold text-hc-soft">Cupones asignados</h2>
         <div className="relative" ref={ref}>
           <button
             onClick={() => setAssignOpen((v) => !v)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] transition"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover transition"
           >
             <svg
               viewBox="0 0 24 24"
@@ -139,25 +139,25 @@ export function ClienteCuponesSection({ clienteId }: Props) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96, y: -6 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-72 bg-white border border-[#f0e0d0] rounded-2xl shadow-xl overflow-hidden z-20"
+                className="absolute right-0 top-full mt-2 w-72 bg-white border border-hc-line rounded-2xl shadow-xl overflow-hidden z-20"
               >
-                <div className="p-3 border-b border-[#f0e0d0]">
+                <div className="p-3 border-b border-hc-line">
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Buscar por código…"
                     autoFocus
-                    className="w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]"
+                    className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft"
                   />
                 </div>
                 <div className="max-h-60 overflow-y-auto">
                   {dispLoading && (
-                    <p className="px-3 py-3 text-[12px] text-[#AA6A42] text-center">
+                    <p className="px-3 py-3 text-[12px] text-hc-soft text-center">
                       Cargando…
                     </p>
                   )}
                   {!dispLoading && disponibles.length === 0 && (
-                    <p className="px-3 py-3 text-[12px] text-[#AA6A42] text-center">
+                    <p className="px-3 py-3 text-[12px] text-hc-soft text-center">
                       No hay cupones individuales disponibles. Créalos en
                       Cupones con tipo "Individual".
                     </p>
@@ -168,20 +168,20 @@ export function ClienteCuponesSection({ clienteId }: Props) {
                         key={c.id}
                         onClick={() => handleAsignar(c.id)}
                         disabled={assigning === c.id}
-                        className="w-full text-left px-3 py-2.5 hover:bg-[#FFF7F0] transition border-b border-[#f9eef2] last:border-b-0 disabled:opacity-50"
+                        className="w-full text-left px-3 py-2.5 hover:bg-hc-hover transition border-b border-hc-line last:border-b-0 disabled:opacity-50"
                       >
                         <div className="flex items-center justify-between">
-                          <p className="text-[13px] font-bold text-[#3d1a24] tracking-wide">
+                          <p className="text-[13px] font-bold text-hc-ink tracking-wide">
                             {c.codigo}
                           </p>
-                          <span className="text-[12px] font-semibold text-[#c0607a]">
+                          <span className="text-[12px] font-semibold text-hc-rose">
                             {c.tipoDescuento === "porcentaje"
                               ? `${c.valor}%`
                               : `$${c.valor}`}
                           </span>
                         </div>
                         {c.descripcion && (
-                          <p className="text-[11px] text-[#6B3E26] mt-0.5">
+                          <p className="text-[11px] text-hc-muted mt-0.5">
                             {c.descripcion}
                           </p>
                         )}
@@ -199,7 +199,7 @@ export function ClienteCuponesSection({ clienteId }: Props) {
       )}
 
       {!isLoading && cupones.length === 0 && (
-        <div className="rounded-2xl border border-[#f0e0d0] bg-[#FFF7F0] py-8 text-center text-[#AA6A42] text-sm">
+        <div className="rounded-2xl border border-hc-line bg-hc-hover py-8 text-center text-hc-soft text-sm">
           Este cliente no tiene cupones individuales asignados
         </div>
       )}
@@ -208,22 +208,22 @@ export function ClienteCuponesSection({ clienteId }: Props) {
         {cupones.map((c) => (
           <div
             key={c.id}
-            className="rounded-xl border border-[#f0e0d0] bg-white px-4 py-3 flex items-center justify-between gap-3"
+            className="rounded-xl border border-hc-line bg-white px-4 py-3 flex items-center justify-between gap-3"
           >
             <div className="flex items-center gap-3 min-w-0">
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="font-bold text-[#3d1a24] tracking-wide">
+                  <p className="font-bold text-hc-ink tracking-wide">
                     {c.codigo}
                   </p>
                   <CuponStatusBadge cupon={c} />
                 </div>
                 {c.descripcion && (
-                  <p className="text-[12px] text-[#6B3E26] mt-0.5">
+                  <p className="text-[12px] text-hc-muted mt-0.5">
                     {c.descripcion}
                   </p>
                 )}
-                <p className="text-[11px] text-[#AA6A42] mt-0.5">
+                <p className="text-[11px] text-hc-soft mt-0.5">
                   {c.tipoDescuento === "porcentaje"
                     ? `${c.valor}% de descuento`
                     : `$${c.valor} de descuento`}
@@ -236,7 +236,7 @@ export function ClienteCuponesSection({ clienteId }: Props) {
             <button
               onClick={() => handleDesasignar(c.id)}
               disabled={removing === c.id}
-              className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[12px] font-semibold hover:bg-red-50 hover:text-red-500 hover:border-red-200 disabled:opacity-50 transition shrink-0"
+              className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-muted text-[12px] font-semibold hover:bg-red-50 hover:text-red-500 hover:border-red-200 disabled:opacity-50 transition shrink-0"
             >
               {removing === c.id ? "Quitando…" : "Quitar"}
             </button>

@@ -109,7 +109,7 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar producto…"
-            className="w-full px-4 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+            className="w-full px-4 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
           />
         </div>
         <div className="flex gap-2">
@@ -120,8 +120,8 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
               className={
                 "px-3 py-1.5 rounded-lg text-[12px] font-semibold border transition " +
                 (linea === l.value
-                  ? "bg-[#c0607a] text-white border-[#c0607a]"
-                  : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]")
+                  ? "bg-hc-rose text-white border-hc-rose"
+                  : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover")
               }
             >
               {l.label}
@@ -130,7 +130,7 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
           {/* Botón crear */}
           <button
             onClick={() => setEditing("new")}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#AA6A42] text-white text-[12px] font-bold hover:bg-[#5a1e2e] transition"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-hc-soft text-white text-[12px] font-bold hover:bg-hc-ink transition"
           >
             <svg
               viewBox="0 0 24 24"
@@ -149,17 +149,17 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
       {isLoading && (
-        <p className="text-center text-[#AA6A42] text-sm py-8">Cargando…</p>
+        <p className="text-center text-hc-soft text-sm py-8">Cargando…</p>
       )}
 
       {!isLoading && productos.length === 0 && (
-        <div className="rounded-2xl border border-[#f0e0d0] bg-[#FFF7F0] py-12 text-center">
-          <p className="text-[#AA6A42] text-sm mb-3">
+        <div className="rounded-2xl border border-hc-line bg-hc-hover py-12 text-center">
+          <p className="text-hc-soft text-sm mb-3">
             No hay productos en esta categoría
           </p>
           <button
             onClick={() => setEditing("new")}
-            className="px-4 py-2 rounded-xl bg-[#c0607a] text-white text-sm font-semibold hover:bg-[#a84d66] transition"
+            className="px-4 py-2 rounded-xl bg-hc-rose text-white text-sm font-semibold hover:bg-hc-rose-hover transition"
           >
             Crear primer producto
           </button>
@@ -210,10 +210,10 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
       {deleting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-hc-cacao/25 backdrop-blur-[2px]"
             onClick={() => setDeleting(null)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 max-w-sm w-full z-10">
+          <div className="relative bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 max-w-sm w-full z-10">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                 <svg
@@ -228,11 +228,11 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
                 </svg>
               </div>
               <div>
-                <p className="font-bold text-[#3d1a24]">Eliminar producto</p>
-                <p className="text-[13px] text-[#6B3E26]">{deleting.nombre}</p>
+                <p className="font-bold text-hc-ink">Eliminar producto</p>
+                <p className="text-[13px] text-hc-muted">{deleting.nombre}</p>
               </div>
             </div>
-            <p className="text-[13px] text-[#AA6A42] mb-5">
+            <p className="text-[13px] text-hc-soft mb-5">
               El producto se marcará como inactivo y dejará de aparecer en el
               catálogo. Esta acción se puede revertir.
             </p>
@@ -242,7 +242,7 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleting(null)}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
               >
                 Cancelar
               </button>

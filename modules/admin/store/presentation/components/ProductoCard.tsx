@@ -28,13 +28,13 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
   const linea = LINEA_LABELS[producto.linea] ?? LINEA_LABELS.sweet;
 
   return (
-    <div className="group relative flex flex-col bg-white rounded-2xl border border-[#f0e0d0] shadow-sm hover:shadow-md hover:border-[#e8c4a0] transition overflow-hidden">
+    <div className="group relative flex flex-col bg-white rounded-2xl border border-hc-line shadow-sm hover:shadow-md hover:border-hc-line-strong transition overflow-hidden">
       {/* Imagen / placeholder */}
       <button
         onClick={onClick}
         className="text-left flex flex-col flex-1 focus:outline-none"
       >
-        <div className="relative w-full aspect-[4/3] bg-[#FFF7F0]">
+        <div className="relative w-full aspect-[4/3] bg-hc-hover">
           {producto.imagenUrl ? (
             <Image
               src={producto.imagenUrl}
@@ -43,7 +43,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-[#e8c4a0]">
+            <div className="w-full h-full flex items-center justify-center text-hc-line-strong">
               <svg
                 viewBox="0 0 24 24"
                 className="w-12 h-12"
@@ -71,7 +71,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
             <button
               onClick={onEdit}
               title="Editar"
-              className="p-1.5 rounded-lg bg-white/90 border border-[#e8c4a0] text-[#AA6A42] hover:bg-[#FFF7F0] hover:text-[#c0607a] shadow-sm transition backdrop-blur-sm"
+              className="p-1.5 rounded-lg bg-white/90 border border-hc-line-strong text-hc-soft hover:bg-hc-hover hover:text-hc-rose shadow-sm transition backdrop-blur-sm"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -88,7 +88,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
             <button
               onClick={onDuplicate}
               title="Duplicar"
-              className="p-1.5 rounded-lg bg-white/90 border border-[#e8c4a0] text-[#AA6A42] hover:bg-[#FFF7F0] hover:text-[#c0607a] shadow-sm transition backdrop-blur-sm"
+              className="p-1.5 rounded-lg bg-white/90 border border-hc-line-strong text-hc-soft hover:bg-hc-hover hover:text-hc-rose shadow-sm transition backdrop-blur-sm"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -123,25 +123,25 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
         </div>
 
         <div className="p-3 flex flex-col gap-1">
-          <p className="font-semibold text-[#3d1a24] text-[14px] leading-tight group-hover:text-[#c0607a] transition">
+          <p className="font-semibold text-hc-ink text-[14px] leading-tight group-hover:text-hc-rose transition">
             {producto.nombre}
           </p>
           {producto.descripcion && (
-            <p className="text-[12px] text-[#6B3E26] line-clamp-2">
+            <p className="text-[12px] text-hc-muted line-clamp-2">
               {producto.descripcion}
             </p>
           )}
           <div className="flex items-center gap-1.5 mt-1">
             {producto.permiteMedidaPersonalizada ? (
-              <span className="text-[11px] text-[#c0607a] font-medium">
+              <span className="text-[11px] text-hc-rose font-medium">
                 Medida personalizable
               </span>
             ) : producto.tamanosFijos.length > 0 ? (
-              <span className="text-[11px] text-[#c0607a] font-medium">
+              <span className="text-[11px] text-hc-rose font-medium">
                 {producto.tamanosFijos.length} tamaños
               </span>
             ) : (
-              <span className="text-[11px] text-[#6B3E26]">Tamaño único</span>
+              <span className="text-[11px] text-hc-muted">Tamaño único</span>
             )}
           </div>
         </div>

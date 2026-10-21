@@ -40,7 +40,7 @@ export function PastelCompartidoSection({ ordenId, ordenItemId, compartido, onCh
   useEffect(() => {
     if (!url) return;
     let vigente = true;
-    QRCode.toDataURL(url, { width: 480, margin: 1, color: { dark: "#3A1F14", light: "#FFFFFF" } })
+    QRCode.toDataURL(url, { width: 480, margin: 1, color: { dark: "#2D1B16", light: "#FFFFFF" } })
       .then((data) => vigente && setQr(data))
       .catch(() => vigente && setQr(null));
     return () => { vigente = false; };
@@ -113,13 +113,13 @@ export function PastelCompartidoSection({ ordenId, ordenItemId, compartido, onCh
   }
 
   const btn =
-    "px-2.5 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[11px] font-semibold text-[#AA6A42] hover:text-[#c0607a] hover:border-[#c0607a] transition disabled:opacity-50";
+    "px-2.5 py-1 rounded-lg border border-hc-line-strong bg-white text-[11px] font-semibold text-hc-soft hover:text-hc-rose hover:border-hc-rose transition disabled:opacity-50";
 
   if (!compartido) {
     return (
-      <div className="mt-2 flex flex-col gap-2 rounded-lg border border-dashed border-[#e8c4a0] bg-white px-3 py-2.5">
-        <p className="text-[12px] text-[#6B3E26]">
-          <span className="font-semibold text-[#3A1F14]">Para compartir</span> — el cliente pidió
+      <div className="mt-2 flex flex-col gap-2 rounded-lg border border-dashed border-hc-line-strong bg-white px-3 py-2.5">
+        <p className="text-[12px] text-hc-muted">
+          <span className="font-semibold text-hc-ink">Para compartir</span> — el cliente pidió
           invitar a más personas y dividir el pago.
         </p>
         <button onClick={generar} disabled={generando} className={`${btn} self-start`}>
@@ -135,8 +135,8 @@ export function PastelCompartidoSection({ ordenId, ordenItemId, compartido, onCh
   const tieneSolicitante = activos.some((p) => p.origen === "solicitante");
 
   return (
-    <div className="mt-2 flex flex-col gap-3 rounded-lg border border-[#e8c4a0] bg-white px-3 py-3">
-      <p className="text-[10px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+    <div className="mt-2 flex flex-col gap-3 rounded-lg border border-hc-line-strong bg-white px-3 py-3">
+      <p className="text-[10px] font-semibold text-hc-soft uppercase tracking-wider">
         Para compartir
       </p>
 
@@ -147,7 +147,7 @@ export function PastelCompartidoSection({ ordenId, ordenItemId, compartido, onCh
           <img
             src={qr}
             alt="Código QR de la invitación"
-            className="w-32 h-32 rounded-lg border border-[#f0e0d0] self-center sm:self-start"
+            className="w-32 h-32 rounded-lg border border-hc-line self-center sm:self-start"
           />
         )}
         <div className="flex flex-col gap-2 min-w-0 flex-1">
@@ -156,7 +156,7 @@ export function PastelCompartidoSection({ ordenId, ordenItemId, compartido, onCh
             value={url ?? ""}
             onFocus={(e) => e.currentTarget.select()}
             aria-label="Enlace de invitación"
-            className="w-full text-[12px] border border-[#e8c4a0] rounded-lg px-2.5 py-1.5 text-[#3d1a24] bg-[#FFF7F0]"
+            className="w-full text-[12px] border border-hc-line-strong rounded-lg px-2.5 py-1.5 text-hc-ink bg-hc-hover"
           />
           <div className="flex flex-wrap gap-2">
             <button onClick={copiar} className={btn}>
@@ -178,29 +178,29 @@ export function PastelCompartidoSection({ ordenId, ordenItemId, compartido, onCh
 
       {/* Participantes */}
       <div className="flex flex-col gap-1.5">
-        <p className="text-[12px] text-[#6B3E26]">
-          <span className="font-semibold text-[#3A1F14]">{activos.length}</span>{" "}
+        <p className="text-[12px] text-hc-muted">
+          <span className="font-semibold text-hc-ink">{activos.length}</span>{" "}
           {activos.length === 1 ? "participante" : "participantes"}
           {noParticipan > 0 && ` · ${noParticipan} no ${noParticipan === 1 ? "participará" : "participarán"}`}
         </p>
         {activos.map((p) => (
           <div
             key={p.id}
-            className="flex items-center justify-between gap-2 rounded-lg bg-[#FFF7F0] border border-[#f0e0d0] px-2.5 py-1.5"
+            className="flex items-center justify-between gap-2 rounded-lg bg-hc-hover border border-hc-line px-2.5 py-1.5"
           >
-            <span className="text-[12px] text-[#3d1a24] truncate">
+            <span className="text-[12px] text-hc-ink truncate">
               {p.nombre ?? "Sin nombre"}
               {p.origen === "solicitante" && (
-                <span className="ml-1.5 text-[10px] font-semibold text-[#AA6A42]">(solicitante)</span>
+                <span className="ml-1.5 text-[10px] font-semibold text-hc-soft">(solicitante)</span>
               )}
               {p.origen === "admin" && (
-                <span className="ml-1.5 text-[10px] text-[#6B3E26]/70">(agregado por admin)</span>
+                <span className="ml-1.5 text-[10px] text-hc-muted/70">(agregado por admin)</span>
               )}
             </span>
             <button
               onClick={() => quitar(p.id)}
               disabled={quitandoId === p.id}
-              className="p-1 rounded-md hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition disabled:opacity-50"
+              className="p-1 rounded-md hover:bg-red-50 text-hc-soft hover:text-red-500 transition disabled:opacity-50"
               aria-label={`Quitar a ${p.nombre ?? "participante"}`}
             >
               <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -218,7 +218,7 @@ export function PastelCompartidoSection({ ordenId, ordenItemId, compartido, onCh
             onKeyDown={(e) => e.key === "Enter" && agregar(false)}
             placeholder="Agregar participante"
             aria-label="Nombre del participante a agregar"
-            className="flex-1 min-w-0 text-[12px] border border-[#e8c4a0] rounded-lg px-2.5 py-1.5 text-[#3d1a24] focus:outline-none focus:border-[#c0607a] bg-white"
+            className="flex-1 min-w-0 text-[12px] border border-hc-line-strong rounded-lg px-2.5 py-1.5 text-hc-ink focus:outline-none focus:border-hc-rose bg-white"
           />
           <button onClick={() => agregar(false)} disabled={guardando || !nuevo.trim()} className={btn}>
             Agregar

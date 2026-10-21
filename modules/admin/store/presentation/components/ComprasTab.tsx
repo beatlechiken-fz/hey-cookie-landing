@@ -107,21 +107,21 @@ export function ComprasTab({ desde, hasta }: Props) {
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
 
   return (
     <div className="flex flex-col gap-4">
       {/* Toolbar */}
       <div className="flex items-center justify-between">
         {totalCompras > 0 && (
-          <p className="text-[13px] text-[#6B3E26]">
+          <p className="text-[13px] text-hc-muted">
             Total en período:{" "}
             <strong className="text-red-600">{fmt(totalCompras)}</strong>
           </p>
         )}
         <button
           onClick={openCreate}
-          className="ml-auto flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#AA6A42] text-white text-[12px] font-bold hover:bg-[#5a1e2e] transition"
+          className="ml-auto flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-hc-soft text-white text-[12px] font-bold hover:bg-hc-ink transition"
         >
           <svg
             viewBox="0 0 24 24"
@@ -138,25 +138,25 @@ export function ComprasTab({ desde, hasta }: Props) {
       </div>
 
       {isLoading && (
-        <p className="text-center text-[#AA6A42] text-sm py-8">
+        <p className="text-center text-hc-soft text-sm py-8">
           Cargando compras…
         </p>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {!isLoading && compras.length === 0 && (
-        <div className="rounded-2xl border border-[#f0e0d0] bg-[#FFF7F0] py-12 text-center">
-          <p className="text-[#AA6A42] text-sm">
+        <div className="rounded-2xl border border-hc-line bg-hc-hover py-12 text-center">
+          <p className="text-hc-soft text-sm">
             Sin compras registradas en el período
           </p>
         </div>
       )}
 
       {compras.length > 0 && (
-        <div className="rounded-2xl border border-[#f0e0d0] overflow-hidden">
+        <div className="rounded-2xl border border-hc-line overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
+              <tr className="bg-hc-hover border-b border-hc-line">
                 {[
                   "Fecha",
                   "Concepto",
@@ -167,30 +167,30 @@ export function ComprasTab({ desde, hasta }: Props) {
                 ].map((h) => (
                   <th
                     key={h}
-                    className="px-3 py-2.5 text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider text-left last:w-16"
+                    className="px-3 py-2.5 text-[10px] font-semibold text-hc-muted uppercase tracking-wider text-left last:w-16"
                   >
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f9eef2]">
+            <tbody className="divide-y divide-hc-line">
               {compras.map((c) => (
-                <tr key={c.id} className="hover:bg-[#fdf9fb] transition">
-                  <td className="px-3 py-2.5 text-[#3d1a24] text-[13px] whitespace-nowrap">
+                <tr key={c.id} className="hover:bg-hc-rose-tint transition">
+                  <td className="px-3 py-2.5 text-hc-ink text-[13px] whitespace-nowrap">
                     {fmtD(c.fecha)}
                   </td>
                   <td className="px-3 py-2.5">
-                    <p className="text-[#3d1a24] font-medium text-[13px]">
+                    <p className="text-hc-ink font-medium text-[13px]">
                       {c.concepto}
                     </p>
                     {c.notas && (
-                      <p className="text-[11px] text-[#6B3E26] truncate max-w-[200px]">
+                      <p className="text-[11px] text-hc-muted truncate max-w-[200px]">
                         {c.notas}
                       </p>
                     )}
                   </td>
-                  <td className="px-3 py-2.5 text-[#3d1a24] text-[13px]">
+                  <td className="px-3 py-2.5 text-hc-ink text-[13px]">
                     {c.proveedor ?? "—"}
                   </td>
                   <td className="px-3 py-2.5">
@@ -201,7 +201,7 @@ export function ComprasTab({ desde, hasta }: Props) {
                         {CATEGORIA_COMPRA_LABELS[c.categoria]}
                       </span>
                     ) : (
-                      <span className="text-[#AA6A42]">—</span>
+                      <span className="text-hc-soft">—</span>
                     )}
                   </td>
                   <td className="px-3 py-2.5 font-bold text-red-600 whitespace-nowrap">
@@ -211,7 +211,7 @@ export function ComprasTab({ desde, hasta }: Props) {
                     <div className="flex gap-1">
                       <button
                         onClick={() => openEdit(c)}
-                        className="p-1.5 rounded-lg hover:bg-[#FFF7F0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                        className="p-1.5 rounded-lg hover:bg-hc-hover text-hc-muted hover:text-hc-rose transition"
                       >
                         <svg
                           viewBox="0 0 24 24"
@@ -227,7 +227,7 @@ export function ComprasTab({ desde, hasta }: Props) {
                       </button>
                       <button
                         onClick={() => setDeleting(c.id)}
-                        className="p-1.5 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
+                        className="p-1.5 rounded-lg hover:bg-red-50 text-hc-soft hover:text-red-500 transition"
                       >
                         <svg
                           viewBox="0 0 24 24"
@@ -246,10 +246,10 @@ export function ComprasTab({ desde, hasta }: Props) {
               ))}
             </tbody>
             <tfoot>
-              <tr className="bg-[#FFF7F0] border-t-2 border-[#f0e0d0]">
+              <tr className="bg-hc-hover border-t-2 border-hc-line">
                 <td
                   colSpan={4}
-                  className="px-3 py-2.5 text-[11px] font-bold text-[#6B3E26] uppercase tracking-wider"
+                  className="px-3 py-2.5 text-[11px] font-bold text-hc-muted uppercase tracking-wider"
                 >
                   TOTAL ({compras.length} compras)
                 </td>
@@ -267,17 +267,17 @@ export function ComprasTab({ desde, hasta }: Props) {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-hc-cacao/25 backdrop-blur-[2px]"
             onClick={() => setShowForm(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 max-w-md w-full z-10 flex flex-col gap-4">
+          <div className="relative bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 max-w-md w-full z-10 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-[#AA6A42] text-lg">
+              <h3 className="font-bold text-hc-soft text-lg">
                 {editId ? "Editar compra" : "Nueva compra"}
               </h3>
               <button
                 onClick={() => setShowForm(false)}
-                className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -293,7 +293,7 @@ export function ComprasTab({ desde, hasta }: Props) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Fecha
               </label>
               <input
@@ -307,7 +307,7 @@ export function ComprasTab({ desde, hasta }: Props) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Concepto *
               </label>
               <input
@@ -322,7 +322,7 @@ export function ComprasTab({ desde, hasta }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                   Proveedor
                 </label>
                 <input
@@ -335,7 +335,7 @@ export function ComprasTab({ desde, hasta }: Props) {
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                   Categoría
                 </label>
                 <select
@@ -360,11 +360,11 @@ export function ComprasTab({ desde, hasta }: Props) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Monto *
               </label>
               <div className="flex items-center gap-2">
-                <span className="text-[#6B3E26]">$</span>
+                <span className="text-hc-muted">$</span>
                 <input
                   type="number"
                   min="0.01"
@@ -380,7 +380,7 @@ export function ComprasTab({ desde, hasta }: Props) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Notas
               </label>
               <textarea
@@ -398,14 +398,14 @@ export function ComprasTab({ desde, hasta }: Props) {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
               >
                 {saving
                   ? "Guardando…"
@@ -421,20 +421,20 @@ export function ComprasTab({ desde, hasta }: Props) {
       {deleting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-hc-cacao/25 backdrop-blur-[2px]"
             onClick={() => setDeleting(null)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 max-w-sm w-full z-10">
-            <p className="font-bold text-[#3d1a24] mb-2">
+          <div className="relative bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 max-w-sm w-full z-10">
+            <p className="font-bold text-hc-ink mb-2">
               ¿Eliminar esta compra?
             </p>
-            <p className="text-[13px] text-[#6B3E26] mb-5">
+            <p className="text-[13px] text-hc-muted mb-5">
               Esta acción es permanente.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setDeleting(null)}
-                className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
               >
                 Cancelar
               </button>

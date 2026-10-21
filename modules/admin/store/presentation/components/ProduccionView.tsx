@@ -10,7 +10,7 @@ import type { ProductoResumen } from "../../domain/entities/Producto.entity";
 import { useInventarioStock, useProducciones } from "../hooks/useInventario";
 
 const inputCls =
-  "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+  "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition";
 
 function fmtFecha(iso: string | null) {
   if (!iso) return "—";
@@ -103,20 +103,20 @@ export function ProduccionView() {
   return (
     <div className="flex flex-col gap-5">
       {/* ── Registrar producción ── */}
-      <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-5">
-        <h2 className="text-sm font-bold text-[#AA6A42] mb-4">
+      <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
+        <h2 className="text-sm font-bold text-hc-soft mb-4">
           Registrar producción
         </h2>
         <form onSubmit={handleRegistrar} className="flex flex-col gap-4">
           <div className="grid sm:grid-cols-[2fr_1fr_1fr] gap-3">
             {/* Producto */}
             <div ref={ref} className="relative flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Producto
               </label>
               {productoSel ? (
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg border border-[#c0607a] bg-[#FFF7F0]">
-                  <span className="text-sm font-semibold text-[#3d1a24] truncate">
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg border border-hc-rose bg-hc-hover">
+                  <span className="text-sm font-semibold text-hc-ink truncate">
                     {productoSel.nombre}
                   </span>
                   <button
@@ -125,7 +125,7 @@ export function ProduccionView() {
                       setProductoSel(null);
                       setProductoSearch("");
                     }}
-                    className="text-[#AA6A42] hover:text-red-500 transition shrink-0 ml-2"
+                    className="text-hc-soft hover:text-red-500 transition shrink-0 ml-2"
                   >
                     ✕
                   </button>
@@ -143,13 +143,13 @@ export function ProduccionView() {
                     className={inputCls}
                   />
                   {productoOpen && (
-                    <div className="absolute z-20 top-full mt-1 w-full bg-white rounded-xl border border-[#f0e0d0] shadow-lg max-h-56 overflow-y-auto">
+                    <div className="absolute z-20 top-full mt-1 w-full bg-white rounded-xl border border-hc-line shadow-lg max-h-56 overflow-y-auto">
                       {productoLoading ? (
-                        <p className="px-3 py-3 text-xs text-[#AA6A42]/60">
+                        <p className="px-3 py-3 text-xs text-hc-soft/60">
                           Buscando…
                         </p>
                       ) : productoResults.length === 0 ? (
-                        <p className="px-3 py-3 text-xs text-[#AA6A42]/60">
+                        <p className="px-3 py-3 text-xs text-hc-soft/60">
                           Sin resultados
                         </p>
                       ) : (
@@ -161,7 +161,7 @@ export function ProduccionView() {
                               setProductoSel(p);
                               setProductoOpen(false);
                             }}
-                            className="w-full text-left px-3 py-2 text-sm text-[#3d1a24] hover:bg-[#FFF7F0] transition"
+                            className="w-full text-left px-3 py-2 text-sm text-hc-ink hover:bg-hc-hover transition"
                           >
                             {p.nombre}
                           </button>
@@ -175,7 +175,7 @@ export function ProduccionView() {
 
             {/* Cantidad */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Cantidad producida
               </label>
               <input
@@ -193,7 +193,7 @@ export function ProduccionView() {
 
             {/* Fecha */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Fecha
               </label>
               <input
@@ -206,7 +206,7 @@ export function ProduccionView() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+            <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
               Notas <span className="normal-case font-normal">(opcional)</span>
             </label>
             <input
@@ -231,7 +231,7 @@ export function ProduccionView() {
           <button
             type="submit"
             disabled={!productoSel || !cantidad || producciones.registrando}
-            className="self-start px-5 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+            className="self-start px-5 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
           >
             {producciones.registrando ? "Registrando…" : "Registrar producción"}
           </button>
@@ -239,9 +239,9 @@ export function ProduccionView() {
       </div>
 
       {/* ── Stock actual ── */}
-      <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-5">
+      <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-bold text-[#AA6A42]">Existencias</h2>
+          <h2 className="text-sm font-bold text-hc-soft">Existencias</h2>
           <input
             value={stock.search}
             onChange={(e) => {
@@ -253,23 +253,23 @@ export function ProduccionView() {
           />
         </div>
         {stock.loading ? (
-          <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+          <p className="text-center text-hc-soft/50 text-sm py-8">
             Cargando…
           </p>
         ) : !stock.data || stock.data.data.length === 0 ? (
-          <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+          <p className="text-center text-hc-soft/50 text-sm py-8">
             Sin productos registrados
           </p>
         ) : (
           <div className="overflow-x-auto -mx-1">
             <table className="w-full text-sm min-w-[480px]">
               <thead>
-                <tr className="border-b border-[#f5e8db]">
+                <tr className="border-b border-hc-sunken">
                   {["Producto", "Línea", "Existencias", "Última producción"].map(
                     (h, i) => (
                       <th
                         key={h}
-                        className={`pb-2.5 text-[10px] font-semibold text-[#6B3E26]/50 uppercase tracking-wider ${
+                        className={`pb-2.5 text-[10px] font-semibold text-hc-muted/50 uppercase tracking-wider ${
                           i === 2 ? "text-right pr-4" : "text-left pr-3"
                         }`}
                       >
@@ -283,12 +283,12 @@ export function ProduccionView() {
                 {stock.data.data.map((p) => (
                   <tr
                     key={p.productoId}
-                    className="border-b border-[#f5e8db] last:border-0"
+                    className="border-b border-hc-sunken last:border-0"
                   >
-                    <td className="py-2.5 pr-3 text-[#3A1F14] font-medium">
+                    <td className="py-2.5 pr-3 text-hc-ink font-medium">
                       {p.productoNombre}
                     </td>
-                    <td className="py-2.5 pr-3 text-[#6B3E26]/70 capitalize">
+                    <td className="py-2.5 pr-3 text-hc-muted/70 capitalize">
                       {p.linea}
                     </td>
                     <td className="py-2.5 pr-4 text-right">
@@ -298,13 +298,13 @@ export function ProduccionView() {
                             ? "text-red-500"
                             : p.stockActual <= STOCK_BAJO
                               ? "text-amber-600"
-                              : "text-[#3A1F14]"
+                              : "text-hc-ink"
                         }`}
                       >
                         {p.stockActual}
                       </span>
                     </td>
-                    <td className="py-2.5 text-[#6B3E26]/55">
+                    <td className="py-2.5 text-hc-muted/55">
                       {fmtFecha(p.ultimaProduccion)}
                     </td>
                   </tr>
@@ -316,27 +316,27 @@ export function ProduccionView() {
       </div>
 
       {/* ── Producciones recientes ── */}
-      <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-5">
-        <h2 className="text-sm font-bold text-[#AA6A42] mb-4">
+      <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
+        <h2 className="text-sm font-bold text-hc-soft mb-4">
           Producciones recientes
         </h2>
         {producciones.loading ? (
-          <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+          <p className="text-center text-hc-soft/50 text-sm py-8">
             Cargando…
           </p>
         ) : !producciones.data || producciones.data.data.length === 0 ? (
-          <p className="text-center text-[#AA6A42]/50 text-sm py-8">
+          <p className="text-center text-hc-soft/50 text-sm py-8">
             Sin producciones registradas todavía
           </p>
         ) : (
           <div className="overflow-x-auto -mx-1">
             <table className="w-full text-sm min-w-[420px]">
               <thead>
-                <tr className="border-b border-[#f5e8db]">
+                <tr className="border-b border-hc-sunken">
                   {["Fecha", "Producto", "Cantidad", "Notas"].map((h, i) => (
                     <th
                       key={h}
-                      className={`pb-2.5 text-[10px] font-semibold text-[#6B3E26]/50 uppercase tracking-wider ${
+                      className={`pb-2.5 text-[10px] font-semibold text-hc-muted/50 uppercase tracking-wider ${
                         i === 2 ? "text-right pr-4" : "text-left pr-3"
                       }`}
                     >
@@ -347,17 +347,17 @@ export function ProduccionView() {
               </thead>
               <tbody>
                 {producciones.data.data.map((p) => (
-                  <tr key={p.id} className="border-b border-[#f5e8db] last:border-0">
-                    <td className="py-2.5 pr-3 text-[#6B3E26]/70 whitespace-nowrap">
+                  <tr key={p.id} className="border-b border-hc-sunken last:border-0">
+                    <td className="py-2.5 pr-3 text-hc-muted/70 whitespace-nowrap">
                       {fmtFecha(p.fecha)}
                     </td>
-                    <td className="py-2.5 pr-3 text-[#3A1F14] font-medium">
+                    <td className="py-2.5 pr-3 text-hc-ink font-medium">
                       {p.productoNombre}
                     </td>
-                    <td className="py-2.5 pr-4 text-right font-bold text-[#3A1F14] tabular-nums">
+                    <td className="py-2.5 pr-4 text-right font-bold text-hc-ink tabular-nums">
                       +{p.cantidad}
                     </td>
-                    <td className="py-2.5 text-[#6B3E26]/55 truncate max-w-[200px]">
+                    <td className="py-2.5 text-hc-muted/55 truncate max-w-[200px]">
                       {p.notas ?? "—"}
                     </td>
                   </tr>

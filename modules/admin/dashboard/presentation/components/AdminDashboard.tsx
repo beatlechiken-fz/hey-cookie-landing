@@ -49,7 +49,7 @@ const DESGLOSE_CFG = [
 
 /* ── Sub-components ───────────────────────────────────────────────────────── */
 function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`bg-[#f0e4d4] animate-pulse rounded-2xl ${className}`} />;
+  return <div className={`bg-hc-sunken animate-pulse rounded-2xl ${className}`} />;
 }
 
 function KPICard({
@@ -69,13 +69,13 @@ function KPICard({
 }) {
   const hasDelta = delta !== null && delta !== undefined;
   return (
-    <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+    <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold text-[#6B3E26]/55 uppercase tracking-wider truncate">
+          <p className="text-[11px] font-semibold text-hc-muted/55 uppercase tracking-wider truncate">
             {title}
           </p>
-          <p className="text-2xl sm:text-3xl font-bold text-[#3A1F14] mt-1 leading-none tabular-nums">
+          <p className="text-2xl sm:text-3xl font-bold text-hc-ink mt-1 leading-none tabular-nums">
             {value}
           </p>
           {hasDelta && (
@@ -88,7 +88,7 @@ function KPICard({
             </span>
           )}
           {subtext && !hasDelta && (
-            <p className="text-[11px] text-[#6B3E26]/50 mt-2">{subtext}</p>
+            <p className="text-[11px] text-hc-muted/50 mt-2">{subtext}</p>
           )}
         </div>
         <div
@@ -118,8 +118,8 @@ function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   const d = new Date(label + "T12:00:00");
   return (
-    <div className="bg-white border border-[#f0e0d0] rounded-xl shadow-lg px-3.5 py-2.5 text-xs">
-      <p className="font-semibold text-[#3A1F14] mb-1.5">
+    <div className="bg-white border border-hc-line rounded-xl shadow-lg px-3.5 py-2.5 text-xs">
+      <p className="font-semibold text-hc-ink mb-1.5">
         {d.toLocaleDateString("es-MX", { day: "numeric", month: "short" })}
       </p>
       {payload.map((p: any) => (
@@ -128,8 +128,8 @@ function ChartTooltip({ active, payload, label }: any) {
             className="w-2 h-2 rounded-full shrink-0"
             style={{ background: p.stroke }}
           />
-          <span className="text-[#6B3E26]/70">{p.name}:</span>
-          <span className="font-semibold text-[#3A1F14]">{fmtMXN(p.value)}</span>
+          <span className="text-hc-muted/70">{p.name}:</span>
+          <span className="font-semibold text-hc-ink">{fmtMXN(p.value)}</span>
         </div>
       ))}
     </div>
@@ -138,8 +138,8 @@ function ChartTooltip({ active, payload, label }: any) {
 
 function DashboardSkeleton() {
   return (
-    <div className="px-4 sm:px-6 lg:px-20 pb-16 pt-6">
-      <div className="max-w-7xl mx-auto space-y-4">
+    <div>
+      <div className="space-y-4">
         <Skeleton className="h-8 w-56" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -206,7 +206,7 @@ export function AdminDashboard() {
 
   if (!data) {
     return (
-      <div className="flex items-center justify-center h-64 text-[#AA6A42]/60 text-sm">
+      <div className="flex items-center justify-center h-64 text-hc-soft/60 text-sm">
         Error al cargar el panel. Recarga la página.
       </div>
     );
@@ -240,18 +240,18 @@ export function AdminDashboard() {
     v >= 1000 ? `$${(v / 1000).toFixed(0)}k` : `$${v}`;
 
   return (
-    <div className="px-4 sm:px-6 lg:px-20 pb-16">
-      <div className="max-w-7xl mx-auto pt-6">
+    <div>
+      <div>
 
         {/* ── Header ── */}
-        <div className="flex items-end justify-between mb-7">
+        <div className="flex items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[#AA6A42]">Panel de control</h1>
-            <p className="text-sm text-[#6B3E26]/55 mt-0.5 capitalize">{mesLabel}</p>
+            <p className="text-[13px] font-medium text-hc-soft capitalize">{mesLabel}</p>
+            <h2 className="text-xl font-bold tracking-tight text-hc-ink">Resumen del negocio</h2>
           </div>
           <a
             href={goto("/admin/dashboard/store/ordenes")}
-            className="text-xs font-semibold text-[#AA6A42] hover:text-[#8B5635] transition hidden sm:block"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-hc-line bg-white px-4 py-2 text-xs font-semibold text-hc-muted hover:border-hc-line-strong hover:text-hc-ink transition"
           >
             Ver todas las órdenes →
           </a>
@@ -278,9 +278,9 @@ export function AdminDashboard() {
             title="Ventas del mes"
             value={fmtMXN(kpi.ventasMes)}
             delta={deltaVentas}
-            colorClass="bg-[#DA6C94]/10"
+            colorClass="bg-hc-rose/10"
             icon={
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-[#DA6C94]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 text-hc-rose" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             }
@@ -328,15 +328,15 @@ export function AdminDashboard() {
         <div className="grid lg:grid-cols-3 gap-4 mb-4">
 
           {/* Area chart: ventas 30 días */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-hc-line shadow-sm p-5">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-bold text-[#3A1F14]">Ventas — últimos 30 días</h2>
+              <h2 className="text-sm font-bold text-hc-ink">Ventas — últimos 30 días</h2>
               <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1.5 text-[10px] font-semibold text-[#6B3E26]/60">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#DA6C94]" />
+                <span className="flex items-center gap-1.5 text-[10px] font-semibold text-hc-muted/60">
+                  <span className="w-2.5 h-2.5 rounded-full bg-hc-rose" />
                   Ventas
                 </span>
-                <span className="flex items-center gap-1.5 text-[10px] font-semibold text-[#6B3E26]/60">
+                <span className="flex items-center gap-1.5 text-[10px] font-semibold text-hc-muted/60">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                   Utilidad
                 </span>
@@ -346,25 +346,25 @@ export function AdminDashboard() {
               <AreaChart data={ventasPorDia} margin={{ top: 5, right: 8, left: -8, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradVentas" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#DA6C94" stopOpacity={0.18} />
-                    <stop offset="95%" stopColor="#DA6C94" stopOpacity={0}    />
+                    <stop offset="5%"  stopColor="#C0607A" stopOpacity={0.18} />
+                    <stop offset="95%" stopColor="#C0607A" stopOpacity={0}    />
                   </linearGradient>
                   <linearGradient id="gradUtilidad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%"  stopColor="#10b981" stopOpacity={0.15} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0}    />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f5e8db" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#F4EEEB" vertical={false} />
                 <XAxis
                   dataKey="fecha"
-                  tick={{ fontSize: 10, fill: "#AA6A42" }}
+                  tick={{ fontSize: 10, fill: "#A07D6B" }}
                   tickFormatter={xTickFmt}
                   interval={6}
                   tickLine={false}
                   axisLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 10, fill: "#AA6A42" }}
+                  tick={{ fontSize: 10, fill: "#A07D6B" }}
                   tickFormatter={yTickFmt}
                   tickLine={false}
                   axisLine={false}
@@ -375,11 +375,11 @@ export function AdminDashboard() {
                   type="monotone"
                   dataKey="ventas"
                   name="Ventas"
-                  stroke="#DA6C94"
+                  stroke="#C0607A"
                   strokeWidth={2.5}
                   fill="url(#gradVentas)"
                   dot={false}
-                  activeDot={{ r: 4, fill: "#DA6C94", strokeWidth: 0 }}
+                  activeDot={{ r: 4, fill: "#C0607A", strokeWidth: 0 }}
                 />
                 <Area
                   type="monotone"
@@ -396,10 +396,10 @@ export function AdminDashboard() {
           </div>
 
           {/* Pipeline donut */}
-          <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 flex flex-col">
-            <h2 className="text-sm font-bold text-[#3A1F14] mb-4">Pipeline de órdenes</h2>
+          <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5 flex flex-col">
+            <h2 className="text-sm font-bold text-hc-ink mb-4">Pipeline de órdenes</h2>
             {ordenesPorEstado.length === 0 ? (
-              <div className="flex-1 flex items-center justify-center text-[#AA6A42]/40 text-sm">
+              <div className="flex-1 flex items-center justify-center text-hc-soft/40 text-sm">
                 Sin órdenes registradas
               </div>
             ) : (
@@ -429,8 +429,8 @@ export function AdminDashboard() {
                   </ResponsiveContainer>
                   {/* Center label */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-2xl font-bold text-[#3A1F14]">{totalOrdenes}</span>
-                    <span className="text-[10px] text-[#6B3E26]/50 font-medium">órdenes</span>
+                    <span className="text-2xl font-bold text-hc-ink">{totalOrdenes}</span>
+                    <span className="text-[10px] text-hc-muted/50 font-medium">órdenes</span>
                   </div>
                 </div>
                 <div className="mt-3 space-y-2 flex-1">
@@ -441,13 +441,13 @@ export function AdminDashboard() {
                           className="w-2 h-2 rounded-full shrink-0"
                           style={{ background: STATUS_CFG[o.status]?.color }}
                         />
-                        <span className="text-[#6B3E26]/70 truncate">
+                        <span className="text-hc-muted/70 truncate">
                           {STATUS_CFG[o.status]?.label ?? o.status}
                         </span>
                       </span>
                       <div className="flex items-center gap-2 shrink-0 ml-2">
-                        <span className="font-bold text-[#3A1F14]">{o.count}</span>
-                        <span className="text-[#6B3E26]/40 text-[10px]">{fmtMXN(o.total)}</span>
+                        <span className="font-bold text-hc-ink">{o.count}</span>
+                        <span className="text-hc-muted/40 text-[10px]">{fmtMXN(o.total)}</span>
                       </div>
                     </div>
                   ))}
@@ -460,19 +460,19 @@ export function AdminDashboard() {
         {/* ── Ingresos vs Gastos + Top productos + Inventario ── */}
         <div className="grid lg:grid-cols-3 gap-4 mb-4">
           {/* Ingresos vs Gastos */}
-          <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+          <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-[#3A1F14]">Ingresos vs gastos</h2>
+              <h2 className="text-sm font-bold text-hc-ink">Ingresos vs gastos</h2>
               <a
                 href={goto("/admin/dashboard/store/finanzas")}
-                className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
+                className="text-[11px] font-semibold text-hc-soft hover:text-hc-ink transition"
               >
                 Gastos →
               </a>
             </div>
             <div className="flex flex-col gap-3">
               {[
-                { label: "Ingresos", value: ingresosVsGastos.ingresos, color: "#DA6C94" },
+                { label: "Ingresos", value: ingresosVsGastos.ingresos, color: "#C0607A" },
                 { label: "Gastos", value: ingresosVsGastos.gastos, color: "#ef4444" },
               ].map((r) => {
                 const max = Math.max(
@@ -484,12 +484,12 @@ export function AdminDashboard() {
                 return (
                   <div key={r.label}>
                     <div className="flex items-center justify-between text-xs mb-1">
-                      <span className="text-[#6B3E26]/70">{r.label}</span>
-                      <span className="font-semibold text-[#3A1F14]">
+                      <span className="text-hc-muted/70">{r.label}</span>
+                      <span className="font-semibold text-hc-ink">
                         {fmtMXN(r.value)}
                       </span>
                     </div>
-                    <div className="h-2 bg-[#f5e8db] rounded-full overflow-hidden">
+                    <div className="h-2 bg-hc-sunken rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full"
                         style={{ width: `${pct}%`, background: r.color }}
@@ -498,8 +498,8 @@ export function AdminDashboard() {
                   </div>
                 );
               })}
-              <div className="pt-2 mt-1 border-t border-[#f5e8db] flex items-center justify-between text-xs">
-                <span className="text-[#6B3E26]/50 font-medium">Margen</span>
+              <div className="pt-2 mt-1 border-t border-hc-sunken flex items-center justify-between text-xs">
+                <span className="text-hc-muted/50 font-medium">Margen</span>
                 <span
                   className={`font-bold ${
                     (ingresosVsGastos.margenPct ?? 0) >= 0
@@ -516,26 +516,26 @@ export function AdminDashboard() {
           </div>
 
           {/* Top productos del mes */}
-          <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
-            <h2 className="text-sm font-bold text-[#3A1F14] mb-4">
+          <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
+            <h2 className="text-sm font-bold text-hc-ink mb-4">
               Top productos del mes
             </h2>
             {topProductos.length === 0 ? (
-              <div className="flex items-center justify-center h-32 text-[#AA6A42]/40 text-sm">
+              <div className="flex items-center justify-center h-32 text-hc-soft/40 text-sm">
                 Sin ventas este mes
               </div>
             ) : (
               <div className="flex flex-col gap-2.5">
                 {topProductos.map((p, i) => (
                   <div key={p.productoNombre} className="flex items-center gap-2.5 text-xs">
-                    <span className="w-5 h-5 rounded-full bg-[#FFF7F0] text-[#AA6A42] font-bold flex items-center justify-center shrink-0 text-[10px]">
+                    <span className="w-5 h-5 rounded-full bg-hc-hover text-hc-soft font-bold flex items-center justify-center shrink-0 text-[10px]">
                       {i + 1}
                     </span>
-                    <span className="flex-1 text-[#3A1F14] truncate">
+                    <span className="flex-1 text-hc-ink truncate">
                       {p.productoNombre}
                     </span>
-                    <span className="text-[#6B3E26]/50 shrink-0">×{p.cantidad}</span>
-                    <span className="font-semibold text-[#3A1F14] shrink-0 tabular-nums">
+                    <span className="text-hc-muted/50 shrink-0">×{p.cantidad}</span>
+                    <span className="font-semibold text-hc-ink shrink-0 tabular-nums">
                       {fmtMXN(p.ingreso)}
                     </span>
                   </div>
@@ -545,27 +545,27 @@ export function AdminDashboard() {
           </div>
 
           {/* Inventario */}
-          <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+          <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-[#3A1F14]">Inventario</h2>
+              <h2 className="text-sm font-bold text-hc-ink">Inventario</h2>
               <a
                 href={goto("/admin/dashboard/store/produccion")}
-                className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
+                className="text-[11px] font-semibold text-hc-soft hover:text-hc-ink transition"
               >
                 Producción →
               </a>
             </div>
             {inventario.totalSkus === 0 ? (
-              <div className="flex items-center justify-center h-32 text-[#AA6A42]/40 text-sm text-center px-4">
+              <div className="flex items-center justify-center h-32 text-hc-soft/40 text-sm text-center px-4">
                 Sin productos con producción registrada
               </div>
             ) : (
               <>
                 <div className="flex items-center gap-4 mb-3 text-xs">
-                  <span className="text-[#6B3E26]/60">
-                    <span className="font-bold text-[#3A1F14]">{inventario.totalSkus}</span> SKUs
+                  <span className="text-hc-muted/60">
+                    <span className="font-bold text-hc-ink">{inventario.totalSkus}</span> SKUs
                   </span>
-                  <span className={inventario.skusBajoStock > 0 ? "text-amber-600" : "text-[#6B3E26]/60"}>
+                  <span className={inventario.skusBajoStock > 0 ? "text-amber-600" : "text-hc-muted/60"}>
                     <span className="font-bold">{inventario.skusBajoStock}</span> con stock bajo
                   </span>
                 </div>
@@ -580,7 +580,7 @@ export function AdminDashboard() {
                         key={it.productoId}
                         className="flex items-center justify-between text-xs"
                       >
-                        <span className="text-[#3A1F14] truncate">{it.nombre}</span>
+                        <span className="text-hc-ink truncate">{it.nombre}</span>
                         <span
                           className={`font-bold shrink-0 ml-2 ${
                             it.stock < 0 ? "text-red-500" : "text-amber-600"
@@ -601,27 +601,27 @@ export function AdminDashboard() {
         <div className="grid lg:grid-cols-3 gap-4">
 
           {/* Tabla órdenes recientes */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-hc-line shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-bold text-[#3A1F14]">Órdenes recientes</h2>
+              <h2 className="text-sm font-bold text-hc-ink">Órdenes recientes</h2>
               <a
                 href={goto("/admin/dashboard/store/ordenes")}
-                className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
+                className="text-[11px] font-semibold text-hc-soft hover:text-hc-ink transition"
               >
                 Ver todas →
               </a>
             </div>
             {ordenesRecientes.length === 0 ? (
-              <p className="text-sm text-[#AA6A42]/50 text-center py-8">Sin órdenes todavía</p>
+              <p className="text-sm text-hc-soft/50 text-center py-8">Sin órdenes todavía</p>
             ) : (
               <div className="overflow-x-auto -mx-1">
                 <table className="w-full text-xs min-w-[420px]">
                   <thead>
-                    <tr className="border-b border-[#f5e8db]">
+                    <tr className="border-b border-hc-sunken">
                       {["#", "Cliente", "Estado", "Total", "Entrega"].map((h, i) => (
                         <th
                           key={h}
-                          className={`pb-2.5 text-[#6B3E26]/50 font-semibold ${
+                          className={`pb-2.5 text-hc-muted/50 font-semibold ${
                             i === 3 ? "text-right pr-4" : "text-left pr-3"
                           }`}
                         >
@@ -634,27 +634,27 @@ export function AdminDashboard() {
                     {ordenesRecientes.map((o) => (
                       <tr
                         key={o.id}
-                        className="border-b border-[#f5e8db] last:border-0 hover:bg-[#FAF3E0]/80 transition-colors"
+                        className="border-b border-hc-sunken last:border-0 hover:bg-hc-bg/80 transition-colors"
                       >
-                        <td className="py-3 pr-3 font-mono text-[#AA6A42] font-bold">
+                        <td className="py-3 pr-3 font-mono text-hc-soft font-bold">
                           #{o.numero}
                         </td>
-                        <td className="py-3 pr-3 text-[#3A1F14] max-w-[130px] truncate">
-                          {o.clienteNombre ?? <span className="text-[#6B3E26]/40">—</span>}
+                        <td className="py-3 pr-3 text-hc-ink max-w-[130px] truncate">
+                          {o.clienteNombre ?? <span className="text-hc-muted/40">—</span>}
                         </td>
                         <td className="py-3 pr-3">
                           <StatusBadge status={o.status} />
                         </td>
-                        <td className="py-3 pr-4 text-right font-semibold text-[#3A1F14] tabular-nums">
+                        <td className="py-3 pr-4 text-right font-semibold text-hc-ink tabular-nums">
                           {fmtMXN(o.total)}
                         </td>
-                        <td className="py-3 text-[#6B3E26]/55">
+                        <td className="py-3 text-hc-muted/55">
                           {o.fechaEntrega
                             ? new Date(o.fechaEntrega + "T12:00:00").toLocaleDateString(
                                 "es-MX",
                                 { day: "numeric", month: "short" },
                               )
-                            : <span className="text-[#6B3E26]/30">—</span>}
+                            : <span className="text-hc-muted/30">—</span>}
                         </td>
                       </tr>
                     ))}
@@ -668,18 +668,18 @@ export function AdminDashboard() {
           <div className="space-y-4">
 
             {/* Desglose */}
-            <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
+            <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-[#3A1F14]">Desglose del mes</h2>
+                <h2 className="text-sm font-bold text-hc-ink">Desglose del mes</h2>
                 <a
                   href={goto("/admin/dashboard/store/finanzas")}
-                  className="text-[11px] font-semibold text-[#AA6A42] hover:text-[#8B5635] transition"
+                  className="text-[11px] font-semibold text-hc-soft hover:text-hc-ink transition"
                 >
                   Finanzas →
                 </a>
               </div>
               {desgloseTotal === 0 ? (
-                <p className="text-xs text-[#AA6A42]/50 text-center py-4">
+                <p className="text-xs text-hc-soft/50 text-center py-4">
                   Sin registros este mes
                 </p>
               ) : (
@@ -691,18 +691,18 @@ export function AdminDashboard() {
                     return (
                       <div key={key}>
                         <div className="flex items-center justify-between text-xs mb-1.5">
-                          <span className="flex items-center gap-1.5 text-[#6B3E26]/70">
+                          <span className="flex items-center gap-1.5 text-hc-muted/70">
                             <span
                               className="w-2 h-2 rounded-full shrink-0"
                               style={{ background: color }}
                             />
                             {label}
                           </span>
-                          <span className="font-semibold text-[#3A1F14] tabular-nums">
+                          <span className="font-semibold text-hc-ink tabular-nums">
                             {fmtMXN(value)}
                           </span>
                         </div>
-                        <div className="h-1.5 bg-[#f5e8db] rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-hc-sunken rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full transition-all duration-700"
                             style={{ width: `${pct}%`, background: color }}
@@ -711,9 +711,9 @@ export function AdminDashboard() {
                       </div>
                     );
                   })}
-                  <div className="pt-1 border-t border-[#f5e8db] flex items-center justify-between text-xs">
-                    <span className="text-[#6B3E26]/50 font-medium">Total registrado</span>
-                    <span className="font-bold text-[#3A1F14] tabular-nums">
+                  <div className="pt-1 border-t border-hc-sunken flex items-center justify-between text-xs">
+                    <span className="text-hc-muted/50 font-medium">Total registrado</span>
+                    <span className="font-bold text-hc-ink tabular-nums">
                       {fmtMXN(kpi.ventasMes)}
                     </span>
                   </div>
@@ -722,8 +722,8 @@ export function AdminDashboard() {
             </div>
 
             {/* Accesos rápidos */}
-            <div className="bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5">
-              <h2 className="text-sm font-bold text-[#3A1F14] mb-3">Accesos rápidos</h2>
+            <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-5">
+              <h2 className="text-sm font-bold text-hc-ink mb-3">Accesos rápidos</h2>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   {

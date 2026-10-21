@@ -24,13 +24,13 @@ interface Props {
 }
 
 const selectCls =
-  "px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition";
+  "px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition";
 
 export function FinanzasFiltrosBar({ filtros, onChange, avisoCompras }: Props) {
   return (
-    <div className="bg-white rounded-2xl border border-[#f0e0d0] shadow-sm p-4 flex flex-col gap-2">
+    <div className="bg-white rounded-2xl border border-hc-line shadow-sm p-4 flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="text-[11px] font-semibold text-[#6B3E26]/60 uppercase tracking-wide">
+        <span className="text-[11px] font-semibold text-hc-muted/60 uppercase tracking-wide">
           Filtrar ventas
         </span>
         <select
@@ -84,14 +84,14 @@ export function FinanzasFiltrosBar({ filtros, onChange, avisoCompras }: Props) {
         {hayFiltros(filtros) && (
           <button
             onClick={() => onChange(FILTROS_VACIOS)}
-            className="text-[12px] font-semibold text-[#AA6A42] hover:text-red-500 transition"
+            className="text-[12px] font-semibold text-hc-soft hover:text-red-500 transition"
           >
             Limpiar
           </button>
         )}
       </div>
       {avisoCompras && hayFiltros(filtros) && (
-        <p className="text-[11px] text-[#6B3E26]/70">
+        <p className="text-[11px] text-hc-muted/70">
           Compras a proveedores y movimientos manuales no tienen producto ni
           marca de finanzas, así que no se filtran.
           {hayFiltroProducto(filtros) &&

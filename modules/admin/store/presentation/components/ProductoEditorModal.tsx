@@ -478,16 +478,16 @@ export function ProductoEditorModal({
 
   // ── Styles ────────────────────────────────────────────────────────────────
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
   const labelCls =
-    "text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider";
+    "text-[11px] font-semibold text-hc-soft uppercase tracking-wider";
   const sectionCls =
-    "flex flex-col gap-3 p-4 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0]";
+    "flex flex-col gap-3 p-4 rounded-xl bg-hc-hover border border-hc-line";
   const tabCls = (active: boolean) =>
     `px-3 py-3 text-[12px] font-semibold border-b-2 transition -mb-px ${
       active
-        ? "border-[#c0607a] text-[#c0607a]"
-        : "border-transparent text-[#6B3E26] hover:text-[#AA6A42]"
+        ? "border-hc-rose text-hc-rose"
+        : "border-transparent text-hc-muted hover:text-hc-soft"
     }`;
 
   const tabs = [
@@ -558,14 +558,14 @@ export function ProductoEditorModal({
               }
               className={`px-3 py-1.5 rounded-xl text-[12px] font-semibold border transition ${
                 active
-                  ? "bg-[#c0607a] text-white border-[#c0607a]"
-                  : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"
+                  ? "bg-hc-rose text-white border-hc-rose"
+                  : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"
               }`}
             >
               {o.label}
               {o.sublabel && (
                 <span
-                  className={`ml-1 text-[10px] ${active ? "opacity-80" : "text-[#6B3E26]"}`}
+                  className={`ml-1 text-[10px] ${active ? "opacity-80" : "text-hc-muted"}`}
                 >
                   {o.sublabel}
                 </span>
@@ -574,7 +574,7 @@ export function ProductoEditorModal({
           );
         })}
         {options.length === 0 && (
-          <p className="text-[12px] text-[#AA6A42]">
+          <p className="text-[12px] text-hc-soft">
             No hay opciones disponibles
           </p>
         )}
@@ -592,7 +592,7 @@ export function ProductoEditorModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
 
           <motion.div
@@ -603,22 +603,22 @@ export function ProductoEditorModal({
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-2xl max-h-[92vh] bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] flex flex-col overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-2xl max-h-[92vh] bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover shrink-0">
                 <div>
-                  <h2 className="font-bold text-[#AA6A42] text-lg">
+                  <h2 className="font-bold text-hc-soft text-lg">
                     {producto ? "Editar producto" : "Nuevo producto"}
                   </h2>
                   {nombre && (
-                    <p className="text-[12px] text-[#6B3E26] mt-0.5">
+                    <p className="text-[12px] text-hc-muted mt-0.5">
                       {nombre}
                     </p>
                   )}
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -634,7 +634,7 @@ export function ProductoEditorModal({
               </div>
 
               {/* Tabs */}
-              <div className="flex border-b border-[#f0e0d0] shrink-0 bg-white px-6 overflow-x-auto">
+              <div className="flex border-b border-hc-line shrink-0 bg-white px-6 overflow-x-auto">
                 {tabs.map((t) => (
                   <button
                     key={t.key}
@@ -661,15 +661,15 @@ export function ProductoEditorModal({
                       />
                     </div>
                     {producto && (
-                      <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0]">
-                        <span className="text-[12px] font-semibold text-[#6B3E26]">
+                      <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-hc-hover border border-hc-line">
+                        <span className="text-[12px] font-semibold text-hc-muted">
                           Existencias en inventario
                         </span>
                         <span
                           className={`text-lg font-bold tabular-nums ${
                             producto.stockActual < 0
                               ? "text-red-500"
-                              : "text-[#AA6A42]"
+                              : "text-hc-soft"
                           }`}
                         >
                           {producto.stockActual}
@@ -684,7 +684,7 @@ export function ProductoEditorModal({
                             key={l.value}
                             type="button"
                             onClick={() => setLinea(l.value)}
-                            className={`flex-1 py-2 rounded-xl text-[13px] font-semibold border transition ${linea === l.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
+                            className={`flex-1 py-2 rounded-xl text-[13px] font-semibold border transition ${linea === l.value ? "bg-hc-rose text-white border-hc-rose" : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"}`}
                           >
                             {l.label}
                           </button>
@@ -700,14 +700,14 @@ export function ProductoEditorModal({
                               key={c.value ?? "ninguna"}
                               type="button"
                               onClick={() => setColeccion(c.value)}
-                              className={`flex-1 py-2 rounded-xl text-[13px] font-semibold border transition ${coleccion === c.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
+                              className={`flex-1 py-2 rounded-xl text-[13px] font-semibold border transition ${coleccion === c.value ? "bg-hc-rose text-white border-hc-rose" : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"}`}
                             >
                               {c.label}
                             </button>
                           ),
                         )}
                       </div>
-                      <p className="text-[11px] text-[#AA6A42]/70">
+                      <p className="text-[11px] text-hc-soft/70">
                         Las galletas con colección se muestran en su propia
                         sección del inicio, conservando la etiqueta de su línea.
                       </p>
@@ -738,7 +738,7 @@ export function ProductoEditorModal({
                       <label className={labelCls}>Imagen del producto</label>
                       <div className="flex items-center gap-3">
                         {imagenUrl ? (
-                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#e8c4a0] shrink-0">
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-hc-line-strong shrink-0">
                             <img
                               src={imagenUrl}
                               alt="Preview"
@@ -746,8 +746,8 @@ export function ProductoEditorModal({
                             />
                           </div>
                         ) : (
-                          <div className="w-16 h-16 rounded-xl border-2 border-dashed border-[#e8c4a0] bg-[#FFF7F0] flex items-center justify-center shrink-0">
-                            <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#AA6A42]" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <div className="w-16 h-16 rounded-xl border-2 border-dashed border-hc-line-strong bg-hc-hover flex items-center justify-center shrink-0">
+                            <svg viewBox="0 0 24 24" className="w-6 h-6 text-hc-soft" fill="none" stroke="currentColor" strokeWidth="1.5">
                               <rect x="3" y="3" width="18" height="18" rx="3" />
                               <circle cx="8.5" cy="8.5" r="1.5" />
                               <path d="m21 15-5-5L5 21" />
@@ -755,10 +755,10 @@ export function ProductoEditorModal({
                           </div>
                         )}
                         <div className="flex flex-col gap-1.5">
-                          <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFF7F0] border border-[#e8c4a0] text-[12px] font-semibold text-[#AA6A42] hover:bg-[#f0e0d0] transition">
+                          <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-hover border border-hc-line-strong text-[12px] font-semibold text-hc-soft hover:bg-hc-sunken transition">
                             {imgUploading ? (
                               <>
-                                <span className="w-3 h-3 border-2 border-[#c0607a] border-t-transparent rounded-full animate-spin" />
+                                <span className="w-3 h-3 border-2 border-hc-rose border-t-transparent rounded-full animate-spin" />
                                 Subiendo…
                               </>
                             ) : (
@@ -783,7 +783,7 @@ export function ProductoEditorModal({
                             <button
                               type="button"
                               onClick={() => setImagenUrl(null)}
-                              className="text-[11px] text-[#6B3E26] hover:text-[#c0607a] text-left transition"
+                              className="text-[11px] text-hc-muted hover:text-hc-rose text-left transition"
                             >
                               Quitar imagen
                             </button>
@@ -799,7 +799,7 @@ export function ProductoEditorModal({
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <label className={labelCls}>Ingredientes</label>
-                      <span className="text-[11px] text-[#6B3E26]">
+                      <span className="text-[11px] text-hc-muted">
                         {lineas.length} agregado{lineas.length !== 1 ? "s" : ""}{" "}
                         · costo ${costoTotal.toFixed(2)}
                       </span>
@@ -812,11 +812,11 @@ export function ProductoEditorModal({
                         placeholder="Buscar y agregar ingrediente…"
                       />
                       {ingLoading ? (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-[#c0607a] border-t-transparent rounded-full animate-spin" />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 border-2 border-hc-rose border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <svg
                           viewBox="0 0 24 24"
-                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#AA6A42] pointer-events-none"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-hc-soft pointer-events-none"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2"
@@ -827,7 +827,7 @@ export function ProductoEditorModal({
                         </svg>
                       )}
                       {showDropdown && ingResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#f0e0d0] rounded-xl shadow-lg z-10 overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-hc-line rounded-xl shadow-lg z-10 overflow-hidden">
                           {ingResults.map((ing) => (
                             <button
                               key={ing.id}
@@ -836,12 +836,12 @@ export function ProductoEditorModal({
                               disabled={lineas.some(
                                 (l) => l.ingredienteId === ing.id,
                               )}
-                              className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-[#FFF7F0] disabled:opacity-40 transition border-b border-[#f9eef2] last:border-0"
+                              className="w-full flex items-center justify-between px-3 py-2.5 text-left text-sm hover:bg-hc-hover disabled:opacity-40 transition border-b border-hc-line last:border-0"
                             >
-                              <span className="text-[#3d1a24] font-medium">
+                              <span className="text-hc-ink font-medium">
                                 {ing.nombre}
                               </span>
-                              <span className="text-[11px] text-[#6B3E26]">
+                              <span className="text-[11px] text-hc-muted">
                                 ${ing.costoUnidadMinima?.toFixed(4)} /{" "}
                                 {ing.unidadBase}
                               </span>
@@ -851,30 +851,30 @@ export function ProductoEditorModal({
                       )}
                     </div>
                     {lineas.length > 0 && (
-                      <div className="rounded-xl border border-[#f0e0d0] overflow-hidden">
+                      <div className="rounded-xl border border-hc-line overflow-hidden">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-                              <th className="px-3 py-2 text-left text-[10px] font-semibold text-[#6B3E26] uppercase">
+                            <tr className="bg-hc-hover border-b border-hc-line">
+                              <th className="px-3 py-2 text-left text-[10px] font-semibold text-hc-muted uppercase">
                                 Ingrediente
                               </th>
-                              <th className="px-3 py-2 text-center text-[10px] font-semibold text-[#6B3E26] uppercase">
+                              <th className="px-3 py-2 text-center text-[10px] font-semibold text-hc-muted uppercase">
                                 Cantidad
                               </th>
-                              <th className="px-3 py-2 text-right text-[10px] font-semibold text-[#6B3E26] uppercase">
+                              <th className="px-3 py-2 text-right text-[10px] font-semibold text-hc-muted uppercase">
                                 Costo
                               </th>
                               <th className="px-3 py-2 w-8" />
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-[#f9eef2]">
+                          <tbody className="divide-y divide-hc-line">
                             {lineas.map((l) => (
                               <tr key={l.ingredienteId}>
                                 <td className="px-3 py-2">
-                                  <p className="font-medium text-[#3d1a24] text-[13px]">
+                                  <p className="font-medium text-hc-ink text-[13px]">
                                     {l._nombre}
                                   </p>
-                                  <p className="text-[11px] text-[#6B3E26]">
+                                  <p className="text-[11px] text-hc-muted">
                                     ${l._costoUnidad.toFixed(4)}/{l._unidad}
                                   </p>
                                 </td>
@@ -891,21 +891,21 @@ export function ProductoEditorModal({
                                           Number(e.target.value),
                                         )
                                       }
-                                      className="w-20 text-center px-2 py-1 rounded-lg border border-[#e8c4a0] text-sm focus:outline-none focus:border-[#c0607a] transition"
+                                      className="w-20 text-center px-2 py-1 rounded-lg border border-hc-line-strong text-sm focus:outline-none focus:border-hc-rose transition"
                                     />
-                                    <span className="text-[11px] text-[#6B3E26]">
+                                    <span className="text-[11px] text-hc-muted">
                                       {l._unidad}
                                     </span>
                                   </div>
                                 </td>
-                                <td className="px-3 py-2 text-right font-medium text-[#AA6A42] text-[13px]">
+                                <td className="px-3 py-2 text-right font-medium text-hc-soft text-[13px]">
                                   ${(l.cantidad * l._costoUnidad).toFixed(2)}
                                 </td>
                                 <td className="px-3 py-2">
                                   <button
                                     type="button"
                                     onClick={() => removeLinea(l.ingredienteId)}
-                                    className="p-1 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
+                                    className="p-1 rounded-lg hover:bg-red-50 text-hc-soft hover:text-red-500 transition"
                                   >
                                     <svg
                                       viewBox="0 0 24 24"
@@ -923,14 +923,14 @@ export function ProductoEditorModal({
                             ))}
                           </tbody>
                           <tfoot>
-                            <tr className="bg-[#FFF7F0] border-t border-[#f0e0d0]">
+                            <tr className="bg-hc-hover border-t border-hc-line">
                               <td
                                 colSpan={2}
-                                className="px-3 py-2 text-right text-[11px] font-semibold text-[#6B3E26] uppercase"
+                                className="px-3 py-2 text-right text-[11px] font-semibold text-hc-muted uppercase"
                               >
                                 Total
                               </td>
-                              <td className="px-3 py-2 text-right font-bold text-[#c0607a] text-base">
+                              <td className="px-3 py-2 text-right font-bold text-hc-rose text-base">
                                 ${costoTotal.toFixed(2)}
                               </td>
                               <td />
@@ -940,7 +940,7 @@ export function ProductoEditorModal({
                       </div>
                     )}
                     {lineas.length === 0 && (
-                      <div className="rounded-xl border border-dashed border-[#e8c4a0] py-8 text-center text-[#AA6A42] text-sm">
+                      <div className="rounded-xl border border-dashed border-hc-line-strong py-8 text-center text-hc-soft text-sm">
                         Escribe en el buscador para agregar ingredientes
                       </div>
                     )}
@@ -963,7 +963,7 @@ export function ProductoEditorModal({
                             key={String(opt.v)}
                             type="button"
                             onClick={() => setPermiteMedida(opt.v)}
-                            className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${permiteMedida === opt.v ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
+                            className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${permiteMedida === opt.v ? "bg-hc-rose text-white border-hc-rose" : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"}`}
                           >
                             {opt.label}
                           </button>
@@ -971,7 +971,7 @@ export function ProductoEditorModal({
                       </div>
                       {permiteMedida && (
                         <div className="flex items-center gap-2 mt-1">
-                          <label className="text-[11px] text-[#6B3E26] shrink-0">
+                          <label className="text-[11px] text-hc-muted shrink-0">
                             Medida base:
                           </label>
                           <input
@@ -984,7 +984,7 @@ export function ProductoEditorModal({
                             }
                             className={inputCls + " max-w-[80px] text-center"}
                           />
-                          <span className="text-[11px] text-[#6B3E26]">cm</span>
+                          <span className="text-[11px] text-hc-muted">cm</span>
                         </div>
                       )}
                     </div>
@@ -1000,7 +1000,7 @@ export function ProductoEditorModal({
                               key={opt.v}
                               type="button"
                               onClick={() => setTipoTamano(opt.v as any)}
-                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${tipoTamano === opt.v ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
+                              className={`flex-1 py-2 rounded-xl text-[12px] font-semibold border transition ${tipoTamano === opt.v ? "bg-hc-rose text-white border-hc-rose" : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"}`}
                             >
                               {opt.label}
                             </button>
@@ -1011,7 +1011,7 @@ export function ProductoEditorModal({
                             {tamanos.map((t, i) => (
                               <div
                                 key={t.id}
-                                className="flex flex-col gap-2 p-3 rounded-xl bg-white border border-[#e8c4a0]"
+                                className="flex flex-col gap-2 p-3 rounded-xl bg-white border border-hc-line-strong"
                               >
                                 <div className="flex items-center gap-2">
                                   <input
@@ -1028,7 +1028,7 @@ export function ProductoEditorModal({
                                   />
                                   <button
                                     onClick={() => removeTamano(t.id)}
-                                    className="p-1.5 rounded-lg hover:bg-red-50 text-[#AA6A42] hover:text-red-500 transition"
+                                    className="p-1.5 rounded-lg hover:bg-red-50 text-hc-soft hover:text-red-500 transition"
                                   >
                                     <svg
                                       viewBox="0 0 24 24"
@@ -1044,7 +1044,7 @@ export function ProductoEditorModal({
                                 </div>
                                 <div className="grid grid-cols-2 gap-2">
                                   <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
+                                    <span className="text-[10px] text-hc-muted font-semibold uppercase">
                                       Factor receta
                                     </span>
                                     <input
@@ -1063,7 +1063,7 @@ export function ProductoEditorModal({
                                     />
                                   </div>
                                   <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
+                                    <span className="text-[10px] text-hc-muted font-semibold uppercase">
                                       Factor opciones
                                     </span>
                                     <input
@@ -1089,7 +1089,7 @@ export function ProductoEditorModal({
                             ))}
                             <button
                               onClick={addTamano}
-                              className="flex items-center justify-center gap-1.5 py-2 rounded-xl border border-dashed border-[#c0607a] text-[#c0607a] text-[12px] font-semibold hover:bg-[#FFF7F0] transition"
+                              className="flex items-center justify-center gap-1.5 py-2 rounded-xl border border-dashed border-hc-rose text-hc-rose text-[12px] font-semibold hover:bg-hc-hover transition"
                             >
                               <svg
                                 viewBox="0 0 24 24"
@@ -1125,7 +1125,7 @@ export function ProductoEditorModal({
                     </div>
 
                     {catLoading && (
-                      <p className="text-center text-[#AA6A42] text-sm py-4">
+                      <p className="text-center text-hc-soft text-sm py-4">
                         Cargando catálogo…
                       </p>
                     )}
@@ -1231,7 +1231,7 @@ export function ProductoEditorModal({
                               key={sel.ingredienteId}
                               className="flex items-center gap-2 -mt-1"
                             >
-                              <span className="text-[12px] text-[#6B3E26] shrink-0">
+                              <span className="text-[12px] text-hc-muted shrink-0">
                                 {t.nombre}:
                               </span>
                               <input
@@ -1253,9 +1253,9 @@ export function ProductoEditorModal({
                                     ),
                                   );
                                 }}
-                                className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-[12px] font-semibold text-center focus:outline-none focus:border-[#c0607a]"
+                                className="w-20 px-2 py-1 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-[12px] font-semibold text-center focus:outline-none focus:border-hc-rose"
                               />
-                              <span className="text-[11px] text-[#6B3E26]">
+                              <span className="text-[11px] text-hc-muted">
                                 {t.unidad}
                               </span>
                               {overridden && (
@@ -1270,7 +1270,7 @@ export function ProductoEditorModal({
                                       ),
                                     )
                                   }
-                                  className="text-[11px] text-[#AA6A42] underline hover:text-[#8A5535] transition cursor-pointer"
+                                  className="text-[11px] text-hc-soft underline hover:text-hc-ink transition cursor-pointer"
                                 >
                                   Restablecer ({t.cantidad}{t.unidad})
                                 </button>
@@ -1297,7 +1297,7 @@ export function ProductoEditorModal({
                               <label className={labelCls}>
                                 Precio de empaque por variante
                               </label>
-                              <p className="text-[11px] text-[#6B3E26] -mt-1">
+                              <p className="text-[11px] text-hc-muted -mt-1">
                                 Para cada variante, precio real de este
                                 empaque en esa presentación — reemplaza el
                                 precio del catálogo, sin escalar por factor.
@@ -1306,9 +1306,9 @@ export function ProductoEditorModal({
                               {tamanos.map((t) => (
                                 <div
                                   key={t.id}
-                                  className="flex flex-col gap-1.5 p-3 rounded-xl bg-white border border-[#e8c4a0]"
+                                  className="flex flex-col gap-1.5 p-3 rounded-xl bg-white border border-hc-line-strong"
                                 >
-                                  <span className="text-[12px] font-semibold text-[#3A1F14]">
+                                  <span className="text-[12px] font-semibold text-hc-ink">
                                     {t.nombre || "(variante sin nombre)"}
                                   </span>
                                   {defEmpaqueIds.map((eid) => {
@@ -1321,10 +1321,10 @@ export function ProductoEditorModal({
                                         key={eid}
                                         className="flex items-center gap-2"
                                       >
-                                        <span className="text-[12px] text-[#6B3E26] flex-1">
+                                        <span className="text-[12px] text-hc-muted flex-1">
                                           {emp.nombre}
                                         </span>
-                                        <span className="text-[#6B3E26] text-sm">
+                                        <span className="text-hc-muted text-sm">
                                           $
                                         </span>
                                         <input
@@ -1360,7 +1360,7 @@ export function ProductoEditorModal({
                             <div className="flex flex-col gap-1 text-[12px]">
                               {defToppings.length > 0 && (
                                 <div className="flex gap-2 flex-wrap">
-                                  <span className="text-[#6B3E26] shrink-0">
+                                  <span className="text-hc-muted shrink-0">
                                     Toppings:
                                   </span>
                                   {defToppings.map((sel) => {
@@ -1371,7 +1371,7 @@ export function ProductoEditorModal({
                                     return (
                                       <span
                                         key={sel.ingredienteId}
-                                        className="flex items-center gap-1 bg-[#f0e0d0] text-[#AA6A42] px-2 py-0.5 rounded-full"
+                                        className="flex items-center gap-1 bg-hc-sunken text-hc-soft px-2 py-0.5 rounded-full"
                                       >
                                         {t.nombre}
                                         {sel.cantidad != null &&
@@ -1396,7 +1396,7 @@ export function ProductoEditorModal({
                               )}
                               {defEmpaqueIds.length > 0 && (
                                 <div className="flex gap-2 flex-wrap">
-                                  <span className="text-[#6B3E26] shrink-0">
+                                  <span className="text-hc-muted shrink-0">
                                     Empaques:
                                   </span>
                                   {defEmpaqueIds.map((eid) => {
@@ -1406,7 +1406,7 @@ export function ProductoEditorModal({
                                     return e ? (
                                       <span
                                         key={eid}
-                                        className="flex items-center gap-1 bg-[#f0e0d0] text-[#AA6A42] px-2 py-0.5 rounded-full"
+                                        className="flex items-center gap-1 bg-hc-sunken text-hc-soft px-2 py-0.5 rounded-full"
                                       >
                                         {e.nombre}
                                         <button
@@ -1428,7 +1428,7 @@ export function ProductoEditorModal({
                           defRellenos.length === 0 &&
                           defToppings.length === 0 &&
                           defEmpaqueIds.length === 0 && (
-                            <p className="text-[12px] text-[#AA6A42] text-center py-2">
+                            <p className="text-[12px] text-hc-soft text-center py-2">
                               Sin opciones predeterminadas — el configurador
                               abrirá con todo en blanco.
                             </p>
@@ -1444,7 +1444,7 @@ export function ProductoEditorModal({
                     <div className={sectionCls}>
                       <div>
                         <label className={labelCls}>Precio establecido</label>
-                        <p className="text-[11px] text-[#6B3E26] mt-1">
+                        <p className="text-[11px] text-hc-muted mt-1">
                           Precio de venta fijo definido manualmente. Si se
                           define, el configurador mostrará ambas opciones
                           (sugerido vs establecido) para que elijas al cotizar.
@@ -1452,7 +1452,7 @@ export function ProductoEditorModal({
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[#6B3E26] text-sm">$</span>
+                        <span className="text-hc-muted text-sm">$</span>
                         <input
                           type="number"
                           min="0"
@@ -1472,14 +1472,14 @@ export function ProductoEditorModal({
                           <button
                             type="button"
                             onClick={() => setPrecioEstablecido("")}
-                            className="text-[11px] text-[#AA6A42] hover:text-red-500 transition"
+                            className="text-[11px] text-hc-soft hover:text-red-500 transition"
                           >
                             Quitar precio establecido
                           </button>
                         )}
                       </div>
                       {precioEstablecido !== "" && (
-                        <p className="text-[11px] text-[#c0607a] font-semibold">
+                        <p className="text-[11px] text-hc-rose font-semibold">
                           Al cotizar se ofrecerá elegir entre $
                           {Number(precioEstablecido).toFixed(2)} (establecido) y
                           el precio calculado.
@@ -1490,7 +1490,7 @@ export function ProductoEditorModal({
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <label className={labelCls}>Promoción</label>
-                          <p className="text-[11px] text-[#6B3E26] mt-1">
+                          <p className="text-[11px] text-hc-muted mt-1">
                             Paquete de varias piezas a precio especial (ej. 2
                             por $40). Productos con la misma promoción se
                             combinan entre sí en el carrito.
@@ -1500,7 +1500,7 @@ export function ProductoEditorModal({
                           type="button"
                           onClick={() => setPromoActiva((v) => !v)}
                           className={`relative shrink-0 w-11 h-6 rounded-full transition-colors duration-200 ${
-                            promoActiva ? "bg-[#c0607a]" : "bg-[#e8c4a0]"
+                            promoActiva ? "bg-hc-rose" : "bg-hc-line-strong"
                           }`}
                           aria-label="Activar promoción"
                         >
@@ -1513,7 +1513,7 @@ export function ProductoEditorModal({
                       </div>
                       {promoActiva && (
                         <>
-                          <div className="flex flex-wrap items-center gap-2 text-sm text-[#6B3E26]">
+                          <div className="flex flex-wrap items-center gap-2 text-sm text-hc-muted">
                             <input
                               type="number"
                               min="2"
@@ -1546,7 +1546,7 @@ export function ProductoEditorModal({
                             />
                           </div>
                           <div>
-                            <p className="text-[11px] text-[#6B3E26] mb-1.5">
+                            <p className="text-[11px] text-hc-muted mb-1.5">
                               Días en que aplica (ninguno = todos los días)
                             </p>
                             <div className="flex flex-wrap gap-1.5">
@@ -1565,8 +1565,8 @@ export function ProductoEditorModal({
                                     }
                                     className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition cursor-pointer ${
                                       on
-                                        ? "bg-[#c0607a] border-[#c0607a] text-white"
-                                        : "bg-white border-[#e8c4a0] text-[#6B3E26] hover:bg-[#FFF7F0]"
+                                        ? "bg-hc-rose border-hc-rose text-white"
+                                        : "bg-white border-hc-line-strong text-hc-muted hover:bg-hc-hover"
                                     }`}
                                   >
                                     {dia.slice(0, 3)}
@@ -1582,7 +1582,7 @@ export function ProductoEditorModal({
                               dias: promoDias,
                             });
                             return preview ? (
-                              <p className="text-[11px] text-[#c0607a] font-semibold">
+                              <p className="text-[11px] text-hc-rose font-semibold">
                                 Se mostrará como: {promoEtiqueta(preview)}
                               </p>
                             ) : (
@@ -1597,14 +1597,14 @@ export function ProductoEditorModal({
                     <div className={sectionCls}>
                       <div>
                         <label className={labelCls}>Mano de obra</label>
-                        <p className="text-[11px] text-[#6B3E26] mt-1">
+                        <p className="text-[11px] text-hc-muted mt-1">
                           {manoDeObraModo === "fijo"
                             ? "Fija — se cobra siempre este monto para este producto, sin importar la base estructural."
                             : "Dinámica — Cargo 2 = max(mínimo, 25% base estructural)."}
                         </p>
                       </div>
 
-                      <div className="flex rounded-lg border border-[#e8c4a0] p-0.5 bg-white w-fit">
+                      <div className="flex rounded-lg border border-hc-line-strong p-0.5 bg-white w-fit">
                         {(["dinamico", "fijo"] as const).map((modo) => (
                           <button
                             key={modo}
@@ -1612,8 +1612,8 @@ export function ProductoEditorModal({
                             onClick={() => setManoDeObraModo(modo)}
                             className={`px-3 py-1 rounded-md text-[12px] font-semibold transition cursor-pointer ${
                               manoDeObraModo === modo
-                                ? "bg-[#c0607a] text-white"
-                                : "text-[#AA6A42] hover:bg-[#FFF7F0]"
+                                ? "bg-hc-rose text-white"
+                                : "text-hc-soft hover:bg-hc-hover"
                             }`}
                           >
                             {modo === "dinamico" ? "Dinámico" : "Fijo"}
@@ -1622,7 +1622,7 @@ export function ProductoEditorModal({
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="text-[#6B3E26] text-sm">$</span>
+                        <span className="text-hc-muted text-sm">$</span>
                         <input
                           type="number"
                           min="0"
@@ -1645,7 +1645,7 @@ export function ProductoEditorModal({
                             key={r.label}
                             type="button"
                             onClick={() => setManoDeObraMinimo(r.value)}
-                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${manoDeObraMinimo === r.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
+                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${manoDeObraMinimo === r.value ? "bg-hc-rose text-white border-hc-rose" : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"}`}
                           >
                             {r.label}{" "}
                             <span className="opacity-60">${r.value}</span>
@@ -1660,7 +1660,7 @@ export function ProductoEditorModal({
                           <label className={labelCls}>
                             Precio y mano de obra por variante
                           </label>
-                          <p className="text-[11px] text-[#6B3E26] mt-1">
+                          <p className="text-[11px] text-hc-muted mt-1">
                             Override por variante de tamaño — vacío = usa el
                             precio establecido / mano de obra del producto
                             (arriba).
@@ -1670,18 +1670,18 @@ export function ProductoEditorModal({
                           {tamanos.map((t) => (
                             <div
                               key={t.id}
-                              className="flex flex-col gap-2 p-3 rounded-xl bg-white border border-[#e8c4a0]"
+                              className="flex flex-col gap-2 p-3 rounded-xl bg-white border border-hc-line-strong"
                             >
-                              <span className="text-[12px] font-semibold text-[#3A1F14]">
+                              <span className="text-[12px] font-semibold text-hc-ink">
                                 {t.nombre || "(variante sin nombre)"}
                               </span>
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="flex flex-col gap-1">
-                                  <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
+                                  <span className="text-[10px] text-hc-muted font-semibold uppercase">
                                     Precio establecido
                                   </span>
                                   <div className="flex items-center gap-1">
-                                    <span className="text-[#6B3E26] text-sm">
+                                    <span className="text-hc-muted text-sm">
                                       $
                                     </span>
                                     <input
@@ -1708,7 +1708,7 @@ export function ProductoEditorModal({
                                   </div>
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                  <span className="text-[10px] text-[#6B3E26] font-semibold uppercase">
+                                  <span className="text-[10px] text-hc-muted font-semibold uppercase">
                                     Mano de obra
                                   </span>
                                   <div className="flex items-center gap-1">
@@ -1729,7 +1729,7 @@ export function ProductoEditorModal({
                                       <option value="dinamico">Dinámico</option>
                                       <option value="fijo">Fijo</option>
                                     </select>
-                                    <span className="text-[#6B3E26] text-sm">
+                                    <span className="text-hc-muted text-sm">
                                       $
                                     </span>
                                     <input
@@ -1767,7 +1767,7 @@ export function ProductoEditorModal({
                         <label className={labelCls}>
                           Factor de opciones del catálogo
                         </label>
-                        <p className="text-[11px] text-[#6B3E26] mt-1">
+                        <p className="text-[11px] text-hc-muted mt-1">
                           Las opciones están costeadas para 24cm. Para productos
                           individuales define el factor de escala. Vacío = mismo
                           que receta base.
@@ -1796,7 +1796,7 @@ export function ProductoEditorModal({
                             key={r.label}
                             type="button"
                             onClick={() => setFactorOpciones(r.value)}
-                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${factorOpciones === r.value ? "bg-[#c0607a] text-white border-[#c0607a]" : "bg-white text-[#AA6A42] border-[#e8c4a0] hover:bg-[#FFF7F0]"}`}
+                            className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold transition ${factorOpciones === r.value ? "bg-hc-rose text-white border-hc-rose" : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover"}`}
                           >
                             {r.label}{" "}
                             <span className="opacity-60">{r.value}</span>
@@ -1815,17 +1815,17 @@ export function ProductoEditorModal({
               )}
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-white shrink-0">
+              <div className="flex gap-3 px-6 py-4 border-t border-hc-line bg-white shrink-0">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                  className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                 >
                   {saving
                     ? "Guardando…"

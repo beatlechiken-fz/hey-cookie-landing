@@ -138,7 +138,7 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
   }
 
   const inputCls =
-    "w-full px-3 py-2 rounded-lg border border-[#e8c4a0] bg-white text-[#3d1a24] text-sm focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition placeholder:text-[#AA6A42]";
+    "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft";
 
   return (
     <AnimatePresence>
@@ -150,7 +150,7 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="modal"
@@ -160,15 +160,15 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
             transition={{ duration: 0.18 }}
             className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-xl max-h-[90vh] bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] flex flex-col overflow-hidden">
+            <div className="pointer-events-auto w-full max-w-xl max-h-[90vh] bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line flex flex-col overflow-hidden">
               {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
-                <h2 className="font-bold text-[#AA6A42] text-lg">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-hc-line bg-hc-hover shrink-0">
+                <h2 className="font-bold text-hc-soft text-lg">
                   {isEdit ? "Editar gelatina" : "Nueva gelatina"}
                 </h2>
                 <button
                   onClick={onClose}
-                  className="p-1.5 rounded-lg hover:bg-[#f0e0d0] transition text-[#6B3E26]"
+                  className="p-1.5 rounded-lg hover:bg-hc-sunken transition text-hc-muted"
                 >
                   <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M6 6l12 12M18 6L6 18" />
@@ -184,7 +184,7 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
               >
                 {/* Nombre */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Nombre
                   </label>
                   <input
@@ -196,30 +196,30 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
                 </div>
 
                 {/* Activo toggle */}
-                <div className="flex items-center justify-between rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-4 py-3">
+                <div className="flex items-center justify-between rounded-xl bg-hc-hover border border-hc-line px-4 py-3">
                   <div>
-                    <p className="text-sm font-semibold text-[#3d1a24]">Activa</p>
-                    <p className="text-[11px] text-[#6B3E26]">Visible en el cotizador</p>
+                    <p className="text-sm font-semibold text-hc-ink">Activa</p>
+                    <p className="text-[11px] text-hc-muted">Visible en el cotizador</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setActivo((v) => !v)}
-                    className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${activo ? "bg-[#c0607a]" : "bg-[#e8c4a0]"}`}
+                    className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${activo ? "bg-hc-rose" : "bg-hc-line-strong"}`}
                   >
                     <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-200 ${activo ? "left-5" : "left-0.5"}`} />
                   </button>
                 </div>
 
-                <div className="border-t border-[#f0e0d0]" />
+                <div className="border-t border-hc-line" />
 
                 {/* Ingredients section */}
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                    <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                       Ingredientes
                     </p>
                     {costoTotal > 0 && (
-                      <span className="text-[11px] font-bold text-[#c0607a]">
+                      <span className="text-[11px] font-bold text-hc-rose">
                         Costo: ${costoTotal.toFixed(2)}
                       </span>
                     )}
@@ -235,7 +235,7 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
                     />
                     {ingLoading && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <div className="w-3.5 h-3.5 border-2 border-[#c0607a]/30 border-t-[#c0607a] rounded-full animate-spin" />
+                        <div className="w-3.5 h-3.5 border-2 border-hc-rose/30 border-t-hc-rose rounded-full animate-spin" />
                       </div>
                     )}
                     <AnimatePresence>
@@ -246,17 +246,17 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12 }}
-                          className="absolute z-10 left-0 right-0 top-full mt-1 bg-white rounded-xl border border-[#f0e0d0] shadow-lg overflow-hidden"
+                          className="absolute z-10 left-0 right-0 top-full mt-1 bg-white rounded-xl border border-hc-line shadow-lg overflow-hidden"
                         >
                           {ingResults.map((ing) => (
                             <button
                               key={ing.id}
                               type="button"
                               onClick={() => addIngrediente(ing)}
-                              className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-[#FFF7F0] text-left transition"
+                              className="w-full flex items-center justify-between px-3 py-2 text-sm hover:bg-hc-hover text-left transition"
                             >
-                              <span className="font-medium text-[#3d1a24]">{ing.nombre}</span>
-                              <span className="text-[11px] text-[#6B3E26]">{ing.unidadBase}</span>
+                              <span className="font-medium text-hc-ink">{ing.nombre}</span>
+                              <span className="text-[11px] text-hc-muted">{ing.unidadBase}</span>
                             </button>
                           ))}
                         </motion.div>
@@ -270,11 +270,11 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
                       {lineas.map((l) => (
                         <div
                           key={l.ingredienteId}
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#FFF7F0] border border-[#f0e0d0]"
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-hc-hover border border-hc-line"
                         >
                           <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-medium text-[#3d1a24] truncate">{l._nombre}</p>
-                            <p className="text-[10px] text-[#6B3E26]">
+                            <p className="text-[13px] font-medium text-hc-ink truncate">{l._nombre}</p>
+                            <p className="text-[10px] text-hc-muted">
                               ${(l.cantidad * l._costo).toFixed(2)}
                             </p>
                           </div>
@@ -284,13 +284,13 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
                             step="0.01"
                             value={l.cantidad || ""}
                             onChange={(e) => updateCantidad(l.ingredienteId, parseFloat(e.target.value) || 0)}
-                            className="w-20 px-2 py-1 rounded-lg border border-[#e8c4a0] text-sm text-right text-[#3d1a24] focus:outline-none focus:border-[#c0607a]"
+                            className="w-20 px-2 py-1 rounded-lg border border-hc-line-strong text-sm text-right text-hc-ink focus:outline-none focus:border-hc-rose"
                           />
-                          <span className="text-[11px] text-[#6B3E26] w-10 shrink-0 truncate">{l._unidad}</span>
+                          <span className="text-[11px] text-hc-muted w-10 shrink-0 truncate">{l._unidad}</span>
                           <button
                             type="button"
                             onClick={() => removeLinea(l.ingredienteId)}
-                            className="p-1 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-500 transition shrink-0"
+                            className="p-1 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-500 transition shrink-0"
                           >
                             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                               <path d="M18 6L6 18M6 6l12 12" />
@@ -302,7 +302,7 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
                   )}
 
                   {lineas.length === 0 && (
-                    <p className="text-[11px] text-[#AA6A42] italic">Sin ingredientes. Busca y agrega arriba.</p>
+                    <p className="text-[11px] text-hc-soft italic">Sin ingredientes. Busca y agrega arriba.</p>
                   )}
                 </div>
 
@@ -314,11 +314,11 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
               </form>
 
               {/* Footer */}
-              <div className="flex gap-3 px-6 py-4 border-t border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
+              <div className="flex gap-3 px-6 py-4 border-t border-hc-line bg-hc-hover shrink-0">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-white transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-white transition"
                 >
                   Cancelar
                 </button>
@@ -326,7 +326,7 @@ export function GelatinasModal({ open, gelatina, onClose, onSave }: Props) {
                   type="submit"
                   form="gelatina-form"
                   disabled={saving}
-                  className="flex-1 py-2.5 rounded-xl bg-[#c0607a] text-white text-sm font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                  className="flex-1 py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                 >
                   {saving ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear gelatina"}
                 </button>

@@ -29,7 +29,7 @@ function DeleteDialog({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/30 backdrop-blur-[2px] z-40"
+            className="fixed inset-0 bg-hc-cacao/25 backdrop-blur-[2px] z-40"
           />
           <motion.div
             key="dlg"
@@ -39,7 +39,7 @@ function DeleteDialog({
             transition={{ duration: 0.15 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-[#f0e0d0] p-6 flex flex-col gap-4">
+            <div className="pointer-events-auto w-full max-w-sm bg-white rounded-2xl shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)] border border-hc-line p-6 flex flex-col gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                   <svg
@@ -54,21 +54,21 @@ function DeleteDialog({
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[#3d1a24] text-base">
+                  <h3 className="font-bold text-hc-ink text-base">
                     Eliminar cupón
                   </h3>
-                  <p className="text-sm text-[#6B3E26]">
+                  <p className="text-sm text-hc-muted">
                     Esta acción no se puede deshacer
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-[#AA6A42]">
+              <p className="text-sm text-hc-soft">
                 ¿Confirmas que deseas eliminar <strong>"{codigo}"</strong>?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={onClose}
-                  className="flex-1 py-2.5 rounded-xl border border-[#e8c4a0] text-[#6B3E26] text-sm font-semibold hover:bg-[#FFF7F0] transition"
+                  className="flex-1 py-2.5 rounded-xl border border-hc-line-strong text-hc-muted text-sm font-semibold hover:bg-hc-hover transition"
                 >
                   Cancelar
                 </button>
@@ -189,9 +189,9 @@ export function CuponesView() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por código…"
-          className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-[#e8c4a0] bg-white text-sm text-[#3d1a24] focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 placeholder:text-[#AA6A42]"
+          className="w-full pl-4 pr-28 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
         />
-        <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-[#AA6A42] pointer-events-none">
+        <div className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
           <svg
             viewBox="0 0 24 24"
             className="w-4 h-4"
@@ -206,7 +206,7 @@ export function CuponesView() {
         </div>
         <button
           onClick={openCreate}
-          className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] transition"
+          className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover transition"
         >
           <svg
             viewBox="0 0 24 24"
@@ -223,7 +223,7 @@ export function CuponesView() {
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#6B3E26]">
+        <p className="text-sm text-hc-muted">
           {isLoading ? "Cargando…" : `${total} cupón${total !== 1 ? "es" : ""}`}
         </p>
         {(error || actionError) && (
@@ -232,34 +232,34 @@ export function CuponesView() {
       </div>
 
       {/* Tabla desktop */}
-      <div className="hidden md:block rounded-2xl border border-[#f0e0d0] overflow-hidden bg-white shadow-sm">
+      <div className="hidden md:block rounded-2xl border border-hc-line overflow-hidden bg-white shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-[#FFF7F0] border-b border-[#f0e0d0]">
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+            <tr className="bg-hc-hover border-b border-hc-line">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Código
               </th>
-              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Descuento
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Tipo
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Usos
               </th>
-              <th className="px-4 py-3 text-center text-[11px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Estado
               </th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f9eef2]">
+          <tbody className="divide-y divide-hc-line">
             {isLoading && (
               <tr>
                 <td
                   colSpan={6}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   Cargando…
                 </td>
@@ -269,25 +269,25 @@ export function CuponesView() {
               <tr>
                 <td
                   colSpan={6}
-                  className="py-12 text-center text-[#AA6A42] text-sm"
+                  className="py-12 text-center text-hc-soft text-sm"
                 >
                   No se encontraron cupones
                 </td>
               </tr>
             )}
             {cupones.map((c) => (
-              <tr key={c.id} className="hover:bg-[#FFF7F0]/60 transition group">
+              <tr key={c.id} className="hover:bg-hc-hover/60 transition group">
                 <td className="px-4 py-3">
-                  <p className="font-bold text-[#3d1a24] tracking-wide">
+                  <p className="font-bold text-hc-ink tracking-wide">
                     {c.codigo}
                   </p>
                   {c.descripcion && (
-                    <p className="text-[11px] text-[#6B3E26]">
+                    <p className="text-[11px] text-hc-muted">
                       {c.descripcion}
                     </p>
                   )}
                 </td>
-                <td className="px-4 py-3 font-medium text-[#c0607a]">
+                <td className="px-4 py-3 font-medium text-hc-rose">
                   {c.tipoDescuento === "porcentaje"
                     ? `${c.valor}%`
                     : `$${c.valor}`}
@@ -295,7 +295,7 @@ export function CuponesView() {
                 <td className="px-4 py-3 text-center">
                   <TipoBadge tipo={c.tipo} />
                 </td>
-                <td className="px-4 py-3 text-center text-[#AA6A42]">
+                <td className="px-4 py-3 text-center text-hc-soft">
                   {c.usosActuales}
                   {c.usosMaximos != null ? ` / ${c.usosMaximos}` : ""}
                 </td>
@@ -306,7 +306,7 @@ export function CuponesView() {
                   <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition">
                     <button
                       onClick={() => openEdit(c)}
-                      className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                      className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -322,7 +322,7 @@ export function CuponesView() {
                     </button>
                     <button
                       onClick={() => setDeleteTarget(c)}
-                      className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                      className="p-1.5 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -351,20 +351,20 @@ export function CuponesView() {
         {cupones.map((c) => (
           <div
             key={c.id}
-            className="bg-white rounded-2xl border border-[#f0e0d0] p-4 shadow-sm"
+            className="bg-white rounded-2xl border border-hc-line p-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <p className="font-bold text-[#3d1a24] tracking-wide">
+                <p className="font-bold text-hc-ink tracking-wide">
                   {c.codigo}
                 </p>
                 {c.descripcion && (
-                  <p className="text-[12px] text-[#6B3E26] mt-0.5">
+                  <p className="text-[12px] text-hc-muted mt-0.5">
                     {c.descripcion}
                   </p>
                 )}
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <span className="font-medium text-[#c0607a] text-sm">
+                  <span className="font-medium text-hc-rose text-sm">
                     {c.tipoDescuento === "porcentaje"
                       ? `${c.valor}%`
                       : `$${c.valor}`}
@@ -376,7 +376,7 @@ export function CuponesView() {
               <div className="flex gap-1 shrink-0">
                 <button
                   onClick={() => openEdit(c)}
-                  className="p-2 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] transition"
+                  className="p-2 rounded-lg hover:bg-hc-sunken text-hc-muted transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -392,7 +392,7 @@ export function CuponesView() {
                 </button>
                 <button
                   onClick={() => setDeleteTarget(c)}
-                  className="p-2 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                  className="p-2 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -419,17 +419,17 @@ export function CuponesView() {
           <button
             onClick={() => setPage(page - 1)}
             disabled={page <= 1}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             ← Anterior
           </button>
-          <span className="text-sm text-[#6B3E26]">
+          <span className="text-sm text-hc-muted">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => setPage(page + 1)}
             disabled={page >= totalPages}
-            className="px-3 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-sm hover:bg-[#FFF7F0] disabled:opacity-40 disabled:cursor-not-allowed transition"
+            className="px-3 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-sm hover:bg-hc-hover disabled:opacity-40 disabled:cursor-not-allowed transition"
           >
             Siguiente →
           </button>

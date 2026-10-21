@@ -427,36 +427,36 @@ export function OrdenDetailCard({
 
   return (
     <>
-    <div className="rounded-2xl border border-[#f0e0d0] bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-hc-line bg-white shadow-sm overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setExpanded((v) => !v)}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-[#FFF7F0]/60 transition"
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left hover:bg-hc-hover/60 transition"
       >
         <div className="flex items-center gap-3">
           <div className="flex flex-col">
-            <p className="font-bold text-[#3d1a24] text-sm">
+            <p className="font-bold text-hc-ink text-sm">
               {orden.status === "cotizacion" ? "Cotización" : "Orden"} #
               {orden.numero}
             </p>
-            <p className="text-[11px] text-[#6B3E26]">
+            <p className="text-[11px] text-hc-muted">
               {formatDate(orden.createdAt)}
             </p>
             {orden.fechaEntrega && (
-              <p className="text-[11px] text-[#c0607a] font-medium mt-0.5">
+              <p className="text-[11px] text-hc-rose font-medium mt-0.5">
                 🎂 Entrega: {formatDate(orden.fechaEntrega)}
               </p>
             )}
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <p className="font-bold text-[#c0607a] text-sm">
+          <p className="font-bold text-hc-rose text-sm">
             ${orden.total.toFixed(2)}
           </p>
           <svg
             viewBox="0 0 24 24"
             className={
-              "w-4 h-4 text-[#6B3E26] transition-transform " +
+              "w-4 h-4 text-hc-muted transition-transform " +
               (expanded ? "rotate-180" : "")
             }
             fill="none"
@@ -479,16 +479,16 @@ export function OrdenDetailCard({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 flex flex-col gap-4 border-t border-[#f9eef2] pt-4">
+            <div className="px-4 pb-4 flex flex-col gap-4 border-t border-hc-line pt-4">
               {/* Pipeline */}
               <div className="flex justify-center overflow-x-auto py-1">
                 <OrdenPipeline status={orden.status} />
               </div>
 
               {/* Fecha de entrega */}
-              <div className="flex items-center justify-between rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
+              <div className="flex items-center justify-between rounded-xl bg-hc-hover border border-hc-line px-3 py-2.5">
                 <div>
-                  <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                  <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                     Fecha de entrega
                   </p>
                   {editingFecha ? (
@@ -497,12 +497,12 @@ export function OrdenDetailCard({
                         type="date"
                         value={fechaInput}
                         onChange={(e) => setFechaInput(e.target.value)}
-                        className="text-sm border border-[#e8c4a0] rounded-lg px-2 py-1 text-[#3d1a24] focus:outline-none focus:border-[#c0607a]"
+                        className="text-sm border border-hc-line-strong rounded-lg px-2 py-1 text-hc-ink focus:outline-none focus:border-hc-rose"
                       />
                       <button
                         onClick={handleSaveFecha}
                         disabled={savingFecha}
-                        className="px-2.5 py-1 rounded-lg bg-[#c0607a] text-white text-[11px] font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                        className="px-2.5 py-1 rounded-lg bg-hc-rose text-white text-[11px] font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                       >
                         {savingFecha ? "…" : "Guardar"}
                       </button>
@@ -511,17 +511,17 @@ export function OrdenDetailCard({
                           setEditingFecha(false);
                           setFechaInput(orden.fechaEntrega?.slice(0, 10) ?? "");
                         }}
-                        className="px-2 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-[#f0e0d0] transition"
+                        className="px-2 py-1 rounded-lg border border-hc-line-strong text-hc-muted text-[11px] hover:bg-hc-sunken transition"
                       >
                         Cancelar
                       </button>
                     </div>
                   ) : (
-                    <p className="text-[13px] font-semibold text-[#3d1a24] mt-0.5">
+                    <p className="text-[13px] font-semibold text-hc-ink mt-0.5">
                       {orden.fechaEntrega ? (
                         formatDate(orden.fechaEntrega)
                       ) : (
-                        <span className="text-[#AA6A42] font-normal">
+                        <span className="text-hc-soft font-normal">
                           Sin fecha asignada
                         </span>
                       )}
@@ -531,7 +531,7 @@ export function OrdenDetailCard({
                 {!editingFecha && (
                   <button
                     onClick={() => setEditingFecha(true)}
-                    className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition"
+                    className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -550,11 +550,11 @@ export function OrdenDetailCard({
 
               {/* Observaciones / alergias */}
               {orden.notas && (
-                <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
-                  <p className="text-[10px] font-semibold text-[#6B3E26] uppercase tracking-wider">
+                <div className="rounded-xl bg-hc-hover border border-hc-line px-3 py-2.5">
+                  <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
                     Observaciones
                   </p>
-                  <p className="text-[13px] text-[#3d1a24] mt-0.5 whitespace-pre-wrap">
+                  <p className="text-[13px] text-hc-ink mt-0.5 whitespace-pre-wrap">
                     {orden.notas}
                   </p>
                 </div>
@@ -563,14 +563,14 @@ export function OrdenDetailCard({
               {/* Items */}
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Productos
                   </p>
                   {puedeEditarItems && (
                     <div className="relative">
                       <button
                         onClick={() => setAddMenuOpen((v) => !v)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-[#e8c4a0] text-[#AA6A42] text-[11px] font-semibold hover:bg-[#FFF7F0] transition"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-hc-line-strong text-hc-soft text-[11px] font-semibold hover:bg-hc-hover transition"
                       >
                         <svg
                           viewBox="0 0 24 24"
@@ -590,7 +590,7 @@ export function OrdenDetailCard({
                             className="fixed inset-0 z-10"
                             onClick={() => setAddMenuOpen(false)}
                           />
-                          <div className="absolute right-0 top-full mt-1 z-20 w-56 rounded-xl border border-[#f0e0d0] bg-white shadow-lg overflow-hidden">
+                          <div className="absolute right-0 top-full mt-1 z-20 w-56 rounded-xl border border-hc-line bg-white shadow-lg overflow-hidden">
                             {[
                               {
                                 label: "Pastel personalizado",
@@ -615,7 +615,7 @@ export function OrdenDetailCard({
                                   setAddMenuOpen(false);
                                   opt.onClick();
                                 }}
-                                className="w-full text-left px-3 py-2.5 text-[13px] text-[#3d1a24] hover:bg-[#FFF7F0] transition"
+                                className="w-full text-left px-3 py-2.5 text-[13px] text-hc-ink hover:bg-hc-hover transition"
                               >
                                 {opt.label}
                               </button>
@@ -643,14 +643,14 @@ export function OrdenDetailCard({
                   return (
                     <div
                       key={item.id ?? i}
-                      className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2"
+                      className="rounded-xl bg-hc-hover border border-hc-line px-3 py-2"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="min-w-0">
-                          <p className="text-[13px] font-semibold text-[#3d1a24] truncate">
+                          <p className="text-[13px] font-semibold text-hc-ink truncate">
                             {item.nombre}
                           </p>
-                          <p className="text-[11px] text-[#6B3E26]">
+                          <p className="text-[11px] text-hc-muted">
                             {item.cantidad} × ${item.precioUnitario.toFixed(2)}
                             {(item.configuracion as any)?.diametroCm
                               ? ` · ${(item.configuracion as any).diametroCm}cm`
@@ -662,7 +662,7 @@ export function OrdenDetailCard({
                             <button
                               onClick={() => handleEditItem(item)}
                               disabled={loadingEdit}
-                              className="p-1.5 rounded-lg hover:bg-[#f0e0d0] text-[#6B3E26] hover:text-[#c0607a] transition disabled:opacity-50"
+                              className="p-1.5 rounded-lg hover:bg-hc-sunken text-hc-muted hover:text-hc-rose transition disabled:opacity-50"
                               aria-label="Editar"
                               title="Editar"
                             >
@@ -682,7 +682,7 @@ export function OrdenDetailCard({
                           {removible && !confirming && (
                             <button
                               onClick={() => setConfirmRemoveId(item.id ?? null)}
-                              className="p-1.5 rounded-lg hover:bg-red-50 text-[#6B3E26] hover:text-red-600 transition"
+                              className="p-1.5 rounded-lg hover:bg-red-50 text-hc-muted hover:text-red-600 transition"
                               aria-label="Quitar"
                               title="Quitar"
                             >
@@ -701,7 +701,7 @@ export function OrdenDetailCard({
                               </svg>
                             </button>
                           )}
-                          <p className="font-bold text-[#c0607a] text-sm">
+                          <p className="font-bold text-hc-rose text-sm">
                             ${item.subtotal.toFixed(2)}
                           </p>
                         </div>
@@ -721,19 +721,19 @@ export function OrdenDetailCard({
                             autoFocus
                             aria-label={`Observaciones de ${item.nombre}`}
                             placeholder="Observaciones / descripción detallada del producto"
-                            className="w-full resize-none rounded-lg border border-[#e8c4a0] bg-white px-2.5 py-1.5 text-[12px] text-[#3d1a24] placeholder:text-[#AA6A42]/60 focus:outline-none focus:border-[#c0607a] focus:ring-1 focus:ring-[#c0607a]/20 transition"
+                            className="w-full resize-none rounded-lg border border-hc-line-strong bg-white px-2.5 py-1.5 text-[12px] text-hc-ink placeholder:text-hc-soft/60 focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition"
                           />
                           <div className="flex justify-end gap-2">
                             <button
                               onClick={() => setEditingObsId(null)}
-                              className="px-2.5 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-white transition"
+                              className="px-2.5 py-1 rounded-lg border border-hc-line-strong text-hc-muted text-[11px] hover:bg-white transition"
                             >
                               Cancelar
                             </button>
                             <button
                               onClick={() => handleSaveObs(item.id!)}
                               disabled={savingObs}
-                              className="px-2.5 py-1 rounded-lg bg-[#c0607a] text-white text-[11px] font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                              className="px-2.5 py-1 rounded-lg bg-hc-rose text-white text-[11px] font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                             >
                               {savingObs ? "Guardando…" : "Guardar"}
                             </button>
@@ -742,14 +742,14 @@ export function OrdenDetailCard({
                       ) : (
                         <>
                           {item.observaciones && (
-                            <p className="mt-1.5 text-[12px] text-[#6B3E26] whitespace-pre-wrap break-words">
+                            <p className="mt-1.5 text-[12px] text-hc-muted whitespace-pre-wrap break-words">
                               {item.observaciones}
                             </p>
                           )}
                           {item.id && !confirming && (
                             <button
                               onClick={() => startEditObs(item)}
-                              className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#e8c4a0] bg-white text-[11px] font-semibold text-[#AA6A42] hover:text-[#c0607a] hover:border-[#c0607a] transition"
+                              className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-hc-line-strong bg-white text-[11px] font-semibold text-hc-soft hover:text-hc-rose hover:border-hc-rose transition"
                             >
                               <svg
                                 viewBox="0 0 24 24"
@@ -781,14 +781,14 @@ export function OrdenDetailCard({
                           />
                         )}
                       {confirming && (
-                        <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-[#e8c4a0]">
-                          <span className="text-[12px] text-[#6B3E26]">
+                        <div className="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-hc-line-strong">
+                          <span className="text-[12px] text-hc-muted">
                             ¿Quitar este producto de la orden?
                           </span>
                           <div className="flex gap-2 shrink-0">
                             <button
                               onClick={() => setConfirmRemoveId(null)}
-                              className="px-2.5 py-1 rounded-lg border border-[#e8c4a0] text-[#6B3E26] text-[11px] hover:bg-white transition"
+                              className="px-2.5 py-1 rounded-lg border border-hc-line-strong text-hc-muted text-[11px] hover:bg-white transition"
                             >
                               No
                             </button>
@@ -810,7 +810,7 @@ export function OrdenDetailCard({
               {/* Cupones */}
               {orden.cupones.length > 0 && (
                 <div className="flex flex-col gap-2">
-                  <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
+                  <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                     Cupones aplicados
                   </p>
                   {orden.cupones.map((c, i) => (
@@ -830,10 +830,10 @@ export function OrdenDetailCard({
               )}
 
               {/* Totales */}
-              <div className="flex flex-col gap-1 pt-1 border-t border-[#f0e0d0]">
+              <div className="flex flex-col gap-1 pt-1 border-t border-hc-line">
                 <div className="flex items-center justify-between text-[13px]">
-                  <span className="text-[#6B3E26]">Subtotal</span>
-                  <span className="text-[#3d1a24]">
+                  <span className="text-hc-muted">Subtotal</span>
+                  <span className="text-hc-ink">
                     ${orden.subtotal.toFixed(2)}
                   </span>
                 </div>
@@ -854,17 +854,17 @@ export function OrdenDetailCard({
                   </div>
                 )}
                 <div className="flex items-center justify-between pt-1">
-                  <span className="font-bold text-[#AA6A42]">Total</span>
-                  <span className="font-bold text-[#c0607a] text-lg">
+                  <span className="font-bold text-hc-soft">Total</span>
+                  <span className="font-bold text-hc-rose text-lg">
                     ${orden.total.toFixed(2)}
                   </span>
                 </div>
               </div>
 
               {puedeMarcarFinanzas && (
-                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-3 py-2.5">
-                  <p className="text-[12px] text-[#6B3E26]">
-                    <span className="font-semibold text-[#3A1F14]">Finanzas</span>
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-hc-hover border border-hc-line px-3 py-2.5">
+                  <p className="text-[12px] text-hc-muted">
+                    <span className="font-semibold text-hc-ink">Finanzas</span>
                     {" "}— cuenta esta venta en los dashboards de finanzas.
                   </p>
                   <FinanzasToggle
@@ -876,7 +876,7 @@ export function OrdenDetailCard({
               )}
 
               {orden.inventarioDescontado && (
-                <p className="flex items-center gap-1.5 text-[11px] text-[#6B3E26]/70">
+                <p className="flex items-center gap-1.5 text-[11px] text-hc-muted/70">
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4M4 6v12a2 2 0 0 0 2 2h14v-4M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
                   </svg>
@@ -902,15 +902,15 @@ export function OrdenDetailCard({
               {orden.status === "cotizacion" &&
                 nextStatus === "en_proceso" &&
                 tieneProductosInventariables && (
-                  <label className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] cursor-pointer select-none">
+                  <label className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-hc-hover border border-hc-line cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={descontarInv}
                       onChange={(e) => setDescontarInv(e.target.checked)}
-                      className="w-4 h-4 accent-[#c0607a] cursor-pointer"
+                      className="w-4 h-4 accent-hc-rose cursor-pointer"
                     />
-                    <span className="text-[12px] text-[#6B3E26]">
-                      <span className="font-semibold text-[#3A1F14]">
+                    <span className="text-[12px] text-hc-muted">
+                      <span className="font-semibold text-hc-ink">
                         Descontar de inventario
                       </span>{" "}
                       al generar la orden — resta del stock los productos de
@@ -926,7 +926,7 @@ export function OrdenDetailCard({
                     <button
                       onClick={handleAdvance}
                       disabled={updating}
-                      className="flex-1 py-2 rounded-xl bg-[#c0607a] text-white text-[13px] font-bold hover:bg-[#a84d66] disabled:opacity-50 transition"
+                      className="flex-1 py-2 rounded-xl bg-hc-rose text-white text-[13px] font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
                     >
                       {updating
                         ? "Actualizando…"
@@ -951,7 +951,7 @@ export function OrdenDetailCard({
                   <button
                     onClick={handlePdfCotizacion}
                     disabled={generandoPdf}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e8c4a0] text-[#AA6A42] text-[12px] font-semibold hover:bg-[#FFF7F0] disabled:opacity-50 transition"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-hc-line-strong text-hc-soft text-[12px] font-semibold hover:bg-hc-hover disabled:opacity-50 transition"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -976,7 +976,7 @@ export function OrdenDetailCard({
                 <button
                   onClick={handlePdfComanda}
                   disabled={generandoPdf}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#e8c4a0] bg-[#FFF7F0] text-[#AA6A42] text-[12px] font-semibold hover:bg-[#f0e0d0] disabled:opacity-50 transition"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-hc-line-strong bg-hc-hover text-hc-soft text-[12px] font-semibold hover:bg-hc-sunken disabled:opacity-50 transition"
                 >
                   <svg
                     viewBox="0 0 24 24"
