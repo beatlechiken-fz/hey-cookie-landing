@@ -24,6 +24,7 @@ function toEntity(row: any): Cliente {
     fechaNacimiento: row.fecha_nacimiento ?? null,
     authUserId: row.auth_user_id ?? null,
     activo: row.activo,
+    ...(row.ordenes ? { totalOrdenes: Number(row.ordenes[0]?.count ?? 0) } : {}),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -50,7 +51,11 @@ export class ClienteSupabaseDatasource {
     const { search, activo = true, page = 1, pageSize = 20 } = filters;
     const from = (page - 1) * pageSize;
 
-    let q = this.db.from(TABLE).select("*", { count: "exact" });
+    // ordenes(count) agrega el número de órdenes por cliente (sin canceladas).
+    let q = this.db
+      .from(TABLE)
+      .select("*, ordenes(count)", { count: "exact" })
+      .neq("ordenes.status", "cancelado");
     if (search)
       q = q.or(
         `nombre.ilike.%${search}%,telefono.ilike.%${search}%,email.ilike.%${search}%`,

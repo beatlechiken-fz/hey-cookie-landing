@@ -10,6 +10,8 @@ export interface Cliente {
   fechaNacimiento: string | null; // YYYY-MM-DD
   authUserId: string | null; // null = sin cuenta de acceso todavía
   activo: boolean;
+  /** Órdenes no canceladas; solo viene en el listado (findAll). */
+  totalOrdenes?: number;
   createdAt: string;
   updatedAt: string;
 }

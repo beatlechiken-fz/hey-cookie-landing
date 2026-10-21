@@ -222,6 +222,9 @@ export function ClientesView() {
                 Email
               </th>
               <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
+                Órdenes
+              </th>
+              <th className="px-4 py-3 text-center text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                 Cuenta
               </th>
               <th className="px-4 py-3" />
@@ -231,7 +234,7 @@ export function ClientesView() {
             {isLoading && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="py-12 text-center text-hc-soft text-sm"
                 >
                   Cargando…
@@ -241,7 +244,7 @@ export function ClientesView() {
             {!isLoading && clientes.length === 0 && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="py-12 text-center text-hc-soft text-sm"
                 >
                   No se encontraron clientes
@@ -264,6 +267,15 @@ export function ClientesView() {
                 </td>
                 <td className="px-4 py-3 text-hc-soft/70">
                   {c.email ?? "—"}
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span
+                    className={`inline-flex min-w-[28px] justify-center rounded-full px-2 py-0.5 text-[12px] font-semibold tabular-nums ${
+                      c.totalOrdenes ? "bg-hc-rose-tint text-hc-rose-hover" : "bg-hc-sunken text-hc-soft"
+                    }`}
+                  >
+                    {c.totalOrdenes ?? 0}
+                  </span>
                 </td>
                 <td className="px-4 py-3 text-center">
                   {c.authUserId ? (
@@ -338,6 +350,9 @@ export function ClientesView() {
                 <p className="font-semibold text-hc-ink">{c.nombre}</p>
                 <p className="text-[12px] text-hc-muted mt-0.5">
                   {c.telefono ?? c.email ?? "Sin contacto"}
+                </p>
+                <p className="text-[12px] font-semibold text-hc-rose-hover mt-1">
+                  {c.totalOrdenes ?? 0} {c.totalOrdenes === 1 ? "orden" : "órdenes"}
                 </p>
               </div>
               <div className="flex gap-1 shrink-0">
