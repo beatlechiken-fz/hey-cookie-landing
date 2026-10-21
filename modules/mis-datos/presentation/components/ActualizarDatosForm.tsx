@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Icons from "@/core/assets/Icons";
+import { DatePicker } from "@/core/components/DatePicker";
 import {
   CLIENTE_DIRECCION_MAX,
   CLIENTE_EMAIL_MAX,
@@ -135,15 +136,19 @@ export function ActualizarDatosForm({ token, datos }: Props) {
           </div>
           <div className="flex flex-col gap-1.5">
             <label htmlFor="md-fecha" className={labelCls}>Fecha de nacimiento</label>
-            <input
+            <DatePicker
               id="md-fecha"
-              type="date"
               className={inputCls}
               value={form.fechaNacimiento}
-              onChange={set("fechaNacimiento")}
+              onChange={(v) => {
+                setGuardado(false);
+                setForm((f) => (f ? { ...f, fechaNacimiento: v } : f));
+              }}
               min="1900-01-01"
               max={hoy}
-              autoComplete="bday"
+              placeholder="Elige tu fecha"
+              vistaInicial="anios"
+              anioInicial={new Date().getFullYear() - 30}
             />
           </div>
         </div>
