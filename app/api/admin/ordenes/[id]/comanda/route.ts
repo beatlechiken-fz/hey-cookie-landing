@@ -40,6 +40,7 @@ export interface ComandaData {
   numero: number;
   clienteNombre: string | null;
   fechaEntrega: string | null;
+  horaEntrega: string | null;
   createdAt: string;
   notas: string | null;
   items: ItemComanda[];
@@ -316,6 +317,7 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
       numero: Number(orden.numero),
       clienteNombre: (orden.clientes as any)?.nombre ?? null,
       fechaEntrega: orden.fecha_entrega ?? null,
+      horaEntrega: orden.hora_entrega ? String(orden.hora_entrega).slice(0, 5) : null,
       createdAt: orden.created_at,
       notas: orden.notas ?? null,
       items: comandaItems,

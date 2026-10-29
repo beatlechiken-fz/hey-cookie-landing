@@ -257,7 +257,10 @@ export function OrdenesView() {
                   )}
                   <td className="px-4 py-3 text-hc-soft/70 text-[13px]">
                     {o.fechaEntrega ? (
-                      formatFechaCalendario(o.fechaEntrega)
+                      <>
+                        {formatFechaCalendario(o.fechaEntrega)}
+                        {o.horaEntrega && ` · ${o.horaEntrega}`}
+                      </>
                     ) : (
                       <span className="text-hc-soft">—</span>
                     )}
@@ -338,7 +341,10 @@ export function OrdenesView() {
               <div className="flex items-center justify-between text-[11px] text-hc-muted">
                 <span>{fmtDate(o.createdAt)}</span>
                 {o.fechaEntrega ? (
-                  <span>Entrega: {formatFechaCalendario(o.fechaEntrega)}</span>
+                  <span>
+                    Entrega: {formatFechaCalendario(o.fechaEntrega)}
+                    {o.horaEntrega && ` · ${o.horaEntrega}`}
+                  </span>
                 ) : (
                   <span>
                     {o.items.length} item{o.items.length !== 1 ? "s" : ""}

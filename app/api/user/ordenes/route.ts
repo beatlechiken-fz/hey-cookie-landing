@@ -237,7 +237,7 @@ export async function GET() {
 
     const { data: ordenes, error } = await db
       .from("ordenes")
-      .select("id, numero, status, subtotal, descuento_total, total, cliente_nombre, fecha_entrega, created_at")
+      .select("id, numero, status, subtotal, descuento_total, total, cliente_nombre, fecha_entrega, hora_entrega, created_at")
       .eq("cliente_id", cliente.id)
       .order("created_at", { ascending: false });
 
@@ -265,6 +265,7 @@ export async function GET() {
         total: Number(o.total),
         clienteNombre: o.cliente_nombre ?? session.user.name ?? "Cliente",
         fechaEntrega: o.fecha_entrega ?? null,
+        horaEntrega: o.hora_entrega ? String(o.hora_entrega).slice(0, 5) : null,
         direccionEntrega: null,
         createdAt: o.created_at,
         items: (itemsMap[o.id] ?? []).map((i: any) => ({

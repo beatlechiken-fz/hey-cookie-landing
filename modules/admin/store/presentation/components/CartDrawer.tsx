@@ -99,6 +99,7 @@ export function CartDrawer({ open, onClose }: Props) {
   const [localCuponError, setLocalCuponError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [fechaEntrega, setFechaEntrega] = useState<string>("");
+  const [horaEntrega, setHoraEntrega] = useState<string>("");
   const [notas, setNotas] = useState<string>("");
   const [incluirEnvio, setIncluirEnvio] = useState(false);
   const [descontarInv, setDescontarInv] = useState(true);
@@ -198,6 +199,7 @@ export function CartDrawer({ open, onClose }: Props) {
         clienteId,
         status,
         fechaEntrega: fechaEntrega || null,
+        horaEntrega: fechaEntrega ? horaEntrega || null : null,
         notas: notas.trim() || null,
         descontarInventario: status === "en_proceso" ? descontarInv : undefined,
         items: buildOrdenItems(),
@@ -409,21 +411,38 @@ export function CartDrawer({ open, onClose }: Props) {
                 </div>
               )}
 
-              {/* Fecha de entrega — siempre visible */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
-                  Fecha de entrega{" "}
-                  <span className="text-hc-soft normal-case font-normal">
-                    (opcional)
-                  </span>
-                </label>
-                <input
-                  type="date"
-                  value={fechaEntrega}
-                  onChange={(e) => setFechaEntrega(e.target.value)}
-                  min={new Date().toISOString().slice(0, 10)}
-                  className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition"
-                />
+              {/* Fecha y hora de entrega — siempre visible */}
+              <div className="flex gap-3">
+                <div className="flex flex-col gap-1.5 flex-1">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
+                    Fecha de entrega{" "}
+                    <span className="text-hc-soft normal-case font-normal">
+                      (opcional)
+                    </span>
+                  </label>
+                  <input
+                    type="date"
+                    value={fechaEntrega}
+                    onChange={(e) => setFechaEntrega(e.target.value)}
+                    min={new Date().toISOString().slice(0, 10)}
+                    className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5 w-32">
+                  <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
+                    Hora{" "}
+                    <span className="text-hc-soft normal-case font-normal">
+                      (opcional)
+                    </span>
+                  </label>
+                  <input
+                    type="time"
+                    value={horaEntrega}
+                    onChange={(e) => setHoraEntrega(e.target.value)}
+                    disabled={!fechaEntrega}
+                    className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition disabled:bg-hc-hover disabled:text-hc-soft/50"
+                  />
+                </div>
               </div>
 
               {/* Observaciones / alergias — siempre visible */}

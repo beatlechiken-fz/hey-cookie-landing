@@ -240,6 +240,9 @@ export function EntregasCalendario() {
                   <span className="min-w-0">
                     <span className="block text-[13px] font-semibold text-hc-ink truncate">
                       #{e.numero} · {e.clienteNombre ?? "Sin cliente"}
+                      {e.horaEntrega && (
+                        <span className="text-hc-muted font-normal"> · {e.horaEntrega}</span>
+                      )}
                     </span>
                     <span
                       className={

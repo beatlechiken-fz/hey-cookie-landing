@@ -72,11 +72,12 @@ export function useOrdenesGlobal(filters: Filters = {}) {
   const updateFechaEntrega = async (
     id: string,
     fecha: string | null,
+    hora?: string | null,
   ): Promise<void> => {
     const res = await fetch(`/api/admin/ordenes/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fechaEntrega: fecha }),
+      body: JSON.stringify({ fechaEntrega: fecha, horaEntrega: hora }),
     });
     if (!res.ok) throw new Error("Error al actualizar fecha");
     load();

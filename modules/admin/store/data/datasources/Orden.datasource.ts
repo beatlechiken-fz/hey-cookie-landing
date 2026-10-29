@@ -65,6 +65,7 @@ function toEntity(
     total: Number(row.total),
     notas: row.notas ?? null,
     fechaEntrega: row.fecha_entrega ?? null,
+    horaEntrega: row.hora_entrega ? String(row.hora_entrega).slice(0, 5) : null,
     direccionEntrega: row.direccion_entrega ?? null,
     items,
     cupones,
@@ -196,6 +197,7 @@ export class OrdenSupabaseDatasource {
         total,
         notas: dto.notas ?? null,
         fecha_entrega: dto.fechaEntrega ?? null,
+        hora_entrega: dto.horaEntrega ?? null,
         ...(dto.direccionEntrega ? { direccion_entrega: dto.direccionEntrega } : {}),
         descontar_inventario:
           dto.status === "en_proceso" ? (dto.descontarInventario ?? false) : false,
@@ -285,15 +287,27 @@ export class OrdenSupabaseDatasource {
     if (error) throw new Error(`setInventarioDescontado: ${error.message}`);
   }
 
+  /**
+   * Actualiza fecha y/o hora de entrega. `undefined` en cualquiera de los dos
+   * significa "no tocar ese campo" (permite editar solo la hora sin mandar
+   * de nuevo la fecha, y viceversa).
+   */
   async updateFechaEntrega(
     id: string,
-    fechaEntrega: string | null,
+    fechaEntrega?: string | null,
+    horaEntrega?: string | null,
   ): Promise<Orden> {
-    const { error } = await this.db
-      .from(TABLE)
-      .update({ fecha_entrega: fechaEntrega })
-      .eq("id", id);
-    if (error) throw new Error(`updateFechaEntrega orden: ${error.message}`);
+    const patch: Record<string, any> = {};
+    if (fechaEntrega !== undefined) {
+      patch.fecha_entrega = fechaEntrega;
+      // Sin fecha no tiene sentido conservar una hora suelta.
+      if (!fechaEntrega) patch.hora_entrega = null;
+    }
+    if (horaEntrega !== undefined) patch.hora_entrega = horaEntrega;
+    if (Object.keys(patch).length > 0) {
+      const { error } = await this.db.from(TABLE).update(patch).eq("id", id);
+      if (error) throw new Error(`updateFechaEntrega orden: ${error.message}`);
+    }
     return this.findById(id) as Promise<Orden>;
   }
 

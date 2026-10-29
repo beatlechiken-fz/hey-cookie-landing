@@ -26,6 +26,7 @@ interface Orden {
   total: number;
   clienteNombre: string;
   fechaEntrega: string | null;
+  horaEntrega: string | null;
   direccionEntrega: string | null;
   createdAt: string;
   items: OrdenItem[];
@@ -60,6 +61,7 @@ function downloadOrdenPDF(orden: Orden) {
     clienteNombre: orden.clienteNombre,
     fechaCreacion: orden.createdAt,
     fechaEntrega: orden.fechaEntrega,
+    horaEntrega: orden.horaEntrega,
     direccionEntrega: orden.direccionEntrega,
     items: orden.items.map((i) => ({
       nombre: i.nombre,
@@ -178,6 +180,7 @@ function OrdenCard({ orden }: { orden: Orden }) {
               {orden.fechaEntrega && (
                 <p className="text-[12px] text-[#AA6A42] font-sans">
                   📅 Entrega: {formatFechaCalendario(orden.fechaEntrega, { day: "numeric", month: "long", year: "numeric" })}
+                  {orden.horaEntrega && ` · ${orden.horaEntrega}`}
                 </p>
               )}
               {orden.direccionEntrega && (

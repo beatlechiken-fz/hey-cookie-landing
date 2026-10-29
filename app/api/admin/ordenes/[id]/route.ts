@@ -140,6 +140,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
               clienteEmail: cliente.email,
               fechaCreacion: ord.createdAt,
               fechaEntrega: ord.fechaEntrega,
+              horaEntrega: ord.horaEntrega,
               items: ord.items.map((item) => ({
                 nombre: item.nombre,
                 cantidad: item.cantidad,
@@ -169,9 +170,13 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       }
     }
 
-    // Actualizar fechaEntrega
-    if (body.fechaEntrega !== undefined) {
-      updated = await repo.updateFechaEntrega(id, body.fechaEntrega ?? null);
+    // Actualizar fechaEntrega / horaEntrega
+    if (body.fechaEntrega !== undefined || body.horaEntrega !== undefined) {
+      updated = await repo.updateFechaEntrega(
+        id,
+        body.fechaEntrega,
+        body.horaEntrega,
+      );
     }
 
     // Marcar / desmarcar la venta para finanzas

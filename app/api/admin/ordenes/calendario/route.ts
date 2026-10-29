@@ -14,6 +14,7 @@ export interface EntregaCalendario {
   clienteNombre: string | null;
   status: string;
   fechaEntrega: string;
+  horaEntrega: string | null;
   total: number;
 }
 
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await getSupabaseAdmin()
       .from("ordenes")
-      .select("id, numero, status, total, fecha_entrega, clientes(nombre)")
+      .select("id, numero, status, total, fecha_entrega, hora_entrega, clientes(nombre)")
       .gte("fecha_entrega", desde)
       .lte("fecha_entrega", `${hasta}T23:59:59`)
       .neq("status", "cancelado")
@@ -48,6 +49,7 @@ export async function GET(req: NextRequest) {
       clienteNombre: o.clientes?.nombre ?? null,
       status: o.status,
       fechaEntrega: o.fecha_entrega,
+      horaEntrega: o.hora_entrega ? String(o.hora_entrega).slice(0, 5) : null,
       total: Number(o.total),
     }));
     return NextResponse.json(out);

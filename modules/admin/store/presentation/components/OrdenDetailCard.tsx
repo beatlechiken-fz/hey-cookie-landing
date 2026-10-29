@@ -109,6 +109,7 @@ export function OrdenDetailCard({
   const [fechaInput, setFechaInput] = useState(
     orden.fechaEntrega?.slice(0, 10) ?? "",
   );
+  const [horaInput, setHoraInput] = useState(orden.horaEntrega ?? "");
   const [savingFecha, setSavingFecha] = useState(false);
 
   // ── Descontar inventario al pasar a "en_proceso" ──────────────────────────
@@ -376,7 +377,10 @@ export function OrdenDetailCard({
       await fetch(`/api/admin/ordenes/${orden.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fechaEntrega: fechaInput || null }),
+        body: JSON.stringify({
+          fechaEntrega: fechaInput || null,
+          horaEntrega: fechaInput ? horaInput || null : null,
+        }),
       });
       setEditingFecha(false);
       // Recargar la orden para reflejar el cambio
@@ -472,6 +476,7 @@ export function OrdenDetailCard({
             {orden.fechaEntrega && (
               <span className="text-hc-rose font-medium">
                 {" · "}🎂 Entrega: {formatFechaCalendario(orden.fechaEntrega)}
+                {orden.horaEntrega && ` ${orden.horaEntrega}`}
               </span>
             )}
           </p>
@@ -526,6 +531,13 @@ export function OrdenDetailCard({
                         onChange={(e) => setFechaInput(e.target.value)}
                         className="text-sm border border-hc-line-strong rounded-lg px-2 py-1 text-hc-ink focus:outline-none focus:border-hc-rose"
                       />
+                      <input
+                        type="time"
+                        value={horaInput}
+                        onChange={(e) => setHoraInput(e.target.value)}
+                        disabled={!fechaInput}
+                        className="text-sm border border-hc-line-strong rounded-lg px-2 py-1 text-hc-ink focus:outline-none focus:border-hc-rose disabled:bg-hc-sunken disabled:text-hc-soft/50"
+                      />
                       <button
                         onClick={handleSaveFecha}
                         disabled={savingFecha}
@@ -537,6 +549,7 @@ export function OrdenDetailCard({
                         onClick={() => {
                           setEditingFecha(false);
                           setFechaInput(orden.fechaEntrega?.slice(0, 10) ?? "");
+                          setHoraInput(orden.horaEntrega ?? "");
                         }}
                         className="px-2 py-1 rounded-lg border border-hc-line-strong text-hc-muted text-[11px] hover:bg-hc-sunken transition"
                       >
@@ -546,7 +559,14 @@ export function OrdenDetailCard({
                   ) : (
                     <p className="text-[13px] font-semibold text-hc-ink mt-0.5">
                       {orden.fechaEntrega ? (
-                        formatFechaCalendario(orden.fechaEntrega)
+                        <>
+                          {formatFechaCalendario(orden.fechaEntrega)}
+                          {orden.horaEntrega && (
+                            <span className="text-hc-soft font-normal">
+                              {" "}· {orden.horaEntrega}
+                            </span>
+                          )}
+                        </>
                       ) : (
                         <span className="text-hc-soft font-normal">
                           Sin fecha asignada

@@ -24,6 +24,8 @@ export interface OrdenPdfData {
   clienteEmail?: string | null;
   fechaCreacion: string;
   fechaEntrega?: string | null;
+  /** Hora de entrega opcional, formato "HH:MM". */
+  horaEntrega?: string | null;
   direccionEntrega?: string | null;
   items: OrdenPdfItem[];
   subtotal: number;
@@ -87,9 +89,10 @@ export function buildOrdenClienteHtml(data: OrdenPdfData): string {
     chips.push({
       icon: "🎂",
       label: "Entrega",
-      val: formatFechaCalendario(data.fechaEntrega, {
-        day: "2-digit", month: "short", year: "numeric",
-      }),
+      val:
+        formatFechaCalendario(data.fechaEntrega, {
+          day: "2-digit", month: "short", year: "numeric",
+        }) + (data.horaEntrega ? ` · ${data.horaEntrega}` : ""),
     });
   if (data.direccionEntrega)
     chips.push({ icon: "📍", label: "Domicilio", val: data.direccionEntrega });
@@ -298,6 +301,7 @@ function infoStrip(
   createdAt: string,
   clienteNombre?: string | null,
   fechaEntrega?: string | null,
+  horaEntrega?: string | null,
 ): string {
   type Chip = { icon: string; label: string; val: string };
   const chips: Chip[] = [
@@ -319,10 +323,11 @@ function infoStrip(
           {
             icon: "🎂",
             label: "Entrega",
-            val: formatFechaCalendario(fechaEntrega, {
-              day: "2-digit",
-              month: "short",
-            }),
+            val:
+              formatFechaCalendario(fechaEntrega, {
+                day: "2-digit",
+                month: "short",
+              }) + (horaEntrega ? ` · ${horaEntrega}` : ""),
           },
         ]
       : []),
@@ -490,6 +495,7 @@ export async function buildCotizacionHtml(orden: Orden, costoEnvio?: number): Pr
     clienteNombre: orden.clienteNombre ?? "—",
     fechaCreacion: orden.createdAt,
     fechaEntrega: orden.fechaEntrega,
+    horaEntrega: orden.horaEntrega,
     direccionEntrega: orden.direccionEntrega,
     items,
     subtotal: orden.subtotal,
@@ -613,7 +619,7 @@ export function buildComandaHtml(data: ComandaData): string {
     : "";
 
   const body = `
-    ${infoStrip(data.numero, data.createdAt, data.clienteNombre, data.fechaEntrega)}
+    ${infoStrip(data.numero, data.createdAt, data.clienteNombre, data.fechaEntrega, data.horaEntrega)}
     ${notasHtml}
     ${sec(
       "📋",

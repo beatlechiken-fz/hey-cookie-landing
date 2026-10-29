@@ -54,6 +54,8 @@ export interface Orden {
   total: number;
   notas: string | null;
   fechaEntrega: string | null;
+  /** Hora de entrega opcional, formato "HH:MM". */
+  horaEntrega: string | null;
   direccionEntrega: string | null;
   items: OrdenItem[];
   cupones: OrdenCuponAplicado[];
@@ -74,6 +76,7 @@ export interface CreateOrdenDTO {
   cupones: OrdenCuponAplicado[];
   notas?: string | null;
   fechaEntrega?: string | null;
+  horaEntrega?: string | null;
   direccionEntrega?: string | null;
   /** Solo aplica si status = "en_proceso" — en cotización nunca se descuenta. */
   descontarInventario?: boolean;
