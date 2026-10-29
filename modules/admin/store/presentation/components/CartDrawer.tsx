@@ -8,6 +8,7 @@ import { useCartStore, resolveOrigen, type CartItem } from "../hooks/useCartStor
 import { useOrdenes, useValidarCupon } from "../hooks/useOrdenes";
 import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal";
 import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
+import { PersonalizadoConfiguradorModal } from "./configurador/PersonalizadoConfiguradorModal";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
 import type {
   CreateOrdenDTO,
@@ -71,7 +72,11 @@ export function CartDrawer({ open, onClose }: Props) {
       }
       return;
     }
-    if (origen === "pastel-configurador" || origen === "gelatina-configurador") {
+    if (
+      origen === "pastel-configurador" ||
+      origen === "gelatina-configurador" ||
+      origen === "personalizado-configurador"
+    ) {
       setEditItem({ ...item, origen });
       onClose();
     }
@@ -750,6 +755,11 @@ export function CartDrawer({ open, onClose }: Props) {
       open={editItem?.origen === "gelatina-configurador"}
       onClose={closeEdit}
       editItem={editItem?.origen === "gelatina-configurador" ? editItem : null}
+    />
+    <PersonalizadoConfiguradorModal
+      open={editItem?.origen === "personalizado-configurador"}
+      onClose={closeEdit}
+      editItem={editItem?.origen === "personalizado-configurador" ? editItem : null}
     />
     <ProductoConfiguradorModal
       producto={editItem?.origen === "producto-configurador" ? editProducto : null}

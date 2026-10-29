@@ -16,6 +16,7 @@ import {
 import { FinanzasToggle } from "./FinanzasToggle";
 import { OrdenStatusBadge } from "./OrdenStatusBadge";
 import { resumenProductos } from "@/core/helpers/ordenesResumen";
+import { formatFechaCalendario } from "@/core/helpers/calendario";
 import { OrdenPipeline } from "./OrdenPipeline";
 import { OrdenPagosSection, type PagoCompartido } from "./OrdenPagosSection";
 import { PastelCompartidoSection } from "./PastelCompartidoSection";
@@ -31,6 +32,7 @@ import {
 } from "@/modules/admin/store/presentation/hooks/useCartStore";
 import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal";
 import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
+import { PersonalizadoConfiguradorModal } from "./configurador/PersonalizadoConfiguradorModal";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
 import { ProductoPickerModal } from "./ProductoPickerModal";
 import {
@@ -119,7 +121,11 @@ export function OrdenDetailCard({
   const puedeEditarItems = ORDEN_STATUS_EDITABLES.includes(orden.status);
   const [editingOrdenItem, setEditingOrdenItem] = useState<OrdenItem | null>(null);
   const [editingOrigen, setEditingOrigen] = useState<
-    "pastel-configurador" | "gelatina-configurador" | "producto-configurador" | null
+    | "pastel-configurador"
+    | "gelatina-configurador"
+    | "personalizado-configurador"
+    | "producto-configurador"
+    | null
   >(null);
   const [editProducto, setEditProducto] = useState<Producto | null>(null);
   // Línea personalizada (sin configurador) que se está editando.
@@ -218,7 +224,11 @@ export function OrdenDetailCard({
   // ── Agregar partida nueva a la orden ───────────────────────────────────────
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [addingOrigen, setAddingOrigen] = useState<
-    "pastel-configurador" | "gelatina-configurador" | "custom" | null
+    | "pastel-configurador"
+    | "gelatina-configurador"
+    | "personalizado-configurador"
+    | "custom"
+    | null
   >(null);
   const [pickingProducto, setPickingProducto] = useState(false);
   const [addingProducto, setAddingProducto] = useState<Producto | null>(null);
@@ -270,7 +280,11 @@ export function OrdenDetailCard({
       return;
     }
 
-    if (origen === "pastel-configurador" || origen === "gelatina-configurador") {
+    if (
+      origen === "pastel-configurador" ||
+      origen === "gelatina-configurador" ||
+      origen === "personalizado-configurador"
+    ) {
       setEditingOrigen(origen);
       setEditingOrdenItem(item);
       return;
@@ -457,7 +471,7 @@ export function OrdenDetailCard({
             {formatDate(orden.createdAt)}
             {orden.fechaEntrega && (
               <span className="text-hc-rose font-medium">
-                {" · "}🎂 Entrega: {formatDate(orden.fechaEntrega)}
+                {" · "}🎂 Entrega: {formatFechaCalendario(orden.fechaEntrega)}
               </span>
             )}
           </p>
@@ -532,7 +546,7 @@ export function OrdenDetailCard({
                   ) : (
                     <p className="text-[13px] font-semibold text-hc-ink mt-0.5">
                       {orden.fechaEntrega ? (
-                        formatDate(orden.fechaEntrega)
+                        formatFechaCalendario(orden.fechaEntrega)
                       ) : (
                         <span className="text-hc-soft font-normal">
                           Sin fecha asignada
@@ -612,6 +626,10 @@ export function OrdenDetailCard({
                               {
                                 label: "Gelatina",
                                 onClick: () => setAddingOrigen("gelatina-configurador"),
+                              },
+                              {
+                                label: "Armado personalizado",
+                                onClick: () => setAddingOrigen("personalizado-configurador"),
                               },
                               {
                                 label: "Producto de catálogo",
@@ -1025,6 +1043,12 @@ export function OrdenDetailCard({
       editItem={editingOrigen === "gelatina-configurador" ? toCartItemShape(editingOrdenItem!) : null}
       onSave={handleSaveItem}
     />
+    <PersonalizadoConfiguradorModal
+      open={editingOrigen === "personalizado-configurador"}
+      onClose={closeEditModal}
+      editItem={editingOrigen === "personalizado-configurador" ? toCartItemShape(editingOrdenItem!) : null}
+      onSave={handleSaveItem}
+    />
     <ProductoConfiguradorModal
       producto={editingOrigen === "producto-configurador" ? editProducto : null}
       onClose={closeEditModal}
@@ -1040,6 +1064,11 @@ export function OrdenDetailCard({
     />
     <GelatinaCotizadorModal
       open={addingOrigen === "gelatina-configurador"}
+      onClose={() => setAddingOrigen(null)}
+      onSave={handleAddItem}
+    />
+    <PersonalizadoConfiguradorModal
+      open={addingOrigen === "personalizado-configurador"}
       onClose={() => setAddingOrigen(null)}
       onSave={handleAddItem}
     />

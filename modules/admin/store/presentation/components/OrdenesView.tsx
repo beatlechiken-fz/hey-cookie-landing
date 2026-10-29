@@ -10,6 +10,7 @@ import { useRouter } from "@/i18n/navigation";
 import { FinanzasToggle } from "./FinanzasToggle";
 import { OrdenStatusFilter } from "./OrdenStatusFilter";
 import { resumenProductos } from "@/core/helpers/ordenesResumen";
+import { formatFechaCalendario } from "@/core/helpers/calendario";
 import { ORDEN_STATUS_FINANZAS } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { useOrdenesGlobal } from "@/modules/admin/store/presentation/hooks/useOrdenesGlobal";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
@@ -256,7 +257,7 @@ export function OrdenesView() {
                   )}
                   <td className="px-4 py-3 text-hc-soft/70 text-[13px]">
                     {o.fechaEntrega ? (
-                      fmtDate(o.fechaEntrega)
+                      formatFechaCalendario(o.fechaEntrega)
                     ) : (
                       <span className="text-hc-soft">—</span>
                     )}
@@ -337,7 +338,7 @@ export function OrdenesView() {
               <div className="flex items-center justify-between text-[11px] text-hc-muted">
                 <span>{fmtDate(o.createdAt)}</span>
                 {o.fechaEntrega ? (
-                  <span>Entrega: {fmtDate(o.fechaEntrega)}</span>
+                  <span>Entrega: {formatFechaCalendario(o.fechaEntrega)}</span>
                 ) : (
                   <span>
                     {o.items.length} item{o.items.length !== 1 ? "s" : ""}

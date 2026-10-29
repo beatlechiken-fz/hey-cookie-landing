@@ -45,6 +45,26 @@ export function buildMonthGrid(anio: number, mes0: number): DiaCalendario[][] {
   return out;
 }
 
+/**
+ * Formatea una fecha-calendario (ej. fecha_entrega) ignorando la hora/zona
+ * horaria almacenada, para que el día mostrado sea siempre el mismo que se
+ * guardó — evita el corrimiento de -1 día al convertir un timestamptz en UTC
+ * a la zona horaria local del navegador.
+ */
+export function formatFechaCalendario(
+  iso: string,
+  opts: Intl.DateTimeFormatOptions = {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  },
+): string {
+  return new Date(`${iso.slice(0, 10)}T12:00:00`).toLocaleDateString(
+    "es-MX",
+    opts,
+  );
+}
+
 /** Agrupa elementos por día usando los primeros 10 caracteres de su fecha. */
 export function agruparPorDia<T>(
   items: T[],

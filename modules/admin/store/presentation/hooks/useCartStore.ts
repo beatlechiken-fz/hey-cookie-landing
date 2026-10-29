@@ -13,6 +13,7 @@ import { descuentoPromosDeItems } from "../../domain/entities/Promocion.entity";
 export type CartItemOrigen =
   | "pastel-configurador" // admin, PastelConfiguradorModal
   | "gelatina-configurador" // admin, GelatinaCotizadorModal
+  | "personalizado-configurador" // admin, PersonalizadoConfiguradorModal (sin bizcocho/gelatina)
   | "producto-configurador" // admin, ProductoConfiguradorModal (producto de catálogo)
   | "producto-modal" // público, ProductoModal (producto de catálogo)
   | "cookie-modal" // público, CookieModal (galleta simple, sin configurador)
@@ -56,6 +57,7 @@ export function resolveOrigen(item: CartItem): CartItemOrigen | null {
   if (conf.tipo === "pastel" && conf.productoId) return "producto-modal"; // público, catálogo
   if (conf.productoId && conf.opciones) return "producto-configurador"; // admin, catálogo (sin tipo)
   if (conf.bizcochoId !== undefined && conf.diametroCm !== undefined) return "pastel-configurador"; // admin, pastel custom
+  if (Array.isArray(conf.insumos)) return "personalizado-configurador"; // admin, armado sin bizcocho/gelatina
   return null;
 }
 

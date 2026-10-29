@@ -22,6 +22,7 @@ import {
   Cell,
 } from "recharts";
 import type { DashboardData } from "@/app/api/admin/dashboard/route";
+import { formatFechaCalendario } from "@/core/helpers/calendario";
 
 /* ── Helpers ──────────────────────────────────────────────────────────────── */
 const fmt = (n: number) => Math.round(n).toLocaleString("es-MX");
@@ -650,10 +651,10 @@ export function AdminDashboard() {
                         </td>
                         <td className="py-3 text-hc-muted/55">
                           {o.fechaEntrega
-                            ? new Date(o.fechaEntrega + "T12:00:00").toLocaleDateString(
-                                "es-MX",
-                                { day: "numeric", month: "short" },
-                              )
+                            ? formatFechaCalendario(o.fechaEntrega, {
+                                day: "numeric",
+                                month: "short",
+                              })
                             : <span className="text-hc-muted/30">—</span>}
                         </td>
                       </tr>

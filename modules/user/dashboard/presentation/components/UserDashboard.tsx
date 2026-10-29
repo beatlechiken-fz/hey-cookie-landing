@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
+import { formatFechaCalendario } from "@/core/helpers/calendario";
 import { MisBeneficios } from "./MisBeneficios";
 import { TuOpinion } from "./TuOpinion";
 
@@ -176,7 +177,7 @@ function OrdenCard({ orden }: { orden: Orden }) {
             <div className="mt-3 flex flex-col gap-1">
               {orden.fechaEntrega && (
                 <p className="text-[12px] text-[#AA6A42] font-sans">
-                  📅 Entrega: {new Date(orden.fechaEntrega).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })}
+                  📅 Entrega: {formatFechaCalendario(orden.fechaEntrega, { day: "numeric", month: "long", year: "numeric" })}
                 </p>
               )}
               {orden.direccionEntrega && (

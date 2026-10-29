@@ -4,12 +4,14 @@
 import { useRef, useState } from "react";
 import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal";
 import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
+import { PersonalizadoConfiguradorModal } from "./configurador/PersonalizadoConfiguradorModal";
 import { ProductosView, type ProductosViewHandle } from "./ProductosView";
 import type { CreateProductoDTO } from "../../domain/entities/Producto.entity";
 
 export function ServiciosView() {
   const [configuradorOpen, setConfiguradorOpen] = useState(false);
   const [gelatinaOpen, setGelatinaOpen] = useState(false);
+  const [personalizadoOpen, setPersonalizadoOpen] = useState(false);
   const productosRef = useRef<ProductosViewHandle>(null);
 
   // "Guardar como producto" desde un configurador: crea el producto y abre su
@@ -27,7 +29,7 @@ export function ServiciosView() {
           Productos personalizados
         </h2>
 
-        <div className="grid grid-cols-2 gap-4 max-w-sm">
+        <div className="grid grid-cols-2 gap-4 max-w-2xl sm:grid-cols-3">
           {/* Tarjeta Pastel personalizado */}
           <button
             onClick={() => setConfiguradorOpen(true)}
@@ -102,6 +104,36 @@ export function ServiciosView() {
               </span>
             </div>
           </button>
+
+          {/* Tarjeta Armado personalizado (sin bizcocho ni gelatina) */}
+          <button
+            onClick={() => setPersonalizadoOpen(true)}
+            className="group bg-white rounded-2xl border border-hc-line overflow-hidden shadow-sm hover:border-hc-line-strong hover:shadow-md transition text-left"
+          >
+            <div className="aspect-square bg-[#fdf3e7] flex items-center justify-center">
+              <svg
+                viewBox="0 0 24 24"
+                className="w-16 h-16 text-[#e3c89a] group-hover:text-[#cfa964] transition"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="7" width="7" height="7" rx="1.5" />
+                <circle cx="17.5" cy="10.5" r="3.5" />
+                <path d="M4 17h16M4 20h10" opacity="0.4" />
+              </svg>
+            </div>
+            <div className="p-3 flex flex-col items-center gap-2">
+              <p className="font-semibold text-hc-ink text-[13px] text-center leading-tight">
+                Armado personalizado
+              </p>
+              <span className="w-full text-center py-2 rounded-xl bg-[#cfa964] text-white text-[12px] font-bold group-hover:bg-[#b8924f] transition">
+                Configurar
+              </span>
+            </div>
+          </button>
         </div>
       </div>
 
@@ -120,6 +152,10 @@ export function ServiciosView() {
         open={gelatinaOpen}
         onClose={() => setGelatinaOpen(false)}
         onGuardarComoProducto={guardarComoProducto}
+      />
+      <PersonalizadoConfiguradorModal
+        open={personalizadoOpen}
+        onClose={() => setPersonalizadoOpen(false)}
       />
     </div>
   );
