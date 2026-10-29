@@ -20,5 +20,5 @@ export function destinoTrasLogin(
   params: { from?: string | null; callbackUrl?: string | null },
 ): string {
   if (params.from === "cart") return `/${locale}?cart=1`;
-  return rutaInternaSegura(params.callbackUrl, `/${locale}/user/dashboard`);
+  return rutaInternaSegura(params.callbackUrl, `/${locale}/club/dashboard`);
 }

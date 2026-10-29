@@ -1,4 +1,4 @@
-// GET /api/user/beneficios — cashback (saldo + movimientos) y cupones asignados del cliente.
+// GET /api/club/beneficios — cashback (saldo + movimientos) y cupones asignados del cliente.
 // Protegida por proxy: requiere token.role === "user".
 
 import { NextResponse } from "next/server";
@@ -23,16 +23,27 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   try {
-    const { data: cliente } = await getSupabaseAdmin()
+    const db = getSupabaseAdmin();
+    const { data: cliente } = await db
       .from("clientes")
       .select("id")
       .eq("email", session.user.email ?? "")
       .maybeSingle();
-    if (!cliente) return NextResponse.json({ cashback: { saldo: 0, movimientos: [] }, cupones: [] });
+    if (!cliente)
+      return NextResponse.json({
+        cashback: { saldo: 0, movimientos: [] },
+        cupones: [],
+        comprasRealizadas: 0,
+      });
 
-    const [cashback, asignados] = await Promise.all([
+    const [cashback, asignados, { count: comprasRealizadas }] = await Promise.all([
       new GetCashbackClienteUseCase(new CashbackRepositoryImpl()).execute(cliente.id),
       new CuponRepositoryImpl().findAsignadosByCliente(cliente.id),
+      db
+        .from("ordenes")
+        .select("id", { count: "exact", head: true })
+        .eq("cliente_id", cliente.id)
+        .in("status", ["pagado", "entregado"]),
     ]);
     const ahora = new Date();
     const cupones = asignados
@@ -44,7 +55,11 @@ export async function GET() {
         valor: c.valor,
         fechaFin: c.fechaFin,
       }));
-    return NextResponse.json({ cashback, cupones });
+    return NextResponse.json({
+      cashback,
+      cupones,
+      comprasRealizadas: comprasRealizadas ?? 0,
+    });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }

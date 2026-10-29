@@ -1,4 +1,4 @@
-// POST /api/user/ordenes — crea una orden desde el carrito público.
+// POST /api/club/ordenes — crea una orden desde el carrito público.
 // Protegida por proxy: requiere token.role === "user".
 
 import { NextResponse } from "next/server";

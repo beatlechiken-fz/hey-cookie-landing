@@ -22,7 +22,7 @@ function generarPasswordTemporal(): string {
 
 // ── Email de bienvenida ───────────────────────────────────────────────────────
 function buildBienvenidaEmail(nombre: string, email: string, password: string): string {
-  const loginUrl = `${process.env.NEXTAUTH_URL ?? "https://heycookie.mx"}/es/user/login`;
+  const loginUrl = `${process.env.NEXTAUTH_URL ?? "https://heycookie.mx"}/es/club/login`;
   return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bienvenid@ a Hey Cookie</title></head>

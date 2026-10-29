@@ -23,6 +23,7 @@ function toEntity(row: any): Cliente {
     notas: row.notas ?? null,
     fechaNacimiento: row.fecha_nacimiento ?? null,
     authUserId: row.auth_user_id ?? null,
+    qrToken: row.qr_token,
     activo: row.activo,
     ...(row.ordenes ? { totalOrdenes: Number(row.ordenes[0]?.count ?? 0) } : {}),
     createdAt: row.created_at,

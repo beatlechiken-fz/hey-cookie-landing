@@ -8,7 +8,7 @@ export default async function CambiarPasswordPage() {
   const locale = await getLocale();
 
   if (!session) {
-    redirect({ href: "/user/login", locale });
+    redirect({ href: "/club/login", locale });
   }
 
   // Si ya cambió su contraseña y llega aquí manualmente → redirigir al inicio

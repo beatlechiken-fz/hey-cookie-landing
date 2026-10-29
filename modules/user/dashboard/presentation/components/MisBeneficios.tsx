@@ -18,6 +18,7 @@ interface CuponCliente {
 interface Beneficios {
   cashback: { saldo: number; movimientos: MovimientoCashback[] };
   cupones: CuponCliente[];
+  comprasRealizadas: number;
 }
 
 const dinero = (n: number) => {
@@ -34,7 +35,7 @@ export function MisBeneficios() {
   const [verMovimientos, setVerMovimientos] = useState(false);
 
   useEffect(() => {
-    fetch("/api/user/beneficios")
+    fetch("/api/club/beneficios")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && setData(d))
       .catch(() => null);
@@ -44,14 +45,25 @@ export function MisBeneficios() {
     return <div className="bg-white rounded-2xl border border-[#f0e0d0] h-28 animate-pulse mb-6" />;
   }
 
-  const { cashback, cupones } = data;
+  const { cashback, cupones, comprasRealizadas } = data;
   const movimientos = verMovimientos ? cashback.movimientos : cashback.movimientos.slice(0, 3);
 
   return (
     <section className="mb-8" aria-labelledby="mis-beneficios">
       <h2 id="mis-beneficios" className="text-lg font-bold text-[#3A1F14] mb-4">Mis beneficios</h2>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
+        {/* Compras */}
+        <div className="bg-white rounded-2xl border border-[#f0e0d0] p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[#AA6A42]">Mis compras</p>
+          <p className="text-3xl font-bold text-[#7b2d42] mt-1">{comprasRealizadas}</p>
+          <p className="text-xs text-[#AA6A42]/70 font-sans mt-1">
+            {comprasRealizadas === 0
+              ? "Haz tu primera compra pagada para empezar a sumar."
+              : `Pedido${comprasRealizadas !== 1 ? "s" : ""} pagado${comprasRealizadas !== 1 ? "s" : ""} con Hey Cookie.`}
+          </p>
+        </div>
+
         {/* Cashback */}
         <div className="bg-white rounded-2xl border border-[#f0e0d0] p-5">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[#AA6A42]">Mi cashback</p>

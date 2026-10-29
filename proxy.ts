@@ -10,6 +10,8 @@ const LOCALES = ["es", "en"];
 const PUBLIC_API_PATHS: string[] = [
   "/api/public/",
   "/api/contact",
+  // Protegida por su propio CRON_SECRET (ver la ruta), no por sesión NextAuth.
+  "/api/cron/",
 ];
 
 function stripLocale(pathname: string): string {
@@ -47,8 +49,17 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // /user/login y /user/signin → autenticación pública
-  if (clean === "/user/login" || clean === "/user/signin") {
+  // /club/login, /club/signin y /club/qr-invalido → autenticación/errores públicos
+  if (
+    clean === "/club/login" ||
+    clean === "/club/signin" ||
+    clean === "/club/qr-invalido"
+  ) {
+    return NextResponse.next();
+  }
+
+  // /club/qr/* → resuelve a dónde mandar al cliente (login/signin/dashboard), siempre público
+  if (clean.startsWith("/club/qr/")) {
     return NextResponse.next();
   }
 
@@ -70,8 +81,8 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Rutas de API de usuario → requiere role "user"
-  if (clean.startsWith("/api/user/")) {
+  // Rutas de API del club de clientes → requiere role "user"
+  if (clean.startsWith("/api/club/")) {
     if (!token || token.role !== "user") {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
@@ -97,19 +108,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // /user/* → requiere role "user"
-  if (clean.startsWith("/user/")) {
+  // /club/* → requiere role "user"
+  if (clean.startsWith("/club/")) {
     if (!token || token.role !== "user") {
       const locale = activeLocale(pathname);
-      const loginUrl = new URL(`/${locale}/user/login`, request.url);
+      const loginUrl = new URL(`/${locale}/club/login`, request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
     // Primera sesión con contraseña temporal → forzar cambio
-    if (token.mustChangePassword && clean !== "/user/cambiar-password") {
+    if (token.mustChangePassword && clean !== "/club/cambiar-password") {
       const locale = activeLocale(pathname);
       return NextResponse.redirect(
-        new URL(`/${locale}/user/cambiar-password`, request.url),
+        new URL(`/${locale}/club/cambiar-password`, request.url),
       );
     }
     return NextResponse.next();
@@ -121,10 +132,10 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/:locale(es|en)/admin/:path*",
-    "/:locale(es|en)/user/:path*",
+    "/:locale(es|en)/club/:path*",
     "/:locale(es|en)/api/:path*",
     "/admin/:path*",
-    "/user/:path*",
+    "/club/:path*",
     "/api/:path*",
   ],
 };

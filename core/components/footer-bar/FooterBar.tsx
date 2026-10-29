@@ -91,7 +91,7 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
       links: [
         { label: t("custom"), href: "/custom" },
         { label: t("menuPdf"), href: MENU_PDF, externo: true },
-        { label: t("cuenta"), href: "/user/login" },
+        { label: t("cuenta"), href: "/club/login" },
       ],
     },
   ];

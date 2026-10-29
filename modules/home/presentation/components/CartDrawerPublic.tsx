@@ -163,7 +163,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   const [usarCashback, setUsarCashback] = useState(false);
   useEffect(() => {
     if (!open || !isUser) return;
-    fetch("/api/user/beneficios")
+    fetch("/api/club/beneficios")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => setSaldoCashback(Math.max(0, Number(d?.cashback?.saldo ?? 0))))
       .catch(() => null);
@@ -172,7 +172,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   // Cargar direcciones del cliente al abrir el carrito
   useEffect(() => {
     if (!open || !isUser) return;
-    fetch("/api/user/direcciones")
+    fetch("/api/club/direcciones")
       .then((r) => r.json())
       .then((d) => {
         const dirs: DireccionItem[] = d.direcciones ?? [];
@@ -235,7 +235,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
     setSavingAddr(true);
     setAddrError(null);
     try {
-      const res = await fetch("/api/user/direcciones", {
+      const res = await fetch("/api/club/direcciones", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ alias: addAlias, calle: addCalle, colonia: addColonia, ciudad: addCiudad, cp: addCp, referencias: addRefs }),
@@ -277,7 +277,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
     setOrdenError(null);
     const direccionEntrega = getDireccionTexto();
     try {
-      const res = await fetch("/api/user/ordenes", {
+      const res = await fetch("/api/club/ordenes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -338,11 +338,11 @@ export function CartDrawerPublic({ open, onClose }: Props) {
 
   function goToLogin() {
     onClose();
-    router.push("/user/login?from=cart");
+    router.push("/club/login?from=cart");
   }
   function goToRegister() {
     onClose();
-    router.push("/user/signin?from=cart");
+    router.push("/club/signin?from=cart");
   }
 
   /* ── Per-item discount helper ──────────────────────────── */

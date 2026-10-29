@@ -18,7 +18,7 @@ export function LoginForm() {
     callbackUrl: searchParams.get("callbackUrl"),
   });
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -144,7 +144,7 @@ export function LoginForm() {
         <p style={{ fontSize: "0.82rem", color: "#b07a8a", marginTop: "1.25rem", textAlign: "center" }}>
           ¿No tienes cuenta?{" "}
           <a
-            href={`/${locale}/user/signin${fromCart ? "?from=cart" : ""}`}
+            href={`/${locale}/club/signin${fromCart ? "?from=cart" : ""}`}
             style={{ color: "#c0607a", fontWeight: 600, textDecoration: "none" }}
           >
             Crear una

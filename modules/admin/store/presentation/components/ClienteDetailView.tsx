@@ -10,6 +10,7 @@ import { OrdenDetailCard } from "./OrdenDetailCard";
 import { ClienteCuponesSection } from "./ClienteCuponesSection";
 import { ClienteModal } from "./ClienteModal";
 import { ClienteEnlaceEdicionSection } from "./ClienteEnlaceEdicionSection";
+import { ClienteClubQrSection } from "./ClienteClubQrSection";
 import type { CreateClienteDTO } from "../../domain/entities/Cliente.entity";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
 
@@ -210,6 +211,13 @@ export function ClienteDetailView({ clienteId }: Props) {
           </div>
         )}
       </div>
+
+      {/* Tarjeta del club (QR persistente) */}
+      <ClienteClubQrSection
+        clienteId={cliente.id}
+        qrToken={cliente.qrToken}
+        nombreCliente={cliente.nombre}
+      />
 
       {/* Enlace para que el cliente actualice sus datos */}
       <ClienteEnlaceEdicionSection clienteId={cliente.id} />

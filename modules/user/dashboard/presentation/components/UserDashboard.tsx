@@ -206,7 +206,7 @@ export function UserDashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/user/ordenes")
+    fetch("/api/club/ordenes")
       .then((r) => r.json())
       .then((d) => setOrdenes(d.ordenes ?? []))
       .catch(() => setError("No se pudieron cargar tus pedidos"))
@@ -269,7 +269,7 @@ export function UserDashboard() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-[#3A1F14]">Mis pedidos</h2>
           <a
-            href={`/${locale}/user/perfil`}
+            href={`/${locale}/club/perfil`}
             className="text-xs text-[#AA6A42] hover:underline font-sans flex items-center gap-1"
           >
             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -1,4 +1,4 @@
-// PATCH /api/user/cambiar-password — cambia contraseña y limpia el flag must_change_password.
+// PATCH /api/club/cambiar-password — cambia contraseña y limpia el flag must_change_password.
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";

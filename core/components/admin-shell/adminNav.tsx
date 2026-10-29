@@ -139,7 +139,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       { key: "produccion", label: "Producción", href: "/admin/dashboard/store/produccion", icon: AdminIcons.produccion },
       { key: "servicios", label: "Servicios", href: "/admin/dashboard/store/servicios", icon: AdminIcons.servicios },
       { key: "clientes", label: "Clientes", href: "/admin/dashboard/store/clientes", icon: AdminIcons.clientes },
-      { key: "cupones", label: "Cupones", href: "/admin/dashboard/store/cupones", icon: AdminIcons.cupones },
+      { key: "cupones", label: "Beneficios", href: "/admin/dashboard/store/beneficios", icon: AdminIcons.cupones },
       { key: "finanzas", label: "Finanzas", href: "/admin/dashboard/store/finanzas", icon: AdminIcons.finanzas },
     ],
   },

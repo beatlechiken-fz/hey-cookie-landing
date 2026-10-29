@@ -74,7 +74,7 @@ export function UserPerfil() {
   const fetchPerfil = useCallback(async () => {
     setLoadingProfile(true);
     try {
-      const res = await fetch("/api/user/perfil");
+      const res = await fetch("/api/club/perfil");
       if (res.ok) {
         const d = await res.json();
         setNombre(d.nombre ?? "");
@@ -89,7 +89,7 @@ export function UserPerfil() {
   const fetchDirecciones = useCallback(async () => {
     setLoadingDirs(true);
     try {
-      const res = await fetch("/api/user/direcciones");
+      const res = await fetch("/api/club/direcciones");
       if (res.ok) {
         const d = await res.json();
         setDirecciones(d.direcciones ?? []);
@@ -111,7 +111,7 @@ export function UserPerfil() {
     setProfileError(null);
     setSavingProfile(true);
     try {
-      const res = await fetch("/api/user/perfil", {
+      const res = await fetch("/api/club/perfil", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ nombre: nombre.trim() || undefined, telefono }),
@@ -140,7 +140,7 @@ export function UserPerfil() {
 
     setSavingPass(true);
     try {
-      const res = await fetch("/api/user/perfil", {
+      const res = await fetch("/api/club/perfil", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ passwordActual, passwordNuevo }),
@@ -162,7 +162,7 @@ export function UserPerfil() {
     if (!newCalle.trim()) { setAddError("La calle es requerida"); return; }
     setSavingNew(true);
     try {
-      const res = await fetch("/api/user/direcciones", {
+      const res = await fetch("/api/club/direcciones", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -202,7 +202,7 @@ export function UserPerfil() {
     if (!editCalle.trim()) { setEditError("La calle es requerida"); return; }
     setSavingEdit(true);
     try {
-      const res = await fetch(`/api/user/direcciones/${editingId}`, {
+      const res = await fetch(`/api/club/direcciones/${editingId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -224,7 +224,7 @@ export function UserPerfil() {
 
   async function handleDeleteDir(id: string) {
     if (!confirm("¿Eliminar esta dirección?")) return;
-    await fetch(`/api/user/direcciones/${id}`, { method: "DELETE" });
+    await fetch(`/api/club/direcciones/${id}`, { method: "DELETE" });
     await fetchDirecciones();
   }
 
@@ -282,7 +282,7 @@ export function UserPerfil() {
         <div className="max-w-2xl mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
             <a
-              href={`/${locale}/user/dashboard`}
+              href={`/${locale}/club/dashboard`}
               className="p-2 rounded-xl hover:bg-[#fdf6f0] text-[#AA6A42] transition-colors"
               aria-label="Volver al dashboard"
             >

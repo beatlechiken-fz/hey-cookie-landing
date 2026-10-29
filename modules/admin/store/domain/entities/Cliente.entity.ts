@@ -9,6 +9,8 @@ export interface Cliente {
   notas: string | null;
   fechaNacimiento: string | null; // YYYY-MM-DD
   authUserId: string | null; // null = sin cuenta de acceso todavía
+  /** Token persistente de la tarjeta del club (QR) — siempre presente. */
+  qrToken: string;
   activo: boolean;
   /** Órdenes no canceladas; solo viene en el listado (findAll). */
   totalOrdenes?: number;

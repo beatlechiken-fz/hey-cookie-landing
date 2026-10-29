@@ -26,7 +26,7 @@ export function CambiarPasswordForm() {
     }
 
     startTransition(async () => {
-      const res = await fetch("/api/user/cambiar-password", {
+      const res = await fetch("/api/club/cambiar-password", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
@@ -40,7 +40,7 @@ export function CambiarPasswordForm() {
 
       // Cerrar sesión para que el nuevo JWT no traiga mustChangePassword
       await signOut({ redirect: false });
-      window.location.href = `/${locale}/user/login?changed=1`;
+      window.location.href = `/${locale}/club/login?changed=1`;
     });
   }
 

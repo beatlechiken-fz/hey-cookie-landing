@@ -1,6 +1,6 @@
 # Hey Cookie — Landing
 
-App web para una repostería artesanal. Tiene tres zonas bien separadas: **pública** (website), **admin** (gestión interna) y **user** (tienda en línea para clientes).
+App web para una repostería artesanal. Tiene tres zonas bien separadas: **pública** (website), **admin** (gestión interna) y **club** (programa de lealtad / tienda en línea para clientes).
 
 ---
 
@@ -94,18 +94,34 @@ Solo `role: "admin"`. Login en `/admin`.
 **Store (Tienda):**
 - `productos` — catálogo (líneas: sweet/fitness/healthy), precios calculados por tamaño
 - `ordenes` — pipeline de estados: `cotizacion → en_proceso → listo_entregar → pagado → entregado | cancelado`
-- `clientes` — contactos + historial + cupones
-- `cupones` — descuentos (% o monto fijo), asignables por cliente
+- `clientes` — contactos + historial + cupones; cada cliente tiene `qr_token` persistente (tarjeta del club)
+- `cupones` — descuentos (% o monto fijo), asignables por cliente; todo "beneficio" (incluso un regalo) se modela como un cupón
+- `beneficios` / `beneficio_otorgamientos` — reglas automáticas (ej. cumpleaños: genera cupón + regalo) y su historial de otorgamientos, uno por cliente por año
 - `finanzas` — movimientos, compras, resumen por período
 
-### Zona user (`app/[locale]/user/`)
-Solo `role: "user"`. Login en `/user/login`.
+### Zona club (`app/[locale]/club/`)
+Solo `role: "user"`. Login en `/club/login`. Programa de lealtad: cashback, cupones/beneficios y conteo de compras.
 
 | Ruta | Descripción |
 |------|-------------|
-| `/user/login` | Login público (tabla `user_accounts`) |
-| `/user/signin` | Registro público |
-| `/user/dashboard` | Pedidos y datos del cliente |
+| `/club/login` | Login público (tabla `user_accounts`) |
+| `/club/signin` | Registro público (acepta `?email=&telefono=&nombre=` para prellenar) |
+| `/club/dashboard` | Cashback, beneficios, compras y pedidos del cliente |
+| `/club/qr/[token]` | Aterrizaje del QR de la tarjeta del club — resuelve a dónde mandar al cliente (ver abajo) |
+| `/club/qr-invalido` | Token de QR no encontrado |
+
+**QR persistente por cliente** (`clientes.qr_token`, generado solo, único): al escanear `/club/qr/[token]`,
+1. si ya hay sesión de club activa → directo a `/club/dashboard`;
+2. si no, y el email del cliente ya tiene cuenta en `user_accounts` → a `/club/login?email=...`;
+3. si no tiene cuenta → a `/club/signin?email=...&telefono=...&nombre=...`.
+
+El admin puede ver/descargar/regenerar el QR de cada cliente desde su ficha (`ClienteClubQrSection`).
+
+**Beneficios automáticos** (sección "Beneficios" del admin, antes "Cupones"): cada tipo (ej. `cumpleanos`) vive en la tabla `beneficios` con su `config` (porcentaje, descripción del regalo, días de vigencia) y se activa/desactiva ahí mismo. Se disparan por `GenerarCumpleanosBeneficioUseCase`, llamado por:
+- Vercel Cron diario (`vercel.json` → `/api/cron/beneficios-cumpleanos`, protegido con `CRON_SECRET`);
+- un botón manual en el admin (mismo resultado, de respaldo).
+
+Un cliente nunca recibe el mismo beneficio dos veces en el mismo año (`beneficio_otorgamientos` lo evita).
 
 ---
 
@@ -142,12 +158,14 @@ Corre en el Edge. Reglas en orden:
 |------|-------|
 | `/api/auth/*` | Siempre público (NextAuth) |
 | `/admin` (exacto) | Público (login admin) |
-| `/user/login` | Público (login usuario) |
+| `/club/login`, `/club/signin`, `/club/qr-invalido` | Público |
+| `/club/qr/*` | Siempre público (resuelve a dónde mandar al cliente) |
 | `/api/admin/*` | Requiere `token.role === "admin"` → 401 si no |
-| `/api/user/*` | Requiere `token.role === "user"` → 401 si no |
+| `/api/club/*` | Requiere `token.role === "user"` → 401 si no |
+| `/api/cron/*` | Público — protegido con su propio `CRON_SECRET`, no por sesión |
 | `/api/*` (otros) | Requiere cualquier token válido |
 | `/admin/*` | Requiere `token.role === "admin"` → redirect a `/[locale]/admin` |
-| `/user/*` | Requiere `token.role === "user"` → redirect a `/[locale]/user/login` |
+| `/club/*` | Requiere `token.role === "user"` → redirect a `/[locale]/club/login` |
 
 El proxy preserva el locale en los redirects.
 
@@ -159,7 +177,7 @@ El proxy preserva el locale en los redirects.
 - Archivos de mensajes: `messages/es.json`, `messages/en.json`
 - Configuración: `i18n/routing.ts`, `i18n/request.ts`, `i18n/navigation.ts`
 
-Todas las rutas van prefijadas con el locale: `/es/admin`, `/en/user/login`, etc.
+Todas las rutas van prefijadas con el locale: `/es/admin`, `/en/club/login`, etc.
 
 **En server components:**
 ```ts
@@ -184,7 +202,7 @@ const locale = useLocale();
 `ingredientes`, `bizcochos`, `bizcocho_ingredientes`, `coberturas`, `cobertura_ingredientes`, `sabores_cobertura`, `jarabes`, `jarabe_ingredientes`, `sabores_jarabe`, `licores`, `empaques`
 
 **Store:**
-`productos`, `ordenes`, `orden_items`, `clientes`, `cupones`, `cupon_clientes`, `cashback_movimientos` (libro de cashback: 3% de cada orden pagada; el saldo es la suma de `monto`; se usa con la función `cashback_aplicar_a_orden`)
+`productos`, `ordenes`, `orden_items`, `clientes`, `cupones`, `cupon_clientes`, `cashback_movimientos` (libro de cashback: 3% de cada orden pagada; el saldo es la suma de `monto`; se usa con la función `cashback_aplicar_a_orden`), `beneficios`, `beneficio_otorgamientos`
 
 **Finanzas:**
 `finanzas_registros`, `finanzas_movimientos`, `finanzas_compras`
@@ -209,6 +227,7 @@ RESEND_API_KEY=
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
 MONGODB_URI=                    # Conexión disponible (uso secundario)
+CRON_SECRET=                    # Protege /api/cron/* (Vercel Cron la manda sola en producción)
 ```
 
 **Clientes Supabase en `core/helpers/supabase.ts`:**
@@ -240,19 +259,23 @@ landing/
 │   │   │   └── dashboard/
 │   │   │       ├── raws/         # Materias primas
 │   │   │       └── store/        # Tienda admin
-│   │   └── user/                 # Zona usuario
+│   │   └── club/                 # Zona club (antes "user") — login/signin/dashboard/qr
 │   │       ├── layout.tsx
 │   │       ├── login/page.tsx
-│   │       └── servicios/page.tsx
+│   │       ├── signin/page.tsx
+│   │       ├── dashboard/page.tsx
+│   │       └── qr/[token]/page.tsx
 │   └── api/
 │       ├── auth/[...nextauth]/   # Handler único NextAuth
 │       ├── admin/                # APIs protegidas admin
-│       └── user/                 # APIs protegidas user (futuro)
-├── modules/                      # Lógica por zona/feature
+│       ├── club/                 # APIs protegidas club (role "user")
+│       └── cron/                 # Jobs programados (Vercel Cron), auth por CRON_SECRET
+├── modules/                      # Lógica por zona/feature — "user" aquí es solo
+│   │                             # organización interna de código, no la URL (esa es /club)
 │   ├── admin/
 │   │   ├── auth/
 │   │   ├── raws/                 # Materias primas
-│   │   └── store/                # Productos, órdenes, clientes
+│   │   └── store/                # Productos, órdenes, clientes, beneficios
 │   ├── home/
 │   ├── cake/
 │   ├── quote/

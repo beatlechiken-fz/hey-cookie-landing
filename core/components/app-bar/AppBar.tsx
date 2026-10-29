@@ -105,7 +105,7 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
               {/* Actions */}
               <div className="p-1.5 flex flex-col gap-0.5">
                 <a
-                  href={`/${locale}/user/dashboard`}
+                  href={`/${locale}/club/dashboard`}
                   onClick={() => setOpen(false)}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
                 >
@@ -115,7 +115,7 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
                   Mi Dashboard
                 </a>
                 <a
-                  href={`/${locale}/user/perfil`}
+                  href={`/${locale}/club/perfil`}
                   onClick={() => setOpen(false)}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
                 >
@@ -129,7 +129,7 @@ function UserAvatar({ onClose }: { onClose: () => void }) {
                   onClick={() => {
                     setOpen(false);
                     onClose();
-                    signOut({ callbackUrl: `/${locale}/user/login` });
+                    signOut({ callbackUrl: `/${locale}/club/login` });
                   }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#6B3E26]/80 hover:text-[#AA6A42] hover:bg-[#FFF0E6] transition text-left cursor-pointer"
                 >
@@ -222,7 +222,7 @@ export default function AppBar() {
 
           {!isUserLoggedIn && (
             <button
-              onClick={() => router.push("/user/login")}
+              onClick={() => router.push("/club/login")}
               aria-label="Iniciar sesión"
               title="Iniciar sesión"
               className="flex items-center justify-center w-11 h-11 rounded-full text-[#3A1F14] hover:bg-[#AA6A42]/10 transition-colors cursor-pointer"

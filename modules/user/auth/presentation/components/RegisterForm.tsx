@@ -12,9 +12,9 @@ export function RegisterForm() {
   const locale = useLocale();
   const fromCart = searchParams.get("from") === "cart";
 
-  const [nombre, setNombre]               = useState("");
-  const [email, setEmail]                 = useState("");
-  const [telefono, setTelefono]           = useState("");
+  const [nombre, setNombre]               = useState(searchParams.get("nombre") ?? "");
+  const [email, setEmail]                 = useState(searchParams.get("email") ?? "");
+  const [telefono, setTelefono]           = useState(searchParams.get("telefono") ?? "");
   const [password, setPassword]           = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [recibirOfertas, setRecibirOfertas]   = useState(false);
@@ -66,7 +66,7 @@ export function RegisterForm() {
 
       if (signInRes?.error) {
         // Cuenta creada pero no pudo iniciar sesión — llevar a login
-        router.push(`/${locale}/user/login?registered=1&from=${fromCart ? "cart" : ""}`);
+        router.push(`/${locale}/club/login?registered=1&from=${fromCart ? "cart" : ""}`);
         return;
       }
 
@@ -213,7 +213,7 @@ export function RegisterForm() {
         <p style={{ fontSize: "0.82rem", color: "#b07a8a", marginTop: "1.25rem", textAlign: "center" }}>
           ¿Ya tienes cuenta?{" "}
           <a
-            href={`/${locale}/user/login${fromCart ? "?from=cart" : ""}`}
+            href={`/${locale}/club/login${fromCart ? "?from=cart" : ""}`}
             style={{ color: "#c0607a", fontWeight: 600, textDecoration: "none" }}
           >
             Inicia sesión
