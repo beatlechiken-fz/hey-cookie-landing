@@ -35,6 +35,9 @@ export class OrdenRepositoryImpl implements OrdenRepository {
   updateFechaEntrega(id: string, fecha?: string | null, hora?: string | null): Promise<Orden> {
     return this.ds.updateFechaEntrega(id, fecha, hora);
   }
+  asignarCliente(id: string, clienteId: string): Promise<Orden> {
+    return this.ds.asignarCliente(id, clienteId);
+  }
   updateItem(ordenId: string, itemId: string, dto: UpdateOrdenItemDTO): Promise<Orden> {
     return this.ds.updateItem(ordenId, itemId, dto);
   }

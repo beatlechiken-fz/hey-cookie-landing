@@ -17,6 +17,7 @@ import { FinanzasToggle } from "./FinanzasToggle";
 import { OrdenStatusBadge } from "./OrdenStatusBadge";
 import { resumenProductos } from "@/core/helpers/ordenesResumen";
 import { formatFechaCalendario } from "@/core/helpers/calendario";
+import type { ClienteResumen } from "@/modules/admin/store/domain/entities/Cliente.entity";
 import { OrdenPipeline } from "./OrdenPipeline";
 import { OrdenPagosSection, type PagoCompartido } from "./OrdenPagosSection";
 import { PastelCompartidoSection } from "./PastelCompartidoSection";
@@ -111,6 +112,62 @@ export function OrdenDetailCard({
   );
   const [horaInput, setHoraInput] = useState(orden.horaEntrega ?? "");
   const [savingFecha, setSavingFecha] = useState(false);
+
+  // ── Asignar cliente a una orden que todavía no tiene uno ──────────────────
+  const [asignandoCliente, setAsignandoCliente] = useState(false);
+  const [clienteSearch, setClienteSearch] = useState("");
+  const [clienteResults, setClienteResults] = useState<ClienteResumen[]>([]);
+  const [clienteSearchOpen, setClienteSearchOpen] = useState(false);
+  const [clienteLoading, setClienteLoading] = useState(false);
+  const [savingCliente, setSavingCliente] = useState(false);
+
+  useEffect(() => {
+    if (!clienteSearchOpen) return;
+    const q = clienteSearch.trim();
+    let active = true;
+    setClienteLoading(true);
+    const t = setTimeout(() => {
+      fetch(`/api/admin/clientes/search?q=${encodeURIComponent(q)}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (active) setClienteResults(Array.isArray(data) ? data : []);
+        })
+        .catch(() => {
+          if (active) setClienteResults([]);
+        })
+        .finally(() => {
+          if (active) setClienteLoading(false);
+        });
+    }, 250);
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
+  }, [clienteSearch, clienteSearchOpen]);
+
+  async function handleAsignarCliente(clienteId: string) {
+    setSavingCliente(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/ordenes/${orden.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clienteId }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: res.statusText }));
+        throw new Error(err.error ?? "No se pudo asignar el cliente");
+      }
+      setAsignandoCliente(false);
+      setClienteSearch("");
+      setClienteSearchOpen(false);
+      onRefresh();
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setSavingCliente(false);
+    }
+  }
 
   // ── Descontar inventario al pasar a "en_proceso" ──────────────────────────
   const tieneProductosInventariables = orden.items.some(
@@ -515,6 +572,82 @@ export function OrdenDetailCard({
               {/* Pipeline */}
               <div className="flex justify-center overflow-x-auto py-1">
                 <OrdenPipeline status={orden.status} />
+              </div>
+
+              {/* Cliente */}
+              <div className="relative rounded-xl bg-hc-hover border border-hc-line px-3 py-2.5">
+                <p className="text-[10px] font-semibold text-hc-muted uppercase tracking-wider">
+                  Cliente
+                </p>
+                {orden.clienteNombre ? (
+                  <p className="text-[13px] font-semibold text-hc-ink mt-0.5">
+                    {orden.clienteNombre}
+                  </p>
+                ) : asignandoCliente ? (
+                  <div className="mt-1.5">
+                    <input
+                      autoFocus
+                      value={clienteSearch}
+                      onChange={(e) => {
+                        setClienteSearch(e.target.value);
+                        setClienteSearchOpen(true);
+                      }}
+                      onFocus={() => setClienteSearchOpen(true)}
+                      placeholder="Buscar cliente por nombre, teléfono o email…"
+                      className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft"
+                    />
+                    {clienteSearchOpen && (
+                      <div className="absolute left-3 right-3 mt-1 rounded-xl border border-hc-line bg-white shadow-lg z-10 overflow-hidden max-h-52 overflow-y-auto">
+                        {clienteLoading && (
+                          <p className="px-3 py-2.5 text-[12px] text-hc-soft">Buscando…</p>
+                        )}
+                        {!clienteLoading && clienteResults.length === 0 && (
+                          <p className="px-3 py-2.5 text-[12px] text-hc-soft">
+                            {clienteSearch.trim() ? "Sin resultados" : "Escribe para buscar un cliente"}
+                          </p>
+                        )}
+                        {!clienteLoading &&
+                          clienteResults.map((c) => (
+                            <button
+                              key={c.id}
+                              type="button"
+                              disabled={savingCliente}
+                              onClick={() => handleAsignarCliente(c.id)}
+                              className="w-full text-left px-3 py-2.5 hover:bg-hc-hover transition border-b border-hc-line last:border-b-0 disabled:opacity-50"
+                            >
+                              <p className="text-[13px] font-semibold text-hc-ink">{c.nombre}</p>
+                              {(c.telefono || c.email) && (
+                                <p className="text-[11px] text-hc-muted">
+                                  {[c.telefono, c.email].filter(Boolean).join(" · ")}
+                                </p>
+                              )}
+                            </button>
+                          ))}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAsignandoCliente(false);
+                        setClienteSearchOpen(false);
+                        setClienteSearch("");
+                      }}
+                      className="mt-1.5 text-[11px] font-semibold text-hc-muted hover:text-hc-rose transition"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between gap-2 mt-0.5">
+                    <span className="text-[13px] text-hc-soft font-normal">Sin cliente asignado</span>
+                    <button
+                      onClick={() => setAsignandoCliente(true)}
+                      className="shrink-0 px-2.5 py-1 rounded-lg bg-hc-rose text-white text-[11px] font-bold hover:bg-hc-rose-hover transition"
+                    >
+                      Asignar cliente
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Fecha de entrega */}

@@ -179,6 +179,25 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       );
     }
 
+    // Asignar cliente a una orden/cotización que todavía no tiene uno
+    if (body.clienteId !== undefined) {
+      const actual = updated ?? (await repo.findById(id));
+      if (!actual) throw new Error("Orden no encontrada");
+      if (actual.clienteId) {
+        return NextResponse.json(
+          { error: "Esta orden ya tiene un cliente asignado" },
+          { status: 409 },
+        );
+      }
+      if (!body.clienteId || typeof body.clienteId !== "string") {
+        return NextResponse.json(
+          { error: "clienteId inválido" },
+          { status: 400 },
+        );
+      }
+      updated = await repo.asignarCliente(id, body.clienteId);
+    }
+
     // Marcar / desmarcar la venta para finanzas
     if (body.finanzas !== undefined) {
       if (typeof body.finanzas !== "boolean")

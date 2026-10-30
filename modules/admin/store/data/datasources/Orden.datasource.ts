@@ -312,6 +312,27 @@ export class OrdenSupabaseDatasource {
   }
 
   /**
+   * Asigna un cliente a una orden/cotización que todavía no tiene uno.
+   * También actualiza cliente_nombre (denormalizado) para las vistas que
+   * leen esa columna directo sin join (dashboard, panel del club).
+   */
+  async asignarCliente(id: string, clienteId: string): Promise<Orden> {
+    const { data: cliente, error: ce } = await this.db
+      .from("clientes")
+      .select("nombre")
+      .eq("id", clienteId)
+      .single();
+    if (ce) throw new Error(`asignarCliente cliente: ${ce.message}`);
+
+    const { error } = await this.db
+      .from(TABLE)
+      .update({ cliente_id: clienteId, cliente_nombre: cliente.nombre })
+      .eq("id", id);
+    if (error) throw new Error(`asignarCliente orden: ${error.message}`);
+    return this.findById(id) as Promise<Orden>;
+  }
+
+  /**
    * Recalcula subtotal/descuento_total/total de la orden a partir de sus
    * orden_items y orden_cupones actuales — misma fórmula que create():
    * subtotal = Σ item.subtotal, descuentoTotal = Σ cupón.monto_descontado

@@ -19,6 +19,7 @@ export interface OrdenRepository {
   updateStatus(id: string, status: OrdenStatus, descontarInventario?: boolean): Promise<Orden>;
   setInventarioDescontado(id: string, value: boolean): Promise<void>;
   updateFechaEntrega(id: string, fechaEntrega?: string | null, horaEntrega?: string | null): Promise<Orden>;
+  asignarCliente(id: string, clienteId: string): Promise<Orden>;
   updateItem(ordenId: string, itemId: string, dto: UpdateOrdenItemDTO): Promise<Orden>;
   removeItem(ordenId: string, itemId: string): Promise<Orden>;
   addItem(ordenId: string, dto: AddOrdenItemDTO): Promise<Orden>;
