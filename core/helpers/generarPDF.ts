@@ -660,20 +660,26 @@ export async function descargarPdf(
   wrapper.style.cssText = "position:absolute;left:-9999px;top:0;";
   document.body.appendChild(wrapper);
   try {
+    // Todo el documento se dibuja en un solo lienzo. Safari (Mac y iPhone) no
+    // dibuja lienzos de más de ~16.7 millones de píxeles, así que en pedidos
+    // largos (ej. comandas con varios productos) bajamos la escala para que quepa.
+    const doc = (wrapper.querySelector(".doc") as HTMLElement | null) ?? wrapper;
+    const area = Math.max(1, doc.scrollWidth * doc.scrollHeight);
+    const escala = Math.max(1, Math.min(2.5, Math.sqrt(15_000_000 / area)));
     await html2pdf()
       .set({
         margin: 6,
         filename,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
-          scale: 2.5,
+          scale: escala,
           useCORS: true,
           letterRendering: true,
           backgroundColor: "#f5ede8",
         },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       })
-      .from(wrapper.querySelector(".doc") ?? wrapper)
+      .from(doc)
       .save();
   } finally {
     document.body.removeChild(wrapper);
@@ -698,9 +704,16 @@ export async function generarComandaPdf(
   if (!res.ok)
     throw new Error(`Error al obtener datos de comanda: ${res.statusText}`);
   const data: ComandaData = await res.json();
-  const html = buildComandaHtml(data);
+  await descargarComandaPdf(data, ordenNumero);
+}
+
+/** Descarga la comanda cuando ya se tienen sus datos (ej. desde el visor). */
+export async function descargarComandaPdf(
+  data: ComandaData,
+  ordenNumero: number = data.numero,
+): Promise<void> {
   await descargarPdf(
-    html,
+    buildComandaHtml(data),
     `heycookie_comanda_${ordenNumero}_${new Date().toISOString().slice(0, 10)}.pdf`,
   );
 }

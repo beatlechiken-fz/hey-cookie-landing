@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
 import { RawThumb } from "./RawThumb";
 import { useJarabes, useSaboresJarabe } from "../hooks/useJarabes";
 import { JarabeModal } from "./JarabeModal";
@@ -33,33 +34,6 @@ function SlidersIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-function Tab({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={
-        "relative px-5 py-2.5 text-sm font-semibold transition " +
-        (active ? "text-hc-rose" : "text-hc-muted hover:text-hc-soft")
-      }
-    >
-      {label}
-      {active && (
-        <motion.div
-          layoutId="jarabe-tab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-hc-rose rounded-full"
-        />
-      )}
-    </button>
-  );
-}
 
 function FilterDrawer({
   open,
@@ -981,18 +955,12 @@ export function JarabesView() {
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs */}
-      <div className="flex border-b border-hc-line">
-        <Tab
-          label="Jarabes"
-          active={activeTab === "jarabes"}
-          onClick={() => setActiveTab("jarabes")}
-        />
-        <Tab
-          label="Sabores"
-          active={activeTab === "sabores"}
-          onClick={() => setActiveTab("sabores")}
-        />
-      </div>
+      <PanelTabs
+        label="Secciones"
+        tabs={[{ value: "jarabes", label: "Jarabes" }, { value: "sabores", label: "Sabores" }]}
+        value={activeTab}
+        onChange={setActiveTab}
+      />
 
       <AnimatePresence mode="wait">
         <motion.div

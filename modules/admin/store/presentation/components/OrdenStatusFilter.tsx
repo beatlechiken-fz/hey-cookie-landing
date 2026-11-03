@@ -1,11 +1,10 @@
 "use client";
 // src/modules/admin/store/presentation/components/OrdenStatusFilter.tsx
 //
-// Filtro multiselect por estatus de orden. Pantallas grandes: chips que se
-// activan/desactivan con click. Pantallas pequeñas: desplegable con casillas.
-// Sin ninguno seleccionado = todos los estatus.
+// Filtro multiselect por estatus de orden: chips que se activan/desactivan con
+// click. Sin ninguno seleccionado = todos los estatus. En pantallas pequeñas
+// la lista los muestra dentro del panel de filtros, junto a la búsqueda.
 
-import { useState } from "react";
 import { ORDEN_STATUS_LABELS } from "@/modules/admin/store/domain/entities/Orden.entity";
 import type { OrdenStatus } from "@/modules/admin/store/domain/entities/Orden.entity";
 
@@ -17,116 +16,37 @@ interface Props {
 }
 
 export function OrdenStatusFilter({ opciones, selected, onChange }: Props) {
-  const [open, setOpen] = useState(false);
-
   function toggle(s: OrdenStatus) {
     onChange(
       selected.includes(s) ? selected.filter((x) => x !== s) : [...selected, s],
     );
   }
 
-  const resumen =
-    selected.length === 0
-      ? "Todos"
-      : selected.length === 1
-        ? ORDEN_STATUS_LABELS[selected[0]]
-        : `${selected.length} seleccionados`;
-
   return (
-    <>
-      {/* Pantallas grandes: chips */}
-      <div
-        role="group"
-        aria-label="Filtrar por estatus"
-        className="hidden md:flex flex-wrap items-center gap-2"
-      >
-        {opciones.map((s) => {
-          const activo = selected.includes(s);
-          return (
-            <button
-              key={s}
-              type="button"
-              aria-pressed={activo}
-              onClick={() => toggle(s)}
-              className={
-                "px-3.5 py-1.5 rounded-full border text-[12px] font-semibold transition " +
-                (activo
-                  ? "bg-hc-rose border-hc-rose text-white"
-                  : "bg-white border-hc-line-strong text-hc-muted hover:border-hc-rose hover:text-hc-rose")
-              }
-            >
-              {ORDEN_STATUS_LABELS[s]}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Pantallas pequeñas: multiselect */}
-      <div className="md:hidden relative">
-        <button
-          type="button"
-          aria-haspopup="listbox"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-          className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink"
-        >
-          <span>
-            <span className="text-hc-soft">Estatus: </span>
-            <span className="font-semibold">{resumen}</span>
-          </span>
-          <svg
-            viewBox="0 0 24 24"
-            className={"w-4 h-4 text-hc-muted transition-transform " + (open ? "rotate-180" : "")}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+    <div
+      role="group"
+      aria-label="Filtrar por estatus"
+      className="flex flex-wrap items-center gap-2"
+    >
+      {opciones.map((s) => {
+        const activo = selected.includes(s);
+        return (
+          <button
+            key={s}
+            type="button"
+            aria-pressed={activo}
+            onClick={() => toggle(s)}
+            className={
+              "whitespace-nowrap px-3.5 py-1.5 rounded-full border text-[12px] font-semibold transition " +
+              (activo
+                ? "bg-hc-rose border-hc-rose text-white"
+                : "bg-white border-hc-line-strong text-hc-muted hover:border-hc-rose hover:text-hc-rose")
+            }
           >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </button>
-
-        {open && (
-          <>
-            <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-            <div
-              role="listbox"
-              aria-multiselectable="true"
-              className="absolute left-0 right-0 top-full mt-1 z-20 rounded-xl border border-hc-line bg-white shadow-lg overflow-hidden"
-            >
-              {opciones.map((s) => {
-                const activo = selected.includes(s);
-                return (
-                  <label
-                    key={s}
-                    role="option"
-                    aria-selected={activo}
-                    className="flex items-center gap-3 px-4 py-3 text-sm text-hc-ink border-b border-hc-line last:border-b-0 cursor-pointer active:bg-hc-hover"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={activo}
-                      onChange={() => toggle(s)}
-                      className="w-4 h-4 accent-hc-rose"
-                    />
-                    {ORDEN_STATUS_LABELS[s]}
-                  </label>
-                );
-              })}
-              {selected.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => onChange([])}
-                  className="w-full px-4 py-3 text-left text-[13px] font-semibold text-hc-soft bg-hc-hover"
-                >
-                  Limpiar selección
-                </button>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-    </>
+            {ORDEN_STATUS_LABELS[s]}
+          </button>
+        );
+      })}
+    </div>
   );
 }

@@ -4,18 +4,20 @@
 // Botón de carrito con badge para colocar en AppBarAdmin.
 // Uso: <CartButton /> dentro de la barra de navegación.
 
-import { useState } from "react";
 import { useCartStore } from "../hooks/useCartStore";
 import { CartDrawer } from "./CartDrawer";
+import { useCartDrawerAdmin } from "../hooks/useCartDrawerAdmin";
 
 export function CartButton() {
-  const [open, setOpen] = useState(false);
+  const open = useCartDrawerAdmin((s) => s.open);
+  const abrir = useCartDrawerAdmin((s) => s.abrir);
+  const cerrar = useCartDrawerAdmin((s) => s.cerrar);
   const totalItems = useCartStore((s) => s.totalItems());
 
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
+        onClick={abrir}
         className="relative p-2 rounded-lg hover:bg-hc-soft/10 text-hc-ink transition"
       >
         <svg
@@ -38,7 +40,7 @@ export function CartButton() {
         )}
       </button>
 
-      <CartDrawer open={open} onClose={() => setOpen(false)} />
+      <CartDrawer open={open} onClose={cerrar} />
     </>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
 import {
   participantesActivos,
   repartirMonto,
   type PastelCompartido,
 } from "../../domain/entities/PastelCompartido.entity";
+import { OrdenSeccion } from "./OrdenSeccion";
 
 interface OrdenPago {
   id: string;
@@ -28,6 +29,14 @@ interface Props {
   status: string;
   /** Si la orden tiene pasteles para compartir, un pago precargado por participante. */
   compartidos?: PagoCompartido[];
+  /**
+   * "tarjeta": bloque compacto dentro de la tarjeta de la orden (por defecto).
+   * "seccion": sección con borde y título del detalle, con "Registrar pago" en
+   * la línea del título.
+   */
+  modo?: "tarjeta" | "seccion";
+  /** Contenido extra al final de la sección (p. ej. el toggle de finanzas). */
+  children?: ReactNode;
 }
 
 const hoy = () => new Date().toISOString().slice(0, 10);
@@ -40,7 +49,14 @@ function fmtDate(iso: string) {
   });
 }
 
-export function OrdenPagosSection({ ordenId, ordenTotal, status, compartidos = [] }: Props) {
+export function OrdenPagosSection({
+  ordenId,
+  ordenTotal,
+  status,
+  compartidos = [],
+  modo = "tarjeta",
+  children,
+}: Props) {
   const [pagos, setPagos]       = useState<OrdenPago[]>([]);
   const [loading, setLoading]   = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -140,23 +156,21 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status, compartidos = [
     }
   }
 
-  return (
-    <div className="flex flex-col gap-3 rounded-xl border border-hc-line bg-hc-hover px-3.5 py-3">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
-          Pagos
-        </p>
-        {liquidado && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">
-            <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-            LIQUIDADO
-          </span>
-        )}
-      </div>
+  const enSeccion = modo === "seccion";
+  const puedeRegistrar = !showForm && !liquidado;
+  const abrirForm = () => { setShowForm(true); setErrMsg(null); };
 
+  const badgeLiquidado = liquidado && (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">
+      <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <path d="M20 6 9 17l-5-5" />
+      </svg>
+      LIQUIDADO
+    </span>
+  );
+
+  const contenido = (
+    <>
       {/* Resumen de saldo */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-[12px]">
@@ -382,9 +396,9 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status, compartidos = [
           </div>
         </div>
       ) : (
-        !liquidado && (
+        puedeRegistrar && !enSeccion && (
           <button
-            onClick={() => { setShowForm(true); setErrMsg(null); }}
+            onClick={abrirForm}
             className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-dashed border-hc-line-strong text-hc-rose text-[12px] font-semibold hover:bg-white/60 transition"
           >
             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
@@ -394,6 +408,44 @@ export function OrdenPagosSection({ ordenId, ordenTotal, status, compartidos = [
           </button>
         )
       )}
+
+      {children}
+    </>
+  );
+
+  if (enSeccion) {
+    return (
+      <OrdenSeccion
+        titulo={<>Pagos {badgeLiquidado}</>}
+        acciones={
+          puedeRegistrar && (
+            <button
+              onClick={abrirForm}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-hc-rose text-white text-[12px] font-bold hover:bg-hc-rose-hover transition"
+            >
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Registrar pago
+            </button>
+          )
+        }
+      >
+        {contenido}
+      </OrdenSeccion>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-hc-line bg-hc-hover px-3.5 py-3">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
+          Pagos
+        </p>
+        {badgeLiquidado}
+      </div>
+      {contenido}
     </div>
   );
 }

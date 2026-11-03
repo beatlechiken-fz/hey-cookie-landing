@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
 import { formatFechaCalendario } from "@/core/helpers/calendario";
@@ -199,7 +198,6 @@ function OrdenCard({ orden }: { orden: Orden }) {
 // ── Componente principal ─────────────────────────────────────────────────────
 
 export function UserDashboard() {
-  const { data: session } = useSession();
   const locale = useLocale();
   const [ordenes, setOrdenes] = useState<Orden[]>([]);
   const [loading, setLoading] = useState(true);
@@ -213,7 +211,6 @@ export function UserDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const nombre = session?.user?.name?.split(" ")[0] ?? "Cliente";
 
   const stats = {
     total: ordenes.length,
@@ -222,29 +219,11 @@ export function UserDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF3E0]">
-      {/* Header */}
-      <div className="bg-white border-b border-[#f0e0d0]">
-        <div className="max-w-3xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-title text-[#7b2d42]">¡Hola, {nombre}! 👋</h1>
-              <p className="text-sm text-[#AA6A42]/70 font-sans mt-0.5">Aquí están tus pedidos de Hey Cookie</p>
-            </div>
-            <a
-              href={`/${locale}`}
-              className="flex items-center gap-1.5 text-sm text-[#AA6A42] hover:text-[#7b2d42] transition font-sans"
-            >
-              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-              Ir a la tienda
-            </a>
-          </div>
-
+    <div className="flex max-w-3xl flex-col">
+      <div>
           {/* Stats */}
           {!loading && ordenes.length > 0 && (
-            <div className="grid grid-cols-3 gap-3 mt-5">
+            <div className="grid grid-cols-3 gap-3">
               {[
                 { label: "Pedidos totales", value: stats.total, color: "text-[#7b2d42]" },
                 { label: "En curso", value: stats.activas, color: "text-[#AA6A42]" },
@@ -258,10 +237,9 @@ export function UserDashboard() {
             </div>
           )}
         </div>
-      </div>
 
       {/* Órdenes */}
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <div className="py-6">
         <MisBeneficios />
 
         {!loading && stats.entregadas > 0 && <TuOpinion />}

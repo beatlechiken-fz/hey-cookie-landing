@@ -11,6 +11,7 @@ import type {
   UpdateOrdenItemDTO,
   AddOrdenItemDTO,
 } from "../../domain/entities/Orden.entity";
+import { ORDEN_STATUS_EN_CURSO } from "../../domain/entities/Orden.entity";
 
 const TABLE = "ordenes";
 const TABLE_ITEMS = "orden_items";
@@ -269,8 +270,9 @@ export class OrdenSupabaseDatasource {
     const patch: Record<string, any> = { status };
     // Una venta cancelada nunca cuenta para finanzas.
     if (status === "cancelado") patch.finanzas = false;
-    // Al pasar a en_proceso es cuando se fija la intención del toggle (si vino en el body).
-    if (status === "en_proceso" && descontarInventario !== undefined) {
+    // Al salir de cotización (a en_proceso o saltando más adelante) se fija la
+    // intención del toggle, si vino en el body.
+    if (ORDEN_STATUS_EN_CURSO.includes(status) && descontarInventario !== undefined) {
       patch.descontar_inventario = descontarInventario;
     }
     const { error } = await this.db.from(TABLE).update(patch).eq("id", id);

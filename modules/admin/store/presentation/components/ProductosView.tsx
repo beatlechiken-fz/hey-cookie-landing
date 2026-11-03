@@ -10,14 +10,58 @@ import type {
   Producto,
   CreateProductoDTO,
   LineaProducto,
+  CategoriaProducto,
 } from "../../domain/entities/Producto.entity";
 
 const LINEAS: { value: LineaProducto | ""; label: string }[] = [
-  { value: "", label: "Todas" },
+  { value: "", label: "Todas las líneas" },
   { value: "sweet", label: "Sweet" },
   { value: "fitness", label: "Fitness" },
   { value: "healthy", label: "Healthy" },
 ];
+
+// "sin" = productos sin tipo asignado.
+const TIPOS: { value: CategoriaProducto | "" | "sin"; label: string }[] = [
+  { value: "", label: "Todos los tipos" },
+  { value: "cookie", label: "Galletas" },
+  { value: "pastel", label: "Pasteles" },
+  { value: "gelatina", label: "Gelatinas" },
+  { value: "dessert", label: "Repostería" },
+  { value: "sin", label: "Sin tipo" },
+];
+
+/** Select del toolbar con flecha propia (el nativo varía por navegador). */
+function FiltroSelect<T extends string>({
+  value,
+  onChange,
+  opciones,
+  label,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  opciones: { value: T; label: string }[];
+  label: string;
+}) {
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as T)}
+        aria-label={label}
+        className="h-10 cursor-pointer appearance-none rounded-xl border border-hc-line-strong bg-white pl-3.5 pr-9 text-[13.5px] font-medium text-hc-ink transition hover:border-hc-soft focus:border-hc-rose focus:outline-none focus:ring-4 focus:ring-hc-rose/10"
+      >
+        {opciones.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <svg viewBox="0 0 24 24" className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-hc-soft" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </div>
+  );
+}
 
 /** Acciones que la vista padre (ServiciosView) puede disparar sobre el listado. */
 export interface ProductosViewHandle {
@@ -39,6 +83,11 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
     remove,
     uploadImage,
   } = useProductos();
+
+  // El tipo se filtra aquí (la API ya filtra búsqueda y línea).
+  const [tipo, setTipo] = useState<(typeof TIPOS)[number]["value"]>("");
+  const productosVisibles =
+    tipo === "" ? productos : productos.filter((p) => (tipo === "sin" ? !p.categoria : p.categoria === tipo));
 
   // Modal de cotización (configurador para el cliente)
   const [selected, setSelected] = useState<Producto | null>(null);
@@ -101,50 +150,32 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="flex-1">
+      {/* Toolbar: búsqueda, línea y tipo en una línea; "Nuevo producto" a la derecha */}
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="flex h-10 min-w-[220px] flex-1 items-center gap-2 rounded-xl border border-hc-line-strong bg-white px-3.5 text-hc-soft transition focus-within:border-hc-rose focus-within:ring-4 focus-within:ring-hc-rose/10 sm:max-w-sm">
+          <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+            <path d="m21 21-4.3-4.3M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z" />
+          </svg>
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar producto…"
-            className="w-full px-4 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft"
+            aria-label="Buscar producto"
+            className="min-w-0 flex-1 bg-transparent text-[13.5px] text-hc-ink placeholder:text-hc-soft focus:outline-none"
           />
-        </div>
-        <div className="flex gap-2">
-          {LINEAS.map((l) => (
-            <button
-              key={l.value}
-              onClick={() => setLinea(l.value)}
-              className={
-                "px-3 py-1.5 rounded-lg text-[12px] font-semibold border transition " +
-                (linea === l.value
-                  ? "bg-hc-rose text-white border-hc-rose"
-                  : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover")
-              }
-            >
-              {l.label}
-            </button>
-          ))}
-          {/* Botón crear */}
-          <button
-            onClick={() => setEditing("new")}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-hc-soft text-white text-[12px] font-bold hover:bg-hc-ink transition"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              className="w-3.5 h-3.5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Nuevo producto
-          </button>
-        </div>
+        </label>
+        <FiltroSelect value={linea} onChange={setLinea} opciones={LINEAS} label="Filtrar por línea" />
+        <FiltroSelect value={tipo} onChange={setTipo} opciones={TIPOS} label="Filtrar por tipo de producto" />
+        <button
+          onClick={() => setEditing("new")}
+          className="ml-auto flex h-10 items-center gap-2 rounded-xl bg-hc-rose px-4 text-[13.5px] font-semibold text-white shadow-[0_2px_8px_-2px_rgba(168,77,102,0.45)] transition hover:bg-hc-rose-hover active:scale-[0.98]"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Nuevo producto
+        </button>
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -152,10 +183,10 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
         <p className="text-center text-hc-soft text-sm py-8">Cargando…</p>
       )}
 
-      {!isLoading && productos.length === 0 && (
+      {!isLoading && productosVisibles.length === 0 && (
         <div className="rounded-2xl border border-hc-line bg-hc-hover py-12 text-center">
           <p className="text-hc-soft text-sm mb-3">
-            No hay productos en esta categoría
+            No hay productos con estos filtros
           </p>
           <button
             onClick={() => setEditing("new")}
@@ -166,9 +197,9 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
         </div>
       )}
 
-      {!isLoading && productos.length > 0 && (
+      {!isLoading && productosVisibles.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {productos.map((p) => (
+          {productosVisibles.map((p) => (
             <ProductoCard
               key={p.id}
               producto={p}

@@ -107,6 +107,44 @@ export const ORDEN_STATUS_EDITABLES: OrdenStatus[] = ["cotizacion", "en_proceso"
 /** Solo se puede marcar una venta para finanzas en estos estados. */
 export const ORDEN_STATUS_FINANZAS: OrdenStatus[] = ["pagado", "entregado"];
 
+/** El camino de una orden, en orden. "cancelado" queda fuera: es una salida, no un paso. */
+export const ORDEN_PIPELINE: OrdenStatus[] = [
+  "cotizacion",
+  "en_proceso",
+  "listo_entregar",
+  "pagado",
+  "entregado",
+];
+
+/** Ya es una orden (dejó de ser cotización) y sigue viva. */
+export const ORDEN_STATUS_EN_CURSO: OrdenStatus[] = [
+  "en_proceso",
+  "listo_entregar",
+  "pagado",
+  "entregado",
+];
+
+/**
+ * ¿Se puede pasar de `desde` a `hacia`? Se puede saltar pasos hacia adelante,
+ * pero no todo se puede deshacer:
+ * - una vez fuera de cotización, ya no se regresa a cotización;
+ * - pagada, solo puede entregarse (o cancelarse);
+ * - entregada o cancelada, ya no cambia.
+ */
+export function puedeCambiarEstado(desde: OrdenStatus, hacia: OrdenStatus): boolean {
+  if (desde === hacia) return false;
+  if (desde === "entregado" || desde === "cancelado") return false;
+  if (hacia === "cancelado") return true;
+  if (hacia === "cotizacion") return false;
+  if (desde === "pagado") return hacia === "entregado";
+  return true;
+}
+
+/** El cambio ya no se puede deshacer hacia atrás (para pedir confirmación). */
+export function esCambioSinRetorno(desde: OrdenStatus, hacia: OrdenStatus): boolean {
+  return desde === "cotizacion" || hacia === "pagado" || hacia === "entregado" || hacia === "cancelado";
+}
+
 /** Agregar una partida nueva a una orden ya existente — mismo shape que UpdateOrdenItemDTO sin id. */
 export interface AddOrdenItemDTO {
   nombre: string;

@@ -2,7 +2,7 @@
 // src/modules/admin/ordenes/presentation/components/OrdenDetailView.tsx
 //
 // Vista de detalle de una orden/cotización individual.
-// Reutiliza OrdenDetailCard (pipeline, PDF, etc.) igual que en el módulo clientes.
+// Reutiliza OrdenDetailCard en modo "pagina"; los PDF van en la línea de la ruta.
 
 import { useState, useEffect, useCallback, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
@@ -11,6 +11,7 @@ import type {
   OrdenStatus,
 } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { OrdenDetailCard } from "./OrdenDetailCard";
+import { OrdenPdfAcciones } from "./OrdenPdfAcciones";
 
 interface Props {
   ordenId: string;
@@ -65,42 +66,45 @@ export function OrdenDetailView({ ordenId }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-hc-muted">
-        <button
-          onClick={() => router.push("/admin/dashboard/store/ordenes")}
-          className="hover:text-hc-rose transition font-medium"
-        >
-          {label}
-        </button>
-        <svg
-          viewBox="0 0 24 24"
-          className="w-3.5 h-3.5 shrink-0"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        >
-          <path d="m9 18 6-6-6-6" />
-        </svg>
-        <span className="text-hc-soft font-semibold">
-          {orden ? `#${orden.numero}` : "Cargando…"}
-        </span>
-        {orden?.clienteNombre && (
-          <>
-            <svg
-              viewBox="0 0 24 24"
-              className="w-3.5 h-3.5 shrink-0"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <path d="m9 18 6-6-6-6" />
-            </svg>
-            <span className="text-hc-muted">{orden.clienteNombre}</span>
-          </>
-        )}
+      {/* Breadcrumb y, a la derecha en la misma línea, los PDF */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2 text-sm text-hc-muted">
+          <button
+            onClick={() => router.push("/admin/dashboard/store/ordenes")}
+            className="hover:text-hc-rose transition font-medium"
+          >
+            {label}
+          </button>
+          <svg
+            viewBox="0 0 24 24"
+            className="w-3.5 h-3.5 shrink-0"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+          <span className="text-hc-soft font-semibold">
+            {orden ? `#${orden.numero}` : "Cargando…"}
+          </span>
+          {orden?.clienteNombre && (
+            <>
+              <svg
+                viewBox="0 0 24 24"
+                className="w-3.5 h-3.5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+              <span className="truncate text-hc-muted">{orden.clienteNombre}</span>
+            </>
+          )}
+        </div>
+        {orden && !isPending && <OrdenPdfAcciones orden={orden} align="end" />}
       </div>
 
       {/* Estado de carga */}
@@ -128,7 +132,7 @@ export function OrdenDetailView({ ordenId }: Props) {
           orden={orden}
           onUpdateStatus={handleUpdateStatus}
           onRefresh={load}
-          defaultExpanded
+          modo="pagina"
         />
       )}
     </div>

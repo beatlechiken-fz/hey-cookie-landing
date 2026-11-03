@@ -21,7 +21,10 @@ import { CashbackRepositoryImpl } from "@/modules/admin/store/data/repositories/
 import { SincronizarCashbackOrdenUseCase } from "@/modules/admin/store/domain/usecases/Cashback.usecase";
 import { buildOrdenClienteHtml } from "@/core/helpers/generarPDF";
 import { desgloseItem, sumarDesgloses } from "@/core/helpers/finanzasFiltros";
-import type { Orden } from "@/modules/admin/store/domain/entities/Orden.entity";
+import {
+  ORDEN_STATUS_EN_CURSO,
+  type Orden,
+} from "@/modules/admin/store/domain/entities/Orden.entity";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -60,9 +63,10 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
       );
       updated = ord;
 
-      // ── Descontar inventario al pasar a en_proceso (si el toggle viene activo) ─
+      // ── Descontar inventario al salir de cotización (si el toggle viene activo) ─
+      // No solo en en_proceso: la orden puede saltar directo a listo, pagado o entregado.
       if (
-        ord.status === "en_proceso" &&
+        ORDEN_STATUS_EN_CURSO.includes(ord.status) &&
         ord.descontarInventario &&
         !ord.inventarioDescontado
       ) {
@@ -91,7 +95,8 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
         .catch(console.error);
 
       // ── Auto-crear registro financiero al marcar como pagado ──────────────
-      if (body.status === "pagado") {
+      // También al entregar: se puede llegar a entregado sin pasar por pagado.
+      if (body.status === "pagado" || body.status === "entregado") {
         const finDs = new FinanzasDatasource();
         const existing = await finDs.getRegistroByOrdenId(id).catch(() => null);
 

@@ -1,6 +1,7 @@
 "use client";
 // src/modules/admin/productos/presentation/components/ProductoEditorModal.tsx
 
+import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type {
@@ -483,12 +484,6 @@ export function ProductoEditorModal({
     "text-[11px] font-semibold text-hc-soft uppercase tracking-wider";
   const sectionCls =
     "flex flex-col gap-3 p-4 rounded-xl bg-hc-hover border border-hc-line";
-  const tabCls = (active: boolean) =>
-    `px-3 py-3 text-[12px] font-semibold border-b-2 transition -mb-px ${
-      active
-        ? "border-hc-rose text-hc-rose"
-        : "border-transparent text-hc-muted hover:text-hc-soft"
-    }`;
 
   const tabs = [
     { key: "info" as const, label: "Info" },
@@ -634,16 +629,13 @@ export function ProductoEditorModal({
               </div>
 
               {/* Tabs */}
-              <div className="flex border-b border-hc-line shrink-0 bg-white px-6 overflow-x-auto">
-                {tabs.map((t) => (
-                  <button
-                    key={t.key}
-                    onClick={() => setTab(t.key)}
-                    className={tabCls(tab === t.key)}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+              <div className="shrink-0 border-b border-hc-line bg-white px-6 py-3">
+                <PanelTabs
+                  label="Secciones del producto"
+                  tabs={tabs.map((t) => ({ value: t.key, label: t.label }))}
+                  value={tab}
+                  onChange={setTab}
+                />
               </div>
 
               {/* Body */}

@@ -5,7 +5,10 @@
 // Tabs horizontales: Cotizaciones | Órdenes
 // Lista global con click → detalle (reutiliza OrdenDetailCard del módulo clientes)
 
-import { useState } from "react";
+import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
+import { useEffect, useState } from "react";
+import { NuevaOrdenButton } from "./NuevaOrdenButton";
+import { EVENTO_ORDEN_CREADA } from "../hooks/useCartDrawerAdmin";
 import { useRouter } from "@/i18n/navigation";
 import { FinanzasToggle } from "./FinanzasToggle";
 import { OrdenStatusFilter } from "./OrdenStatusFilter";
@@ -58,6 +61,8 @@ export function OrdenesView() {
   const [statusSel, setStatusSel] = useState<OrdenStatus[]>([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  // Pantallas pequeñas: búsqueda y filtros viven tras el botón de filtros.
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
 
   // El filtro por estatus lo resuelve el servidor (así la paginación es correcta por pestaña).
   const statusesFiltro =
@@ -69,12 +74,19 @@ export function OrdenesView() {
     isLoading,
     error,
     setFinanzas,
+    reload,
   } = useOrdenesGlobal({
     search,
     page,
     pageSize: 50,
     statuses: statusesFiltro,
   });
+
+  // Una orden nueva desde el carrito aparece sin recargar la página.
+  useEffect(() => {
+    window.addEventListener(EVENTO_ORDEN_CREADA, reload);
+    return () => window.removeEventListener(EVENTO_ORDEN_CREADA, reload);
+  }, [reload]);
 
   const [finError, setFinError] = useState<string | null>(null);
   async function handleFinanzas(id: string, value: boolean) {
@@ -100,71 +112,96 @@ export function OrdenesView() {
     setPage(1);
   }
 
+  // Lo que el botón de filtros cuenta como aplicado (para no perderlo de vista con el panel cerrado).
+  const filtrosActivos = (search.trim() ? 1 : 0) + statusSel.length;
+
   const inputCls =
     "w-full pl-4 pr-4 py-2.5 rounded-xl border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 placeholder:text-hc-soft";
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Tabs horizontales */}
-      <div className="flex bg-hc-hover border border-hc-line rounded-xl p-1 gap-1 w-fit">
-        {[
-          { key: "ordenes" as Tab, label: "Órdenes", icon: "📦" },
-          { key: "cotizaciones" as Tab, label: "Cotizaciones", icon: "📋" },
-          { key: "canceladas" as Tab, label: "Canceladas", icon: "🚫" },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => handleTabChange(t.key)}
-            className={`flex items-center gap-1.5 px-5 py-2 rounded-lg text-[13px] font-semibold transition ${
-              tab === t.key
-                ? "bg-white text-hc-soft shadow-sm border border-hc-line"
-                : "text-hc-muted hover:text-hc-soft"
-            }`}
-          >
-            <span>{t.icon}</span>
-            {t.label}
-          </button>
-        ))}
+      {/* Tabs y, en pantallas pequeñas, el botón que abre búsqueda y filtros */}
+      <div className="flex items-center justify-between gap-3">
+        <PanelTabs
+          label="Tipo de pedido"
+          tabs={[
+            { value: "ordenes" as Tab, label: "Órdenes" },
+            { value: "cotizaciones" as Tab, label: "Cotizaciones" },
+            { value: "canceladas" as Tab, label: "Canceladas" },
+          ]}
+          value={tab}
+          onChange={handleTabChange}
+        />
+        <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setFiltrosAbiertos((v) => !v)}
+          aria-expanded={filtrosAbiertos}
+          aria-controls="ordenes-filtros"
+          aria-label="Búsqueda y filtros"
+          title="Búsqueda y filtros"
+          className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition md:hidden ${
+            filtrosAbiertos
+              ? "border-hc-rose bg-hc-rose/5 text-hc-rose"
+              : "border-hc-line-strong bg-white text-hc-muted hover:text-hc-ink"
+          }`}
+        >
+          <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M3 6h18M7 12h10M10 18h4" />
+          </svg>
+          {filtrosActivos > 0 && (
+            <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-hc-rose px-1 text-[10px] font-bold text-white">
+              {filtrosActivos}
+            </span>
+          )}
+        </button>
+        <NuevaOrdenButton />
+        </div>
       </div>
 
-      {/* Filtro por estatus — solo en Órdenes (cotización y cancelado tienen su pestaña) */}
-      {tab === "ordenes" && (
-        <OrdenStatusFilter
-          opciones={TAB_STATUSES.ordenes}
-          selected={statusSel}
-          onChange={handleStatusChange}
-        />
-      )}
-
-      {/* Buscador */}
-      <div className="relative">
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          placeholder={
-            tab === "cotizaciones"
-              ? "Buscar cotización por cliente o número…"
-              : "Buscar orden por cliente o número…"
-          }
-          className={inputCls}
-        />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
-          <svg
-            viewBox="0 0 24 24"
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
+      {/* Búsqueda y filtro por estatus en una línea; en pantallas pequeñas,
+          apilados y solo con el panel abierto. El filtro por estatus solo
+          aplica a Órdenes (cotización y cancelado tienen su pestaña). */}
+      <div
+        id="ordenes-filtros"
+        className={`${filtrosAbiertos ? "flex" : "hidden"} flex-col gap-3 md:flex md:flex-row md:items-center md:gap-4`}
+      >
+        <div className="relative min-w-0 flex-1">
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            placeholder={
+              tab === "cotizaciones"
+                ? "Buscar cotización por cliente o número…"
+                : "Buscar orden por cliente o número…"
+            }
+            className={inputCls}
+          />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-hc-soft pointer-events-none">
+            <svg
+              viewBox="0 0 24 24"
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
+          </div>
         </div>
+        {tab === "ordenes" && (
+          <OrdenStatusFilter
+            opciones={TAB_STATUSES.ordenes}
+            selected={statusSel}
+            onChange={handleStatusChange}
+          />
+        )}
       </div>
 
       {/* Contador */}

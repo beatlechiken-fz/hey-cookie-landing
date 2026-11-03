@@ -8,11 +8,42 @@ import { PersonalizadoConfiguradorModal } from "./configurador/PersonalizadoConf
 import { ProductosView, type ProductosViewHandle } from "./ProductosView";
 import type { CreateProductoDTO } from "../../domain/entities/Producto.entity";
 
+type Personalizado = "pastel" | "gelatina" | "armado";
+
+// Cada configurador en su tarjeta pastel tenue, con el botón en el tono
+// oscuro de esa misma tarjeta.
+const PERSONALIZADOS: { key: Personalizado; titulo: string; fondo: string; boton: string }[] = [
+  {
+    key: "pastel",
+    titulo: "Pastel personalizado",
+    fondo: "bg-[#FCF1F4]",
+    boton: "bg-[#A84D66] hover:bg-[#933F57] shadow-[0_2px_8px_-2px_rgba(168,77,102,0.45)]",
+  },
+  {
+    key: "gelatina",
+    titulo: "Gelatina personalizada",
+    fondo: "bg-[#EFF6EF]",
+    boton: "bg-[#5E8566] hover:bg-[#4D7055] shadow-[0_2px_8px_-2px_rgba(94,133,102,0.45)]",
+  },
+  {
+    key: "armado",
+    titulo: "Armado personalizado",
+    fondo: "bg-[#FDF3EC]",
+    boton: "bg-[#AA6A42] hover:bg-[#935A37] shadow-[0_2px_8px_-2px_rgba(170,106,66,0.45)]",
+  },
+];
+
 export function ServiciosView() {
   const [configuradorOpen, setConfiguradorOpen] = useState(false);
   const [gelatinaOpen, setGelatinaOpen] = useState(false);
   const [personalizadoOpen, setPersonalizadoOpen] = useState(false);
   const productosRef = useRef<ProductosViewHandle>(null);
+
+  function abrir(tipo: Personalizado) {
+    if (tipo === "pastel") setConfiguradorOpen(true);
+    else if (tipo === "gelatina") setGelatinaOpen(true);
+    else setPersonalizadoOpen(true);
+  }
 
   // "Guardar como producto" desde un configurador: crea el producto y abre su
   // editor en ProductosView; el configurador se cierra solo al terminar.
@@ -29,111 +60,22 @@ export function ServiciosView() {
           Productos personalizados
         </h2>
 
-        <div className="grid grid-cols-2 gap-4 max-w-2xl sm:grid-cols-3">
-          {/* Tarjeta Pastel personalizado */}
-          <button
-            onClick={() => setConfiguradorOpen(true)}
-            className="group bg-white rounded-2xl border border-hc-line overflow-hidden shadow-sm hover:border-hc-line-strong hover:shadow-md transition text-left"
-          >
-            <div className="aspect-square bg-hc-hover flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-16 h-16 text-hc-line-strong group-hover:text-hc-rose-soft transition"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        <div className="flex flex-wrap gap-3">
+          {PERSONALIZADOS.map((t) => (
+            <div
+              key={t.key}
+              className={`flex w-[196px] flex-col items-center gap-3 rounded-2xl px-4 pb-4 pt-5 text-center ${t.fondo}`}
+            >
+              <p className="text-[14px] font-bold leading-tight text-hc-ink">{t.titulo}</p>
+              <button
+                type="button"
+                onClick={() => abrir(t.key)}
+                className={`w-full rounded-full py-2 text-[13px] font-semibold text-white transition active:scale-[0.98] ${t.boton}`}
               >
-                <path d="M12 2a3 3 0 0 0-3 3c0 1.5 1 2 1 3.5S9 11 9 11h6s-1-2-1-2.5S15 6.5 15 5a3 3 0 0 0-3-3z" />
-                <path d="M4 11h16l-1 9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2l-1-9z" />
-                <path d="M4 15h16M4 19h16" opacity="0.4" />
-              </svg>
-            </div>
-            <div className="p-3 flex flex-col items-center gap-2">
-              <p className="font-semibold text-hc-ink text-[13px] text-center leading-tight">
-                Pastel personalizado
-              </p>
-              <span className="w-full text-center py-2 rounded-xl bg-hc-rose text-white text-[12px] font-bold group-hover:bg-hc-rose-hover transition">
                 Configurar
-              </span>
+              </button>
             </div>
-          </button>
-
-          {/* Tarjeta Gelatina personalizada */}
-          <button
-            onClick={() => setGelatinaOpen(true)}
-            className="group bg-white rounded-2xl border border-hc-line overflow-hidden shadow-sm hover:border-hc-line-strong hover:shadow-md transition text-left"
-          >
-            <div className="aspect-square bg-[#f0f9fd] flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-16 h-16 text-[#a8d8e8] group-hover:text-[#7bc0d8] transition"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M8 2h8l1 4H7L8 2z" />
-                <path d="M6 6c0 0-1 2-1 5s1 8 7 9c6-1 7-6 7-9s-1-5-1-5" />
-                <path d="M8 11c0 0 1 2 4 2s4-2 4-2" opacity="0.5" />
-                <circle cx="9" cy="8" r="1" fill="currentColor" opacity="0.4" />
-                <circle
-                  cx="15"
-                  cy="9"
-                  r="1"
-                  fill="currentColor"
-                  opacity="0.4"
-                />
-                <circle
-                  cx="12"
-                  cy="7"
-                  r="0.8"
-                  fill="currentColor"
-                  opacity="0.3"
-                />
-              </svg>
-            </div>
-            <div className="p-3 flex flex-col items-center gap-2">
-              <p className="font-semibold text-hc-ink text-[13px] text-center leading-tight">
-                Gelatina personalizada
-              </p>
-              <span className="w-full text-center py-2 rounded-xl bg-[#5badd0] text-white text-[12px] font-bold group-hover:bg-[#4090b0] transition">
-                Configurar
-              </span>
-            </div>
-          </button>
-
-          {/* Tarjeta Armado personalizado (sin bizcocho ni gelatina) */}
-          <button
-            onClick={() => setPersonalizadoOpen(true)}
-            className="group bg-white rounded-2xl border border-hc-line overflow-hidden shadow-sm hover:border-hc-line-strong hover:shadow-md transition text-left"
-          >
-            <div className="aspect-square bg-[#fdf3e7] flex items-center justify-center">
-              <svg
-                viewBox="0 0 24 24"
-                className="w-16 h-16 text-[#e3c89a] group-hover:text-[#cfa964] transition"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="7" width="7" height="7" rx="1.5" />
-                <circle cx="17.5" cy="10.5" r="3.5" />
-                <path d="M4 17h16M4 20h10" opacity="0.4" />
-              </svg>
-            </div>
-            <div className="p-3 flex flex-col items-center gap-2">
-              <p className="font-semibold text-hc-ink text-[13px] text-center leading-tight">
-                Armado personalizado
-              </p>
-              <span className="w-full text-center py-2 rounded-xl bg-[#cfa964] text-white text-[12px] font-bold group-hover:bg-[#b8924f] transition">
-                Configurar
-              </span>
-            </div>
-          </button>
+          ))}
         </div>
       </div>
 

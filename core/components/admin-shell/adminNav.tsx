@@ -1,19 +1,9 @@
 // Navegación del panel admin: grupos del sidebar e íconos (trazos estilo lucide).
 
 import type { ReactNode } from "react";
+import { itemActivo, tituloPorMenu, type PanelNavGroup, type PanelTitulo } from "@/core/components/panel-shell/panelNav";
 
-export type AdminNavItem = {
-  key: string;
-  label: string;
-  href: string;
-  icon: ReactNode;
-};
-
-export type AdminNavGroup = {
-  key: string;
-  label: string | null;
-  items: AdminNavItem[];
-};
+export { stripLocale } from "@/core/components/panel-shell/panelNav";
 
 function Svg({ children }: { children: ReactNode }) {
   return (
@@ -39,6 +29,24 @@ export const AdminIcons = {
       <rect x="14" y="3" width="7" height="5" rx="1.5" />
       <rect x="14" y="12" width="7" height="9" rx="1.5" />
       <rect x="3" y="16" width="7" height="5" rx="1.5" />
+    </Svg>
+  ),
+  store: (
+    <Svg>
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+      <path d="M3 6h18M16 10a4 4 0 0 1-8 0" />
+    </Svg>
+  ),
+  administracion: (
+    <Svg>
+      <path d="M3 3v18h18" />
+      <path d="M8 17v-5M13 17V8M18 17v-3" />
+    </Svg>
+  ),
+  materiasPrimas: (
+    <Svg>
+      <path d="m12 2 10 5-10 5L2 7Z" />
+      <path d="m2 12 10 5 10-5M2 17l10 5 10-5" />
     </Svg>
   ),
   ordenes: (
@@ -125,27 +133,36 @@ export const AdminIcons = {
   ),
 };
 
-export const ADMIN_NAV: AdminNavGroup[] = [
+export const ADMIN_NAV: PanelNavGroup[] = [
   {
     key: "inicio",
     label: null,
-    items: [{ key: "dashboard", label: "Inicio", href: "/admin/dashboard", icon: AdminIcons.dashboard }],
+    items: [{ key: "dashboard", label: "Dashboard", href: "/admin/dashboard", icon: AdminIcons.dashboard, exacto: true }],
   },
   {
-    key: "tienda",
-    label: "Tienda",
+    key: "store",
+    label: "Store",
+    icon: AdminIcons.store,
     items: [
       { key: "ordenes", label: "Órdenes", href: "/admin/dashboard/store/ordenes", icon: AdminIcons.ordenes },
-      { key: "produccion", label: "Producción", href: "/admin/dashboard/store/produccion", icon: AdminIcons.produccion },
-      { key: "servicios", label: "Servicios", href: "/admin/dashboard/store/servicios", icon: AdminIcons.servicios },
       { key: "clientes", label: "Clientes", href: "/admin/dashboard/store/clientes", icon: AdminIcons.clientes },
       { key: "cupones", label: "Beneficios", href: "/admin/dashboard/store/beneficios", icon: AdminIcons.cupones },
+      { key: "servicios", label: "Servicios", href: "/admin/dashboard/store/servicios", icon: AdminIcons.servicios },
+    ],
+  },
+  {
+    key: "administracion",
+    label: "Administración",
+    icon: AdminIcons.administracion,
+    items: [
+      { key: "produccion", label: "Producción", href: "/admin/dashboard/store/produccion", icon: AdminIcons.produccion },
       { key: "finanzas", label: "Finanzas", href: "/admin/dashboard/store/finanzas", icon: AdminIcons.finanzas },
     ],
   },
   {
     key: "raws",
     label: "Materias primas",
+    icon: AdminIcons.materiasPrimas,
     items: [
       { key: "insumos", label: "Insumos", href: "/admin/dashboard/raws/insumos", icon: AdminIcons.insumos },
       { key: "bizcochos", label: "Bizcochos", href: "/admin/dashboard/raws/bizcochos", icon: AdminIcons.bizcochos },
@@ -162,29 +179,12 @@ export const ADMIN_NAV: AdminNavGroup[] = [
 const TITULOS_ESPECIALES: { patron: RegExp; titulo: string; grupo: string }[] = [
   { patron: /^\/admin\/dashboard\/store\/ordenes\/[^/]+$/, titulo: "Detalle de la orden", grupo: "Órdenes" },
   { patron: /^\/admin\/dashboard\/store\/clientes\/[^/]+$/, titulo: "Detalle del cliente", grupo: "Clientes" },
-  { patron: /^\/admin\/dashboard\/store\/ordenes$/, titulo: "Cotizaciones y órdenes", grupo: "Tienda" },
+  { patron: /^\/admin\/dashboard\/store\/ordenes$/, titulo: "Cotizaciones y órdenes", grupo: "Store" },
 ];
 
-export function stripLocale(pathname: string) {
-  return pathname.replace(/^\/(en|es)(?=\/|$)/, "") || "/";
-}
-
-/** Ítem activo: coincidencia exacta o por prefijo (el inicio solo exacto). */
-export function itemActivo(path: string): AdminNavItem | null {
-  for (const g of ADMIN_NAV) {
-    for (const it of g.items) {
-      if (it.key === "dashboard" ? path === it.href : path === it.href || path.startsWith(it.href + "/")) return it;
-    }
-  }
-  return null;
-}
-
-export function tituloDe(path: string): { titulo: string; grupo: string | null } {
+export function tituloAdmin(path: string): PanelTitulo {
   const especial = TITULOS_ESPECIALES.find((t) => t.patron.test(path));
   if (especial) return { titulo: especial.titulo, grupo: especial.grupo };
-  for (const g of ADMIN_NAV) {
-    const it = g.items.find((i) => i.key === itemActivo(path)?.key);
-    if (it) return { titulo: it.key === "dashboard" ? "Panel de control" : it.label, grupo: g.label };
-  }
-  return { titulo: "Panel", grupo: null };
+  if (itemActivo(ADMIN_NAV, path)?.key === "dashboard") return { titulo: "Panel de control", grupo: null };
+  return tituloPorMenu(ADMIN_NAV, path, "Panel");
 }

@@ -5,6 +5,7 @@
 // automáticos (cumpleaños y los que se agreguen). Todo beneficio se entrega
 // siempre como un cupón.
 
+import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
 import { useState } from "react";
 import { CuponesView } from "./CuponesView";
 import { BeneficiosAutomaticosSection } from "./BeneficiosAutomaticosSection";
@@ -21,22 +22,12 @@ export function BeneficiosView() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex gap-1 rounded-xl bg-hc-hover p-1 w-fit">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={
-              "px-3.5 py-1.5 rounded-lg text-[13px] font-semibold transition " +
-              (tab === t.key
-                ? "bg-white text-hc-rose shadow-sm"
-                : "text-hc-muted hover:text-hc-ink")
-            }
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <PanelTabs
+        label="Secciones de beneficios"
+        tabs={TABS.map((t) => ({ value: t.key, label: t.label }))}
+        value={tab}
+        onChange={setTab}
+      />
 
       {tab === "automaticos" ? <BeneficiosAutomaticosSection /> : <CuponesView />}
     </div>

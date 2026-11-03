@@ -4,7 +4,9 @@ import type { OrdenRepository } from "../repositories/Orden.repository";
 import {
   ORDEN_STATUS_EDITABLES,
   ORDEN_STATUS_FINANZAS,
+  ORDEN_STATUS_LABELS,
   OBSERVACIONES_MAX,
+  puedeCambiarEstado,
   type CreateOrdenDTO,
   type Orden,
   type OrdenStatus,
@@ -71,6 +73,10 @@ export class UpdateOrdenStatusUseCase {
   async execute(id: string, status: OrdenStatus, descontarInventario?: boolean) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new Error(`Orden ${id} no encontrada`);
+    if (!puedeCambiarEstado(existing.status, status))
+      throw new Error(
+        `No se puede pasar de "${ORDEN_STATUS_LABELS[existing.status]}" a "${ORDEN_STATUS_LABELS[status]}"`,
+      );
     return this.repo.updateStatus(id, status, descontarInventario);
   }
 }

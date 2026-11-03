@@ -1,6 +1,7 @@
 "use client";
 // src/modules/admin/finanzas/presentation/components/FinanzasView.tsx
 
+import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
 import { useState } from "react";
 import { ResumenTab } from "./ResumenTab";
 import { IngresosTab } from "./IngresosTab";
@@ -43,22 +44,12 @@ export function FinanzasView() {
       {/* Header con tabs y filtro de período */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
         {/* Tabs */}
-        <div className="flex bg-hc-hover border border-hc-line rounded-xl p-1 gap-1">
-          {TABS.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold transition ${
-                tab === t.key
-                  ? "bg-white text-hc-soft shadow-sm border border-hc-line"
-                  : "text-hc-muted hover:text-hc-soft"
-              }`}
-            >
-              <span>{t.icon}</span>
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <PanelTabs
+          label="Secciones de finanzas"
+          tabs={TABS.map((t) => ({ value: t.key, label: t.label }))}
+          value={tab}
+          onChange={setTab}
+        />
 
         {/* Filtro de período */}
         <div className="flex items-center gap-2 text-sm">

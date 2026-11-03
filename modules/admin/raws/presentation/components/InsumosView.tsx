@@ -4,6 +4,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
 import { RawThumb } from "./RawThumb";
 import { useIngredientes } from "../hooks/useIngredientes";
 import { ToppingsTab } from "./ToppingsTab";
@@ -117,36 +118,6 @@ function SlidersIcon({ className = "w-4 h-4" }: { className?: string }) {
       <line x1="3" y1="14" x2="17" y2="14" />
       <circle cx="13" cy="14" r="2" fill="currentColor" stroke="none" />
     </svg>
-  );
-}
-
-// ── Tab ───────────────────────────────────────────────────────────────────────
-
-function Tab({
-  label,
-  active,
-  onClick,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={
-        "relative px-5 py-2.5 text-sm font-semibold transition " +
-        (active ? "text-hc-rose" : "text-hc-muted hover:text-hc-soft")
-      }
-    >
-      {label}
-      {active && (
-        <motion.div
-          layoutId="insumos-tab"
-          className="absolute bottom-0 left-0 right-0 h-0.5 bg-hc-rose rounded-full"
-        />
-      )}
-    </button>
   );
 }
 
@@ -1262,23 +1233,12 @@ export function InsumosView() {
   return (
     <div className="flex flex-col gap-5">
       {/* Tabs */}
-      <div className="flex border-b border-hc-line">
-        <Tab
-          label="Insumos"
-          active={activeTab === "insumos"}
-          onClick={() => setActiveTab("insumos")}
-        />
-        <Tab
-          label="Toppings"
-          active={activeTab === "toppings"}
-          onClick={() => setActiveTab("toppings")}
-        />
-        <Tab
-          label="Licores"
-          active={activeTab === "licores"}
-          onClick={() => setActiveTab("licores")}
-        />
-      </div>
+      <PanelTabs
+        label="Secciones"
+        tabs={[{ value: "insumos", label: "Insumos" }, { value: "toppings", label: "Toppings" }, { value: "licores", label: "Licores" }]}
+        value={activeTab}
+        onChange={setActiveTab}
+      />
 
       <AnimatePresence mode="wait">
         <motion.div

@@ -10,6 +10,8 @@ import { PastelConfiguradorModal } from "./configurador/PastelConfiguradorModal"
 import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
 import { PersonalizadoConfiguradorModal } from "./configurador/PersonalizadoConfiguradorModal";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
+import { ProductoPickerModal } from "./ProductoPickerModal";
+import { EVENTO_ORDEN_CREADA } from "../hooks/useCartDrawerAdmin";
 import type {
   CreateOrdenDTO,
   OrdenItem,
@@ -24,6 +26,16 @@ interface Props {
 }
 
 const noSuscribir = () => () => {};
+
+type Agregando = "catalogo" | "pastel" | "gelatina" | "armado";
+
+// Formas de sumar productos a la orden sin salir del carrito.
+const OPCIONES_AGREGAR: { key: Agregando; label: string; d: string }[] = [
+  { key: "catalogo", label: "Del catálogo", d: "M4 6h16M4 12h16M4 18h10" },
+  { key: "pastel", label: "Pastel", d: "M4 11h16v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1ZM4 15h16M12 3v4M9 7h6" },
+  { key: "gelatina", label: "Gelatina", d: "M4 18h16l-1.5-9.5A2 2 0 0 0 16.5 7h-9a2 2 0 0 0-2 1.5ZM3 21h18" },
+  { key: "armado", label: "Armado", d: "M3 7h7v7H3ZM17.5 14a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM4 18h16" },
+];
 
 export function CartDrawer({ open, onClose }: Props) {
   // Se monta en <body> con un portal: dentro de la topbar (que usa
@@ -83,6 +95,10 @@ export function CartDrawer({ open, onClose }: Props) {
     // Items cuyo origen no se pudo inferir (de un flujo público como
     // CustomPipeline) no tienen un modal admin que reabrir.
   }
+
+  // ── Agregar productos desde el carrito (los modales se abren encima) ──
+  const [agregando, setAgregando] = useState<Agregando | null>(null);
+  const [productoElegido, setProductoElegido] = useState<Producto | null>(null);
 
   function closeEdit() {
     setEditItem(null);
@@ -212,6 +228,7 @@ export function CartDrawer({ open, onClose }: Props) {
         })),
       };
       const orden = await createOrden(dto);
+      window.dispatchEvent(new Event(EVENTO_ORDEN_CREADA));
       // Genera PDF automáticamente al crear
       try {
         const { generarCotizacionPdf } =
@@ -295,7 +312,7 @@ export function CartDrawer({ open, onClose }: Props) {
                   <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
                 <h2 className="font-bold text-hc-soft text-base">
-                  Carrito de compras
+                  Nueva orden
                 </h2>
               </div>
               <button
@@ -483,6 +500,28 @@ export function CartDrawer({ open, onClose }: Props) {
 
             {/* Body */}
             <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5">
+              {/* Agregar producto */}
+              <div className="flex flex-col gap-2">
+                <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
+                  Agregar producto
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {OPCIONES_AGREGAR.map((o) => (
+                    <button
+                      key={o.key}
+                      type="button"
+                      onClick={() => setAgregando(o.key)}
+                      className="flex items-center gap-2 rounded-xl border border-hc-line-strong bg-white px-3 py-2.5 text-left text-[13px] font-semibold text-hc-ink transition hover:border-hc-rose hover:bg-hc-rose-tint hover:text-hc-rose"
+                    >
+                      <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 text-hc-rose" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                        <path d={o.d} />
+                      </svg>
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {items.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-2 py-12 text-center">
                   <svg
@@ -499,7 +538,7 @@ export function CartDrawer({ open, onClose }: Props) {
                     <path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
                   <p className="text-hc-soft text-sm">
-                    El carrito está vacío
+                    Agrega productos para armar la orden
                   </p>
                 </div>
               ) : (
@@ -785,6 +824,32 @@ export function CartDrawer({ open, onClose }: Props) {
       onClose={closeEdit}
       editItem={editItem?.origen === "producto-configurador" ? editItem : null}
     />
+
+    {/* Modales para agregar — encima del drawer, que sigue abierto debajo
+        (cerrarlo borraría fecha, notas y demás datos capturados). */}
+    {agregando && (
+      <div className="relative z-[60]">
+        {agregando === "catalogo" && (
+          <>
+            <ProductoPickerModal
+              open={!productoElegido}
+              onClose={() => setAgregando(null)}
+              onSelect={(p) => setProductoElegido(p)}
+            />
+            <ProductoConfiguradorModal
+              producto={productoElegido}
+              onClose={() => {
+                setProductoElegido(null);
+                setAgregando(null);
+              }}
+            />
+          </>
+        )}
+        <PastelConfiguradorModal open={agregando === "pastel"} onClose={() => setAgregando(null)} />
+        <GelatinaCotizadorModal open={agregando === "gelatina"} onClose={() => setAgregando(null)} />
+        <PersonalizadoConfiguradorModal open={agregando === "armado"} onClose={() => setAgregando(null)} />
+      </div>
+    )}
     </>,
     document.body,
   );
