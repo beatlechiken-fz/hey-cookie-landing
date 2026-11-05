@@ -2,14 +2,14 @@
 
 import { useTranslations } from "next-intl";
 import SectionCover, {
-  BandaTemporada,
+  tonoHex,
   type TonoPortada,
 } from "@/core/components/section-cover/SectionCover";
+import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 import ProductGrid from "./ProductGrid";
-import {
-  COLECCIONES,
-  type Producto,
-  type LineaProducto,
+import type {
+  Producto,
+  LineaProducto,
 } from "@/modules/admin/store/domain/entities/Producto.entity";
 
 const LINE_ORDER: LineaProducto[] = ["sweet", "fitness", "healthy"];
@@ -29,16 +29,16 @@ interface Props {
   kicker: string;
   /** Imagen de portada propia de la sección (core/data/portadas.ts). */
   portada?: string | null;
+  /** Color de lo que hay arriba; la onda de entrada baja al color de la primera franja. */
+  ondaSuperior: string;
 }
 
 /**
- * Franjas de productos para pasteles / repostería / gelatinas: primero una
- * franja por colección de temporada (siempre visible; "Próximamente…" si está
- * vacía) con colores de Halloween, y luego una por línea con los productos del
- * catálogo regular. Cada franja abre con su portada corta y muestra todos sus
- * productos.
+ * Franjas de productos para pasteles / repostería / gelatinas: una por línea
+ * con los productos activos. Cada franja abre con su portada corta y muestra
+ * todos sus productos.
  */
-export default function ProductBands({ productos, precios = {}, kicker, portada }: Props) {
+export default function ProductBands({ productos, precios = {}, kicker, portada, ondaSuperior }: Props) {
   const t = useTranslations();
   const conPrecio = (items: Producto[]) =>
     items.map((producto) => ({ producto, precio: precios[producto.id] ?? null }));
@@ -46,24 +46,15 @@ export default function ProductBands({ productos, precios = {}, kicker, portada 
   const lineas = LINE_ORDER.map((line) => ({
     key: line,
     title: t(`cakes.lines.${line}`),
-    items: productos.filter((p) => !p.coleccion && p.linea === line),
+    items: productos.filter((p) => p.linea === line),
   })).filter((b) => b.items.length > 0);
 
   return (
     <div className="relative">
-      {COLECCIONES.map((c) => {
-        const items = productos.filter((p) => p.coleccion === c.value);
-        return (
-          <BandaTemporada
-            key={c.value}
-            kicker={kicker}
-            titulo={t(`cakes.collections.${c.value}`)}
-            imagen={items[0]?.imagenUrl ?? null}
-          >
-            <ProductGrid items={conPrecio(items)} mostrarLinea oscuro />
-          </BandaTemporada>
-        );
-      })}
+      <HeaderWaveRibbon
+        topFill={ondaSuperior}
+        bottomFill={lineas[0] ? tonoHex(TONO_LINEA[lineas[0].key]) : "#FAF3E0"}
+      />
 
       {lineas.map((band, i) => (
         <section key={band.key} aria-label={band.title}>

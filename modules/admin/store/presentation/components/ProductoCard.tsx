@@ -9,6 +9,7 @@ interface Props {
   onClick: () => void;
   onEdit: (e: React.MouseEvent) => void;
   onDuplicate: (e: React.MouseEvent) => void;
+  onToggleActivo: (e: React.MouseEvent) => void;
   onDelete: (e: React.MouseEvent) => void;
 }
 
@@ -24,7 +25,7 @@ const LINEA_LABELS: Record<string, { label: string; cls: string }> = {
   },
 };
 
-export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete }: Props) {
+export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onToggleActivo, onDelete }: Props) {
   const linea = LINEA_LABELS[producto.linea] ?? LINEA_LABELS.sweet;
 
   return (
@@ -40,7 +41,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
               src={producto.imagenUrl}
               alt={producto.nombre}
               fill
-              className="object-cover"
+              className={`object-cover ${producto.activo ? "" : "opacity-50 grayscale"}`}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-hc-line-strong">
@@ -65,6 +66,11 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
           >
             {linea.label}
           </span>
+          {!producto.activo && (
+            <span className="absolute bottom-2 left-2 rounded-full border border-hc-line-strong bg-white/95 px-2 py-0.5 text-[10px] font-bold text-hc-muted">
+              Inactivo
+            </span>
+          )}
 
           {/* Botones editar/eliminar — aparecen al hover */}
           <div className="absolute top-2 right-2 flex gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity">
@@ -102,6 +108,24 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onDelete 
                 <rect x="9" y="9" width="13" height="13" rx="2" />
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
+            </button>
+            <button
+              onClick={onToggleActivo}
+              title={producto.activo ? "Desactivar (ocultar en la página)" : "Activar (mostrar en la página)"}
+              aria-label={producto.activo ? "Desactivar producto" : "Activar producto"}
+              className="p-1.5 rounded-lg bg-white/90 border border-hc-line-strong text-hc-soft hover:bg-hc-hover hover:text-hc-rose shadow-sm transition backdrop-blur-sm"
+            >
+              {producto.activo ? (
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 4.4-1.1" />
+                  <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+                </svg>
+              )}
             </button>
             <button
               onClick={onDelete}

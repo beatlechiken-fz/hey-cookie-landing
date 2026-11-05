@@ -56,8 +56,7 @@
       "description": "Our cookie for love and friendship, made with rose water, filled with almonds, and topped with white chocolate and rose petals."
     },
     "title": "Sweet Cookies",
-    "titleFiness": "Fitness & Healthy Cookies",
-    "titleHalloween": "Halloween & Day of the Dead"
+    "titleFiness": "Fitness & Healthy Cookies"
   },
   "cakes": {
     "title": "Cakes",
@@ -66,9 +65,6 @@
     "sweetCategory": "Sweet",
     "healthyCategory": "Healthy",
     "gfCategory": "Gluten-Free",
-    "collections": {
-      "halloween-muertos": "Halloween & Day of the Dead"
-    },
     "lines": {
       "sweet": "Sweet Line",
       "fitness": "Fitness Line",
@@ -293,7 +289,6 @@
   },
   "mainnav": {
     "bakeLab": "Bake Lab",
-    "halloween": "Halloween & Day of the Dead",
     "home": "Cookies",
     "cake": "Cakes & Sweet Breads",
     "desserts": "Pastry",
@@ -319,26 +314,13 @@
     "pedidos": "Orders",
     "contacto": "Contact",
     "galletas": "Cookies",
-    "temporada": "Seasonal",
     "custom": "Build your cake",
     "cuenta": "My account",
-    "menuPdf": "Seasonal menu (PDF)",
     "whatsapp": "Message us on WhatsApp",
     "instagram": "Follow us on Instagram",
     "entrega": "Delivery in Morelia",
     "anticipacion": "Order 3 days in advance",
     "horario": "Monday to Saturday, 8 am to 7 pm"
-  },
-  "halloween": {
-    "title": "Halloween & Day of the Dead",
-    "descargarMenu": "Download menu",
-    "proximamente": "Coming soon…",
-    "sections": {
-      "pasteles": "Cakes & Sweet Breads",
-      "reposteria": "Pastry",
-      "gelatinas": "Jellies",
-      "galletas": "Cookies"
-    }
   },
   "home": {
     "antojo": {
@@ -363,15 +345,9 @@
     },
     "chips": {
       "label": "Jump to section",
-      "temporada": "Seasonal",
       "galletas": "Cookies",
       "fitness": "Fitness",
       "pasteles": "Cakes"
-    },
-    "temporada": {
-      "kicker": "Seasonal",
-      "desc": "Pumpkin, café de olla and chocolate: the flavors of Halloween and Day of the Dead.",
-      "verMenu": "See full menu"
     },
     "galletas": {
       "kicker": "Cookies",

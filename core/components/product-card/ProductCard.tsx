@@ -43,9 +43,8 @@ const TONO: Record<
   },
 };
 
-/** Tono de un producto: temporada → noche; si no, por línea. */
-export function tonoProducto(p: { linea?: string | null; coleccion?: string | null }): TonoCard {
-  if (p.coleccion) return "noche";
+/** Tono de un producto según su línea. */
+export function tonoProducto(p: { linea?: string | null }): TonoCard {
   if (p.linea === "fitness" || p.linea === "healthy") return "olivo";
   return "rosa";
 }

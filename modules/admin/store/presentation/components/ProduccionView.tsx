@@ -48,7 +48,7 @@ export function ProduccionView() {
     let active = true;
     setProductoLoading(true);
     const t = setTimeout(() => {
-      fetch(`/api/admin/productos?search=${encodeURIComponent(q)}&pageSize=8`)
+      fetch(`/api/admin/productos?search=${encodeURIComponent(q)}&pageSize=8&activo=true`)
         .then((r) => r.json())
         .then((data) => {
           if (active) setProductoResults(data.data ?? []);

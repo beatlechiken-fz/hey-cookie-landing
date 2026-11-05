@@ -15,12 +15,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   try {
     const { searchParams } = req.nextUrl;
+    const activoParam = searchParams.get("activo");
     const result = await new GetProductosUseCase(
       new ProductoRepositoryImpl(),
     ).execute({
       search: searchParams.get("search") ?? undefined,
       linea: (searchParams.get("linea") as LineaProducto) ?? undefined,
-      activo: searchParams.get("activo") !== "false",
+      activo:
+        activoParam === "true" ? true : activoParam === "false" ? false : undefined,
       page: Number(searchParams.get("page") ?? 1),
       pageSize: Number(searchParams.get("pageSize") ?? 50),
     });

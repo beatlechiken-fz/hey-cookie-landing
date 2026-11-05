@@ -21,15 +21,13 @@ export interface CatalogoPublico {
  */
 export async function fetchCatalogoPublico(
   categoria: CategoriaProducto,
-  filtro?: { soloRegulares?: boolean },
 ): Promise<CatalogoPublico> {
   try {
-    let q = getSupabaseAdmin()
+    const q = getSupabaseAdmin()
       .from("productos")
       .select("*")
       .eq("categoria", categoria)
       .eq("activo", true);
-    if (filtro?.soloRegulares) q = q.is("coleccion", null);
     const [{ data, error }, catalogo] = await Promise.all([
       q.order("nombre"),
       getPastelConfigCatalogoPublico(),

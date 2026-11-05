@@ -2,7 +2,7 @@
 // src/modules/admin/productos/presentation/components/ProductosView.tsx
 
 import { useState, useImperativeHandle, type Ref } from "react";
-import { useProductos } from "../hooks/useProductos";
+import { useProductos, type EstadoProducto } from "../hooks/useProductos";
 import { ProductoCard } from "./ProductoCard";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
 import { ProductoEditorModal } from "./ProductoEditorModal";
@@ -18,6 +18,12 @@ const LINEAS: { value: LineaProducto | ""; label: string }[] = [
   { value: "sweet", label: "Sweet" },
   { value: "fitness", label: "Fitness" },
   { value: "healthy", label: "Healthy" },
+];
+
+const ESTADOS: { value: EstadoProducto; label: string }[] = [
+  { value: "", label: "Activos e inactivos" },
+  { value: "activo", label: "Solo activos" },
+  { value: "inactivo", label: "Solo inactivos" },
 ];
 
 // "sin" = productos sin tipo asignado.
@@ -76,8 +82,10 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
     error,
     search,
     linea,
+    estado,
     setSearch,
     setLinea,
+    setEstado,
     create,
     update,
     remove,
@@ -127,6 +135,14 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
     },
   }));
 
+  async function handleToggleActivo(p: Producto) {
+    try {
+      await update(p.id, { activo: !p.activo });
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "No se pudo cambiar el estado");
+    }
+  }
+
   async function handleDuplicate(p: Producto) {
     const dto: CreateProductoDTO = {
       nombre: `${p.nombre} (copia)`,
@@ -143,6 +159,8 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
       factorOpciones: p.factorOpciones,
       manoDeObraMinimo: p.manoDeObraMinimo,
       precioEstablecido: p.precioEstablecido,
+      coleccion: p.coleccion,
+      activo: p.activo,
     };
     const created = await create(dto);
     setEditing(created);
@@ -167,6 +185,7 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
         </label>
         <FiltroSelect value={linea} onChange={setLinea} opciones={LINEAS} label="Filtrar por línea" />
         <FiltroSelect value={tipo} onChange={setTipo} opciones={TIPOS} label="Filtrar por tipo de producto" />
+        <FiltroSelect value={estado} onChange={setEstado} opciones={ESTADOS} label="Filtrar por estado" />
         <button
           onClick={() => setEditing("new")}
           className="ml-auto flex h-10 items-center gap-2 rounded-xl bg-hc-rose px-4 text-[13.5px] font-semibold text-white shadow-[0_2px_8px_-2px_rgba(168,77,102,0.45)] transition hover:bg-hc-rose-hover active:scale-[0.98]"
@@ -211,6 +230,10 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
               onDuplicate={(e) => {
                 e.stopPropagation();
                 handleDuplicate(p);
+              }}
+              onToggleActivo={(e) => {
+                e.stopPropagation();
+                handleToggleActivo(p);
               }}
               onDelete={(e) => {
                 e.stopPropagation();
@@ -264,8 +287,8 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
               </div>
             </div>
             <p className="text-[13px] text-hc-soft mb-5">
-              El producto se marcará como inactivo y dejará de aparecer en el
-              catálogo. Esta acción se puede revertir.
+              El producto desaparecerá del admin y de la página. Si solo
+              quieres ocultarlo a los clientes, márcalo como inactivo.
             </p>
             {delError && (
               <p className="text-sm text-red-600 mb-3">{delError}</p>

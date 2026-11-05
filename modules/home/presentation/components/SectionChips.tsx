@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
  * sigue visible en la página, sin carruseles). Marca la sección en pantalla.
  */
 
-const SECCIONES = ["temporada", "galletas", "fitness", "pasteles"] as const;
+const SECCIONES = ["galletas", "fitness", "pasteles"] as const;
 
 export default function SectionChips() {
   const t = useTranslations("home.chips");

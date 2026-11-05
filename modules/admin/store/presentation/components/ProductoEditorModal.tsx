@@ -109,6 +109,7 @@ export function ProductoEditorModal({
   const [descripcion, setDescripcion] = useState("");
   const [linea, setLinea] = useState<LineaProducto>("sweet");
   const [coleccion, setColeccion] = useState<ColeccionProducto | null>(null);
+  const [activo, setActivo] = useState(true);
   const [elaboracion, setElaboracion] = useState("");
   const [permiteMedida, setPermiteMedida] = useState(false);
   const [medidaBaseCm, setMedidaBaseCm] = useState<number | "">(24);
@@ -160,6 +161,7 @@ export function ProductoEditorModal({
       setDescripcion(producto.descripcion ?? "");
       setLinea(producto.linea);
       setColeccion(producto.coleccion ?? null);
+      setActivo(producto.activo);
       setElaboracion(producto.elaboracion ?? "");
       setPermiteMedida(producto.permiteMedidaPersonalizada);
       setMedidaBaseCm(producto.medidaBaseCm ?? 24);
@@ -225,6 +227,7 @@ export function ProductoEditorModal({
       setDescripcion("");
       setLinea("sweet");
       setColeccion(null);
+      setActivo(true);
       setElaboracion("");
       setPermiteMedida(false);
       setMedidaBaseCm(24);
@@ -466,7 +469,7 @@ export function ProductoEditorModal({
           precioEstablecido !== "" ? Number(precioEstablecido) : null,
         promo,
         coleccion,
-        activo: true,
+        activo,
       };
       await onSave(dto, producto?.id);
       onClose();
@@ -683,6 +686,30 @@ export function ProductoEditorModal({
                         ))}
                       </div>
                     </div>
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-hc-line bg-white px-3.5 py-3">
+                      <div>
+                        <p className="text-[13px] font-semibold text-hc-ink">
+                          {activo ? "Activo" : "Inactivo"}
+                        </p>
+                        <p className="text-[11px] text-hc-soft">
+                          {activo
+                            ? "Se muestra a los clientes en la página."
+                            : "Oculto en la página; solo se ve aquí en el admin."}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={activo}
+                        aria-label="Producto activo"
+                        onClick={() => setActivo((v) => !v)}
+                        className={`relative h-6 w-11 shrink-0 rounded-full transition ${activo ? "bg-hc-rose" : "bg-hc-line-strong"}`}
+                      >
+                        <span
+                          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${activo ? "left-[22px]" : "left-0.5"}`}
+                        />
+                      </button>
+                    </div>
                     <div className="flex flex-col gap-1.5">
                       <label className={labelCls}>Colección / temporada</label>
                       <div className="flex gap-2">
@@ -700,8 +727,9 @@ export function ProductoEditorModal({
                         )}
                       </div>
                       <p className="text-[11px] text-hc-soft/70">
-                        Las galletas con colección se muestran en su propia
-                        sección del inicio, conservando la etiqueta de su línea.
+                        Solo es una etiqueta interna para agrupar productos de
+                        temporada; la página los muestra en su línea si están
+                        activos.
                       </p>
                     </div>
                     <div className="flex flex-col gap-1.5">

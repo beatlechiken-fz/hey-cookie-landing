@@ -15,7 +15,7 @@ interface Props {
 }
 
 export function ProductoPickerModal({ open, onClose, onSelect }: Props) {
-  const { productos, isLoading, search, setSearch } = useProductos();
+  const { productos, isLoading, search, setSearch } = useProductos("", "activo");
 
   return (
     <AnimatePresence>

@@ -85,10 +85,14 @@ export class ProductoSupabaseDatasource {
   }
 
   async findAll(filters: ProductoFilters): Promise<PaginatedResult<Producto>> {
-    const { search, linea, activo = true, page = 1, pageSize = 50 } = filters;
+    const { search, linea, activo, page = 1, pageSize = 50 } = filters;
     const from = (page - 1) * pageSize;
 
-    let q = this.db.from(TABLE).select("*", { count: "exact" });
+    // Los eliminados nunca se listan; activo/inactivo solo si se pide.
+    let q = this.db
+      .from(TABLE)
+      .select("*", { count: "exact" })
+      .eq("eliminado", false);
     if (search) q = q.ilike("nombre", `%${search}%`);
     if (linea) q = q.eq("linea", linea);
     if (activo !== undefined) q = q.eq("activo", activo);
@@ -139,10 +143,11 @@ export class ProductoSupabaseDatasource {
     return toEntity(data);
   }
 
+  /** Soft delete: se oculta del admin y de la landing, pero las órdenes viejas lo siguen encontrando. */
   async delete(id: string): Promise<void> {
     const { error } = await this.db
       .from(TABLE)
-      .update({ activo: false })
+      .update({ eliminado: true, activo: false })
       .eq("id", id);
     if (error) throw new Error(`delete producto: ${error.message}`);
   }

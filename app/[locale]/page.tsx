@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
-import SectionCover, { BandaTemporada } from "@/core/components/section-cover/SectionCover";
+import SectionCover from "@/core/components/section-cover/SectionCover";
 import { portadaDe } from "@/core/data/portadas";
 import { Link } from "@/i18n/navigation";
 import Hero from "@/modules/home/presentation/components/Hero";
@@ -13,29 +13,17 @@ import { fetchCatalogoPublico } from "@/modules/cake/data/datasources/CatalogoPu
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
 import type { GalletaPublica } from "@/modules/home/presentation/components/Cookies";
 import { parsePromo } from "@/modules/admin/store/domain/entities/Promocion.entity";
-import type { ColeccionProducto } from "@/modules/admin/store/domain/entities/Producto.entity";
 
-// Menú de temporada en PDF (public/menus), el mismo que enlaza /halloween.
-const MENU_PDF = "/menus/menu-halloween-dia-de-muertos.pdf";
-
-/**
- * Galletas activas de una línea (sweet/fitness) del catálogo regular, o de una
- * colección de temporada (cualquier línea; cada galleta conserva su etiqueta).
- */
-async function fetchGalletas(
-  filtro: { linea: "sweet" | "fitness" } | { coleccion: ColeccionProducto },
-): Promise<GalletaPublica[]> {
+/** Galletas activas de una línea (sweet/fitness). */
+async function fetchGalletas(linea: "sweet" | "fitness"): Promise<GalletaPublica[]> {
   try {
-    let q = getSupabaseAdmin()
+    const { data, error } = await getSupabaseAdmin()
       .from("productos")
       .select("id, nombre, descripcion, imagen_url, precio_establecido, promo, linea")
       .eq("categoria", "cookie")
-      .eq("activo", true);
-    q =
-      "coleccion" in filtro
-        ? q.eq("coleccion", filtro.coleccion)
-        : q.eq("linea", filtro.linea).is("coleccion", null);
-    const { data, error } = await q.order("nombre");
+      .eq("activo", true)
+      .eq("linea", linea)
+      .order("nombre");
 
     if (error) return [];
 
@@ -45,7 +33,7 @@ async function fetchGalletas(
       descripcion: row.descripcion ?? null,
       imagenUrl: row.imagen_url ?? null,
       precioEstablecido: row.precio_establecido != null ? Number(row.precio_establecido) : null,
-      linea: row.linea ?? ("linea" in filtro ? filtro.linea : "sweet"),
+      linea: row.linea ?? linea,
       promo: parsePromo(row.promo),
     }));
   } catch {
@@ -56,11 +44,10 @@ async function fetchGalletas(
 const CONTENIDO = "mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 md:pt-20";
 
 export default async function Home() {
-  const [halloween, sweet, fitness, pasteles, t, tc] = await Promise.all([
-    fetchGalletas({ coleccion: "halloween-muertos" }),
-    fetchGalletas({ linea: "sweet" }),
-    fetchGalletas({ linea: "fitness" }),
-    fetchCatalogoPublico("pastel", { soloRegulares: true }),
+  const [sweet, fitness, pasteles, t, tc] = await Promise.all([
+    fetchGalletas("sweet"),
+    fetchGalletas("fitness"),
+    fetchCatalogoPublico("pastel"),
     getTranslations("home"),
     getTranslations("cookies"),
   ]);
@@ -72,35 +59,6 @@ export default async function Home() {
       <CategoryCards />
 
       <SectionChips />
-
-      <BandaTemporada
-        id="temporada"
-        kicker={t("temporada.kicker")}
-        titulo={tc("titleHalloween")}
-        descripcion={t("temporada.desc")}
-        imagen={portadaDe("temporada", halloween[0]?.imagenUrl)}
-        anterior="#FAF3E0"
-        siguiente="#F6DDE4"
-        acciones={
-          <>
-            <Link
-              href="/halloween"
-              className="inline-flex rounded-full bg-calabaza px-5 py-2.5 font-body text-sm font-semibold text-noche transition-colors hover:bg-calabaza-hover"
-            >
-              {t("temporada.verMenu")}
-            </Link>
-            <a
-              href={MENU_PDF}
-              download
-              className="inline-flex rounded-full border-2 border-crema/70 px-5 py-2 font-body text-sm font-semibold text-crema transition-colors hover:bg-crema hover:text-noche"
-            >
-              PDF
-            </a>
-          </>
-        }
-      >
-        <Cookies productos={halloween} tono="noche" mostrarLinea oscuro />
-      </BandaTemporada>
 
       <section aria-label={tc("title")}>
         <SectionCover

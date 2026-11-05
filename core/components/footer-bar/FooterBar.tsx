@@ -4,8 +4,6 @@ import { useTranslations } from "next-intl";
 import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 import { Link } from "@/i18n/navigation";
 
-const MENU_PDF = "/menus/menu-halloween-dia-de-muertos.pdf";
-
 interface FooterBarProps {
   appearance?: "dark" | "light";
 }
@@ -83,14 +81,12 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
         { label: tm("cake"), href: "/cake" },
         { label: tm("desserts"), href: "/desserts" },
         { label: tm("jelly"), href: "/jelly" },
-        { label: t("temporada"), href: "/halloween" },
       ],
     },
     {
       titulo: t("pedidos"),
       links: [
         { label: t("custom"), href: "/custom" },
-        { label: t("menuPdf"), href: MENU_PDF, externo: true },
         { label: t("cuenta"), href: "/club/login" },
       ],
     },

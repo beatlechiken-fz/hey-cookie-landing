@@ -40,11 +40,6 @@ export function createMenuNavElement(t: TType): MenuNavElement {
         { id: "jelly", label: t("jelly"), url: "/jelly" },
       ],
     },
-    halloween: {
-      id: "halloween",
-      label: t("halloween"),
-      url: "/halloween",
-    },
     custom: {
       id: "custom",
       label: t("custom"),

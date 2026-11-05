@@ -92,7 +92,7 @@ Solo `role: "admin"`. Login en `/admin`.
 - `licores` — alcohol para rellenos
 
 **Store (Tienda):**
-- `productos` — catálogo (líneas: sweet/fitness/healthy), precios calculados por tamaño
+- `productos` — catálogo (líneas: sweet/fitness/healthy), precios calculados por tamaño. `activo` = se muestra en la landing (los inactivos solo se ven en el admin); `eliminado` = soft delete, no sale en ningún lado. `coleccion` es solo una etiqueta interna de temporada
 - `ordenes` — pipeline de estados: `cotizacion → en_proceso → listo_entregar → pagado → entregado | cancelado`
 - `clientes` — contactos + historial + cupones; cada cliente tiene `qr_token` persistente (tarjeta del club)
 - `cupones` — descuentos (% o monto fijo), asignables por cliente; todo "beneficio" (incluso un regalo) se modela como un cupón

@@ -7,7 +7,6 @@ import { portadaDe } from "@/core/data/portadas";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import Images from "@/core/assets/Images";
-import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 import { getTranslations } from "next-intl/server";
 
 export default async function CakePage() {
@@ -36,10 +35,8 @@ export default async function CakePage() {
         </div>
       </div>
 
-      {/* La primera franja siempre es la colección de temporada (morado noche). */}
-      <HeaderWaveRibbon topFill="#F1DCC9" bottomFill="#34203F" />
-
       <ProductBands
+        ondaSuperior="#F1DCC9"
         productos={productos}
         precios={precios}
         kicker={t("cake")}

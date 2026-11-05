@@ -10,6 +10,7 @@ import type {
 export interface ProductoFilters {
   search?: string;
   linea?: LineaProducto;
+  /** undefined = activos e inactivos (los eliminados nunca salen). */
   activo?: boolean;
   page?: number;
   pageSize?: number;

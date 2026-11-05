@@ -72,8 +72,7 @@
       "description": "Creada para quienes buscan equilibrio entre nutrición y placer. Elaborada con vainilla, nibs de cacao y trozos de dátil, con 10g de proteína, baja en azúcar y alta en fibra."
     },
     "title": "Sweet Cookies",
-    "titleFiness": "Fitness & Healthy Cookies",
-    "titleHalloween": "Halloween & Día de muertos"
+    "titleFiness": "Fitness & Healthy Cookies"
   },
   "cakes": {
     "title": "Pasteles",
@@ -82,9 +81,6 @@
     "sweetCategory": "Dulce",
     "healthyCategory": "Saludable",
     "gfCategory": "Libre de gluten",
-    "collections": {
-      "halloween-muertos": "Halloween & Día de muertos"
-    },
     "lines": {
       "sweet": "Línea Dulce",
       "fitness": "Línea Fitness",
@@ -309,7 +305,6 @@
   },
   "mainnav": {
     "bakeLab": "Bake Lab",
-    "halloween": "Halloween & Día de muertos",
     "home": "Galletas",
     "cake": "Pasteles & Roscas",
     "desserts": "Repostería",
@@ -335,26 +330,13 @@
     "pedidos": "Pedidos",
     "contacto": "Contacto",
     "galletas": "Galletas",
-    "temporada": "Temporada",
     "custom": "Arma tu pastel",
     "cuenta": "Mi cuenta",
-    "menuPdf": "Menú de temporada (PDF)",
     "whatsapp": "Escríbenos por WhatsApp",
     "instagram": "Síguenos en Instagram",
     "entrega": "Entregas en Morelia",
     "anticipacion": "Pedidos con 3 días de anticipación",
     "horario": "Lunes a sábado, 8:00 a 19:00"
-  },
-  "halloween": {
-    "title": "Halloween & Día de muertos",
-    "descargarMenu": "Descargar menú",
-    "proximamente": "Próximamente…",
-    "sections": {
-      "pasteles": "Pasteles & Roscas",
-      "reposteria": "Repostería",
-      "gelatinas": "Gelatinas",
-      "galletas": "Galletas"
-    }
   },
   "home": {
     "antojo": {
@@ -379,15 +361,9 @@
     },
     "chips": {
       "label": "Ir a la sección",
-      "temporada": "Temporada",
       "galletas": "Galletas",
       "fitness": "Fitness",
       "pasteles": "Pasteles"
-    },
-    "temporada": {
-      "kicker": "Temporada",
-      "desc": "Calabaza, café de olla y chocolate: los sabores de Halloween y Día de muertos.",
-      "verMenu": "Ver menú completo"
     },
     "galletas": {
       "kicker": "Galletas",

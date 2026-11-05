@@ -24,11 +24,12 @@ const TONO_HEX = {
   noche: "#34203F",
 } as const;
 
-/** Colores de temporada (mismos valores que los tokens de globals.css). */
-export const NOCHE = "#1E1517";
-export const NOCHE_MORADO = "#34203F";
-
 export type TonoPortada = keyof typeof TONO_HEX;
+
+/** Color de fondo de una portada (para empatar ondas de la sección anterior). */
+export function tonoHex(tono: TonoPortada): string {
+  return TONO_HEX[tono];
+}
 
 interface Props {
   id?: string;
@@ -114,38 +115,5 @@ export default function SectionCover({
         />
       </svg>
     </header>
-  );
-}
-
-const ONDA =
-  "M0,60 C120,100 240,20 360,60 C480,100 600,20 720,60 C840,100 960,20 1080,60 C1200,100 1320,20 1440,60 L1440,140 L0,140 Z";
-
-interface BandaProps extends Omit<Props, "tono" | "siguiente"> {
-  children: ReactNode;
-  /** Color de lo que hay arriba; si se pasa, abre con una onda de ese color. */
-  anterior?: string;
-  /** Color de lo que sigue abajo (la onda final se rellena con él). */
-  siguiente?: string;
-}
-
-/**
- * Sección de temporada (Halloween & Día de muertos): portada morado noche y
- * productos sobre negro cálido, con ondas de entrada y salida. Es el único
- * lugar donde el sitio rompe su paleta clara.
- */
-export function BandaTemporada({ children, anterior, siguiente = "#FAF3E0", ...cover }: BandaProps) {
-  return (
-    <section aria-label={cover.titulo} className="relative bg-noche">
-      {anterior && (
-        <svg viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true" className="absolute left-0 -top-px z-20 h-12 w-full rotate-180 md:h-16 pointer-events-none">
-          <path d={ONDA} fill={anterior} />
-        </svg>
-      )}
-      <SectionCover {...cover} tono="noche" siguiente={NOCHE} />
-      <div className="mx-auto max-w-6xl px-4 pb-24 pt-14 sm:px-6 md:pb-28 md:pt-20">{children}</div>
-      <svg viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true" className="absolute -bottom-px left-0 h-14 w-full md:h-20 pointer-events-none">
-        <path d={ONDA} fill={siguiente} />
-      </svg>
-    </section>
   );
 }
