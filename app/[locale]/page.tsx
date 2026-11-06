@@ -110,6 +110,7 @@ export default async function Home() {
             items={pasteles.productos.map((producto) => ({
               producto,
               precio: pasteles.precios[producto.id] ?? null,
+              incluye: pasteles.incluye[producto.id] ?? [],
             }))}
           />
         </div>

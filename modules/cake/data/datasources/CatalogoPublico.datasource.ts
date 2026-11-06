@@ -4,6 +4,9 @@ import { getSupabaseAdmin } from "@/core/helpers/supabase";
 import { toEntity as productoFromRow } from "@/modules/admin/store/data/datasources/Producto.datasource";
 import { getPastelConfigCatalogoPublico } from "@/modules/admin/store/data/datasources/PastelConfigPublico.datasource";
 import { precioPublicoProducto } from "@/modules/admin/store/domain/usecases/PrecioPublico.usecase";
+import { incluyeProducto } from "@/modules/admin/store/domain/usecases/IncluyeProducto.usecase";
+import { normalizeOpciones } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
+import { OPCIONES_VACIAS } from "@/modules/admin/store/domain/entities/Producto.entity";
 import type {
   CategoriaProducto,
   Producto,
@@ -13,6 +16,8 @@ export interface CatalogoPublico {
   productos: Producto[];
   /** Precio público por id (fijo o sugerido redondeado); null si no se pudo calcular. */
   precios: Record<string, number | null>;
+  /** Lo que incluye cada producto con sus opciones por defecto (para los chips de la card). */
+  incluye: Record<string, string[]>;
 }
 
 /**
@@ -35,15 +40,20 @@ export async function fetchCatalogoPublico(
     if (error) throw error;
     const productos = (data ?? []).map(productoFromRow);
     const precios: Record<string, number | null> = {};
+    const incluye: Record<string, string[]> = {};
     for (const p of productos) {
+      incluye[p.id] = incluyeProducto(
+        normalizeOpciones({ ...OPCIONES_VACIAS, ...p.opcionesDefault }),
+        catalogo,
+      ).map((i) => i.nombre);
       try {
         precios[p.id] = precioPublicoProducto(p, catalogo);
       } catch {
         precios[p.id] = null;
       }
     }
-    return { productos, precios };
+    return { productos, precios, incluye };
   } catch {
-    return { productos: [], precios: {} };
+    return { productos: [], precios: {}, incluye: {} };
   }
 }

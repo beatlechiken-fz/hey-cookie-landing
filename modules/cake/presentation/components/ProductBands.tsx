@@ -25,6 +25,8 @@ interface Props {
   productos: Producto[];
   /** Precio público por id de producto (precio fijo o sugerido redondeado). */
   precios?: Record<string, number | null>;
+  /** Lo que incluye cada producto por defecto (chips junto al precio). */
+  incluye?: Record<string, string[]>;
   /** Texto pequeño sobre cada título ("Pasteles", "Gelatinas"…). */
   kicker: string;
   /** Imagen de portada propia de la sección (core/data/portadas.ts). */
@@ -38,10 +40,14 @@ interface Props {
  * con los productos activos. Cada franja abre con su portada corta y muestra
  * todos sus productos.
  */
-export default function ProductBands({ productos, precios = {}, kicker, portada, ondaSuperior }: Props) {
+export default function ProductBands({ productos, precios = {}, incluye = {}, kicker, portada, ondaSuperior }: Props) {
   const t = useTranslations();
   const conPrecio = (items: Producto[]) =>
-    items.map((producto) => ({ producto, precio: precios[producto.id] ?? null }));
+    items.map((producto) => ({
+      producto,
+      precio: precios[producto.id] ?? null,
+      incluye: incluye[producto.id] ?? [],
+    }));
 
   const lineas = LINE_ORDER.map((line) => ({
     key: line,

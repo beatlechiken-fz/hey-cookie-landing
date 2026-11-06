@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useProductoConfigurador } from "@/modules/admin/store/presentation/hooks/useProductoConfigurador";
@@ -10,8 +10,14 @@ import { NINGUNO } from "@/modules/admin/store/presentation/components/configura
 import { DiametroPersonasSelectorPublic as DiametroPersonasSelector } from "./DiametroPersonasSelectorPublic";
 import {
   getPrecioEstablecidoEfectivo,
+  OPCIONES_VACIAS,
   type Producto,
 } from "@/modules/admin/store/domain/entities/Producto.entity";
+import { normalizeOpciones } from "@/modules/admin/store/domain/entities/PastelPersonalizado.entity";
+import {
+  incluyeProductoDiff,
+  type ItemIncluidoDiff,
+} from "@/modules/admin/store/domain/usecases/IncluyeProducto.usecase";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { redondearPrecioCerrado } from "@/modules/admin/store/domain/usecases/PrecioPublico.usecase";
 import type { Cupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
@@ -158,6 +164,41 @@ function MultiCoberturaSelect({
   );
 }
 
+/**
+ * Lo que lleva el producto con la configuración actual, junto al precio:
+ * lo que sigue incluido, lo agregado (+) y lo quitado (tachado), para que la
+ * descripción original no haga pensar que algo que se quitó sigue incluido.
+ */
+function IncluyeChips({ items }: { items: ItemIncluidoDiff[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="min-w-0">
+      <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider mb-1.5">
+        Tu precio incluye
+      </p>
+      <ul className="flex flex-wrap gap-1.5" aria-live="polite">
+        {items.map((i) => (
+          <li
+            key={i.key}
+            className={`rounded-full px-2.5 py-0.5 text-xs leading-5 border ${
+              i.estado === "quitado"
+                ? "border-dashed border-[#e8c4a0] text-[#AA6A42]/60 line-through"
+                : i.estado === "agregado"
+                  ? "border-[#DA6C94] bg-[#FCE8EF] text-[#A84D66] font-semibold"
+                  : "border-[#f0e0d0] bg-[#FFF7F0] text-[#6B3E26]"
+            }`}
+          >
+            {i.estado === "quitado" && <span className="sr-only">Sin </span>}
+            {i.estado === "agregado" && <span aria-hidden="true">+ </span>}
+            {i.nombre}
+            {i.estado === "agregado" && <span className="sr-only"> (agregado)</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 // ── Visibilidad de opciones según tipo de producto ────────────────────────────
 // Los campos ocultos siguen activos en opcionesDefault y afectan el precio.
 
@@ -270,6 +311,19 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
   const subtotal = precioBase * cantidad;
   const descuento = cuponAplicado ? calcularDescuentoCupon(cuponAplicado.cupon, subtotal) : 0;
   const total = Math.max(0, subtotal - descuento);
+
+  // ── Lo que incluye el precio (vs. las opciones por defecto del producto) ──
+  const incluidos = useMemo(
+    () =>
+      catalogo
+        ? incluyeProductoDiff(
+            opciones,
+            normalizeOpciones({ ...OPCIONES_VACIAS, ...producto.opcionesDefault }),
+            catalogo,
+          )
+        : [],
+    [catalogo, opciones, producto.opcionesDefault],
+  );
 
   // ── Tamaño activo ───────────────────────────────────────────────────────────
   const tamanoActivo = producto.tamanosFijos.find((t) => t.id === tamanoFijoId);
@@ -899,14 +953,17 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
           {/* Footer */}
           <div className="px-6 py-4 border-t border-[#f0e0d0] bg-[#FFFDF8] shrink-0">
             {desglose && !justAdded && (
-              <div className="flex items-baseline justify-end gap-1.5 mb-3">
-                {cuponAplicado && (
-                  <span className="text-sm text-[#AA6A42]/50 line-through">${subtotal.toFixed(0)}</span>
-                )}
-                <span className="text-2xl font-bold text-[#3A1F14]">${total.toFixed(0)}</span>
-                {cantidad > 1 && (
-                  <span className="text-xs text-[#AA6A42]/60">${precioBase.toFixed(0)} c/u</span>
-                )}
+              <div className="flex items-end justify-between gap-4 mb-3">
+                <IncluyeChips items={incluidos} />
+                <div className="ml-auto flex shrink-0 items-baseline gap-1.5">
+                  {cuponAplicado && (
+                    <span className="text-sm text-[#AA6A42]/50 line-through">${subtotal.toFixed(0)}</span>
+                  )}
+                  <span className="text-2xl font-bold text-[#3A1F14]">${total.toFixed(0)}</span>
+                  {cantidad > 1 && (
+                    <span className="text-xs text-[#AA6A42]/60">${precioBase.toFixed(0)} c/u</span>
+                  )}
+                </div>
               </div>
             )}
             <div className="flex gap-3">

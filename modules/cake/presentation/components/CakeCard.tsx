@@ -10,9 +10,11 @@ interface Props {
   precio?: number | null;
   /** Muestra la etiqueta de línea (solo en secciones que mezclan líneas). */
   mostrarLinea?: boolean;
+  /** Lo que incluye el precio mostrado (opciones por defecto). */
+  incluye?: string[];
 }
 
-export default function CakeCard({ producto, onClick, precio, mostrarLinea }: Props) {
+export default function CakeCard({ producto, onClick, precio, mostrarLinea, incluye }: Props) {
   // Medida visible en la tarjeta: tamaño fijo único (p. ej. panqués "Molde 23 × 13 cm")
   // o la medida base de los productos personalizables (solo junto al precio).
   const medida =
@@ -30,6 +32,7 @@ export default function CakeCard({ producto, onClick, precio, mostrarLinea }: Pr
       tono={tonoProducto(producto)}
       precio={precio != null ? `$${precio.toFixed(0)}` : null}
       detalle={medida}
+      incluye={precio != null ? incluye : undefined}
       etiqueta={mostrarLinea ? LINEA_ETIQUETA[producto.linea] : null}
       onOpen={() => onClick(producto)}
     />

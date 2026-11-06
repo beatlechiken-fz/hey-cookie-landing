@@ -10,7 +10,7 @@ import Images from "@/core/assets/Images";
 import { getTranslations } from "next-intl/server";
 
 export default async function CakePage() {
-  const [{ productos, precios }, t] = await Promise.all([
+  const [{ productos, precios, incluye }, t] = await Promise.all([
     fetchCatalogoPublico("pastel"),
     getTranslations("mainnav"),
   ]);
@@ -39,6 +39,7 @@ export default async function CakePage() {
         ondaSuperior="#F1DCC9"
         productos={productos}
         precios={precios}
+        incluye={incluye}
         kicker={t("cake")}
         portada={portadaDe("pasteles")}
       />

@@ -15,6 +15,8 @@ const CookieModal = dynamic(
 export interface ProductoConPrecio {
   producto: Producto;
   precio: number | null;
+  /** Lo que incluye con sus opciones por defecto (chips de la card). */
+  incluye?: string[];
 }
 
 function toGalleta(p: Producto): GalletaPublica {
@@ -54,11 +56,12 @@ export default function ProductGrid({ items, mostrarLinea, vacio = "Próximament
   return (
     <>
       <div className={GRID_PRODUCTOS}>
-        {items.map(({ producto, precio }) => (
+        {items.map(({ producto, precio, incluye }) => (
           <CakeCard
             key={producto.id}
             producto={producto}
             precio={precio}
+            incluye={incluye}
             mostrarLinea={mostrarLinea}
             onClick={(p) =>
               p.categoria === "cookie" ? setSelectedCookie(toGalleta(p)) : setSelected(p)

@@ -15,7 +15,7 @@ export type TonoCard = "rosa" | "olivo" | "noche";
  */
 const TONO: Record<
   TonoCard,
-  { bg: string; titulo: string; precio: string; detalle: string; boton: string; plato: string }
+  { bg: string; titulo: string; precio: string; detalle: string; boton: string; plato: string; chip: string }
 > = {
   rosa: {
     bg: "bg-tinte-rosa",
@@ -24,6 +24,7 @@ const TONO: Record<
     detalle: "text-cacao",
     boton: "bg-white text-espresso group-hover:bg-frambuesa group-hover:text-white",
     plato: "bg-white",
+    chip: "bg-white/70 text-cacao",
   },
   olivo: {
     bg: "bg-tinte-olivo",
@@ -32,6 +33,7 @@ const TONO: Record<
     detalle: "text-cacao",
     boton: "bg-white text-espresso group-hover:bg-frambuesa group-hover:text-white",
     plato: "bg-white",
+    chip: "bg-white/70 text-cacao",
   },
   noche: {
     bg: "bg-noche-morado",
@@ -40,8 +42,12 @@ const TONO: Record<
     detalle: "text-crema/70",
     boton: "bg-calabaza text-noche group-hover:bg-calabaza-hover",
     plato: "bg-crema",
+    chip: "bg-crema/15 text-crema/85",
   },
 };
+
+/** Chips de "incluye" visibles en la card; el resto se resume en "+N". */
+const MAX_CHIPS = 3;
 
 /** Tono de un producto según su línea. */
 export function tonoProducto(p: { linea?: string | null }): TonoCard {
@@ -65,6 +71,11 @@ interface Props {
   precio?: string | null;
   /** Nota bajo el precio: "/ pz", medida, etc. */
   detalle?: string | null;
+  /**
+   * Lo que incluye el precio mostrado (coberturas, rellenos, toppings…).
+   * Se muestra en chips sobre el precio para que el cliente sepa qué está pagando.
+   */
+  incluye?: string[];
   /** Etiqueta de línea (solo donde se mezclan líneas). */
   etiqueta?: { label: string; cls: string } | null;
   /** Etiqueta de promoción ("Viernes 2×$40"). */
@@ -81,6 +92,7 @@ export default function ProductCard({
   tono,
   precio,
   detalle,
+  incluye,
   etiqueta,
   promo,
   onOpen,
@@ -142,7 +154,29 @@ export default function ProductCard({
         </div>
       </div>
 
-      <div className="mt-auto flex items-end justify-between gap-2 pt-4">
+      {incluye && incluye.length > 0 && (
+        <ul
+          aria-label="Incluye"
+          title={`Incluye: ${incluye.join(", ")}`}
+          className="mt-auto flex flex-wrap gap-1 pt-4"
+        >
+          {incluye.slice(0, MAX_CHIPS).map((item) => (
+            <li
+              key={item}
+              className={`max-w-full truncate rounded-full px-2 py-0.5 font-body text-[11px] leading-4 ${TONO[tono].chip}`}
+            >
+              {item}
+            </li>
+          ))}
+          {incluye.length > MAX_CHIPS && (
+            <li className={`rounded-full px-2 py-0.5 font-body text-[11px] leading-4 ${TONO[tono].chip}`}>
+              +{incluye.length - MAX_CHIPS}
+            </li>
+          )}
+        </ul>
+      )}
+
+      <div className={`${incluye && incluye.length > 0 ? "pt-2" : "mt-auto pt-4"} flex items-end justify-between gap-2`}>
         <div className="min-w-0 font-body leading-tight">
           {precio && <p className={`text-base sm:text-lg font-semibold ${TONO[tono].precio}`}>{precio}</p>}
           {detalle && <p className={`text-xs ${TONO[tono].detalle} truncate`}>{detalle}</p>}
