@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 import { Link } from "@/i18n/navigation";
+import { TEMPORADA } from "@/core/data/temporada";
 
 interface FooterBarProps {
   appearance?: "dark" | "light";
@@ -81,12 +82,14 @@ export default function FooterBar({ appearance = "dark" }: FooterBarProps) {
         { label: tm("cake"), href: "/cake" },
         { label: tm("desserts"), href: "/desserts" },
         { label: tm("jelly"), href: "/jelly" },
+        ...(TEMPORADA ? [{ label: tm("temporada"), href: TEMPORADA.ruta }] : []),
       ],
     },
     {
       titulo: t("pedidos"),
       links: [
         { label: t("custom"), href: "/custom" },
+        ...(TEMPORADA ? [{ label: t("menuPdf"), href: TEMPORADA.menuPdf, externo: true }] : []),
         { label: t("cuenta"), href: "/club/login" },
       ],
     },

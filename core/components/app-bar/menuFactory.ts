@@ -1,3 +1,4 @@
+import { TEMPORADA } from "@/core/data/temporada";
 import { useTranslations } from "next-intl";
 
 // Creamos el tipo manualmente, equivalente a la función que retorna useTranslations()
@@ -40,6 +41,9 @@ export function createMenuNavElement(t: TType): MenuNavElement {
         { id: "jelly", label: t("jelly"), url: "/jelly" },
       ],
     },
+    ...(TEMPORADA
+      ? { temporada: { id: "temporada", label: t("temporada"), url: TEMPORADA.ruta } }
+      : {}),
     custom: {
       id: "custom",
       label: t("custom"),

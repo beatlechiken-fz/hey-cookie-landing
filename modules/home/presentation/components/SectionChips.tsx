@@ -8,11 +8,13 @@ import { useTranslations } from "next-intl";
  * sigue visible en la página, sin carruseles). Marca la sección en pantalla.
  */
 
-const SECCIONES = ["galletas", "fitness", "pasteles"] as const;
+const BASE = ["galletas", "fitness", "pasteles"] as const;
 
-export default function SectionChips() {
+/** `temporada`: hay sección de la temporada activa en la home (chip al inicio). */
+export default function SectionChips({ temporada = false }: { temporada?: boolean }) {
   const t = useTranslations("home.chips");
   const [activa, setActiva] = useState<string | null>(null);
+  const SECCIONES = temporada ? (["temporada", ...BASE] as const) : BASE;
 
   useEffect(() => {
     const els = SECCIONES.map((id) => document.getElementById(id)).filter(
@@ -36,7 +38,9 @@ export default function SectionChips() {
       scroller.removeEventListener("scroll", actualizar);
       window.removeEventListener("scroll", actualizar);
     };
-  }, []);
+    // SECCIONES solo cambia con `temporada`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [temporada]);
 
   // En móvil la barra se desliza de lado: mantiene visible el chip activo.
   useEffect(() => {

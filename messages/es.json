@@ -310,7 +310,8 @@
     "desserts": "Repostería",
     "jelly": "Gelatinas",
     "other": "Otros alimentos",
-    "custom": "Arma tu Postre"
+    "custom": "Arma tu Postre",
+    "temporada": "Navidad"
   },
   "comingSoon": {
     "coming": "Próximamente",
@@ -336,7 +337,8 @@
     "instagram": "Síguenos en Instagram",
     "entrega": "Entregas en Morelia",
     "anticipacion": "Pedidos con 3 días de anticipación",
-    "horario": "Lunes a sábado, 8:00 a 19:00"
+    "horario": "Lunes a sábado, 8:00 a 19:00",
+    "menuPdf": "Menú navideño (PDF)"
   },
   "home": {
     "antojo": {
@@ -363,7 +365,8 @@
       "label": "Ir a la sección",
       "galletas": "Galletas",
       "fitness": "Fitness",
-      "pasteles": "Pasteles"
+      "pasteles": "Pasteles",
+      "temporada": "Navidad"
     },
     "galletas": {
       "kicker": "Galletas",
@@ -388,5 +391,24 @@
       "kicker": "Eventos y regalos",
       "cta": "Cotizar por WhatsApp"
     }
+  },
+  "navidad": {
+    "title": "Navidad",
+    "kicker": "Temporada navideña",
+    "desc": "Pistache, rompope, frutos rojos y ponche: los sabores de la Navidad, hechos a mano para compartir en estas fiestas.",
+    "verMenu": "Ver menú navideño",
+    "descargarMenu": "Descargar menú (PDF)",
+    "proximamente": "Próximamente…",
+    "sections": {
+      "pasteles": "Pasteles",
+      "reposteria": "Repostería",
+      "gelatinas": "Gelatinas",
+      "galletas": "Galletas"
+    },
+    "lleva": "Lleva",
+    "precioProximamente": "Precios muy pronto. Apártalo desde ahora por WhatsApp.",
+    "pedirWhatsapp": "Pedir por WhatsApp",
+    "whatsappMensaje": "Hola, me interesa el {producto} del menú navideño",
+    "cerrar": "Cerrar"
   }
 }

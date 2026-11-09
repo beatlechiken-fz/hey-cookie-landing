@@ -294,7 +294,8 @@
     "desserts": "Pastry",
     "jelly": "Jellies",
     "other": "Other foods",
-    "custom": "Build your cake"
+    "custom": "Build your cake",
+    "temporada": "Christmas"
   },
   "comingSoon": {
     "coming": "Coming soon",
@@ -320,7 +321,8 @@
     "instagram": "Follow us on Instagram",
     "entrega": "Delivery in Morelia",
     "anticipacion": "Order 3 days in advance",
-    "horario": "Monday to Saturday, 8 am to 7 pm"
+    "horario": "Monday to Saturday, 8 am to 7 pm",
+    "menuPdf": "Christmas menu (PDF)"
   },
   "home": {
     "antojo": {
@@ -347,7 +349,8 @@
       "label": "Jump to section",
       "galletas": "Cookies",
       "fitness": "Fitness",
-      "pasteles": "Cakes"
+      "pasteles": "Cakes",
+      "temporada": "Christmas"
     },
     "galletas": {
       "kicker": "Cookies",
@@ -372,5 +375,24 @@
       "kicker": "Events and gifts",
       "cta": "Quote on WhatsApp"
     }
+  },
+  "navidad": {
+    "title": "Christmas",
+    "kicker": "Holiday season",
+    "desc": "Pistachio, rompope, red berries and ponche: the flavors of Christmas, handmade to share this season.",
+    "verMenu": "See Christmas menu",
+    "descargarMenu": "Download menu (PDF)",
+    "proximamente": "Coming soon…",
+    "sections": {
+      "pasteles": "Cakes",
+      "reposteria": "Pastries",
+      "gelatinas": "Jellies",
+      "galletas": "Cookies"
+    },
+    "lleva": "Includes",
+    "precioProximamente": "Prices coming soon. Reserve yours now on WhatsApp.",
+    "pedirWhatsapp": "Order on WhatsApp",
+    "whatsappMensaje": "Hi, I'm interested in the {producto} from the Christmas menu",
+    "cerrar": "Close"
   }
 }

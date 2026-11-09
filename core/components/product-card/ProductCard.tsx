@@ -7,11 +7,12 @@ import Image from "next/image";
  * catálogo público (galletas, pasteles, repostería, gelatinas, temporada).
  */
 
-export type TonoCard = "rosa" | "olivo" | "noche";
+export type TonoCard = "rosa" | "olivo" | "noche" | "pino";
 
 /**
  * Colores por tono. Sweet = rosa, Fitness/Healthy = olivo (verde), y la
- * temporada (Halloween & Día de muertos) = noche: morado oscuro con naranja.
+ * temporadas: noche (Halloween, morado con naranja) y pino (Navidad, verde
+ * profundo con rojo nochebuena y dorado).
  */
 const TONO: Record<
   TonoCard,
@@ -41,6 +42,15 @@ const TONO: Record<
     precio: "text-calabaza-texto",
     detalle: "text-crema/70",
     boton: "bg-calabaza text-noche group-hover:bg-calabaza-hover",
+    plato: "bg-crema",
+    chip: "bg-crema/15 text-crema/85",
+  },
+  pino: {
+    bg: "bg-pino-claro",
+    titulo: "text-crema",
+    precio: "text-oro-texto",
+    detalle: "text-crema/70",
+    boton: "bg-nochebuena text-crema group-hover:bg-nochebuena-hover",
     plato: "bg-crema",
     chip: "bg-crema/15 text-crema/85",
   },

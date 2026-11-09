@@ -727,9 +727,9 @@ export function ProductoEditorModal({
                         )}
                       </div>
                       <p className="text-[11px] text-hc-soft/70">
-                        Solo es una etiqueta interna para agrupar productos de
-                        temporada; la página los muestra en su línea si están
-                        activos.
+                        Si es la colección de la temporada activa (Navidad), el
+                        producto sale en su sección especial de la página; si
+                        no, se muestra en su línea normal mientras esté activo.
                       </p>
                     </div>
                     <div className="flex flex-col gap-1.5">

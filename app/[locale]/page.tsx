@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import FooterBar from "@/core/components/footer-bar/FooterBar";
-import SectionCover from "@/core/components/section-cover/SectionCover";
+import SectionCover, { BandaTemporada } from "@/core/components/section-cover/SectionCover";
 import { portadaDe } from "@/core/data/portadas";
 import { Link } from "@/i18n/navigation";
 import Hero from "@/modules/home/presentation/components/Hero";
@@ -13,13 +13,24 @@ import { fetchCatalogoPublico } from "@/modules/cake/data/datasources/CatalogoPu
 import { getSupabaseAdmin } from "@/core/helpers/supabase";
 import type { GalletaPublica } from "@/modules/home/presentation/components/Cookies";
 import { parsePromo } from "@/modules/admin/store/domain/entities/Promocion.entity";
+import { TEMPORADA, esDeTemporada } from "@/core/data/temporada";
+import { fetchTemporada, type ProductoTemporada } from "@/modules/cake/data/datasources/Temporada.datasource";
+import TemporadaGrid from "@/modules/cake/presentation/components/TemporadaGrid";
+import TemporadaAcciones from "@/modules/cake/presentation/components/TemporadaAcciones";
+
+/** Destacados de temporada para la home: hasta 2 por categoría, en orden de menú. */
+function destacados(items: ProductoTemporada[]): ProductoTemporada[] {
+  return (["pastel", "dessert", "gelatina", "cookie"] as const).flatMap((c) =>
+    items.filter((i) => i.producto.categoria === c).slice(0, 2),
+  );
+}
 
 /** Galletas activas de una línea (sweet/fitness). */
 async function fetchGalletas(linea: "sweet" | "fitness"): Promise<GalletaPublica[]> {
   try {
     const { data, error } = await getSupabaseAdmin()
       .from("productos")
-      .select("id, nombre, descripcion, imagen_url, precio_establecido, promo, linea")
+      .select("id, nombre, descripcion, imagen_url, precio_establecido, promo, linea, coleccion")
       .eq("categoria", "cookie")
       .eq("activo", true)
       .eq("linea", linea)
@@ -27,7 +38,7 @@ async function fetchGalletas(linea: "sweet" | "fitness"): Promise<GalletaPublica
 
     if (error) return [];
 
-    return (data ?? []).map((row: any): GalletaPublica => ({
+    return (data ?? []).filter((row: any) => !esDeTemporada(row)).map((row: any): GalletaPublica => ({
       id: row.id,
       nombre: row.nombre,
       descripcion: row.descripcion ?? null,
@@ -44,13 +55,20 @@ async function fetchGalletas(linea: "sweet" | "fitness"): Promise<GalletaPublica
 const CONTENIDO = "mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 md:pt-20";
 
 export default async function Home() {
-  const [sweet, fitness, pasteles, t, tc] = await Promise.all([
+  const [sweet, fitness, catalogoPasteles, temporada, t, tc, tt] = await Promise.all([
     fetchGalletas("sweet"),
     fetchGalletas("fitness"),
     fetchCatalogoPublico("pastel"),
+    fetchTemporada(),
     getTranslations("home"),
     getTranslations("cookies"),
+    getTranslations(TEMPORADA?.mensajes ?? "navidad"),
   ]);
+  const pasteles = {
+    ...catalogoPasteles,
+    productos: catalogoPasteles.productos.filter((p) => !esDeTemporada(p)),
+  };
+  const temporadaHome = destacados(temporada);
 
   return (
     <main className="bg-crema min-h-full">
@@ -58,7 +76,23 @@ export default async function Home() {
 
       <CategoryCards />
 
-      <SectionChips />
+      <SectionChips temporada={!!TEMPORADA && temporadaHome.length > 0} />
+
+      {TEMPORADA && temporadaHome.length > 0 && (
+        <BandaTemporada
+          id="temporada"
+          tono={TEMPORADA.tono}
+          kicker={tt("kicker")}
+          titulo={tt("title")}
+          descripcion={tt("desc")}
+          imagen={portadaDe("temporada", temporadaHome[0]?.producto.imagenUrl)}
+          anterior="#FAF3E0"
+          siguiente="#F6DDE4"
+          acciones={<TemporadaAcciones />}
+        >
+          <TemporadaGrid items={temporadaHome} tono={TEMPORADA.tono} vacio={tt("proximamente")} mostrarLinea />
+        </BandaTemporada>
+      )}
 
       <section aria-label={tc("title")}>
         <SectionCover

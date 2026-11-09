@@ -7,6 +7,7 @@
  * la ruta, p. ej. "/img/portadas/pasteles.webp".
  */
 export const PORTADAS = {
+  temporada: null,
   galletas: null,
   fitness: null,
   pasteles: null,

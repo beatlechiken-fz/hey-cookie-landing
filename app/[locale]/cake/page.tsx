@@ -3,6 +3,7 @@ import FooterBar from "@/core/components/footer-bar/FooterBar";
 import CakeInfoSection from "@/modules/cake/presentation/components/CakeInfoSection";
 import ProductBands from "@/modules/cake/presentation/components/ProductBands";
 import { fetchCatalogoPublico } from "@/modules/cake/data/datasources/CatalogoPublico.datasource";
+import { fetchTemporada } from "@/modules/cake/data/datasources/Temporada.datasource";
 import { portadaDe } from "@/core/data/portadas";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
@@ -10,8 +11,9 @@ import Images from "@/core/assets/Images";
 import { getTranslations } from "next-intl/server";
 
 export default async function CakePage() {
-  const [{ productos, precios, incluye }, t] = await Promise.all([
+  const [{ productos, precios, incluye }, temporada, t] = await Promise.all([
     fetchCatalogoPublico("pastel"),
+    fetchTemporada("pastel"),
     getTranslations("mainnav"),
   ]);
 
@@ -40,6 +42,7 @@ export default async function CakePage() {
         productos={productos}
         precios={precios}
         incluye={incluye}
+        temporada={temporada}
         kicker={t("cake")}
         portada={portadaDe("pasteles")}
       />

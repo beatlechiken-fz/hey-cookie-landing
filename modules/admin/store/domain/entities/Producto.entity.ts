@@ -11,10 +11,11 @@ export type CategoriaProducto = "cookie" | "pastel" | "gelatina" | "dessert";
  * Es independiente de la línea: una galleta de la colección de Halloween sigue
  * siendo "sweet" (y así se etiqueta), pero sale en su propia sección.
  */
-export type ColeccionProducto = "halloween-muertos";
+export type ColeccionProducto = "halloween-muertos" | "navidad";
 
 export const COLECCIONES: { value: ColeccionProducto; label: string }[] = [
   { value: "halloween-muertos", label: "🎃 Halloween & Día de muertos" },
+  { value: "navidad", label: "🎄 Navidad" },
 ];
 
 /** Línea de receta congelada (snapshot) que representa el "bizcocho" del producto */

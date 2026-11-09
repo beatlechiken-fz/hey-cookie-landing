@@ -79,6 +79,9 @@ Rutas sin protección, accesibles a cualquiera.
 | `/desserts` | — | Postres |
 | `/jelly` | — | Gelatinas |
 | `/other` | — | Otros productos |
+| `/navidad` | `cake` | Menú de la temporada activa (Navidad), sin precios |
+
+**Temporada activa** (`core/data/temporada.ts` → `TEMPORADA`): define la colección (`productos.coleccion`), su página, su PDF (`public/menus/`) y su tono (`noche` | `pino`). Sus productos activos salen en una franja especial en la home, `/cake`, `/desserts`, `/jelly` y su página propia, sin precio (detalle con pedido por WhatsApp). Para apagarla: `TEMPORADA = null` y desactivar sus productos. Fuente del PDF navideño: `docs/menus/menu-navidad-2026.html`.
 
 ### Zona admin (`app/[locale]/admin/`)
 Solo `role: "admin"`. Login en `/admin`.

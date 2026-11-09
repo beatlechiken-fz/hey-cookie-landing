@@ -2,9 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import SectionCover, {
+  BandaTemporada,
   tonoHex,
   type TonoPortada,
 } from "@/core/components/section-cover/SectionCover";
+import { TEMPORADA, esDeTemporada } from "@/core/data/temporada";
+import TemporadaGrid, { type ProductoTemporadaItem } from "./TemporadaGrid";
+import TemporadaAcciones from "./TemporadaAcciones";
 import { HeaderWaveRibbon } from "@/core/components/wave-divider/WaveDivider";
 import ProductGrid from "./ProductGrid";
 import type {
@@ -33,14 +37,17 @@ interface Props {
   portada?: string | null;
   /** Color de lo que hay arriba; la onda de entrada baja al color de la primera franja. */
   ondaSuperior: string;
+  /** Productos de la temporada activa de esta categoría (franja especial al inicio). */
+  temporada?: ProductoTemporadaItem[];
 }
 
 /**
- * Franjas de productos para pasteles / repostería / gelatinas: una por línea
- * con los productos activos. Cada franja abre con su portada corta y muestra
- * todos sus productos.
+ * Franjas de productos para pasteles / repostería / gelatinas: primero la de
+ * la temporada activa (si tiene productos de esta categoría) y luego una por
+ * línea con el resto de los productos activos. Cada franja abre con su
+ * portada corta y muestra todos sus productos.
  */
-export default function ProductBands({ productos, precios = {}, incluye = {}, kicker, portada, ondaSuperior }: Props) {
+export default function ProductBands({ productos, precios = {}, incluye = {}, kicker, portada, ondaSuperior, temporada = [] }: Props) {
   const t = useTranslations();
   const conPrecio = (items: Producto[]) =>
     items.map((producto) => ({
@@ -52,15 +59,37 @@ export default function ProductBands({ productos, precios = {}, incluye = {}, ki
   const lineas = LINE_ORDER.map((line) => ({
     key: line,
     title: t(`cakes.lines.${line}`),
-    items: productos.filter((p) => p.linea === line),
+    items: productos.filter((p) => p.linea === line && !esDeTemporada(p)),
   })).filter((b) => b.items.length > 0);
+
+  const conTemporada = !!TEMPORADA && temporada.length > 0;
+  const primeraLinea = lineas[0] ? tonoHex(TONO_LINEA[lineas[0].key]) : "#FAF3E0";
 
   return (
     <div className="relative">
       <HeaderWaveRibbon
         topFill={ondaSuperior}
-        bottomFill={lineas[0] ? tonoHex(TONO_LINEA[lineas[0].key]) : "#FAF3E0"}
+        bottomFill={conTemporada && TEMPORADA ? tonoHex(TEMPORADA.tono) : primeraLinea}
       />
+
+      {conTemporada && TEMPORADA && (
+        <BandaTemporada
+          id="temporada"
+          tono={TEMPORADA.tono}
+          kicker={t(`${TEMPORADA.mensajes}.title`)}
+          titulo={kicker}
+          imagen={temporada[0]?.producto.imagenUrl ?? null}
+          siguiente={primeraLinea}
+          acciones={<TemporadaAcciones />}
+        >
+          <TemporadaGrid
+            items={temporada}
+            tono={TEMPORADA.tono}
+            vacio={t(`${TEMPORADA.mensajes}.proximamente`)}
+            mostrarLinea
+          />
+        </BandaTemporada>
+      )}
 
       {lineas.map((band, i) => (
         <section key={band.key} aria-label={band.title}>

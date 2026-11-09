@@ -43,6 +43,13 @@
   --color-calabaza-hover: #F08C42;
   --color-calabaza-texto: #F5A04A;
 
+  /* Temporada Navidad: verde pino profundo, rojo nochebuena y dorado. */
+  --color-pino: #12261C;
+  --color-pino-claro: #1F3D2D;
+  --color-nochebuena: #C0353B;
+  --color-nochebuena-hover: #D1454B;
+  --color-oro-texto: #E9C77E;
+
   /* Paneles internos (admin y club): contenido en blanco puro, sidebar en
      rosa pastel muy claro (el tinte de la landing, aclarado) y botones con la
      frambuesa de la landing. Generan utilidades: bg-hc-bg, bg-hc-side… */

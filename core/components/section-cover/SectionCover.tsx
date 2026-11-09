@@ -20,9 +20,18 @@ const TONO_HEX = {
   calabaza: "#F8DCC4",
   // Fondo base de la página (bloques que no son de categoría, p. ej. Eventos).
   crema: "#FAF3E0",
-  // Temporada Halloween & Día de muertos (fondo oscuro, texto claro).
+  // Temporadas (fondo oscuro, texto claro): Halloween & Día de muertos y Navidad.
   noche: "#34203F",
+  pino: "#1F3D2D",
 } as const;
+
+/** Fondo de la banda de productos bajo la portada de cada temporada. */
+const BANDA_TEMPORADA = {
+  noche: { fondo: "#1E1517", clase: "bg-noche", kicker: "text-calabaza-texto" },
+  pino: { fondo: "#12261C", clase: "bg-pino", kicker: "text-oro-texto" },
+} as const;
+
+export type TonoTemporada = keyof typeof BANDA_TEMPORADA;
 
 export type TonoPortada = keyof typeof TONO_HEX;
 
@@ -61,7 +70,7 @@ export default function SectionCover({
   espejo = false,
 }: Props) {
   const Heading = nivel;
-  const oscuro = tono === "noche";
+  const oscuro = tono === "noche" || tono === "pino";
   return (
     <header
       id={id}
@@ -86,7 +95,7 @@ export default function SectionCover({
         )}
 
         <div className="min-w-0 flex-1">
-          <p className={`font-body text-xs font-semibold uppercase tracking-[0.25em] ${oscuro ? "text-calabaza-texto" : "text-cacao"}`}>
+          <p className={`font-body text-xs font-semibold uppercase tracking-[0.25em] ${oscuro ? BANDA_TEMPORADA[tono as TonoTemporada].kicker : "text-cacao"}`}>
             {kicker}
           </p>
           <Heading className={`mt-2 font-title-light text-[clamp(1.6rem,4.2vw,3.5rem)] leading-[1.05] ${oscuro ? "text-crema" : "text-espresso"}`}>
@@ -115,5 +124,40 @@ export default function SectionCover({
         />
       </svg>
     </header>
+  );
+}
+
+const ONDA =
+  "M0,60 C120,100 240,20 360,60 C480,100 600,20 720,60 C840,100 960,20 1080,60 C1200,100 1320,20 1440,60 L1440,140 L0,140 Z";
+
+interface BandaProps extends Omit<Props, "tono" | "siguiente"> {
+  children: ReactNode;
+  tono: TonoTemporada;
+  /** Color de lo que hay arriba; si se pasa, abre con una onda de ese color. */
+  anterior?: string;
+  /** Color de lo que sigue abajo (la onda final se rellena con él). */
+  siguiente?: string;
+}
+
+/**
+ * Sección de temporada: portada oscura (morado noche o verde pino) y productos
+ * sobre un fondo aún más oscuro, con ondas de entrada y salida. Es el único
+ * lugar donde el sitio rompe su paleta clara.
+ */
+export function BandaTemporada({ children, tono, anterior, siguiente = "#FAF3E0", ...cover }: BandaProps) {
+  const banda = BANDA_TEMPORADA[tono];
+  return (
+    <section aria-label={cover.titulo} className={`relative ${banda.clase}`}>
+      {anterior && (
+        <svg viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true" className="pointer-events-none absolute -top-px left-0 z-20 h-12 w-full rotate-180 md:h-16">
+          <path d={ONDA} fill={anterior} />
+        </svg>
+      )}
+      <SectionCover {...cover} tono={tono} siguiente={banda.fondo} />
+      <div className="mx-auto max-w-6xl px-4 pb-24 pt-14 sm:px-6 md:pb-28 md:pt-20">{children}</div>
+      <svg viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true" className="pointer-events-none absolute -bottom-px left-0 h-14 w-full md:h-20">
+        <path d={ONDA} fill={siguiente} />
+      </svg>
+    </section>
   );
 }
