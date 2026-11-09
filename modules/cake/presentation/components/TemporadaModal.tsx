@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { TEMPORADA } from "@/core/data/temporada";
 import { LINEA_ETIQUETA } from "@/core/components/product-card/ProductCard";
-import { medidaProducto, type ProductoTemporadaItem } from "./TemporadaGrid";
+import { medidaProducto, precioTemporada, type ProductoTemporadaItem } from "./TemporadaGrid";
 
 const WHATSAPP = "5214433853472";
 
@@ -16,13 +16,14 @@ interface Props {
 
 /**
  * Detalle de un producto de temporada: foto, descripción y lo que lleva. Sin
- * precio ni carrito; el pedido se hace por WhatsApp mientras se fijan precios.
+ * carrito; el pedido se hace por WhatsApp. El precio sale solo si ya se fijó.
  */
 export default function TemporadaModal({ item, onClose }: Props) {
   const t = useTranslations(TEMPORADA?.mensajes ?? "navidad");
   const { producto, incluye } = item;
   const cerrarRef = useRef<HTMLButtonElement>(null);
-  const medida = medidaProducto(producto);
+  const medida = medidaProducto(producto, t("personalizable"));
+  const precio = precioTemporada(producto);
   const linea = LINEA_ETIQUETA[producto.linea];
   const mensaje = t("whatsappMensaje", { producto: producto.nombre });
 
@@ -101,7 +102,13 @@ export default function TemporadaModal({ item, onClose }: Props) {
               )}
 
               <div className="mt-auto flex flex-col gap-2 border-t border-[#f0e0d0] pt-4">
-                <p className="font-body text-sm text-cacao">{t("precioProximamente")}</p>
+                {precio ? (
+                  <p className="font-body text-xl font-semibold text-espresso">
+                    {precio} <span className="text-sm font-normal text-cacao">{t("porPieza")}</span>
+                  </p>
+                ) : (
+                  <p className="font-body text-sm text-cacao">{t("precioProximamente")}</p>
+                )}
                 <a
                   href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`}
                   target="_blank"
