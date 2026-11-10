@@ -6,6 +6,12 @@ import type { Producto } from "../../domain/entities/Producto.entity";
 
 interface Props {
   producto: Producto;
+  /** Lo que incluye con sus opciones por defecto (los mismos chips de la página). */
+  incluye?: string[];
+  /** Sugerido con opciones por defecto y medida base, redondeado. */
+  precioSugerido?: number | null;
+  /** Precio fijo del producto (o de su primer tamaño), si tiene. */
+  precioFijo?: number | null;
   onClick: () => void;
   onEdit: (e: React.MouseEvent) => void;
   onDuplicate: (e: React.MouseEvent) => void;
@@ -25,15 +31,29 @@ const LINEA_LABELS: Record<string, { label: string; cls: string }> = {
   },
 };
 
-export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onToggleActivo, onDelete }: Props) {
+/** Chips visibles; el resto se resume en "+N". */
+const MAX_CHIPS = 3;
+const pesos = (n: number) => `$${n.toFixed(0)}`;
+
+export function ProductoCard({ producto, incluye = [], precioSugerido, precioFijo, onClick, onEdit, onDuplicate, onToggleActivo, onDelete }: Props) {
   const linea = LINEA_LABELS[producto.linea] ?? LINEA_LABELS.sweet;
 
   return (
     <div className="group relative flex flex-col bg-white rounded-2xl border border-hc-line shadow-sm hover:shadow-md hover:border-hc-line-strong transition overflow-hidden">
       {/* Imagen / placeholder */}
-      <button
+      {/* div con rol de botón: un <button> no puede contener los botones de acciones. */}
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onClick}
-        className="text-left flex flex-col flex-1 focus:outline-none"
+        onKeyDown={(e) => {
+          if (e.target !== e.currentTarget) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+        className="text-left flex flex-col flex-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-hc-rose/40"
       >
         <div className="relative w-full aspect-[4/3] bg-hc-hover">
           {producto.imagenUrl ? (
@@ -155,6 +175,42 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onToggleA
               {producto.descripcion}
             </p>
           )}
+          {incluye.length > 0 && (
+            <div className="mt-1 flex flex-wrap gap-1" aria-label="Incluye">
+              {incluye.slice(0, MAX_CHIPS).map((nombre) => (
+                <span
+                  key={nombre}
+                  className="max-w-full truncate rounded-full border border-hc-line bg-hc-hover px-2 py-0.5 text-[10.5px] font-medium text-hc-muted"
+                >
+                  {nombre}
+                </span>
+              ))}
+              {incluye.length > MAX_CHIPS && (
+                <span
+                  title={incluye.slice(MAX_CHIPS).join(", ")}
+                  className="rounded-full border border-hc-line bg-hc-hover px-2 py-0.5 text-[10.5px] font-semibold text-hc-soft"
+                >
+                  +{incluye.length - MAX_CHIPS}
+                </span>
+              )}
+            </div>
+          )}
+          {(precioFijo != null || precioSugerido != null) && (
+            <dl className="mt-1.5 grid grid-cols-2 gap-1.5">
+              <div className="rounded-lg bg-hc-hover px-2 py-1">
+                <dt className="text-[10px] font-semibold uppercase tracking-wide text-hc-soft">Sugerido</dt>
+                <dd className="text-[14px] font-bold tabular-nums text-hc-ink">
+                  {precioSugerido != null ? pesos(precioSugerido) : "—"}
+                </dd>
+              </div>
+              {precioFijo != null && (
+                <div className="rounded-lg border border-hc-rose/25 bg-hc-rose/5 px-2 py-1">
+                  <dt className="text-[10px] font-semibold uppercase tracking-wide text-hc-rose">Fijo</dt>
+                  <dd className="text-[14px] font-bold tabular-nums text-hc-rose">{pesos(precioFijo)}</dd>
+                </div>
+              )}
+            </dl>
+          )}
           <div className="flex items-center gap-1.5 mt-1">
             {producto.permiteMedidaPersonalizada ? (
               <span className="text-[11px] text-hc-rose font-medium">
@@ -169,7 +225,7 @@ export function ProductoCard({ producto, onClick, onEdit, onDuplicate, onToggleA
             )}
           </div>
         </div>
-      </button>
+      </div>
     </div>
   );
 }

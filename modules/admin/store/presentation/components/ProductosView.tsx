@@ -1,8 +1,13 @@
 "use client";
 // src/modules/admin/productos/presentation/components/ProductosView.tsx
 
-import { useState, useImperativeHandle, type Ref } from "react";
+import { useMemo, useState, useImperativeHandle, type Ref } from "react";
 import { useProductos, type EstadoProducto } from "../hooks/useProductos";
+import { usePastelConfigCatalogo } from "../hooks/usePastelConfig";
+import { incluyeProducto } from "../../domain/usecases/IncluyeProducto.usecase";
+import { precioSugeridoProducto } from "../../domain/usecases/PrecioPublico.usecase";
+import { normalizeOpciones } from "../../domain/entities/PastelPersonalizado.entity";
+import { getPrecioEstablecidoEfectivo, OPCIONES_VACIAS } from "../../domain/entities/Producto.entity";
 import { ProductoCard } from "./ProductoCard";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
 import { ProductoEditorModal } from "./ProductoEditorModal";
@@ -96,6 +101,30 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
   const [tipo, setTipo] = useState<(typeof TIPOS)[number]["value"]>("");
   const productosVisibles =
     tipo === "" ? productos : productos.filter((p) => (tipo === "sin" ? !p.categoria : p.categoria === tipo));
+
+  // Chips "incluye" y precios de cada card (mismo cálculo que la página pública).
+  const { catalogo } = usePastelConfigCatalogo();
+  const resumen = useMemo(() => {
+    const out: Record<string, { incluye: string[]; sugerido: number | null; fijo: number | null }> = {};
+    if (!catalogo) return out;
+    for (const p of productos) {
+      let sugerido: number | null = null;
+      try {
+        sugerido = precioSugeridoProducto(p, catalogo);
+      } catch {
+        sugerido = null;
+      }
+      out[p.id] = {
+        incluye: incluyeProducto(
+          normalizeOpciones({ ...OPCIONES_VACIAS, ...p.opcionesDefault }),
+          catalogo,
+        ).map((i) => i.nombre),
+        sugerido,
+        fijo: getPrecioEstablecidoEfectivo(p, p.tamanosFijos[0]?.id ?? null),
+      };
+    }
+    return out;
+  }, [productos, catalogo]);
 
   // Modal de cotización (configurador para el cliente)
   const [selected, setSelected] = useState<Producto | null>(null);
@@ -222,6 +251,9 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
             <ProductoCard
               key={p.id}
               producto={p}
+              incluye={resumen[p.id]?.incluye}
+              precioSugerido={resumen[p.id]?.sugerido}
+              precioFijo={resumen[p.id]?.fijo}
               onClick={() => setSelected(p)}
               onEdit={(e) => {
                 e.stopPropagation();
