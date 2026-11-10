@@ -93,6 +93,11 @@ interface Props {
   onOpen: () => void;
   /** Precarga la imagen (primeras cards visibles). */
   priority?: boolean;
+  /**
+   * Encuadre vertical de la foto dentro del plato (CSS object-position).
+   * Las fotos verticales con el producto arriba se bajan mostrando más de su parte superior.
+   */
+  encuadre?: string;
 }
 
 export default function ProductCard({
@@ -107,6 +112,7 @@ export default function ProductCard({
   promo,
   onOpen,
   priority,
+  encuadre,
 }: Props) {
   return (
     <article
@@ -159,6 +165,7 @@ export default function ProductCard({
               priority={priority}
               sizes="(max-width: 640px) 40vw, (max-width: 1024px) 26vw, 20vw"
               className="object-cover"
+              style={encuadre ? { objectPosition: encuadre } : undefined}
             />
           </div>
         </div>

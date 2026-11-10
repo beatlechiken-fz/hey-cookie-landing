@@ -18,6 +18,13 @@ export interface ProductoTemporadaItem {
 }
 
 /**
+ * Las fotos de temporada son verticales (4:5) con el producto en la parte de
+ * arriba; en el plato redondo se recortan centradas y el producto queda alto.
+ * Mostrar más de la parte superior lo baja al centro del plato.
+ */
+const ENCUADRE_TEMPORADA = "50% 15%";
+
+/**
  * Medida a mostrar: el tamaño fijo único ("Individual", "Tronco 30 cm"); si se
  * hace por diámetro, el tamaño es a gusto del cliente (`personalizable`).
  */
@@ -69,6 +76,7 @@ export default function TemporadaGrid({ items, tono, vacio, mostrarLinea }: Prop
             etiqueta={mostrarLinea ? LINEA_ETIQUETA[item.producto.linea] : null}
             onOpen={() => setAbierto(item)}
             priority={i < 4}
+            encuadre={ENCUADRE_TEMPORADA}
           />
         ))}
       </div>
