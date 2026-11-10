@@ -21,6 +21,86 @@ import {
   type Producto,
 } from "../../domain/entities/Producto.entity";
 
+type SeccionId =
+  | "tamano"
+  | "coberturas"
+  | "rellenos"
+  | "jarabe"
+  | "toppings"
+  | "empaques"
+  | "ornamentos"
+  | "precio";
+
+/**
+ * Sección colapsable del configurador. Muestra lo elegido en el encabezado
+ * para que se lea la configuración completa sin abrir cada una.
+ */
+function Seccion({
+  id,
+  titulo,
+  resumen,
+  abierta,
+  onToggle,
+  children,
+}: {
+  id: SeccionId;
+  titulo: string;
+  resumen?: string | null;
+  abierta: SeccionId | null;
+  onToggle: (id: SeccionId) => void;
+  children: React.ReactNode;
+}) {
+  const expandida = abierta === id;
+  return (
+    <section
+      className={`rounded-xl border transition-colors ${
+        expandida ? "border-hc-rose/40 bg-white" : "border-hc-line bg-hc-hover/40"
+      }`}
+    >
+      <h3>
+        <button
+          type="button"
+          onClick={() => onToggle(id)}
+          aria-expanded={expandida}
+          aria-controls={`seccion-${id}`}
+          className="flex w-full items-center gap-3 px-4 py-3 text-left cursor-pointer"
+        >
+          <span className="text-[13px] font-semibold text-hc-ink shrink-0">{titulo}</span>
+          <span className="min-w-0 flex-1 truncate text-right text-[12px] text-hc-muted">
+            {resumen ?? "Ninguno"}
+          </span>
+          <svg
+            viewBox="0 0 24 24"
+            className={`h-4 w-4 shrink-0 text-hc-muted transition-transform ${expandida ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      </h3>
+      <AnimatePresence initial={false}>
+        {expandida && (
+          <motion.div
+            id={`seccion-${id}`}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-hc-line px-4 pb-4 pt-3">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+}
+
 interface Props {
   producto: Producto | null;
   onClose: () => void;
@@ -89,12 +169,48 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
     return desglose.precioSugerido;
   })();
 
+  // ── Secciones en acordeón: solo una abierta a la vez (Tamaño al inicio) ──
+  const [abierta, setAbierta] = useState<SeccionId | null>("tamano");
+  const toggle = (id: SeccionId) => setAbierta((a) => (a === id ? null : id));
+
+  // Resumen de lo elegido en cada sección (se ve aunque esté colapsada)
+  const nombres = (ids: (string | null | undefined)[], lista: { id: string; nombre: string }[] = []) =>
+    ids.map((id) => lista.find((x) => x.id === id)?.nombre).filter(Boolean).join(", ") || null;
+  const resumenTamano = !producto
+    ? null
+    : producto.permiteMedidaPersonalizada
+      ? `${personasDesdeDiametro(diametroCm, producto.medidaBaseCm ?? 24)} personas · ${diametroCm}cm`
+      : producto.tamanosFijos.find((t) => t.id === tamanoFijoId)?.nombre ?? "Tamaño único";
+  const resumenCoberturas = nombres(opciones.coberturas.map((c) => c.coberturaId), catalogo?.coberturas);
+  const resumenRellenos = nombres(opciones.rellenos.map((r) => r.rellenoId), catalogo?.coberturas);
+  const resumenJarabe =
+    [
+      nombres([opciones.jarabeId], catalogo?.jarabes),
+      catalogo?.licores.find((l) => l.ingredienteId === opciones.licorId)?.nombre,
+    ]
+      .filter(Boolean)
+      .join(" · ") || null;
+  const resumenToppings = nombres(
+    opciones.toppings.map((t) => t.ingredienteId),
+    catalogo?.toppings.map((t) => ({ id: t.ingredienteId, nombre: t.nombre })),
+  );
+  const resumenEmpaques = nombres(opciones.empaqueIds, catalogo?.empaques);
+  const resumenOrnamentos =
+    opciones.ornamentos
+      .map((o) => {
+        const n = catalogo?.ornamentos.find((x) => x.id === o.ornamentoId)?.nombre;
+        return n ? (o.cantidad > 1 ? `${n} ×${o.cantidad}` : n) : null;
+      })
+      .filter(Boolean)
+      .join(", ") || null;
+
   const open = Boolean(producto);
   const inputCls =
     "w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-sm focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition";
 
   function handleClose() {
     reset();
+    setAbierta("tamano");
     setAdded(false);
     setUsarPrecioEstablecido(false);
     onClose();
@@ -234,62 +350,59 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
                 )}
 
                 {!loading && !error && catalogo && (
-                  <div className="flex flex-col gap-5">
-                    {/* Medida personalizada */}
-                    {producto.permiteMedidaPersonalizada && (
-                      <DiametroPersonasSelector
-                        diametroCm={diametroCm}
-                        medidaBaseCm={producto.medidaBaseCm ?? 24}
-                        onChange={setDiametroCm}
-                      />
-                    )}
+                  <div className="flex flex-col gap-2">
+                    <Seccion id="tamano" titulo="Tamaño" resumen={resumenTamano} abierta={abierta} onToggle={toggle}>
+                        {producto.permiteMedidaPersonalizada && (
+                          <DiametroPersonasSelector
+                            diametroCm={diametroCm}
+                            medidaBaseCm={producto.medidaBaseCm ?? 24}
+                            onChange={setDiametroCm}
+                          />
+                        )}
 
-                    {/* Tamaños fijos */}
-                    {!producto.permiteMedidaPersonalizada &&
-                      producto.tamanosFijos.length > 0 && (
-                        <div className="flex flex-col gap-2">
-                          <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
-                            Tamaño
-                          </label>
-                          <div className="flex flex-wrap gap-2">
-                            {producto.tamanosFijos.map((t) => (
-                              <button
-                                key={t.id}
-                                type="button"
-                                onClick={() => setTamanoFijoId(t.id)}
-                                className={
-                                  "px-4 py-2 rounded-xl text-[13px] font-semibold border transition " +
-                                  (tamanoFijoId === t.id
-                                    ? "bg-hc-rose text-white border-hc-rose"
-                                    : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover")
-                                }
-                              >
-                                {t.nombre}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                        {/* Tamaños fijos */}
+                        {!producto.permiteMedidaPersonalizada &&
+                          producto.tamanosFijos.length > 0 && (
+                            <div className="flex flex-col gap-2">
+                              <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
+                                Tamaño
+                              </label>
+                              <div className="flex flex-wrap gap-2">
+                                {producto.tamanosFijos.map((t) => (
+                                  <button
+                                    key={t.id}
+                                    type="button"
+                                    onClick={() => setTamanoFijoId(t.id)}
+                                    className={
+                                      "px-4 py-2 rounded-xl text-[13px] font-semibold border transition " +
+                                      (tamanoFijoId === t.id
+                                        ? "bg-hc-rose text-white border-hc-rose"
+                                        : "bg-white text-hc-soft border-hc-line-strong hover:bg-hc-hover")
+                                    }
+                                  >
+                                    {t.nombre}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
-                    {/* Tamaño único */}
-                    {!producto.permiteMedidaPersonalizada &&
-                      producto.tamanosFijos.length === 0 && (
-                        <div className="rounded-xl bg-hc-hover border border-hc-line px-3 py-2.5">
-                          <p className="text-[12px] text-hc-soft">
-                            Este producto tiene un tamaño único
-                            {producto.medidaBaseCm
-                              ? ` (${producto.medidaBaseCm}cm)`
-                              : ""}
-                            .
-                          </p>
-                        </div>
-                      )}
+                        {/* Tamaño único */}
+                        {!producto.permiteMedidaPersonalizada &&
+                          producto.tamanosFijos.length === 0 && (
+                            <div className="rounded-xl bg-hc-hover border border-hc-line px-3 py-2.5">
+                              <p className="text-[12px] text-hc-soft">
+                                Este producto tiene un tamaño único
+                                {producto.medidaBaseCm
+                                  ? ` (${producto.medidaBaseCm}cm)`
+                                  : ""}
+                                .
+                              </p>
+                            </div>
+                          )}
+                    </Seccion>
 
-                    <div className="h-px bg-hc-sunken" />
-
-                    {/* Grid de selectores */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="sm:col-span-2">
+                    <Seccion id="coberturas" titulo="Coberturas" resumen={resumenCoberturas} abierta={abierta} onToggle={toggle}>
                         <MultiCoberturaField
                           label="Coberturas"
                           items={opciones.coberturas.map((c) => ({
@@ -319,9 +432,9 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
                           }))}
                           addLabel="+ Agregar cobertura"
                         />
-                      </div>
+                    </Seccion>
 
-                      <div className="sm:col-span-2">
+                    <Seccion id="rellenos" titulo="Rellenos" resumen={resumenRellenos} abierta={abierta} onToggle={toggle}>
                         <MultiCoberturaField
                           label="Rellenos"
                           items={opciones.rellenos.map((r) => ({
@@ -351,271 +464,262 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
                           }))}
                           addLabel="+ Agregar relleno"
                         />
+                    </Seccion>
+
+                    <Seccion id="jarabe" titulo="Jarabe y licor" resumen={resumenJarabe} abierta={abierta} onToggle={toggle}>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <SelectField
+                            label="Jarabe"
+                            value={opciones.jarabeId ?? NINGUNO}
+                            options={catalogo.jarabes.map((j) => ({
+                              value: j.id,
+                              label: j.nombre,
+                            }))}
+                            onChange={(v) =>
+                              update("jarabeId", v === NINGUNO ? null : v)
+                            }
+                          />
+
+                          <SelectField
+                            label="Sabor de jarabe"
+                            value={opciones.saborJarabeId ?? NINGUNO}
+                            options={catalogo.saboresJarabe.map((s) => ({
+                              value: s.id,
+                              label: s.nombre,
+                              sublabel:
+                                s.precio != null ? `+$${s.precio}` : undefined,
+                            }))}
+                            onChange={(v) =>
+                              update("saborJarabeId", v === NINGUNO ? null : v)
+                            }
+                          />
+
+                          <SelectField
+                            label="Licor"
+                            value={opciones.licorId ?? NINGUNO}
+                            options={catalogo.licores
+                              .filter((l) => l.cantidad != null)
+                              .map((l) => ({
+                                value: l.ingredienteId,
+                                label: l.nombre,
+                                sublabel: `${l.cantidad}ml`,
+                              }))}
+                            onChange={(v) =>
+                              update("licorId", v === NINGUNO ? null : v)
+                            }
+                          />
                       </div>
+                    </Seccion>
 
-                      <SelectField
-                        label="Jarabe"
-                        value={opciones.jarabeId ?? NINGUNO}
-                        options={catalogo.jarabes.map((j) => ({
-                          value: j.id,
-                          label: j.nombre,
-                        }))}
-                        onChange={(v) =>
-                          update("jarabeId", v === NINGUNO ? null : v)
-                        }
-                      />
-
-                      <SelectField
-                        label="Sabor de jarabe"
-                        value={opciones.saborJarabeId ?? NINGUNO}
-                        options={catalogo.saboresJarabe.map((s) => ({
-                          value: s.id,
-                          label: s.nombre,
-                          sublabel:
-                            s.precio != null ? `+$${s.precio}` : undefined,
-                        }))}
-                        onChange={(v) =>
-                          update("saborJarabeId", v === NINGUNO ? null : v)
-                        }
-                      />
-
-                      <SelectField
-                        label="Licor"
-                        value={opciones.licorId ?? NINGUNO}
-                        options={catalogo.licores
-                          .filter((l) => l.cantidad != null)
-                          .map((l) => ({
-                            value: l.ingredienteId,
-                            label: l.nombre,
-                            sublabel: `${l.cantidad}ml`,
-                          }))}
-                        onChange={(v) =>
-                          update("licorId", v === NINGUNO ? null : v)
-                        }
-                      />
-                    </div>
-
-                    <div className="h-px bg-hc-sunken" />
-
-                    <MultiSelectField
-                      label="Toppings"
-                      values={opciones.toppings.map((t) => t.ingredienteId)}
-                      options={catalogo.toppings
-                        .filter((t) => t.cantidad != null)
-                        .map((t) => ({
-                          value: t.ingredienteId,
-                          label: t.nombre,
-                          sublabel: `${t.cantidad}${t.unidad}`,
-                        }))}
-                      onChange={(ids) =>
-                        update(
-                          "toppings",
-                          ids.map(
-                            (id) =>
-                              opciones.toppings.find((t) => t.ingredienteId === id) ?? {
-                                ingredienteId: id,
-                              },
-                          ),
-                        )
-                      }
-                    />
-                    {/* Cantidad ajustable por topping — override manual solo para esta orden */}
-                    {opciones.toppings.map((sel) => {
-                      const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
-                      if (!t || t.cantidad == null) return null;
-                      const overridden = sel.cantidad != null;
-                      return (
-                        <div key={sel.ingredienteId} className="flex items-center gap-2 -mt-1">
-                          <span className="text-[12px] text-hc-muted shrink-0">{t.nombre}:</span>
-                          <input
-                            type="number"
-                            min={0}
-                            step={1}
-                            value={sel.cantidad ?? t.cantidad}
-                            onChange={(e) => {
-                              const n = Number(e.target.value);
+                    <Seccion id="toppings" titulo="Toppings" resumen={resumenToppings} abierta={abierta} onToggle={toggle}>
+                      <div className="flex flex-col gap-3">
+                          <MultiSelectField
+                            label="Toppings"
+                            values={opciones.toppings.map((t) => t.ingredienteId)}
+                            options={catalogo.toppings
+                              .filter((t) => t.cantidad != null)
+                              .map((t) => ({
+                                value: t.ingredienteId,
+                                label: t.nombre,
+                                sublabel: `${t.cantidad}${t.unidad}`,
+                              }))}
+                            onChange={(ids) =>
                               update(
                                 "toppings",
-                                opciones.toppings.map((x) =>
-                                  x.ingredienteId === sel.ingredienteId
-                                    ? { ...x, cantidad: Number.isFinite(n) && n >= 0 ? n : 0 }
-                                    : x,
+                                ids.map(
+                                  (id) =>
+                                    opciones.toppings.find((t) => t.ingredienteId === id) ?? {
+                                      ingredienteId: id,
+                                    },
                                 ),
-                              );
-                            }}
-                            className="w-20 px-2 py-1 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-[12px] font-semibold text-center focus:outline-none focus:border-hc-rose"
+                              )
+                            }
                           />
-                          <span className="text-[11px] text-hc-muted">{t.unidad}</span>
-                          {overridden && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                update(
-                                  "toppings",
-                                  opciones.toppings.map((x) =>
-                                    x.ingredienteId === sel.ingredienteId ? { ...x, cantidad: undefined } : x,
-                                  ),
-                                )
-                              }
-                              className="text-[11px] text-hc-soft underline hover:text-hc-ink transition cursor-pointer"
-                            >
-                              Restablecer ({t.cantidad}{t.unidad})
-                            </button>
+                          {/* Cantidad ajustable por topping — override manual solo para esta orden */}
+                          {opciones.toppings.map((sel) => {
+                            const t = catalogo.toppings.find((x) => x.ingredienteId === sel.ingredienteId);
+                            if (!t || t.cantidad == null) return null;
+                            const overridden = sel.cantidad != null;
+                            return (
+                              <div key={sel.ingredienteId} className="flex items-center gap-2 -mt-1">
+                                <span className="text-[12px] text-hc-muted shrink-0">{t.nombre}:</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step={1}
+                                  value={sel.cantidad ?? t.cantidad}
+                                  onChange={(e) => {
+                                    const n = Number(e.target.value);
+                                    update(
+                                      "toppings",
+                                      opciones.toppings.map((x) =>
+                                        x.ingredienteId === sel.ingredienteId
+                                          ? { ...x, cantidad: Number.isFinite(n) && n >= 0 ? n : 0 }
+                                          : x,
+                                      ),
+                                    );
+                                  }}
+                                  className="w-20 px-2 py-1 rounded-lg border border-hc-line-strong bg-white text-hc-ink text-[12px] font-semibold text-center focus:outline-none focus:border-hc-rose"
+                                />
+                                <span className="text-[11px] text-hc-muted">{t.unidad}</span>
+                                {overridden && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      update(
+                                        "toppings",
+                                        opciones.toppings.map((x) =>
+                                          x.ingredienteId === sel.ingredienteId ? { ...x, cantidad: undefined } : x,
+                                        ),
+                                      )
+                                    }
+                                    className="text-[11px] text-hc-soft underline hover:text-hc-ink transition cursor-pointer"
+                                  >
+                                    Restablecer ({t.cantidad}{t.unidad})
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </Seccion>
+
+                    <Seccion id="empaques" titulo="Empaques" resumen={resumenEmpaques} abierta={abierta} onToggle={toggle}>
+                        <MultiSelectField
+                          label="Empaques"
+                          values={opciones.empaqueIds}
+                          options={catalogo.empaques.map((e) => ({
+                            value: e.id,
+                            label: e.nombre,
+                            sublabel: `$${e.precio}`,
+                          }))}
+                          onChange={(v) => update("empaqueIds", v)}
+                        />
+                    </Seccion>
+
+                    <Seccion id="ornamentos" titulo="Ornamentos" resumen={resumenOrnamentos} abierta={abierta} onToggle={toggle}>
+                        <MultiSelectQuantityField
+                          label="Ornamentos"
+                          items={opciones.ornamentos.map((o) => ({
+                            id: o.ornamentoId,
+                            cantidad: o.cantidad,
+                          }))}
+                          options={catalogo.ornamentos.map((o) => ({
+                            value: o.id,
+                            label: o.nombre,
+                            sublabel: `$${o.precio}`,
+                          }))}
+                          onChange={(items) =>
+                            update(
+                              "ornamentos",
+                              items.map((it) => ({
+                                ornamentoId: it.id,
+                                cantidad: it.cantidad,
+                              })),
+                            )
+                          }
+                        />
+                    </Seccion>
+
+                    <Seccion id="precio" titulo="Costos y precio" resumen={desglose ? `$${precioFinal.toFixed(2)} c/u` : null} abierta={abierta} onToggle={toggle}>
+                      <div className="flex flex-col gap-4">
+                          {desglose && (
+                            <CostoDesgloseTable
+                              desglose={desglose}
+                              cantidad={cantidad}
+                            />
                           )}
-                        </div>
-                      );
-                    })}
 
-                    <MultiSelectField
-                      label="Empaques"
-                      values={opciones.empaqueIds}
-                      options={catalogo.empaques.map((e) => ({
-                        value: e.id,
-                        label: e.nombre,
-                        sublabel: `$${e.precio}`,
-                      }))}
-                      onChange={(v) => update("empaqueIds", v)}
-                    />
+                          {desglose && tieneEstablecido && (
+                            <div className="flex flex-col gap-2">
+                              <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
+                                Precio a usar
+                              </p>
+                              <div className="flex gap-2">
+                                {/* Sugerido */}
+                                <button
+                                  type="button"
+                                  onClick={() => setUsarPrecioEstablecido(false)}
+                                  className={`flex-1 flex flex-col items-center py-3 px-4 rounded-xl border-2 transition ${
+                                    !usarPrecioEstablecido
+                                      ? "border-hc-rose bg-hc-hover"
+                                      : "border-hc-line-strong bg-white hover:bg-hc-rose-tint"
+                                  }`}
+                                >
+                                  <span
+                                    className={`text-[11px] font-semibold uppercase tracking-wide ${!usarPrecioEstablecido ? "text-hc-rose" : "text-hc-muted"}`}
+                                  >
+                                    Precio sugerido
+                                  </span>
+                                  <span
+                                    className={`text-lg font-bold mt-0.5 ${!usarPrecioEstablecido ? "text-hc-soft" : "text-hc-muted"}`}
+                                  >
+                                    ${desglose.precioSugerido.toFixed(2)}
+                                  </span>
+                                  <span className="text-[10px] text-hc-soft mt-0.5">
+                                    Calculado del desglose
+                                  </span>
+                                </button>
 
-                    <MultiSelectQuantityField
-                      label="Ornamentos"
-                      items={opciones.ornamentos.map((o) => ({
-                        id: o.ornamentoId,
-                        cantidad: o.cantidad,
-                      }))}
-                      options={catalogo.ornamentos.map((o) => ({
-                        value: o.id,
-                        label: o.nombre,
-                        sublabel: `$${o.precio}`,
-                      }))}
-                      onChange={(items) =>
-                        update(
-                          "ornamentos",
-                          items.map((it) => ({
-                            ornamentoId: it.id,
-                            cantidad: it.cantidad,
-                          })),
-                        )
-                      }
-                    />
+                                {/* Establecido */}
+                                <button
+                                  type="button"
+                                  onClick={() => setUsarPrecioEstablecido(true)}
+                                  className={`flex-1 flex flex-col items-center py-3 px-4 rounded-xl border-2 transition ${
+                                    usarPrecioEstablecido
+                                      ? "border-hc-rose bg-hc-hover"
+                                      : "border-hc-line-strong bg-white hover:bg-hc-rose-tint"
+                                  }`}
+                                >
+                                  <span
+                                    className={`text-[11px] font-semibold uppercase tracking-wide ${usarPrecioEstablecido ? "text-hc-rose" : "text-hc-muted"}`}
+                                  >
+                                    Precio establecido
+                                  </span>
+                                  <span
+                                    className={`text-lg font-bold mt-0.5 ${usarPrecioEstablecido ? "text-hc-soft" : "text-hc-muted"}`}
+                                  >
+                                    ${precioEstablecidoEfectivo!.toFixed(2)}
+                                  </span>
+                                  <span className="text-[10px] text-hc-soft mt-0.5">
+                                    Definido manualmente
+                                  </span>
+                                </button>
+                              </div>
 
-                    <div className="h-px bg-hc-sunken" />
-
-                    {/* Cantidad */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
-                          Cantidad
-                        </p>
-                        <p className="text-[11px] text-hc-muted mt-0.5">
-                          Número de unidades con esta configuración
-                        </p>
+                            </div>
+                          )}
                       </div>
-                      <QuantityStepper
-                        value={cantidad}
-                        onChange={setCantidad}
-                      />
-                    </div>
-
-                    <div className="h-px bg-hc-sunken" />
-
-                    {/* Desglose de costos */}
-                    {desglose && (
-                      <CostoDesgloseTable
-                        desglose={desglose}
-                        cantidad={cantidad}
-                      />
-                    )}
-
-                    {/* ── Selector de precio ───────────────────────────── */}
-                    {desglose && tieneEstablecido && (
-                      <div className="flex flex-col gap-2">
-                        <p className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
-                          Precio a usar
-                        </p>
-                        <div className="flex gap-2">
-                          {/* Sugerido */}
-                          <button
-                            type="button"
-                            onClick={() => setUsarPrecioEstablecido(false)}
-                            className={`flex-1 flex flex-col items-center py-3 px-4 rounded-xl border-2 transition ${
-                              !usarPrecioEstablecido
-                                ? "border-hc-rose bg-hc-hover"
-                                : "border-hc-line-strong bg-white hover:bg-hc-rose-tint"
-                            }`}
-                          >
-                            <span
-                              className={`text-[11px] font-semibold uppercase tracking-wide ${!usarPrecioEstablecido ? "text-hc-rose" : "text-hc-muted"}`}
-                            >
-                              Precio sugerido
-                            </span>
-                            <span
-                              className={`text-lg font-bold mt-0.5 ${!usarPrecioEstablecido ? "text-hc-soft" : "text-hc-muted"}`}
-                            >
-                              ${desglose.precioSugerido.toFixed(2)}
-                            </span>
-                            <span className="text-[10px] text-hc-soft mt-0.5">
-                              Calculado del desglose
-                            </span>
-                          </button>
-
-                          {/* Establecido */}
-                          <button
-                            type="button"
-                            onClick={() => setUsarPrecioEstablecido(true)}
-                            className={`flex-1 flex flex-col items-center py-3 px-4 rounded-xl border-2 transition ${
-                              usarPrecioEstablecido
-                                ? "border-hc-rose bg-hc-hover"
-                                : "border-hc-line-strong bg-white hover:bg-hc-rose-tint"
-                            }`}
-                          >
-                            <span
-                              className={`text-[11px] font-semibold uppercase tracking-wide ${usarPrecioEstablecido ? "text-hc-rose" : "text-hc-muted"}`}
-                            >
-                              Precio establecido
-                            </span>
-                            <span
-                              className={`text-lg font-bold mt-0.5 ${usarPrecioEstablecido ? "text-hc-soft" : "text-hc-muted"}`}
-                            >
-                              ${precioEstablecidoEfectivo!.toFixed(2)}
-                            </span>
-                            <span className="text-[10px] text-hc-soft mt-0.5">
-                              Definido manualmente
-                            </span>
-                          </button>
-                        </div>
-
-                        {/* Total con el precio elegido */}
-                        {cantidad > 1 && (
-                          <div className="flex justify-between items-center px-1 text-[13px]">
-                            <span className="text-hc-muted">
-                              Total ({cantidad} unidades)
-                            </span>
-                            <span className="font-bold text-hc-rose">
-                              ${(precioFinal * cantidad).toFixed(2)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Si no tiene precio establecido, mostrar solo el precio final */}
-                    {desglose && !tieneEstablecido && cantidad > 1 && (
-                      <div className="flex justify-between items-center px-1 text-[13px]">
-                        <span className="text-hc-muted">
-                          Total ({cantidad} unidades)
-                        </span>
-                        <span className="font-bold text-hc-rose">
-                          ${(desglose.precioSugerido * cantidad).toFixed(2)}
-                        </span>
-                      </div>
-                    )}
+                    </Seccion>
                   </div>
                 )}
               </div>
 
               {/* Footer */}
-              <div className="flex flex-col gap-2 px-6 py-4 border-t border-hc-line bg-white shrink-0">
+              <div className="flex flex-col gap-3 px-6 py-4 border-t border-hc-line bg-white shrink-0">
+                {/* Cantidad junto al precio — siempre visible */}
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
+                      Cantidad
+                    </span>
+                    <QuantityStepper value={cantidad} onChange={setCantidad} />
+                  </div>
+                  {desglose && (
+                    <div className="text-right leading-tight">
+                      <p className="text-xl font-bold text-hc-ink tabular-nums">
+                        ${(precioFinal * cantidad).toFixed(2)}
+                      </p>
+                      <p className="text-[11px] text-hc-muted">
+                        {cantidad > 1
+                          ? `${cantidad} × $${precioFinal.toFixed(2)}`
+                          : usarPrecioEstablecido && tieneEstablecido
+                            ? "Precio establecido"
+                            : "Precio sugerido"}
+                      </p>
+                    </div>
+                  )}
+                </div>
                 {saveError && (
                   <p className="text-[12px] text-[#C0392B] text-center">{saveError}</p>
                 )}
@@ -650,11 +754,6 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
                   ) : (
                     <>
                       {editItem ? "Guardar cambios" : "Agregar"}
-                      {desglose && (
-                        <span className="opacity-90 text-[13px] font-semibold">
-                          · ${precioFinal.toFixed(2)}
-                        </span>
-                      )}
                     </>
                   )}
                 </button>

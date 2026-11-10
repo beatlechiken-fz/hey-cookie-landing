@@ -18,6 +18,7 @@ import {
   incluyeProductoDiff,
   type ItemIncluidoDiff,
 } from "@/modules/admin/store/domain/usecases/IncluyeProducto.usecase";
+import { desglosePrecioCliente } from "@/modules/admin/store/domain/usecases/DesglosePrecioCliente.usecase";
 import type { OrdenCuponAplicado } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { redondearPrecioCerrado } from "@/modules/admin/store/domain/usecases/PrecioPublico.usecase";
 import type { Cupon } from "@/modules/admin/store/domain/entities/Cupon.entity";
@@ -65,8 +66,6 @@ const NativeSelect = ({
     ))}
   </select>
 );
-
-const SectionDivider = () => <hr className="border-[#f0e0d0]" />;
 
 interface CoberturaRow {
   id: string;
@@ -176,7 +175,7 @@ function IncluyeChips({ items }: { items: ItemIncluidoDiff[] }) {
       <p className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider mb-1.5">
         Tu precio incluye
       </p>
-      <ul className="flex flex-wrap gap-1.5" aria-live="polite">
+      <ul className="flex max-h-[3.75rem] flex-wrap gap-1.5 overflow-y-auto" aria-live="polite">
         {items.map((i) => (
           <li
             key={i.key}
@@ -198,6 +197,28 @@ function IncluyeChips({ items }: { items: ItemIncluidoDiff[] }) {
     </div>
   );
 }
+
+// ── Pasos del wizard ─────────────────────────────────────────────────────────
+
+type PasoId = "tamano" | "coberturas" | "rellenos" | "jarabe" | "extras" | "resumen";
+
+const PASOS: { id: PasoId; label: string }[] = [
+  { id: "tamano", label: "Tamaño" },
+  { id: "coberturas", label: "Cobertura" },
+  { id: "rellenos", label: "Relleno" },
+  { id: "jarabe", label: "Jarabe" },
+  { id: "extras", label: "Extras" },
+  { id: "resumen", label: "Resumen" },
+];
+
+const AYUDA_PASO: Partial<Record<PasoId, string>> = {
+  tamano: "Elige para cuántas personas o de qué tamaño lo quieres.",
+  coberturas: "Viene con la cobertura marcada. Puedes cambiarla, quitarla o agregar otra.",
+  rellenos: "Viene con el relleno marcado. Puedes cambiarlo, quitarlo o agregar otro.",
+  jarabe: "El jarabe le da humedad al bizcocho.",
+  extras: "Toppings y decoraciones opcionales.",
+  resumen: "Así se forma tu precio. Revisa y agrégalo al carrito.",
+};
 
 // ── Visibilidad de opciones según tipo de producto ────────────────────────────
 // Los campos ocultos siguen activos en opcionesDefault y afectan el precio.
@@ -285,7 +306,16 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
   const [validandoCupon, setValidandoCupon] = useState(false);
 
   const [justAdded, setJustAdded] = useState(false);
-  const [showExtras, setShowExtras] = useState(false);
+  const [pasoIdx, setPasoIdx] = useState(0);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const pasosRef = useRef<HTMLOListElement>(null);
+
+  // Mantiene visible el paso actual en la barra (en celular no caben todos).
+  useEffect(() => {
+    pasosRef.current
+      ?.querySelector('[aria-current="step"]')
+      ?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [pasoIdx]);
 
   const overlayRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -420,24 +450,45 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
   // Visibilidad de cada campo según tipo de producto
   const vis = getVisibilidad(producto.nombre);
 
+  // ── Pasos del wizard (solo los que aplican a este producto) ────────────────
+  const pasos = PASOS.filter((p) => {
+    if (p.id === "coberturas") return vis.cobertura;
+    if (p.id === "rellenos") return vis.relleno;
+    if (p.id === "jarabe") return vis.jarabe || vis.licor;
+    if (p.id === "extras") return vis.toppings || (catalogo?.ornamentos.length ?? 0) > 0;
+    return true;
+  }).map((p) => (p.id === "jarabe" && vis.jarabe && vis.licor ? { ...p, label: "Jarabe y licor" } : p));
+  const idx = Math.min(pasoIdx, pasos.length - 1);
+  const pasoActual = pasos[idx];
+  const esUltimo = idx === pasos.length - 1;
+  function irAPaso(i: number) {
+    setPasoIdx(Math.max(0, Math.min(i, pasos.length - 1)));
+    bodyRef.current?.scrollTo({ top: 0 });
+  }
+
+  // ── Resumen: tamaño elegido y desglose del precio por parte ────────────────
+  const etiquetaTamano = producto.permiteMedidaPersonalizada
+    ? `${personasDesdeDiametro(diametroCm, producto.medidaBaseCm ?? 24)} personas`
+    : tamanoActivo?.nombre ?? "Tamaño único";
+  const lineasPrecio = desglose ? desglosePrecioCliente(desglose, precioBase) : [];
+
   return (
-    /* Overlay — scrollable cuando el contenido es alto */
+    /* Overlay: el modal ocupa el alto de la pantalla dejando aire arriba y abajo */
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center px-3 py-5 sm:px-6 sm:py-10"
       style={{ backgroundColor: "rgba(30,10,5,0.55)", backdropFilter: "blur(4px)" }}
       onClick={(e) => { if (e.target === overlayRef.current) { reset(); onClose(); } }}
     >
-      <div className="flex min-h-full items-center justify-center p-4 md:p-6">
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby="producto-modal-title"
-          className="relative w-full max-w-2xl bg-[#FFFDF8] rounded-2xl shadow-2xl overflow-hidden"
+          className="relative flex h-full w-full max-w-2xl flex-col bg-[#FFFDF8] rounded-2xl shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between gap-3 px-6 py-4 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
+          <div className="flex items-center justify-between gap-3 px-5 py-3 sm:px-6 border-b border-[#f0e0d0] bg-[#FFF7F0] shrink-0">
             <div className="flex items-center gap-3 min-w-0">
               {producto.imagenUrl && (
                 <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-[#f0e0d0]">
@@ -473,8 +524,40 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
             </button>
           </div>
 
-          {/* Body */}
-          <div className="overflow-y-auto px-6 py-5 flex flex-col gap-5" style={{ maxHeight: "70vh" }}>
+          {/* Pasos del wizard — se puede saltar libremente a cualquiera */}
+          <nav aria-label="Pasos" className="shrink-0 border-b border-[#f0e0d0] bg-[#FFFDF8]">
+            <ol ref={pasosRef} className="flex gap-1.5 overflow-x-auto px-5 py-2.5 sm:px-6 [scrollbar-width:none]">
+              {pasos.map((p, i) => {
+                const actual = i === idx;
+                return (
+                  <li key={p.id} className="shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => irAPaso(i)}
+                      aria-current={actual ? "step" : undefined}
+                      className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 text-xs font-semibold border transition cursor-pointer ${
+                        actual
+                          ? "bg-[#A84D66] border-[#A84D66] text-white"
+                          : "bg-white border-[#f0e0d0] text-[#6B3E26] hover:bg-[#FFF0E6]"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] ${
+                          actual ? "bg-white/25" : "bg-[#FFF0E6] text-[#AA6A42]"
+                        }`}
+                      >
+                        {i + 1}
+                      </span>
+                      {p.label}
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
+
+          {/* Body — solo el paso actual; hace scroll si no cabe */}
+          <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-6 flex flex-col gap-5">
             {loading && (
               <p className="text-center text-[#AA6A42]/60 text-sm py-8 animate-pulse">
                 Cargando opciones…
@@ -488,526 +571,541 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
 
             {!loading && !error && catalogo && (
               <>
-                {/* ── Tamaño / Número de personas ── */}
-                {producto.permiteMedidaPersonalizada && producto.medidaBaseCm && (
-                  <DiametroPersonasSelector
-                    label="Número de personas"
-                    diametroCm={diametroCm}
-                    medidaBaseCm={producto.medidaBaseCm}
-                    onChange={setDiametroCm}
-                  />
-                )}
-
-                {!producto.permiteMedidaPersonalizada && producto.tamanosFijos.length > 0 && (
-                  <div>
-                    <Label>Tamaño</Label>
-                    <div className="flex flex-wrap gap-2">
-                      {producto.tamanosFijos.map((t) => (
-                        <button
-                          key={t.id}
-                          type="button"
-                          onClick={() => setTamanoFijoId(t.id)}
-                          className={`px-4 py-2 rounded-xl text-sm font-semibold border transition cursor-pointer ${
-                            tamanoFijoId === t.id
-                              ? "bg-[#AA6A42] text-white border-[#AA6A42]"
-                              : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
-                          }`}
-                        >
-                          {t.nombre}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {!producto.permiteMedidaPersonalizada && producto.tamanosFijos.length === 0 && (
-                  <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-4 py-3">
-                    <p className="text-xs text-[#6B3E26]">
-                      Tamaño único{producto.medidaBaseCm ? ` (${producto.medidaBaseCm}cm)` : ""}
-                    </p>
-                  </div>
-                )}
-
-                <SectionDivider />
-
-                {/* ── Grid de opciones (controlado por vis) ── */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Coberturas (varias, todas suman al precio) */}
-                  {vis.cobertura && (
-                    <MultiCoberturaSelect
-                      label="Coberturas"
-                      items={opciones.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId, factor: c.factor ?? 1 }))}
-                      onChange={(items) =>
-                        update(
-                          "coberturas",
-                          items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId, factor: it.factor ?? 1 })),
-                        )
-                      }
-                      options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
-                      sabores={
-                        vis.saborCobertura
-                          ? catalogo.saboresCobertura.map((s) => ({
-                              value: s.id,
-                              label: s.nombre,
-                              sublabel: s.precio != null ? `+$${s.precio}` : undefined,
-                            }))
-                          : []
-                      }
-                      addLabel="+ Agregar cobertura"
-                    />
-                  )}
-
-                  {/* Rellenos (varios, todos suman al precio) */}
-                  {vis.relleno && (
-                    <MultiCoberturaSelect
-                      label="Rellenos"
-                      items={opciones.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId, factor: r.factor ?? 1 }))}
-                      onChange={(items) =>
-                        update(
-                          "rellenos",
-                          items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId, factor: it.factor ?? 1 })),
-                        )
-                      }
-                      options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
-                      sabores={
-                        vis.saborRelleno
-                          ? catalogo.saboresCobertura.map((s) => ({
-                              value: s.id,
-                              label: s.nombre,
-                              sublabel: s.precio != null ? `+$${s.precio}` : undefined,
-                            }))
-                          : []
-                      }
-                      addLabel="+ Agregar relleno"
-                    />
-                  )}
-
-                  {/* Licor */}
-                  {vis.licor && (
-                    <div>
-                      <Label>Licor</Label>
-                      <NativeSelect
-                        value={opciones.licorId ?? NINGUNO}
-                        onChange={(v) => update("licorId", v === NINGUNO ? null : v)}
-                        options={catalogo.licores
-                          .filter((l) => l.cantidad != null)
-                          .map((l) => ({ value: l.ingredienteId, label: l.nombre, sublabel: `${l.cantidad}ml` }))}
-                      />
-                    </div>
-                  )}
-
-                  {/* Jarabe */}
-                  {vis.jarabe && (
-                    <div>
-                      <Label>Jarabe</Label>
-                      <NativeSelect
-                        value={opciones.jarabeId ?? NINGUNO}
-                        onChange={(v) => {
-                          update("jarabeId", v === NINGUNO ? null : v);
-                          if (v === NINGUNO) {
-                            update("saborJarabeId", null);
-                            update("humedadJarabe", null);
-                          }
-                        }}
-                        options={catalogo.jarabes.map((j) => ({ value: j.id, label: j.nombre }))}
-                      />
-                    </div>
-                  )}
-
-                  {/* Sabor de jarabe — solo si jarabe visible + saborJarabe visible + seleccionado */}
-                  {vis.jarabe && vis.saborJarabe && opciones.jarabeId && (
-                    <div>
-                      <Label>Sabor de jarabe</Label>
-                      <NativeSelect
-                        value={opciones.saborJarabeId ?? NINGUNO}
-                        onChange={(v) => update("saborJarabeId", v === NINGUNO ? null : v)}
-                        options={catalogo.saboresJarabe.map((s) => ({
-                          value: s.id,
-                          label: s.nombre,
-                          sublabel: s.precio != null ? `+$${s.precio}` : undefined,
-                        }))}
-                      />
-                    </div>
-                  )}
-
-                  {/* Toggle humedad — siempre que jarabe sea visible y esté seleccionado */}
-                  {vis.jarabe && opciones.jarabeId && (
-                    <div className="sm:col-span-2">
-                      <Label>Humedad del pastel</Label>
-                      <div className="flex rounded-xl border border-[#e8c4a0] overflow-hidden">
-                        <button
-                          type="button"
-                          onClick={() => update("humedadJarabe", "semi_humedo")}
-                          className={`flex-1 py-2 min-h-11 text-sm font-medium transition cursor-pointer ${
-                            (opciones.humedadJarabe ?? "semi_humedo") === "semi_humedo"
-                              ? "bg-[#8A5535] text-white"
-                              : "bg-white text-[#6B3E26] hover:bg-[#FFF0E6]"
-                          }`}
-                        >
-                          Semi húmedo
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => update("humedadJarabe", "humedo")}
-                          className={`flex-1 py-2 min-h-11 text-sm font-medium transition border-l border-[#e8c4a0] cursor-pointer ${
-                            opciones.humedadJarabe === "humedo"
-                              ? "bg-[#8A5535] text-white"
-                              : "bg-white text-[#6B3E26] hover:bg-[#FFF0E6]"
-                          }`}
-                        >
-                          Húmedo{" "}
-                          <span className="text-[11px] opacity-70">(×2.2)</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Mostrar divisor solo si hay al menos una opción visible */}
-                {(vis.cobertura || vis.relleno || vis.licor || vis.jarabe) && <SectionDivider />}
-
-                {/* ── Extras opcionales (Toppings + Ornamentos), colapsado por defecto ── */}
-                {(vis.toppings || catalogo.ornamentos.length > 0) && (() => {
-                  const extrasCount =
-                    opciones.toppings.length +
-                    opciones.ornamentos.reduce((sum, o) => sum + o.cantidad, 0);
-                  return (
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => setShowExtras((v) => !v)}
-                        className="w-full flex items-center justify-between py-1 min-h-11 cursor-pointer"
-                      >
-                        <span className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">
-                          Extras opcionales
-                          {extrasCount > 0 && (
-                            <span className="ml-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-[#DA6C94] text-white text-[11px] font-bold normal-case tracking-normal">
-                              {extrasCount}
-                            </span>
-                          )}
-                        </span>
-                        <svg
-                          viewBox="0 0 24 24"
-                          className={`w-4 h-4 text-[#AA6A42] transition-transform ${showExtras ? "rotate-180" : ""}`}
-                          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </button>
-
-                      {showExtras && (
-                        <div className="flex flex-col gap-4 mt-3">
-                          {/* ── Toppings ── */}
-                          {vis.toppings && (
-                            <div>
-                              <Label>Toppings</Label>
-                              <div className="flex flex-wrap gap-2">
-                                {catalogo.toppings
-                                  .filter((t) => t.cantidad != null)
-                                  .map((t) => {
-                                    const sel = opciones.toppings.find((x) => x.ingredienteId === t.ingredienteId);
-                                    const active = !!sel;
-                                    return (
-                                      <div
-                                        key={t.ingredienteId}
-                                        className={`flex items-center gap-1.5 rounded-xl text-xs font-semibold border transition ${
-                                          t.imagenUrl ? "pl-1.5 pr-2 py-1.5" : "px-3 py-1.5"
-                                        } ${
-                                          active
-                                            ? "bg-[#DA6C94] text-white border-[#DA6C94]"
-                                            : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
-                                        }`}
-                                      >
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            const next = active
-                                              ? opciones.toppings.filter((x) => x.ingredienteId !== t.ingredienteId)
-                                              : [...opciones.toppings, { ingredienteId: t.ingredienteId }];
-                                            update("toppings", next);
-                                          }}
-                                          className="flex items-center gap-2 cursor-pointer"
-                                        >
-                                          {t.imagenUrl && (
-                                            <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
-                                              <Image
-                                                src={t.imagenUrl}
-                                                alt={t.nombre}
-                                                fill
-                                                className="object-cover"
-                                                sizes="32px"
-                                              />
-                                            </div>
-                                          )}
-                                          <span>{t.nombre}</span>
-                                          {!active && <span className="opacity-60">{t.cantidad}{t.unidad}</span>}
-                                        </button>
-                                        {active && sel && (
-                                          <span
-                                            className="flex items-center gap-1"
-                                            onClick={(e) => e.stopPropagation()}
-                                          >
-                                            <input
-                                              type="number"
-                                              min={0}
-                                              value={sel.cantidad ?? t.cantidad ?? 0}
-                                              onChange={(e) => {
-                                                const n = Number(e.target.value);
-                                                update(
-                                                  "toppings",
-                                                  opciones.toppings.map((x) =>
-                                                    x.ingredienteId === t.ingredienteId
-                                                      ? { ...x, cantidad: Number.isFinite(n) && n >= 0 ? n : 0 }
-                                                      : x,
-                                                  ),
-                                                );
-                                              }}
-                                              aria-label={`Cantidad de ${t.nombre}`}
-                                              className="w-12 bg-white/20 rounded text-white text-center focus:outline-none focus:bg-white/30 transition"
-                                            />
-                                            <span className="opacity-80">{t.unidad}</span>
-                                          </span>
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                                {catalogo.toppings.filter((t) => t.cantidad != null).length === 0 && (
-                                  <p className="text-xs text-[#AA6A42]/50">Sin toppings disponibles</p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* ── Ornamentos ── */}
-                          {catalogo.ornamentos.length > 0 && (
-                            <div>
-                              <Label>Ornamentos</Label>
-                              <div className="flex flex-wrap gap-2">
-                                {catalogo.ornamentos.map((o) => {
-                                  const sel = opciones.ornamentos.find((x) => x.ornamentoId === o.id);
-                                  const active = !!sel;
-                                  return (
-                                    <div
-                                      key={o.id}
-                                      className={`flex items-center gap-1.5 rounded-xl text-xs font-semibold border transition ${
-                                        o.imagenUrl ? "pl-1.5 pr-2 py-1.5" : "px-3 py-1.5"
-                                      } ${
-                                        active
-                                          ? "bg-[#DA6C94] text-white border-[#DA6C94]"
-                                          : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
-                                      }`}
-                                    >
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          const next = active
-                                            ? opciones.ornamentos.filter((x) => x.ornamentoId !== o.id)
-                                            : [...opciones.ornamentos, { ornamentoId: o.id, cantidad: 1 }];
-                                          update("ornamentos", next);
-                                        }}
-                                        className="flex items-center gap-2 cursor-pointer"
-                                      >
-                                        {o.imagenUrl && (
-                                          <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
-                                            <Image
-                                              src={o.imagenUrl}
-                                              alt={o.nombre}
-                                              fill
-                                              className="object-cover"
-                                              sizes="32px"
-                                            />
-                                          </div>
-                                        )}
-                                        <span>{o.nombre}</span>
-                                        <span className="opacity-60">+${o.precio.toFixed(0)}</span>
-                                      </button>
-                                      {active && sel && (
-                                        <span className="flex items-center gap-0.5 bg-white/25 rounded-full">
-                                          <button
-                                            type="button"
-                                            onClick={() =>
-                                              update(
-                                                "ornamentos",
-                                                opciones.ornamentos.map((x) =>
-                                                  x.ornamentoId === o.id
-                                                    ? { ...x, cantidad: Math.max(1, x.cantidad - 1) }
-                                                    : x,
-                                                ),
-                                              )
-                                            }
-                                            className="w-6 h-6 flex items-center justify-center cursor-pointer"
-                                            aria-label={`Quitar una unidad de ${o.nombre}`}
-                                          >
-                                            −
-                                          </button>
-                                          <span className="w-5 text-center">{sel.cantidad}</span>
-                                          <button
-                                            type="button"
-                                            onClick={() =>
-                                              update(
-                                                "ornamentos",
-                                                opciones.ornamentos.map((x) =>
-                                                  x.ornamentoId === o.id
-                                                    ? { ...x, cantidad: Math.min(99, x.cantidad + 1) }
-                                                    : x,
-                                                ),
-                                              )
-                                            }
-                                            className="w-6 h-6 flex items-center justify-center cursor-pointer"
-                                            aria-label={`Agregar una unidad de ${o.nombre}`}
-                                          >
-                                            +
-                                          </button>
-                                        </span>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
-
-                <SectionDivider />
-
-                {/* ── Cupón ── */}
                 <div>
-                  <Label>{isUser ? "Cupón de descuento" : "Código promocional"}</Label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Ej. COOKIE10"
-                      value={codigoCupon}
-                      onChange={(e) => {
-                        setCodigoCupon(e.target.value.toUpperCase());
-                        setCuponAplicado(null);
-                        setCuponError(null);
-                      }}
-                      onKeyDown={(e) => e.key === "Enter" && aplicarCupon()}
-                      className="flex-1 border border-[#e8c4a0] rounded-xl px-3 py-2 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#AA6A42] transition-colors"
-                    />
-                    <button
-                      onClick={aplicarCupon}
-                      disabled={validandoCupon || !codigoCupon.trim()}
-                      className="px-3 py-2 min-h-11 rounded-xl bg-[#FFF0E6] border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold cursor-pointer hover:bg-[#fde8d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {validandoCupon ? "…" : "Aplicar"}
-                    </button>
-                  </div>
-                  {cuponError && (
-                    <p className="mt-1.5 text-xs text-[#c0392b] flex items-center gap-1">✕ {cuponError}</p>
-                  )}
-                  {cuponAplicado && (
-                    <p className="mt-1.5 text-xs text-[#27ae60] font-semibold flex items-center gap-1">
-                      ✓ Descuento: −${descuento.toFixed(0)}
-                    </p>
-                  )}
-                  {!isUser && (
-                    <p className="mt-1 text-[11px] text-[#AA6A42]/50">
-                      Inicia sesión para cupones personalizados
-                    </p>
+                  <h3 className="font-subtitle text-lg font-bold text-[#3A1F14]">{pasoActual.label}</h3>
+                  {AYUDA_PASO[pasoActual.id] && (
+                    <p className="mt-0.5 text-xs text-[#6B3E26]/80">{AYUDA_PASO[pasoActual.id]}</p>
                   )}
                 </div>
 
-                {/* ── Cantidad + Total ── */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Label>Cantidad</Label>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setCantidad(Math.max(1, cantidad - 1))}
-                        className="w-11 h-11 rounded-lg border border-[#e8c4a0] bg-[#FFF0E6] text-[#AA6A42] font-bold cursor-pointer hover:bg-[#fde8d0] transition-colors flex items-center justify-center"
-                      >−</button>
-                      <span className="text-sm font-bold text-[#3A1F14] w-6 text-center">{cantidad}</span>
-                      <button
-                        onClick={() => setCantidad(cantidad + 1)}
-                        className="w-11 h-11 rounded-lg border border-[#e8c4a0] bg-[#FFF0E6] text-[#AA6A42] font-bold cursor-pointer hover:bg-[#fde8d0] transition-colors flex items-center justify-center"
-                      >+</button>
-                    </div>
-                  </div>
+                {pasoActual.id === "tamano" && (
+                  <>
+                    {/* ── Tamaño / Número de personas ── */}
+                    {producto.permiteMedidaPersonalizada && producto.medidaBaseCm && (
+                      <DiametroPersonasSelector
+                        label="Número de personas"
+                        diametroCm={diametroCm}
+                        medidaBaseCm={producto.medidaBaseCm}
+                        onChange={setDiametroCm}
+                      />
+                    )}
 
-                  <div className="text-right">
-                    {desglose && (
-                      <>
-                        {cuponAplicado && (
-                          <p className="text-xs text-[#AA6A42]/50 line-through">${subtotal.toFixed(0)}</p>
-                        )}
-                        <p className="text-lg font-bold text-[#3A1F14]">
-                          ${total.toFixed(0)}
+                    {!producto.permiteMedidaPersonalizada && producto.tamanosFijos.length > 0 && (
+                      <div>
+                        <Label>Tamaño</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {producto.tamanosFijos.map((t) => (
+                            <button
+                              key={t.id}
+                              type="button"
+                              onClick={() => setTamanoFijoId(t.id)}
+                              className={`px-4 py-2 rounded-xl text-sm font-semibold border transition cursor-pointer ${
+                                tamanoFijoId === t.id
+                                  ? "bg-[#AA6A42] text-white border-[#AA6A42]"
+                                  : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
+                              }`}
+                            >
+                              {t.nombre}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {!producto.permiteMedidaPersonalizada && producto.tamanosFijos.length === 0 && (
+                      <div className="rounded-xl bg-[#FFF7F0] border border-[#f0e0d0] px-4 py-3">
+                        <p className="text-xs text-[#6B3E26]">
+                          Tamaño único{producto.medidaBaseCm ? ` (${producto.medidaBaseCm}cm)` : ""}
                         </p>
-                        {cantidad > 1 && (
-                          <p className="text-[11px] text-[#AA6A42]/60">${precioBase.toFixed(0)} c/u</p>
-                        )}
-                      </>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {pasoActual.id === "coberturas" && (
+                  <>
+                    {vis.cobertura && (
+                      <MultiCoberturaSelect
+                        label="Coberturas"
+                        items={opciones.coberturas.map((c) => ({ id: c.coberturaId, saborId: c.saborCoberturaId, factor: c.factor ?? 1 }))}
+                        onChange={(items) =>
+                          update(
+                            "coberturas",
+                            items.map((it) => ({ coberturaId: it.id, saborCoberturaId: it.saborId, factor: it.factor ?? 1 })),
+                          )
+                        }
+                        options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
+                        sabores={
+                          vis.saborCobertura
+                            ? catalogo.saboresCobertura.map((s) => ({
+                                value: s.id,
+                                label: s.nombre,
+                                sublabel: s.precio != null ? `+$${s.precio}` : undefined,
+                              }))
+                            : []
+                        }
+                        addLabel="+ Agregar cobertura"
+                      />
+                    )}
+                  </>
+                )}
+
+                {pasoActual.id === "rellenos" && (
+                  <>
+                    {vis.relleno && (
+                      <MultiCoberturaSelect
+                        label="Rellenos"
+                        items={opciones.rellenos.map((r) => ({ id: r.rellenoId, saborId: r.saborRellenoId, factor: r.factor ?? 1 }))}
+                        onChange={(items) =>
+                          update(
+                            "rellenos",
+                            items.map((it) => ({ rellenoId: it.id, saborRellenoId: it.saborId, factor: it.factor ?? 1 })),
+                          )
+                        }
+                        options={catalogo.coberturas.map((c) => ({ value: c.id, label: c.nombre }))}
+                        sabores={
+                          vis.saborRelleno
+                            ? catalogo.saboresCobertura.map((s) => ({
+                                value: s.id,
+                                label: s.nombre,
+                                sublabel: s.precio != null ? `+$${s.precio}` : undefined,
+                              }))
+                            : []
+                        }
+                        addLabel="+ Agregar relleno"
+                      />
+                    )}
+                  </>
+                )}
+
+                {pasoActual.id === "jarabe" && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Licor */}
+                    {vis.licor && (
+                      <div>
+                        <Label>Licor</Label>
+                        <NativeSelect
+                          value={opciones.licorId ?? NINGUNO}
+                          onChange={(v) => update("licorId", v === NINGUNO ? null : v)}
+                          options={catalogo.licores
+                            .filter((l) => l.cantidad != null)
+                            .map((l) => ({ value: l.ingredienteId, label: l.nombre, sublabel: `${l.cantidad}ml` }))}
+                        />
+                      </div>
+                    )}
+
+                    {/* Jarabe */}
+                    {vis.jarabe && (
+                      <div>
+                        <Label>Jarabe</Label>
+                        <NativeSelect
+                          value={opciones.jarabeId ?? NINGUNO}
+                          onChange={(v) => {
+                            update("jarabeId", v === NINGUNO ? null : v);
+                            if (v === NINGUNO) {
+                              update("saborJarabeId", null);
+                              update("humedadJarabe", null);
+                            }
+                          }}
+                          options={catalogo.jarabes.map((j) => ({ value: j.id, label: j.nombre }))}
+                        />
+                      </div>
+                    )}
+
+                    {/* Sabor de jarabe — solo si jarabe visible + saborJarabe visible + seleccionado */}
+                    {vis.jarabe && vis.saborJarabe && opciones.jarabeId && (
+                      <div>
+                        <Label>Sabor de jarabe</Label>
+                        <NativeSelect
+                          value={opciones.saborJarabeId ?? NINGUNO}
+                          onChange={(v) => update("saborJarabeId", v === NINGUNO ? null : v)}
+                          options={catalogo.saboresJarabe.map((s) => ({
+                            value: s.id,
+                            label: s.nombre,
+                            sublabel: s.precio != null ? `+$${s.precio}` : undefined,
+                          }))}
+                        />
+                      </div>
+                    )}
+
+                    {/* Toggle humedad — siempre que jarabe sea visible y esté seleccionado */}
+                    {vis.jarabe && opciones.jarabeId && (
+                      <div className="sm:col-span-2">
+                        <Label>Humedad del pastel</Label>
+                        <div className="flex rounded-xl border border-[#e8c4a0] overflow-hidden">
+                          <button
+                            type="button"
+                            onClick={() => update("humedadJarabe", "semi_humedo")}
+                            className={`flex-1 py-2 min-h-11 text-sm font-medium transition cursor-pointer ${
+                              (opciones.humedadJarabe ?? "semi_humedo") === "semi_humedo"
+                                ? "bg-[#8A5535] text-white"
+                                : "bg-white text-[#6B3E26] hover:bg-[#FFF0E6]"
+                            }`}
+                          >
+                            Semi húmedo
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => update("humedadJarabe", "humedo")}
+                            className={`flex-1 py-2 min-h-11 text-sm font-medium transition border-l border-[#e8c4a0] cursor-pointer ${
+                              opciones.humedadJarabe === "humedo"
+                                ? "bg-[#8A5535] text-white"
+                                : "bg-white text-[#6B3E26] hover:bg-[#FFF0E6]"
+                            }`}
+                          >
+                            Húmedo{" "}
+                            <span className="text-[11px] opacity-70">(×2.2)</span>
+                          </button>
+                        </div>
+                      </div>
                     )}
                   </div>
-                </div>
+                )}
+
+                {pasoActual.id === "extras" && (
+                  <div className="flex flex-col gap-5">
+                    {vis.toppings && (
+                      <div>
+                        <Label>Toppings</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {catalogo.toppings
+                            .filter((t) => t.cantidad != null)
+                            .map((t) => {
+                              const sel = opciones.toppings.find((x) => x.ingredienteId === t.ingredienteId);
+                              const active = !!sel;
+                              return (
+                                <div
+                                  key={t.ingredienteId}
+                                  className={`flex items-center gap-1.5 rounded-xl text-xs font-semibold border transition ${
+                                    t.imagenUrl ? "pl-1.5 pr-2 py-1.5" : "px-3 py-1.5"
+                                  } ${
+                                    active
+                                      ? "bg-[#DA6C94] text-white border-[#DA6C94]"
+                                      : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
+                                  }`}
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const next = active
+                                        ? opciones.toppings.filter((x) => x.ingredienteId !== t.ingredienteId)
+                                        : [...opciones.toppings, { ingredienteId: t.ingredienteId }];
+                                      update("toppings", next);
+                                    }}
+                                    className="flex items-center gap-2 cursor-pointer"
+                                  >
+                                    {t.imagenUrl && (
+                                      <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                                        <Image
+                                          src={t.imagenUrl}
+                                          alt={t.nombre}
+                                          fill
+                                          className="object-cover"
+                                          sizes="32px"
+                                        />
+                                      </div>
+                                    )}
+                                    <span>{t.nombre}</span>
+                                    {!active && <span className="opacity-60">{t.cantidad}{t.unidad}</span>}
+                                  </button>
+                                  {active && sel && (
+                                    <span
+                                      className="flex items-center gap-1"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        value={sel.cantidad ?? t.cantidad ?? 0}
+                                        onChange={(e) => {
+                                          const n = Number(e.target.value);
+                                          update(
+                                            "toppings",
+                                            opciones.toppings.map((x) =>
+                                              x.ingredienteId === t.ingredienteId
+                                                ? { ...x, cantidad: Number.isFinite(n) && n >= 0 ? n : 0 }
+                                                : x,
+                                            ),
+                                          );
+                                        }}
+                                        aria-label={`Cantidad de ${t.nombre}`}
+                                        className="w-12 bg-white/20 rounded text-white text-center focus:outline-none focus:bg-white/30 transition"
+                                      />
+                                      <span className="opacity-80">{t.unidad}</span>
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          {catalogo.toppings.filter((t) => t.cantidad != null).length === 0 && (
+                            <p className="text-xs text-[#AA6A42]/50">Sin toppings disponibles</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ── Ornamentos ── */}
+                    {catalogo.ornamentos.length > 0 && (
+                      <div>
+                        <Label>Ornamentos</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {catalogo.ornamentos.map((o) => {
+                            const sel = opciones.ornamentos.find((x) => x.ornamentoId === o.id);
+                            const active = !!sel;
+                            return (
+                              <div
+                                key={o.id}
+                                className={`flex items-center gap-1.5 rounded-xl text-xs font-semibold border transition ${
+                                  o.imagenUrl ? "pl-1.5 pr-2 py-1.5" : "px-3 py-1.5"
+                                } ${
+                                  active
+                                    ? "bg-[#DA6C94] text-white border-[#DA6C94]"
+                                    : "bg-white text-[#6B3E26] border-[#e8c4a0] hover:bg-[#FFF0E6]"
+                                }`}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const next = active
+                                      ? opciones.ornamentos.filter((x) => x.ornamentoId !== o.id)
+                                      : [...opciones.ornamentos, { ornamentoId: o.id, cantidad: 1 }];
+                                    update("ornamentos", next);
+                                  }}
+                                  className="flex items-center gap-2 cursor-pointer"
+                                >
+                                  {o.imagenUrl && (
+                                    <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                                      <Image
+                                        src={o.imagenUrl}
+                                        alt={o.nombre}
+                                        fill
+                                        className="object-cover"
+                                        sizes="32px"
+                                      />
+                                    </div>
+                                  )}
+                                  <span>{o.nombre}</span>
+                                  <span className="opacity-60">+${o.precio.toFixed(0)}</span>
+                                </button>
+                                {active && sel && (
+                                  <span className="flex items-center gap-0.5 bg-white/25 rounded-full">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        update(
+                                          "ornamentos",
+                                          opciones.ornamentos.map((x) =>
+                                            x.ornamentoId === o.id
+                                              ? { ...x, cantidad: Math.max(1, x.cantidad - 1) }
+                                              : x,
+                                          ),
+                                        )
+                                      }
+                                      className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                                      aria-label={`Quitar una unidad de ${o.nombre}`}
+                                    >
+                                      −
+                                    </button>
+                                    <span className="w-5 text-center">{sel.cantidad}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        update(
+                                          "ornamentos",
+                                          opciones.ornamentos.map((x) =>
+                                            x.ornamentoId === o.id
+                                              ? { ...x, cantidad: Math.min(99, x.cantidad + 1) }
+                                              : x,
+                                          ),
+                                        )
+                                      }
+                                      className="w-6 h-6 flex items-center justify-center cursor-pointer"
+                                      aria-label={`Agregar una unidad de ${o.nombre}`}
+                                    >
+                                      +
+                                    </button>
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {pasoActual.id === "resumen" && (
+                  <>
+                            {/* Desglose del precio por parte */}
+                            <div className="rounded-2xl border border-[#f0e0d0] bg-white">
+                              <ul className="divide-y divide-[#f0e0d0]">
+                                {lineasPrecio.map((l) => (
+                                  <li key={l.concepto} className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-sm">
+                                    <span className="text-[#6B3E26]">
+                                      {l.concepto === "Base" ? `Base · ${etiquetaTamano}` : l.concepto}
+                                    </span>
+                                    <span className="font-semibold text-[#3A1F14] tabular-nums">${l.monto.toFixed(0)}</span>
+                                  </li>
+                                ))}
+                                <li className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-sm bg-[#FFF7F0]">
+                                  <span className="font-semibold text-[#3A1F14]">Precio por pieza</span>
+                                  <span className="font-bold text-[#3A1F14] tabular-nums">${precioBase.toFixed(0)}</span>
+                                </li>
+                                {cantidad > 1 && (
+                                  <li className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-sm">
+                                    <span className="text-[#6B3E26]">× {cantidad} piezas</span>
+                                    <span className="font-semibold text-[#3A1F14] tabular-nums">${subtotal.toFixed(0)}</span>
+                                  </li>
+                                )}
+                                {cuponAplicado && (
+                                  <li className="flex items-baseline justify-between gap-3 px-4 py-2.5 text-sm">
+                                    <span className="text-[#1B7A43]">Cupón {cuponAplicado.cupon.codigo}</span>
+                                    <span className="font-semibold text-[#1B7A43] tabular-nums">−${descuento.toFixed(0)}</span>
+                                  </li>
+                                )}
+                                <li className="flex items-baseline justify-between gap-3 px-4 py-3">
+                                  <span className="font-bold text-[#3A1F14]">Total</span>
+                                  <span className="text-xl font-bold text-[#3A1F14] tabular-nums">${total.toFixed(0)}</span>
+                                </li>
+                              </ul>
+                            </div>
+
+                    {/* ── Cupón ── */}
+                    <div>
+                      <Label>{isUser ? "Cupón de descuento" : "Código promocional"}</Label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Ej. COOKIE10"
+                          value={codigoCupon}
+                          onChange={(e) => {
+                            setCodigoCupon(e.target.value.toUpperCase());
+                            setCuponAplicado(null);
+                            setCuponError(null);
+                          }}
+                          onKeyDown={(e) => e.key === "Enter" && aplicarCupon()}
+                          className="flex-1 border border-[#e8c4a0] rounded-xl px-3 py-2 text-sm text-[#3A1F14] bg-white outline-none focus:border-[#AA6A42] transition-colors"
+                        />
+                        <button
+                          onClick={aplicarCupon}
+                          disabled={validandoCupon || !codigoCupon.trim()}
+                          className="px-3 py-2 min-h-11 rounded-xl bg-[#FFF0E6] border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold cursor-pointer hover:bg-[#fde8d0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          {validandoCupon ? "…" : "Aplicar"}
+                        </button>
+                      </div>
+                      {cuponError && (
+                        <p className="mt-1.5 text-xs text-[#c0392b] flex items-center gap-1">✕ {cuponError}</p>
+                      )}
+                      {cuponAplicado && (
+                        <p className="mt-1.5 text-xs text-[#27ae60] font-semibold flex items-center gap-1">
+                          ✓ Descuento: −${descuento.toFixed(0)}
+                        </p>
+                      )}
+                      {!isUser && (
+                        <p className="mt-1 text-[11px] text-[#AA6A42]/50">
+                          Inicia sesión para cupones personalizados
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
 
-          {/* Footer */}
-          <div className="px-6 py-4 border-t border-[#f0e0d0] bg-[#FFFDF8] shrink-0">
-            {desglose && !justAdded && (
-              <div className="flex items-end justify-between gap-4 mb-3">
-                <IncluyeChips items={incluidos} />
-                <div className="ml-auto flex shrink-0 items-baseline gap-1.5">
+          {/* Footer — siempre visible: lo que incluye, cantidad, precio y navegación */}
+          <div className="shrink-0 border-t border-[#f0e0d0] bg-[#FFF7F0] px-5 py-3 sm:px-6 flex flex-col gap-3">
+            {catalogo && <IncluyeChips items={incluidos} />}
+
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-semibold text-[#AA6A42] uppercase tracking-wider">Cantidad</span>
+                <button
+                  type="button"
+                  onClick={() => setCantidad(Math.max(1, cantidad - 1))}
+                  disabled={cantidad <= 1}
+                  aria-label="Quitar una pieza"
+                  className="w-9 h-9 rounded-lg border border-[#e8c4a0] bg-white text-[#AA6A42] font-bold cursor-pointer hover:bg-[#FFF0E6] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                >−</button>
+                <span className="text-sm font-bold text-[#3A1F14] w-6 text-center tabular-nums" aria-live="polite">{cantidad}</span>
+                <button
+                  type="button"
+                  onClick={() => setCantidad(cantidad + 1)}
+                  aria-label="Agregar una pieza"
+                  className="w-9 h-9 rounded-lg border border-[#e8c4a0] bg-white text-[#AA6A42] font-bold cursor-pointer hover:bg-[#FFF0E6] transition-colors flex items-center justify-center"
+                >+</button>
+              </div>
+
+              {desglose && (
+                <div className="text-right leading-tight">
                   {cuponAplicado && (
-                    <span className="text-sm text-[#AA6A42]/50 line-through">${subtotal.toFixed(0)}</span>
+                    <span className="block text-xs text-[#AA6A42]/50 line-through">${subtotal.toFixed(0)}</span>
                   )}
-                  <span className="text-2xl font-bold text-[#3A1F14]">${total.toFixed(0)}</span>
+                  <span className="text-2xl font-bold text-[#3A1F14] tabular-nums">${total.toFixed(0)}</span>
                   {cantidad > 1 && (
-                    <span className="text-xs text-[#AA6A42]/60">${precioBase.toFixed(0)} c/u</span>
+                    <span className="block text-[11px] text-[#AA6A42]/70">${precioBase.toFixed(0)} c/u</span>
                   )}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => { reset(); onClose(); }}
-                className="flex-1 py-2.5 min-h-11 rounded-xl border border-[#e8c4a0] text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
+                onClick={() => (idx === 0 ? (reset(), onClose()) : irAPaso(idx - 1))}
+                className="flex-1 py-2.5 min-h-11 rounded-xl border border-[#e8c4a0] bg-white text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
               >
-                Cancelar
+                {idx === 0 ? "Cancelar" : "Atrás"}
               </button>
-              <button
-                onClick={handleAdd}
-                disabled={!desglose || loading || justAdded}
-                className={`flex-1 py-2.5 min-h-11 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
-                  justAdded
-                    ? "bg-[#1B7A43]"
-                    : "bg-[#A84D66] hover:bg-[#8f3f54] disabled:opacity-50"
-                }`}
-              >
-                {justAdded ? (
-                  <>
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                    {editItem ? "Cambios guardados" : "Agregado"}
-                  </>
-                ) : (
-                  <>
-                    <Image
-                      src="/icons/shopping-bag.svg"
-                      alt=""
-                      width={16}
-                      height={16}
-                      className="shrink-0"
-                      style={{ filter: "brightness(0) invert(1)" }}
-                    />
-                    <span>{editItem ? "Guardar cambios" : "Agregar al carrito"}</span>
-                  </>
-                )}
-              </button>
+              {!esUltimo ? (
+                <button
+                  type="button"
+                  onClick={() => irAPaso(idx + 1)}
+                  disabled={loading || !catalogo}
+                  className="flex-1 py-2.5 min-h-11 rounded-xl bg-[#A84D66] hover:bg-[#8f3f54] text-white text-sm font-bold transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="truncate">Siguiente: {pasos[idx + 1].label}</span>
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  onClick={handleAdd}
+                  disabled={!desglose || loading || justAdded}
+                  className={`flex-1 py-2.5 min-h-11 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
+                    justAdded
+                      ? "bg-[#1B7A43]"
+                      : "bg-[#A84D66] hover:bg-[#8f3f54] disabled:opacity-50"
+                  }`}
+                >
+                  {justAdded ? (
+                    <>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                      {editItem ? "Cambios guardados" : "Agregado"}
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        src="/icons/shopping-bag.svg"
+                        alt=""
+                        width={16}
+                        height={16}
+                        className="shrink-0"
+                        style={{ filter: "brightness(0) invert(1)" }}
+                      />
+                      <span>{editItem ? "Guardar cambios" : "Agregar al carrito"}</span>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }
