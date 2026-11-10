@@ -1,4 +1,5 @@
 import Image from "next/image";
+import IncluyeMas from "./IncluyeMas";
 
 /**
  * Card de producto "boutique" (DESIGN.md → Product & category cards): fondo
@@ -186,8 +187,14 @@ export default function ProductCard({
             </li>
           ))}
           {incluye.length > MAX_CHIPS && (
-            <li className={`rounded-full px-2 py-0.5 font-body text-[11px] leading-4 ${TONO[tono].chip}`}>
-              +{incluye.length - MAX_CHIPS}
+            <li className="flex">
+              <IncluyeMas
+                items={incluye}
+                ocultos={incluye.length - MAX_CHIPS}
+                chipClassName={`rounded-full px-2 py-0.5 font-body text-[11px] leading-4 ${TONO[tono].chip}`}
+                panelClassName="border-espresso/10 bg-white font-body text-espresso"
+                tituloClassName="text-cacao"
+              />
             </li>
           )}
         </ul>

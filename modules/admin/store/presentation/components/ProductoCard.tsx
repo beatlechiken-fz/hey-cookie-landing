@@ -2,6 +2,7 @@
 // src/modules/admin/productos/presentation/components/ProductoCard.tsx
 
 import Image from "next/image";
+import IncluyeMas from "@/core/components/product-card/IncluyeMas";
 import {
   etiquetaTamanoPredeterminado,
   type Producto,
@@ -198,12 +199,13 @@ export function ProductoCard({ producto, incluye = [], precioSugerido, precioFij
                 </span>
               ))}
               {incluye.length > MAX_CHIPS && (
-                <span
-                  title={incluye.slice(MAX_CHIPS).join(", ")}
-                  className="rounded-full border border-hc-line bg-hc-hover px-2 py-0.5 text-[10.5px] font-semibold text-hc-soft"
-                >
-                  +{incluye.length - MAX_CHIPS}
-                </span>
+                <IncluyeMas
+                  items={incluye}
+                  ocultos={incluye.length - MAX_CHIPS}
+                  chipClassName="rounded-full border border-hc-line bg-hc-hover px-2 py-0.5 text-[10.5px] font-semibold text-hc-soft"
+                  panelClassName="border-hc-line bg-white text-hc-ink"
+                  tituloClassName="text-hc-soft"
+                />
               )}
             </div>
           )}
