@@ -8,6 +8,7 @@ import {
   type ProductoConfiguracion,
 } from "../../domain/usecases/CalcularCostoProducto.usecase";
 import {
+  getTamanoPredeterminado,
   OPCIONES_VACIAS,
   type Producto,
   type ProductoOpciones,
@@ -27,7 +28,7 @@ export function useProductoConfigurador(
     producto?.medidaBaseCm ?? 0,
   );
   const [tamanoFijoId, setTamanoFijoId] = useState<string | null>(
-    producto?.tamanosFijos[0]?.id ?? null,
+    (producto ? getTamanoPredeterminado(producto)?.id : null) ?? null,
   );
   const [cantidad, setCantidad] = useState(1);
 
@@ -36,7 +37,7 @@ export function useProductoConfigurador(
     if (!producto) return;
     setOpciones(normalizeOpciones({ ...OPCIONES_VACIAS, ...producto.opcionesDefault }));
     setDiametroCm(producto.medidaBaseCm ?? 0);
-    setTamanoFijoId(producto.tamanosFijos[0]?.id ?? null);
+    setTamanoFijoId(getTamanoPredeterminado(producto)?.id ?? null);
     setCantidad(1);
   }, [producto]);
 
@@ -51,7 +52,7 @@ export function useProductoConfigurador(
     if (!producto) return;
     setOpciones(normalizeOpciones({ ...OPCIONES_VACIAS, ...producto.opcionesDefault }));
     setDiametroCm(producto.medidaBaseCm ?? 0);
-    setTamanoFijoId(producto.tamanosFijos[0]?.id ?? null);
+    setTamanoFijoId(getTamanoPredeterminado(producto)?.id ?? null);
     setCantidad(1);
   };
 

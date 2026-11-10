@@ -1,7 +1,10 @@
 "use client";
 
 import ProductCard, { LINEA_ETIQUETA, tonoProducto } from "@/core/components/product-card/ProductCard";
-import type { Producto } from "@/modules/admin/store/domain/entities/Producto.entity";
+import {
+  etiquetaTamanoPredeterminado,
+  type Producto,
+} from "@/modules/admin/store/domain/entities/Producto.entity";
 
 interface Props {
   producto: Producto;
@@ -15,14 +18,9 @@ interface Props {
 }
 
 export default function CakeCard({ producto, onClick, precio, mostrarLinea, incluye }: Props) {
-  // Medida visible en la tarjeta: tamaño fijo único (p. ej. panqués "Molde 23 × 13 cm")
-  // o la medida base de los productos personalizables (solo junto al precio).
-  const medida =
-    producto.tamanosFijos.length === 1
-      ? producto.tamanosFijos[0].nombre
-      : precio != null && producto.permiteMedidaPersonalizada && producto.medidaBaseCm
-        ? `${Number(producto.medidaBaseCm).toFixed(0)} cm`
-        : null;
+  // Tamaño predeterminado: el tamaño fijo con el que abre ("2 L", "Molde 23 × 13 cm")
+  // o la medida base de los pasteles por diámetro ("24 cm").
+  const medida = etiquetaTamanoPredeterminado(producto);
 
   return (
     <ProductCard

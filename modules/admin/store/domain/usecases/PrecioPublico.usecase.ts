@@ -2,6 +2,7 @@
 
 import {
   getPrecioEstablecidoEfectivo,
+  getTamanoPredeterminado,
   OPCIONES_VACIAS,
   type Producto,
 } from "../entities/Producto.entity";
@@ -19,25 +20,25 @@ export function redondearPrecioCerrado(precio: number): number {
 
 /**
  * Precio a mostrar en el catálogo público: el precio fijo del producto (o de
- * su primer tamaño) si lo tiene; si no, el sugerido.
+ * su tamaño predeterminado) si lo tiene; si no, el sugerido.
  */
 export function precioPublicoProducto(
   producto: Producto,
   catalogo: PastelConfigCatalogo,
 ): number | null {
-  const fijo = getPrecioEstablecidoEfectivo(producto, producto.tamanosFijos[0]?.id ?? null);
+  const fijo = getPrecioEstablecidoEfectivo(producto, getTamanoPredeterminado(producto)?.id ?? null);
   return fijo ?? precioSugeridoProducto(producto, catalogo);
 }
 
 /**
- * Precio sugerido con las opciones por defecto y la medida base (o el primer
- * tamaño), redondeado al siguiente número cerrado.
+ * Precio sugerido con las opciones por defecto y la medida base (o el tamaño
+ * predeterminado), redondeado al siguiente número cerrado.
  */
 export function precioSugeridoProducto(
   producto: Producto,
   catalogo: PastelConfigCatalogo,
 ): number | null {
-  const tamanoFijoId = producto.tamanosFijos[0]?.id ?? null;
+  const tamanoFijoId = getTamanoPredeterminado(producto)?.id ?? null;
   const { precioSugerido } = calcularCostoProducto(
     producto,
     {

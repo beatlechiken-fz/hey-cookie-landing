@@ -9,10 +9,11 @@ import {
   calcularCostoDesglose,
   type BaseEstructuralItem,
 } from "@/modules/admin/store/domain/usecases/CalcularCostosDesgloce.usecase";
-import type {
-  Producto,
-  ProductoOpciones,
-  TamanoFijo,
+import {
+  getTamanoPredeterminado,
+  type Producto,
+  type ProductoOpciones,
+  type TamanoFijo,
 } from "../entities/Producto.entity";
 
 export interface ProductoConfiguracion {
@@ -58,7 +59,7 @@ export function calcularCostoProducto(
   const tamanoFijo: TamanoFijo | undefined =
     producto.tamanosFijos.length > 0
       ? (producto.tamanosFijos.find((t) => t.id === config.tamanoFijoId) ??
-        producto.tamanosFijos[0])
+        getTamanoPredeterminado(producto))
       : undefined;
 
   if (producto.permiteMedidaPersonalizada && producto.medidaBaseCm) {

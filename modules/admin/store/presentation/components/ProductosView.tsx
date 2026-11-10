@@ -7,7 +7,7 @@ import { usePastelConfigCatalogo } from "../hooks/usePastelConfig";
 import { incluyeProducto } from "../../domain/usecases/IncluyeProducto.usecase";
 import { precioSugeridoProducto } from "../../domain/usecases/PrecioPublico.usecase";
 import { normalizeOpciones } from "../../domain/entities/PastelPersonalizado.entity";
-import { getPrecioEstablecidoEfectivo, OPCIONES_VACIAS } from "../../domain/entities/Producto.entity";
+import { getPrecioEstablecidoEfectivo, getTamanoPredeterminado, OPCIONES_VACIAS } from "../../domain/entities/Producto.entity";
 import { ProductoCard } from "./ProductoCard";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
 import { ProductoEditorModal } from "./ProductoEditorModal";
@@ -120,7 +120,7 @@ export function ProductosView({ ref }: { ref?: Ref<ProductosViewHandle> }) {
           catalogo,
         ).map((i) => i.nombre),
         sugerido,
-        fijo: getPrecioEstablecidoEfectivo(p, p.tamanosFijos[0]?.id ?? null),
+        fijo: getPrecioEstablecidoEfectivo(p, getTamanoPredeterminado(p)?.id ?? null),
       };
     }
     return out;

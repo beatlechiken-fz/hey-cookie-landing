@@ -2,7 +2,19 @@
 // src/modules/admin/productos/presentation/components/ProductoCard.tsx
 
 import Image from "next/image";
-import type { Producto } from "../../domain/entities/Producto.entity";
+import {
+  etiquetaTamanoPredeterminado,
+  type Producto,
+} from "../../domain/entities/Producto.entity";
+
+/** Tamaño predeterminado y, si hay más, cuántas opciones tiene ("2 L · 3 tamaños"). */
+function resumenTamano(producto: Producto): string {
+  const predeterminado = etiquetaTamanoPredeterminado(producto);
+  if (!predeterminado) return "Tamaño único";
+  if (producto.permiteMedidaPersonalizada) return `${predeterminado} · personalizable`;
+  const n = producto.tamanosFijos.length;
+  return n > 1 ? `${predeterminado} · ${n} tamaños` : predeterminado;
+}
 
 interface Props {
   producto: Producto;
@@ -212,17 +224,11 @@ export function ProductoCard({ producto, incluye = [], precioSugerido, precioFij
             </dl>
           )}
           <div className="flex items-center gap-1.5 mt-1">
-            {producto.permiteMedidaPersonalizada ? (
-              <span className="text-[11px] text-hc-rose font-medium">
-                Medida personalizable
-              </span>
-            ) : producto.tamanosFijos.length > 0 ? (
-              <span className="text-[11px] text-hc-rose font-medium">
-                {producto.tamanosFijos.length} tamaños
-              </span>
-            ) : (
-              <span className="text-[11px] text-hc-muted">Tamaño único</span>
-            )}
+            <span
+              className={`text-[11px] font-medium ${etiquetaTamanoPredeterminado(producto) ? "text-hc-rose" : "text-hc-muted"}`}
+            >
+              {resumenTamano(producto)}
+            </span>
           </div>
         </div>
       </div>

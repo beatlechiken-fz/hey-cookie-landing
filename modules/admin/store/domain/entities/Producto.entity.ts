@@ -54,6 +54,8 @@ export interface TamanoFijo {
   id: string; // slug único dentro del producto, ej. "vaso_grande"
   nombre: string; // "Vaso grande"
   factorCosto: number; // multiplicador sobre el costo de ingredientes_base (1 = igual)
+  /** Tamaño con el que abre el producto y el que muestran las cards. Sin marca, es el primero. */
+  predeterminado?: boolean;
   /**
    * Factor que se aplica a las opciones del catálogo (cobertura, relleno,
    * jarabe, toppings, licor) para este tamaño.
@@ -203,4 +205,27 @@ export function getPrecioEstablecidoEfectivo(
 ): number | null {
   const tamano = producto.tamanosFijos.find((t) => t.id === tamanoFijoId);
   return tamano?.precioEstablecido ?? producto.precioEstablecido ?? null;
+}
+
+/** Tamaño fijo predeterminado: el marcado como tal, o el primero. */
+export function getTamanoPredeterminado(
+  producto: Pick<Producto, "tamanosFijos">,
+): TamanoFijo | undefined {
+  return producto.tamanosFijos.find((t) => t.predeterminado) ?? producto.tamanosFijos[0];
+}
+
+/**
+ * Tamaño predeterminado para mostrar en las cards: el nombre del tamaño fijo
+ * predeterminado ("2 L", "Individual") o la medida base de los pasteles por
+ * diámetro ("24 cm"). null si el producto no tiene tamaño definido.
+ */
+export function etiquetaTamanoPredeterminado(
+  producto: Pick<Producto, "tamanosFijos" | "permiteMedidaPersonalizada" | "medidaBaseCm">,
+): string | null {
+  const tamano = getTamanoPredeterminado(producto);
+  if (tamano) return tamano.nombre;
+  if (producto.permiteMedidaPersonalizada && producto.medidaBaseCm) {
+    return `${Number(producto.medidaBaseCm).toFixed(0)} cm`;
+  }
+  return null;
 }

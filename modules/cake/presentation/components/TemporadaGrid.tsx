@@ -7,6 +7,7 @@ import ProductCard, { LINEA_ETIQUETA } from "@/core/components/product-card/Prod
 import { GRID_PRODUCTOS } from "@/modules/home/presentation/components/Cookies";
 import {
   getPrecioEstablecidoEfectivo,
+  getTamanoPredeterminado,
   type Producto,
 } from "@/modules/admin/store/domain/entities/Producto.entity";
 import type { TonoTemporada } from "@/core/components/section-cover/SectionCover";
@@ -25,19 +26,19 @@ export interface ProductoTemporadaItem {
 const ENCUADRE_TEMPORADA = "50% 15%";
 
 /**
- * Medida a mostrar: el tamaño fijo único ("Individual", "Tronco 30 cm"); si se
+ * Medida a mostrar: el tamaño fijo predeterminado ("Individual", "2 L"); si se
  * hace por diámetro, el tamaño es a gusto del cliente (`personalizable`).
  */
 export function medidaProducto(p: Producto, personalizable: string): string | null {
-  if (p.tamanosFijos.length === 1) return p.tamanosFijos[0].nombre;
+  const tamano = getTamanoPredeterminado(p);
+  if (tamano) return tamano.nombre;
   if (p.medidaBaseCm) return personalizable;
   return null;
 }
 
 /** Precio ya fijado de un producto de temporada ("$30"), o null si aún no tiene. */
 export function precioTemporada(p: Producto): string | null {
-  if (p.tamanosFijos.length > 1) return null;
-  const precio = getPrecioEstablecidoEfectivo(p, p.tamanosFijos[0]?.id);
+  const precio = getPrecioEstablecidoEfectivo(p, getTamanoPredeterminado(p)?.id);
   return precio != null ? `$${Number(precio).toFixed(0)}` : null;
 }
 

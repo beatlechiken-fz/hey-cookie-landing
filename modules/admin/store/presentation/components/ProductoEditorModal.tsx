@@ -42,6 +42,8 @@ interface IngLineaRow {
 interface TamanoRow {
   id: string;
   nombre: string;
+  /** Tamaño con el que abre el producto (solo uno). */
+  predeterminado: boolean;
   factorCosto: number;
   factorOpciones: number | "";
   /** "" = hereda el precio establecido del producto */
@@ -188,6 +190,7 @@ export function ProductoEditorModal({
           producto.tamanosFijos.map((t) => ({
             id: t.id,
             nombre: t.nombre,
+            predeterminado: t.predeterminado ?? false,
             factorCosto: t.factorCosto,
             factorOpciones: t.factorOpciones ?? "",
             precioEstablecido: t.precioEstablecido ?? "",
@@ -318,6 +321,7 @@ export function ProductoEditorModal({
       {
         id: uid(),
         nombre: "",
+        predeterminado: false,
         factorCosto: 1,
         factorOpciones: "",
         precioEstablecido: "",
@@ -449,6 +453,7 @@ export function ProductoEditorModal({
                   ({
                     id: t.id,
                     nombre: t.nombre,
+                    predeterminado: t.predeterminado || undefined,
                     factorCosto: Number(t.factorCosto) || 1,
                     factorOpciones:
                       t.factorOpciones !== "" ? Number(t.factorOpciones) : null,
@@ -1046,6 +1051,27 @@ export function ProductoEditorModal({
                                     placeholder={`Variante ${i + 1} (ej: Vaso grande)`}
                                     className={inputCls + " flex-1"}
                                   />
+                                  {/* Solo un tamaño predeterminado; sin marca, se usa el primero. */}
+                                  <label
+                                    className="flex shrink-0 cursor-pointer items-center gap-1.5 text-[11px] font-semibold text-hc-soft"
+                                    title="Tamaño con el que abre el producto y el que muestran las cards"
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="tamano-predeterminado"
+                                      checked={
+                                        t.predeterminado ||
+                                        (i === 0 && !tamanos.some((x) => x.predeterminado))
+                                      }
+                                      onChange={() =>
+                                        setTamanos((p) =>
+                                          p.map((x) => ({ ...x, predeterminado: x.id === t.id })),
+                                        )
+                                      }
+                                      className="accent-hc-rose"
+                                    />
+                                    Predeterminado
+                                  </label>
                                   <button
                                     onClick={() => removeTamano(t.id)}
                                     className="p-1.5 rounded-lg hover:bg-red-50 text-hc-soft hover:text-red-500 transition"
