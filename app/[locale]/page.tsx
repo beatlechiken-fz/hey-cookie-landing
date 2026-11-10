@@ -16,7 +16,7 @@ import { parsePromo } from "@/modules/admin/store/domain/entities/Promocion.enti
 import { TEMPORADA, esDeTemporada } from "@/core/data/temporada";
 import { fetchTemporada, type ProductoTemporada } from "@/modules/cake/data/datasources/Temporada.datasource";
 import TemporadaGrid from "@/modules/cake/presentation/components/TemporadaGrid";
-import TemporadaAcciones from "@/modules/cake/presentation/components/TemporadaAcciones";
+import TemporadaAcciones, { TemporadaVerCompleto } from "@/modules/cake/presentation/components/TemporadaAcciones";
 
 /** Destacados de temporada para la home: hasta 2 por categoría, en orden de menú. */
 function destacados(items: ProductoTemporada[]): ProductoTemporada[] {
@@ -91,6 +91,7 @@ export default async function Home() {
           acciones={<TemporadaAcciones />}
         >
           <TemporadaGrid items={temporadaHome} tono={TEMPORADA.tono} vacio={tt("proximamente")} mostrarLinea />
+          <TemporadaVerCompleto />
         </BandaTemporada>
       )}
 

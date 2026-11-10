@@ -4,7 +4,7 @@
   Para regenerarlo (p. ej. al agregar precios), desde la raíz del proyecto:
     "<ruta a Chrome>" --headless --no-pdf-header-footer \
       --print-to-pdf=public/menus/menu-navidad-2026.pdf docs/menus/menu-navidad-2026.html
-  Para agregar precios: pon el precio dentro de <span class="precio"></span> en cada platillo.
+  Precios: dentro de <span class="precio"></span> en cada platillo; deben coincidir con el precio fijo de cada producto en el admin.
   Usa un Chrome reciente (probado con Chrome for Testing 1243): versiones viejas
   incrustan algunas fotos sin comprimir y el PDF pasa de ~1.6 MB a 3 MB o más.
   Fotos: docs/menus/img/ en JPEG (Chrome las incrusta tal cual; con WebP el PDF pesaba 11 MB).
@@ -171,13 +171,13 @@
     <div class="fila">
       <figure class="foto"><img src="img/pastel-noche-buena.jpg" alt="Pastel Nochebuena"><figcaption>PASTEL NOCHEBUENA</figcaption></figure>
       <div class="lista">
-        <div class="plato"><div class="nombre">Nochebuena<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Nochebuena<span class="precio">$810</span></div>
           <p>Bizcocho de vainilla con tres leches de vainilla, relleno de crema bariloche de frutos rojos, cubierta de crema de mantequilla de pistache y frutos rojos frescos.</p><div class="tam">TAMAÑO Y APARIENCIA PERSONALIZABLE</div></div>
-        <div class="plato"><div class="nombre">Rompope<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Rompope<span class="precio">$740</span></div>
           <p>Bizcocho de vainilla con tres leches de rompope, relleno de crema bariloche de rompope y canela, cubierta de crema de mantequilla de canela y nuez.</p><div class="tam">TAMAÑO Y APARIENCIA PERSONALIZABLE</div></div>
-        <div class="plato"><div class="nombre">Baileys<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Baileys<span class="precio">$860</span></div>
           <p>Bizcocho de chocolate con tres leches de Baileys, relleno de crema bariloche de café, cubierta de crema de mantequilla de chocolate, fresas y chocolate Baileys.</p><div class="tam">TAMAÑO Y APARIENCIA PERSONALIZABLE</div></div>
-        <div class="plato"><div class="nombre">Tronco Red Velvet<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Tronco Red Velvet<span class="precio">$420</span></div>
           <p>Bizcocho red velvet enrollado con crema bariloche de chocolate, frosting de queso crema y frutos rojos frescos.</p><div class="tam">TRONCO 30 CM</div></div>
       </div>
     </div>
@@ -197,13 +197,13 @@
     <div class="fila">
       <figure class="foto"><img src="img/tarta-esfera.jpg" alt="Tarta sablé Esfera"><figcaption>TARTA ESFERA</figcaption></figure>
       <div class="lista">
-        <div class="plato"><div class="nombre">Duende<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Duende<span class="precio">$65</span></div>
           <p>Sablé de mantequilla, bariloche de pistache, pistache troceado y frambuesas.</p><div class="tam">INDIVIDUAL · 8 CM</div></div>
-        <div class="plato"><div class="nombre">Esfera<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Esfera<span class="precio">$65</span></div>
           <p>Sablé de mantequilla, bariloche de frutos rojos y frutos rojos frescos.</p><div class="tam">INDIVIDUAL · 8 CM</div></div>
-        <div class="plato"><div class="nombre">Rompope<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Rompope<span class="precio">$65</span></div>
           <p>Sablé de mantequilla, bariloche de rompope y canela, fresa y raja de canela.</p><div class="tam">INDIVIDUAL · 8 CM</div></div>
-        <div class="plato"><div class="nombre">Chocomenta<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Chocomenta<span class="precio">$65</span></div>
           <p>Sablé de mantequilla con cacao, bariloche de chocolate oscuro, chocolate de menta y una fresa.</p><div class="tam">INDIVIDUAL · 8 CM</div></div>
       </div>
     </div>
@@ -212,9 +212,9 @@
     <div class="fila inv chica">
       <figure class="foto"><img src="img/bundtcake-nevado.jpg" alt="Bundtcake Nevado"><figcaption>BUNDTCAKE NEVADO</figcaption></figure>
       <div class="lista">
-        <div class="plato"><div class="nombre">Flan de Rompope<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Flan de Rompope<span class="precio">$385</span></div>
           <p>Leches y queso crema con rompope, sobre caramelo dorado.</p><div class="tam">TAMAÑO Y APARIENCIA PERSONALIZABLE</div></div>
-        <div class="plato"><div class="nombre">Bundtcake Nevado<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Bundtcake Nevado<span class="precio">$445</span></div>
           <p>Chocolate con nuez, bañado en ganache de chocolate blanco y coronado con fresas.</p><div class="tam">TAMAÑO Y APARIENCIA PERSONALIZABLE</div></div>
       </div>
     </div>
@@ -234,13 +234,13 @@
     <div class="fila">
       <figure class="foto"><img src="img/brownie-santa.jpg" alt="Brownie Santa"><figcaption>BROWNIE SANTA</figcaption></figure>
       <div class="lista">
-        <div class="plato"><div class="nombre">Brownie Santa <span class="badge">FITNESS</span><span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Brownie Santa <span class="badge">FITNESS</span><span class="precio">$40</span></div>
           <p>Camote morado y cacao con crema de mantequilla, chocolate blanco y una fresa.</p><div class="tam">PIEZA</div></div>
-        <div class="plato"><div class="nombre">Brownie Santa Mint <span class="badge">FITNESS</span><span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Brownie Santa Mint <span class="badge">FITNESS</span><span class="precio">$45</span></div>
           <p>Camote morado y cacao con chocolate de menta, chocolate blanco y una fresa.</p><div class="tam">PIEZA</div></div>
-        <div class="plato"><div class="nombre">Muffin Klaus<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Muffin Klaus<span class="precio">$25</span></div>
           <p>Red velvet relleno de frosting de queso crema, con chocolate blanco y una fresa.</p><div class="tam">PIEZA</div></div>
-        <div class="plato"><div class="nombre">Muffin Tree<span class="precio"></span></div>
+        <div class="plato"><div class="nombre">Muffin Tree<span class="precio">$25</span></div>
           <p>Pistache relleno de bariloche de chocolate, con nuez y una frambuesa.</p><div class="tam">PIEZA</div></div>
       </div>
     </div>
@@ -267,12 +267,12 @@
     <div class="fila chica">
       <figure class="foto"><img src="img/gelatina-navidad.jpg" alt="Gelatina Navidad"><figcaption>GELATINA NAVIDAD</figcaption></figure>
       <div class="lista">
-        <div class="plato"><div class="nombre">Ponche<span class="precio"></span></div>
-          <p>Agua de ponche con guayaba, tejocote, caña, jamaica y canela con la fruta encapsulada, sobre una capa de leche con canela. Coronada con guayaba.</p></div>
-        <div class="plato"><div class="nombre">Navidad<span class="precio"></span></div>
-          <p>Gelatina de yogurt con rompope que encapsula un corazón de frutos rojos, coronada con frutos rojos frescos.</p></div>
-        <div class="plato"><div class="nombre">Duende<span class="precio"></span></div>
-          <p>Mosaico de frambuesa y maracuyá en gelatina de leche con pistache, coronada con frambuesas.</p></div>
+        <div class="plato"><div class="nombre">Ponche<span class="precio">$310</span></div>
+          <p>Agua de ponche con guayaba, tejocote, caña, jamaica, canela y piloncillo, con la fruta encapsulada, sobre una capa de leche con canela. Coronada con guayaba.</p><div class="tam">2 LITROS</div></div>
+        <div class="plato"><div class="nombre">Navidad<span class="precio">$345</span></div>
+          <p>Gelatina de yogurt con rompope que encapsula un corazón de frutos rojos, coronada con frutos rojos frescos.</p><div class="tam">2 LITROS</div></div>
+        <div class="plato"><div class="nombre">Duende<span class="precio">$365</span></div>
+          <p>Mosaico de frambuesa y maracuyá en gelatina de leche con pistache, coronada con frambuesas y pistache.</p><div class="tam">2 LITROS</div></div>
       </div>
     </div>
   </div>
@@ -287,14 +287,14 @@
         <div class="plato"><div class="nombre">Nochebuena<span class="precio">$30</span></div>
           <p>Pasta de pistache, chocolate blanco, arándanos y pistache troceado.</p><div class="tam">PIEZA</div></div>
         <div class="plato"><div class="nombre">Chocomenta<span class="precio">$30</span></div>
-          <p>Chocolate intenso, chocolate blanco con menta y un bastón de galleta.</p><div class="tam">PIEZA</div></div>
+          <p>Chocolate intenso con chispas y nibs de cacao, chocolate blanco con menta y un bastón de galleta.</p><div class="tam">PIEZA</div></div>
         <div class="plato"><div class="nombre">Rompope<span class="precio">$30</span></div>
           <p>Masa de rompope con nuez, chocolate de rompope y canela.</p><div class="tam">PIEZA</div></div>
       </div>
     </div>
   </div>
 
-  <p class="aviso">Más precios muy pronto. Disponibles durante la temporada navideña, sujetos a disponibilidad.<br>
+  <p class="aviso">Pasteles, flan y bundt cake: precio en 24 cm. Gelatinas: precio en 2 litros. Otros tamaños, cotízalos por WhatsApp.<br>Disponibles durante la temporada navideña, sujetos a disponibilidad.<br>
     <b>PEDIDOS CON 3 DÍAS DE ANTICIPACIÓN · WHATSAPP 443 385 3472 · HEYCOOKIE.MX/NAVIDAD</b></p>
 
   <div class="pie"><div class="linea"><span class="bola"></span><img src="logo-hey-cookie.png" alt=""><span class="bola"></span></div><p>HEY COOKIE · BAKE LAB &nbsp;·&nbsp; 4 / 4</p></div>
