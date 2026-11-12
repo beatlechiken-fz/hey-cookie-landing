@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useRouter } from "@/i18n/navigation";
@@ -183,6 +184,12 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, isUser]);
 
+  // Se monta en <body> con un portal: el AppBar vive dentro de contenedores con z-index
+  // propio que cambia por página (`relative z-9` en /cake, `z-99999` en la home); en /cake
+  // eso encerraba al drawer y la portada de temporada (z-10) se pintaba encima.
+  const [montado, setMontado] = useState(false);
+  useEffect(() => setMontado(true), []);
+
   // Escape key + body scroll
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -362,8 +369,12 @@ export function CartDrawerPublic({ open, onClose }: Props) {
   const baseGlobal = Math.max(0, subtotal - totalItemDisc - promoDisc);
   const globalDisc = cupones.reduce((s, c) => s + cuponMonto(c, baseGlobal), 0);
 
-  return (
-    <>
+  if (!montado) return null;
+
+  // Una sola capa por encima del header de la home (`z-99999` en Hero) y por debajo
+  // del menú móvil; los z-index de adentro (drawer, modales de edición) se ordenan en ella.
+  return createPortal(
+    <div className="relative z-[100000]">
     <AnimatePresence>
       {open && (
         <>
@@ -820,6 +831,7 @@ export function CartDrawerPublic({ open, onClose }: Props) {
         editItem={editItem}
       />
     )}
-    </>
+    </div>,
+    document.body,
   );
 }
