@@ -1051,31 +1051,36 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
               )}
             </div>
 
-            <div className="flex gap-3">
+            {/* Atrás/Cancelar · Siguiente · Agregar. "Agregar" está en todos los
+                pasos: agrega el producto como va (al abrir, con lo de fábrica). */}
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => (idx === 0 ? (reset(), onClose()) : irAPaso(idx - 1))}
-                className="flex-1 py-2.5 min-h-11 rounded-xl border border-[#e8c4a0] bg-white text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
+                className="shrink-0 px-3 py-2.5 min-h-11 rounded-xl border border-[#e8c4a0] bg-white text-[#AA6A42] text-sm font-semibold hover:bg-[#FFF0E6] transition cursor-pointer"
               >
                 {idx === 0 ? "Cancelar" : "Atrás"}
               </button>
-              {!esUltimo ? (
+              {!esUltimo && (
                 <button
                   type="button"
                   onClick={() => irAPaso(idx + 1)}
                   disabled={loading || !catalogo}
-                  className="flex-1 py-2.5 min-h-11 rounded-xl bg-[#A84D66] hover:bg-[#8f3f54] text-white text-sm font-bold transition flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={`Siguiente: ${pasos[idx + 1].label}`}
+                  className="flex-1 min-w-0 px-2 py-2.5 min-h-11 rounded-xl border border-[#A84D66] bg-white text-[#A84D66] hover:bg-[#FBEFF2] text-sm font-bold transition flex items-center justify-center gap-0.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <span className="truncate">Siguiente: {pasos[idx + 1].label}</span>
+                  <span className="truncate">Siguiente</span>
                   <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M9 6l6 6-6 6" />
                   </svg>
                 </button>
-              ) : (
+              )}
                 <button
+                  type="button"
                   onClick={handleAdd}
                   disabled={!desglose || loading || justAdded}
-                  className={`flex-1 py-2.5 min-h-11 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
+                  aria-label={editItem ? "Guardar cambios" : "Agregar al carrito"}
+                  className={`flex-1 min-w-0 px-2 py-2.5 min-h-11 rounded-xl text-white text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed ${
                     justAdded
                       ? "bg-[#1B7A43]"
                       : "bg-[#A84D66] hover:bg-[#8f3f54] disabled:opacity-50"
@@ -1086,7 +1091,7 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
                       <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20 6 9 17l-5-5" />
                       </svg>
-                      {editItem ? "Cambios guardados" : "Agregado"}
+                      <span className="truncate">{editItem ? "Guardado" : "Agregado"}</span>
                     </>
                   ) : (
                     <>
@@ -1095,14 +1100,13 @@ export default function ProductoModal({ producto, onClose, editItem }: Props) {
                         alt=""
                         width={16}
                         height={16}
-                        className="shrink-0"
+                        className="hidden shrink-0 min-[400px]:block"
                         style={{ filter: "brightness(0) invert(1)" }}
                       />
-                      <span>{editItem ? "Guardar cambios" : "Agregar al carrito"}</span>
+                      <span className="truncate">{editItem ? "Guardar" : "Agregar"}</span>
                     </>
                   )}
                 </button>
-              )}
             </div>
           </div>
         </div>

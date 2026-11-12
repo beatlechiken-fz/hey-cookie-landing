@@ -22,6 +22,7 @@ function toEntity(row: any): Cupon {
     fechaInicio: row.fecha_inicio ?? null,
     fechaFin: row.fecha_fin ?? null,
     activo: row.activo,
+    personalizable: row.personalizable === true,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -52,6 +53,11 @@ export async function POST(req: NextRequest) {
     }
 
     const cupon = toEntity(data);
+
+    // El descuento personalizado lo define el admin al aplicarlo; no aplica en la página.
+    if (cupon.personalizable) {
+      return NextResponse.json({ error: "Cupón no encontrado" }, { status: 404 });
+    }
 
     if (cupon.tipo !== "global") {
       return NextResponse.json(

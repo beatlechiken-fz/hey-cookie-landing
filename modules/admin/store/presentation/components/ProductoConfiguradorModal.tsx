@@ -144,12 +144,16 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
     if (conf.diametroCm != null) setDiametroCm(conf.diametroCm);
     if (conf.tamanoFijoId !== undefined) setTamanoFijoId(conf.tamanoFijoId);
     setCantidad(editItem.cantidad);
+    // Respeta el precio que se eligió al agregarla (fijo o sugerido).
+    const usado = (editItem.desgloseCostos as Record<string, unknown> | undefined)?.precioUsado;
+    if (usado) setUsarPrecioEstablecido(usado === "establecido");
   }, [producto, editItem, setOpciones, setDiametroCm, setTamanoFijoId, setCantidad]);
 
   // ── Precio: sugerido vs establecido ───────────────────────────────────────
   // "sugerido" = precio calculado del desglose
   // "establecido" = precio_establecido del producto (si existe)
-  const [usarPrecioEstablecido, setUsarPrecioEstablecido] = useState(false);
+  // Arranca en el fijo; si el producto no tiene, se usa el sugerido.
+  const [usarPrecioEstablecido, setUsarPrecioEstablecido] = useState(true);
 
   // Precio establecido efectivo: el de la variante de tamaño elegida si
   // define uno propio, si no el del producto.
@@ -212,7 +216,7 @@ export function ProductoConfiguradorModal({ producto, onClose, editItem, onSave 
     reset();
     setAbierta("tamano");
     setAdded(false);
-    setUsarPrecioEstablecido(false);
+    setUsarPrecioEstablecido(true);
     onClose();
   }
 

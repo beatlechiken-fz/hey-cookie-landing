@@ -15,6 +15,12 @@ export interface Cupon {
   fechaInicio: string | null;
   fechaFin: string | null;
   activo: boolean;
+  /**
+   * Descuento personalizado: solo lo aplica el admin, y al aplicarlo define
+   * el tipo y el valor del descuento para esa orden (tipoDescuento/valor de
+   * aquí son solo la sugerencia inicial). No se acepta desde la página pública.
+   */
+  personalizable: boolean;
   createdAt: string;
   updatedAt: string;
   /** Solo presente cuando se consulta en contexto de un cliente específico (ej. /clientes/[id]) */
@@ -30,6 +36,7 @@ export interface CreateCuponDTO {
   usosMaximos?: number | null;
   fechaInicio?: string | null;
   fechaFin?: string | null;
+  personalizable?: boolean;
 }
 
 export type UpdateCuponDTO = Partial<CreateCuponDTO>;

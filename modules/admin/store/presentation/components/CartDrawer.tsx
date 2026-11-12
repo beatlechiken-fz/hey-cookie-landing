@@ -17,6 +17,11 @@ import type {
   OrdenItem,
 } from "../../domain/entities/Orden.entity";
 import type { ClienteResumen } from "../../domain/entities/Cliente.entity";
+import {
+  calcularDescuentoCupon,
+  type Cupon,
+  type TipoDescuento,
+} from "../../domain/entities/Cupon.entity";
 import type { Producto } from "../../domain/entities/Producto.entity";
 import { useRouter } from "@/i18n/navigation";
 
@@ -113,6 +118,12 @@ export function CartDrawer({ open, onClose }: Props) {
 
   const [cuponInput, setCuponInput] = useState("");
   const [localCuponError, setLocalCuponError] = useState<string | null>(null);
+  // Cupón de descuento personalizado validado, esperando a que se elija % o $ y el valor.
+  const [personalizado, setPersonalizado] = useState<{
+    cupon: Cupon;
+    tipoDescuento: TipoDescuento;
+    valor: string;
+  } | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [fechaEntrega, setFechaEntrega] = useState<string>("");
   const [horaEntrega, setHoraEntrega] = useState<string>("");
@@ -180,6 +191,15 @@ export function CartDrawer({ open, onClose }: Props) {
         subtotal,
         clienteId,
       );
+      if (cupon.personalizable) {
+        setPersonalizado({
+          cupon,
+          tipoDescuento: cupon.tipoDescuento,
+          valor: cupon.valor > 0 ? String(cupon.valor) : "",
+        });
+        setCuponInput("");
+        return;
+      }
       addCupon({
         cuponId: cupon.id,
         codigo: cupon.codigo,
@@ -191,6 +211,34 @@ export function CartDrawer({ open, onClose }: Props) {
     } catch (e: any) {
       setLocalCuponError(e.message);
     }
+  }
+
+  /** Aplica el cupón personalizado con el tipo y valor que eligió el admin. */
+  function aplicarPersonalizado(e: React.FormEvent) {
+    e.preventDefault();
+    if (!personalizado) return;
+    const valor = Number(personalizado.valor);
+    if (!(valor > 0)) {
+      setLocalCuponError("Escribe un descuento mayor a 0");
+      return;
+    }
+    if (personalizado.tipoDescuento === "porcentaje" && valor > 100) {
+      setLocalCuponError("El porcentaje no puede ser mayor a 100");
+      return;
+    }
+    const tipoDescuento = personalizado.tipoDescuento;
+    addCupon({
+      cuponId: personalizado.cupon.id,
+      codigo: personalizado.cupon.codigo,
+      tipoDescuento,
+      valor,
+      montoDescontado: calcularDescuentoCupon(
+        { ...personalizado.cupon, tipoDescuento, valor },
+        subtotal,
+      ),
+    });
+    setPersonalizado(null);
+    setLocalCuponError(null);
   }
 
   function buildOrdenItems(): OrdenItem[] {
@@ -676,6 +724,74 @@ export function CartDrawer({ open, onClose }: Props) {
                         </div>
                       ))}
                     </div>
+                  )}
+
+                  {/* Cupón personalizado: el admin elige % o $ y el valor */}
+                  {personalizado && (
+                    <form
+                      onSubmit={aplicarPersonalizado}
+                      className="flex flex-col gap-2 rounded-xl border border-hc-rose/30 bg-hc-rose/5 p-3"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-semibold text-hc-ink">
+                          {personalizado.cupon.codigo}
+                          <span className="ml-1.5 font-normal text-hc-muted">· descuento personalizado</span>
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPersonalizado(null);
+                            setLocalCuponError(null);
+                          }}
+                          className="text-xs font-semibold text-hc-muted hover:text-hc-ink transition"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="flex shrink-0 rounded-lg border border-hc-line-strong bg-white p-0.5" role="radiogroup" aria-label="Tipo de descuento">
+                          {(["porcentaje", "monto_fijo"] as const).map((tipo) => (
+                            <button
+                              key={tipo}
+                              type="button"
+                              role="radio"
+                              aria-checked={personalizado.tipoDescuento === tipo}
+                              onClick={() =>
+                                setPersonalizado((p) => (p ? { ...p, tipoDescuento: tipo } : p))
+                              }
+                              className={`min-w-10 rounded-md px-3 py-1.5 text-sm font-bold transition ${
+                                personalizado.tipoDescuento === tipo
+                                  ? "bg-hc-rose text-white"
+                                  : "text-hc-soft hover:bg-hc-hover"
+                              }`}
+                            >
+                              {tipo === "porcentaje" ? "%" : "$"}
+                            </button>
+                          ))}
+                        </div>
+                        <input
+                          type="number"
+                          inputMode="decimal"
+                          min="0"
+                          step="0.01"
+                          max={personalizado.tipoDescuento === "porcentaje" ? 100 : undefined}
+                          autoFocus
+                          value={personalizado.valor}
+                          onChange={(e) =>
+                            setPersonalizado((p) => (p ? { ...p, valor: e.target.value } : p))
+                          }
+                          placeholder={personalizado.tipoDescuento === "porcentaje" ? "Ej: 15" : "Ej: 100"}
+                          aria-label="Valor del descuento"
+                          className="min-w-0 flex-1 px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition placeholder:text-hc-soft"
+                        />
+                        <button
+                          type="submit"
+                          className="shrink-0 px-4 py-2 rounded-lg bg-hc-rose text-white text-sm font-semibold hover:bg-hc-rose-hover transition"
+                        >
+                          Aplicar
+                        </button>
+                      </div>
+                    </form>
                   )}
 
                   {/* Aplicar cupón */}

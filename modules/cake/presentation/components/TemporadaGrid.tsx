@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { TEMPORADA } from "@/core/data/temporada";
 import ProductCard, { LINEA_ETIQUETA } from "@/core/components/product-card/ProductCard";
@@ -11,7 +12,14 @@ import {
   type Producto,
 } from "@/modules/admin/store/domain/entities/Producto.entity";
 import type { TonoTemporada } from "@/core/components/section-cover/SectionCover";
-import TemporadaModal from "./TemporadaModal";
+import type { GalletaPublica } from "@/modules/home/presentation/components/Cookies";
+import ProductoModal from "./ProductoModal";
+import { toGalleta } from "./ProductGrid";
+
+const CookieModal = dynamic(
+  () => import("@/modules/home/presentation/components/CookieModal"),
+  { ssr: false },
+);
 
 export interface ProductoTemporadaItem {
   producto: Producto;
@@ -51,11 +59,13 @@ interface Props {
 
 /**
  * Cuadrícula de productos de temporada: el precio sale solo si ya se fijó
- * (`precioEstablecido`); el menú se publica antes de tenerlos todos. Cada card abre el detalle con lo que lleva.
+ * (`precioEstablecido`). Cada card abre el mismo configurador que el resto del
+ * catálogo para agregarlo al carrito (las galletas, su modal de galleta).
  */
 export default function TemporadaGrid({ items, tono, vacio, mostrarLinea }: Props) {
   const t = useTranslations(TEMPORADA?.mensajes ?? "navidad");
-  const [abierto, setAbierto] = useState<ProductoTemporadaItem | null>(null);
+  const [abierto, setAbierto] = useState<Producto | null>(null);
+  const [galleta, setGalleta] = useState<GalletaPublica | null>(null);
 
   if (items.length === 0) {
     return <p className="py-10 text-center font-body text-lg text-crema/70">{vacio}</p>;
@@ -75,13 +85,18 @@ export default function TemporadaGrid({ items, tono, vacio, mostrarLinea }: Prop
             detalle={medidaProducto(item.producto, t("personalizable"))}
             incluye={item.incluye}
             etiqueta={mostrarLinea ? LINEA_ETIQUETA[item.producto.linea] : null}
-            onOpen={() => setAbierto(item)}
+            onOpen={() =>
+              item.producto.categoria === "cookie"
+                ? setGalleta(toGalleta(item.producto))
+                : setAbierto(item.producto)
+            }
             priority={i < 4}
             encuadre={ENCUADRE_TEMPORADA}
           />
         ))}
       </div>
-      {abierto && <TemporadaModal item={abierto} onClose={() => setAbierto(null)} />}
+      {abierto && <ProductoModal producto={abierto} onClose={() => setAbierto(null)} />}
+      {galleta && <CookieModal producto={galleta} onClose={() => setGalleta(null)} />}
     </>
   );
 }

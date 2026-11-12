@@ -19,7 +19,7 @@ export interface ProductoConPrecio {
   incluye?: string[];
 }
 
-function toGalleta(p: Producto): GalletaPublica {
+export function toGalleta(p: Producto): GalletaPublica {
   return {
     id: p.id,
     nombre: p.nombre,

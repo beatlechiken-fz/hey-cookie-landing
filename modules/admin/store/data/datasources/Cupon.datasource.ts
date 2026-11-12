@@ -23,6 +23,7 @@ function toEntity(row: any): Cupon {
     fechaInicio: row.fecha_inicio ?? null,
     fechaFin: row.fecha_fin ?? null,
     activo: row.activo,
+    personalizable: row.personalizable === true,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -38,6 +39,7 @@ function toRow(dto: Partial<CreateCuponDTO>) {
   if (dto.usosMaximos !== undefined) row.usos_maximos = dto.usosMaximos;
   if (dto.fechaInicio !== undefined) row.fecha_inicio = dto.fechaInicio;
   if (dto.fechaFin !== undefined) row.fecha_fin = dto.fechaFin;
+  if (dto.personalizable !== undefined) row.personalizable = dto.personalizable;
   return row;
 }
 

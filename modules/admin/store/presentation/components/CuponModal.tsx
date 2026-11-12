@@ -26,6 +26,7 @@ const EMPTY: CreateCuponDTO = {
   usosMaximos: null,
   fechaInicio: null,
   fechaFin: null,
+  personalizable: false,
 };
 
 function toDateInput(iso: string | null | undefined) {
@@ -52,6 +53,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
               usosMaximos: cupon.usosMaximos,
               fechaInicio: cupon.fechaInicio,
               fechaFin: cupon.fechaFin,
+              personalizable: cupon.personalizable,
             }
           : EMPTY,
       );
@@ -65,7 +67,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
       setError("El código es requerido");
       return;
     }
-    if (form.valor <= 0) {
+    if (!form.personalizable && form.valor <= 0) {
       setError("El valor debe ser mayor a 0");
       return;
     }
@@ -226,11 +228,32 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                   />
                 </div>
 
+                {/* Descuento personalizado: el admin pone el monto al aplicarlo */}
+                <label className="flex items-start gap-3 rounded-xl border border-hc-line bg-hc-hover px-3 py-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.personalizable ?? false}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, personalizable: e.target.checked }))
+                    }
+                    className="mt-0.5 h-4 w-4 accent-hc-rose"
+                  />
+                  <span className="flex flex-col">
+                    <span className="text-sm font-semibold text-hc-ink">
+                      Descuento personalizado
+                    </span>
+                    <span className="text-[12px] text-hc-muted">
+                      Al aplicarlo en una orden eliges si es % o $ y cuánto. Solo
+                      lo usa el admin; no funciona en la página.
+                    </span>
+                  </span>
+                </label>
+
                 {/* Tipo + valor */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
-                      Tipo de descuento
+                      {form.personalizable ? "Tipo sugerido" : "Tipo de descuento"}
                     </label>
                     <select
                       className={inputCls}
@@ -248,7 +271,7 @@ export function CuponModal({ open, cupon, onClose, onSave }: Props) {
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
-                      Valor
+                      {form.personalizable ? "Valor sugerido" : "Valor"}
                     </label>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-hc-muted text-sm">
