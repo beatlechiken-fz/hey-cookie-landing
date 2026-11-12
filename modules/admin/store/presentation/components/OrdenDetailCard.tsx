@@ -1087,6 +1087,7 @@ export function OrdenDetailCard({
       <>
         <div className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-3">
+            <OrdenPdfAcciones orden={orden} align="center" />
             <OrdenEstadoControl status={orden.status} onCambiar={cambiarEstado} updating={updating} />
             {toggleInventario}
           </div>
@@ -1205,6 +1206,8 @@ export function OrdenDetailCard({
             className="overflow-hidden"
           >
             <div className="px-4 pb-4 flex flex-col gap-4 border-t border-hc-line pt-4">
+              <OrdenPdfAcciones orden={orden} align="center" />
+
               {/* Pipeline */}
               <div className="flex justify-center overflow-x-auto py-1">
                 <OrdenPipeline status={orden.status} />
@@ -1253,10 +1256,6 @@ export function OrdenDetailCard({
                   </button>
                 </div>
               )}
-
-              <div className="pt-1">
-                <OrdenPdfAcciones orden={orden} />
-              </div>
             </div>
           </motion.div>
         )}

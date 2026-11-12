@@ -1,7 +1,7 @@
 "use client";
 // Botones de PDF de una orden: cotización u orden (mientras se puede editar),
 // y la comanda (siempre): verla en una ventana flotante o descargarla. Llevan su propio estado de carga y error para poder vivir
-// fuera de la tarjeta, en la línea de la ruta del detalle.
+// solos, justo arriba del pipeline de la orden.
 
 import { useState } from "react";
 import type { Orden } from "@/modules/admin/store/domain/entities/Orden.entity";
@@ -11,8 +11,14 @@ import { ComandaModal } from "./ComandaModal";
 interface Props {
   orden: Orden;
   /** Alineación de los botones y del error. */
-  align?: "start" | "end";
+  align?: "start" | "center" | "end";
 }
+
+const ALINEAR = {
+  start: { items: "items-start", fila: "" },
+  center: { items: "items-center", fila: "justify-center" },
+  end: { items: "items-end", fila: "justify-end" },
+} as const;
 
 export function OrdenPdfAcciones({ orden, align = "start" }: Props) {
   const [generando, setGenerando] = useState(false);
@@ -34,8 +40,8 @@ export function OrdenPdfAcciones({ orden, align = "start" }: Props) {
   const puedeCotizacion = orden.status === "cotizacion" || orden.status === "en_proceso";
 
   return (
-    <div className={`flex flex-col gap-1.5 ${align === "end" ? "items-end" : "items-start"}`}>
-      <div className={`flex flex-wrap gap-2 ${align === "end" ? "justify-end" : ""}`}>
+    <div className={`flex flex-col gap-1.5 ${ALINEAR[align].items}`}>
+      <div className={`flex flex-wrap gap-2 ${ALINEAR[align].fila}`}>
         {puedeCotizacion && (
           <button
             onClick={() => generar(() => generarCotizacionPdf(orden), "Error al generar PDF")}

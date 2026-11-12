@@ -11,7 +11,6 @@ import type {
   OrdenStatus,
 } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { OrdenDetailCard } from "./OrdenDetailCard";
-import { OrdenPdfAcciones } from "./OrdenPdfAcciones";
 
 interface Props {
   ordenId: string;
@@ -66,7 +65,7 @@ export function OrdenDetailView({ ordenId }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Breadcrumb y, a la derecha en la misma línea, los PDF */}
+      {/* Breadcrumb */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2 text-sm text-hc-muted">
           <button
@@ -104,7 +103,6 @@ export function OrdenDetailView({ ordenId }: Props) {
             </>
           )}
         </div>
-        {orden && !isPending && <OrdenPdfAcciones orden={orden} align="end" />}
       </div>
 
       {/* Estado de carga */}
