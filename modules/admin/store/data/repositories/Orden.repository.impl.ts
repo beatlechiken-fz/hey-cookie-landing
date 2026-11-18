@@ -4,6 +4,7 @@ import type { OrdenRepository } from "../../domain/repositories/Orden.repository
 import type {
   Orden,
   CreateOrdenDTO,
+  CreatePruebaDTO,
   OrdenStatus,
   UpdateOrdenItemDTO,
   AddOrdenItemDTO,
@@ -25,6 +26,9 @@ export class OrdenRepositoryImpl implements OrdenRepository {
   }
   create(dto: CreateOrdenDTO): Promise<Orden> {
     return this.ds.create(dto);
+  }
+  createPrueba(dto: CreatePruebaDTO): Promise<Orden> {
+    return this.ds.createPrueba(dto);
   }
   updateStatus(id: string, status: OrdenStatus, descontarInventario?: boolean): Promise<Orden> {
     return this.ds.updateStatus(id, status, descontarInventario);

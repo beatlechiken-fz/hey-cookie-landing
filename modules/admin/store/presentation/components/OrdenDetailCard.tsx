@@ -89,6 +89,7 @@ const NEXT_STATUS: Record<OrdenStatus, OrdenStatus | null> = {
   pagado: "entregado",
   entregado: null,
   cancelado: null,
+  test: null,
 };
 
 function formatDate(iso: string) {

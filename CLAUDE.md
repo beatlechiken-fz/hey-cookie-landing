@@ -97,6 +97,7 @@ Solo `role: "admin"`. Login en `/admin`.
 **Store (Tienda):**
 - `productos` — catálogo (líneas: sweet/fitness/healthy), precios calculados por tamaño. `activo` = se muestra en la landing (los inactivos solo se ven en el admin); `eliminado` = soft delete, no sale en ningún lado. `coleccion` es solo una etiqueta interna de temporada
 - `ordenes` — pipeline de estados: `cotizacion → en_proceso → listo_entregar → pagado → entregado | cancelado`
+  - **Pruebas** (pestaña propia en Órdenes): status `test`, único e inmutable. Se arman con el mismo carrito del admin en modo prueba (`useCartDrawerAdmin.modo = "prueba"`) → `POST /api/admin/ordenes/pruebas`. Sin cliente, entrega, cupones ni descuentos (total = subtotal); llevan `fecha_realizacion` y observaciones. No cuentan en finanzas, inventario, cashback ni dashboard; el listado general las excluye salvo `?statuses=test`. Solo se ve/descarga su comanda
 - `clientes` — contactos + historial + cupones; cada cliente tiene `qr_token` persistente (tarjeta del club)
 - `cupones` — descuentos (% o monto fijo), asignables por cliente; todo "beneficio" (incluso un regalo) se modela como un cupón
 - `beneficios` / `beneficio_otorgamientos` — reglas automáticas (ej. cumpleaños: genera cupón + regalo) y su historial de otorgamientos, uno por cliente por año

@@ -2,26 +2,31 @@
 // Botón "Nueva orden": abre el carrito del admin (donde se agregan productos,
 // cupones, etc. y se genera la orden o cotización). Desde el detalle de un
 // cliente, la orden queda a su nombre. Si el carrito ya tiene productos de
-// otra orden, pregunta antes de descartarlos.
+// otra orden, pregunta antes de descartarlos. Con `modo="prueba"` abre el
+// mismo carrito, pero para generar una prueba interna (pestaña Pruebas).
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCartStore } from "../hooks/useCartStore";
-import { useCartDrawerAdmin } from "../hooks/useCartDrawerAdmin";
+import { useCartDrawerAdmin, type CartDrawerModo } from "../hooks/useCartDrawerAdmin";
 
 interface Props {
   /** Cliente al que se le arma la orden (opcional). */
   cliente?: { id: string; nombre: string };
+  /** "prueba": el carrito genera una prueba interna en vez de una orden. */
+  modo?: CartDrawerModo;
 }
 
-export function NuevaOrdenButton({ cliente }: Props) {
-  const abrir = useCartDrawerAdmin((s) => s.abrir);
+export function NuevaOrdenButton({ cliente, modo = "orden" }: Props) {
+  const abrirDrawer = useCartDrawerAdmin((s) => s.abrir);
+  const abrir = () => abrirDrawer(modo);
+  const esPrueba = modo === "prueba";
   const [pendiente, setPendiente] = useState<{ n: number; nombre: string | null } | null>(null);
 
   function empezarNueva() {
     const carrito = useCartStore.getState();
     carrito.clear();
-    if (cliente) carrito.setCliente(cliente);
+    if (cliente && !esPrueba) carrito.setCliente(cliente);
     setPendiente(null);
     abrir();
   }
@@ -30,7 +35,7 @@ export function NuevaOrdenButton({ cliente }: Props) {
     const { items, clienteId, clienteNombre } = useCartStore.getState();
     if (items.length === 0) return empezarNueva();
     // Ya es la orden de este mismo cliente: solo se continúa.
-    if (cliente && clienteId === cliente.id) return abrir();
+    if (!esPrueba && cliente && clienteId === cliente.id) return abrir();
     setPendiente({ n: items.reduce((t, i) => t + i.cantidad, 0), nombre: clienteNombre });
   }
 
@@ -44,7 +49,7 @@ export function NuevaOrdenButton({ cliente }: Props) {
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
           <path d="M12 5v14M5 12h14" />
         </svg>
-        Nueva orden
+        {esPrueba ? "Nueva prueba" : "Nueva orden"}
       </button>
 
       <AnimatePresence>
@@ -71,11 +76,16 @@ export function NuevaOrdenButton({ cliente }: Props) {
             >
               <div className="pointer-events-auto w-full max-w-sm rounded-2xl border border-hc-line bg-white p-5 shadow-[0_24px_64px_-16px_rgba(58,31,20,0.28)]">
                 <h2 id="nueva-orden-titulo" className="text-[16px] font-bold text-hc-ink">
-                  Ya hay una orden en curso
+                  Ya hay productos en el carrito
                 </h2>
                 <p className="mt-1.5 text-[13.5px] text-hc-muted">
                   El carrito tiene {pendiente.n} producto{pendiente.n !== 1 ? "s" : ""}
-                  {pendiente.nombre ? ` para ${pendiente.nombre}` : " sin cliente"}. ¿Qué quieres hacer?
+                  {esPrueba
+                    ? ""
+                    : pendiente.nombre
+                      ? ` para ${pendiente.nombre}`
+                      : " sin cliente"}
+                  . ¿Qué quieres hacer?
                 </p>
                 <div className="mt-5 flex flex-col gap-2">
                   <button
@@ -83,7 +93,9 @@ export function NuevaOrdenButton({ cliente }: Props) {
                     onClick={empezarNueva}
                     className="rounded-xl bg-hc-rose py-2.5 text-[13.5px] font-semibold text-white transition hover:bg-hc-rose-hover"
                   >
-                    Descartarla y empezar nueva{cliente ? ` para ${cliente.nombre.split(" ")[0]}` : ""}
+                    {esPrueba
+                      ? "Descartarlos y empezar la prueba"
+                      : `Descartarla y empezar nueva${cliente ? ` para ${cliente.nombre.split(" ")[0]}` : ""}`}
                   </button>
                   <button
                     type="button"
@@ -93,7 +105,7 @@ export function NuevaOrdenButton({ cliente }: Props) {
                     }}
                     className="rounded-xl border border-hc-line-strong py-2.5 text-[13.5px] font-semibold text-hc-ink transition hover:bg-hc-hover"
                   >
-                    Continuar la orden en curso
+                    {esPrueba ? "Usarlos en la prueba" : "Continuar la orden en curso"}
                   </button>
                 </div>
               </div>

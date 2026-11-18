@@ -302,10 +302,23 @@ function infoStrip(
   clienteNombre?: string | null,
   fechaEntrega?: string | null,
   horaEntrega?: string | null,
+  prueba?: { fechaRealizacion: string | null },
 ): string {
   type Chip = { icon: string; label: string; val: string };
   const chips: Chip[] = [
-    { icon: "#️⃣", label: "Número", val: `${numero}` },
+    { icon: "#️⃣", label: prueba ? "Prueba" : "Número", val: `${numero}` },
+    ...(prueba?.fechaRealizacion
+      ? [
+          {
+            icon: "🧪",
+            label: "Realización",
+            val: formatFechaCalendario(prueba.fechaRealizacion, {
+              day: "2-digit",
+              month: "short",
+            }),
+          },
+        ]
+      : []),
     {
       icon: "📅",
       label: "Fecha",
@@ -619,7 +632,14 @@ export function buildComandaHtml(data: ComandaData): string {
     : "";
 
   const body = `
-    ${infoStrip(data.numero, data.createdAt, data.clienteNombre, data.fechaEntrega, data.horaEntrega)}
+    ${infoStrip(
+      data.numero,
+      data.createdAt,
+      data.clienteNombre,
+      data.fechaEntrega,
+      data.horaEntrega,
+      data.esPrueba ? { fechaRealizacion: data.fechaRealizacion ?? null } : undefined,
+    )}
     ${notasHtml}
     ${sec(
       "📋",
@@ -633,7 +653,10 @@ export function buildComandaHtml(data: ComandaData): string {
     <div style="height:24px;"></div>
   `;
 
-  return wrap(header("Comanda de Producción", "", true), body);
+  return wrap(
+    header(data.esPrueba ? "Comanda de Prueba" : "Comanda de Producción", "", true),
+    body,
+  );
 }
 
 // ── Cargar html2pdf.js ────────────────────────────────────────────────────────
@@ -714,6 +737,6 @@ export async function descargarComandaPdf(
 ): Promise<void> {
   await descargarPdf(
     buildComandaHtml(data),
-    `heycookie_comanda_${ordenNumero}_${new Date().toISOString().slice(0, 10)}.pdf`,
+    `heycookie_comanda${data.esPrueba ? "_prueba" : ""}_${ordenNumero}_${new Date().toISOString().slice(0, 10)}.pdf`,
   );
 }

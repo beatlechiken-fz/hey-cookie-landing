@@ -2,7 +2,7 @@
 // src/modules/admin/ordenes/presentation/components/OrdenesView.tsx
 //
 // Vista principal del módulo de Órdenes.
-// Tabs horizontales: Cotizaciones | Órdenes
+// Tabs horizontales: Órdenes | Cotizaciones | Canceladas | Pruebas
 // Lista global con click → detalle (reutiliza OrdenDetailCard del módulo clientes)
 
 import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
@@ -35,13 +35,15 @@ function fmtMoney(n: number) {
 }
 
 // ── Tipos de pestaña ──────────────────────────────────────────────────────────
-type Tab = "cotizaciones" | "ordenes" | "canceladas";
+type Tab = "cotizaciones" | "ordenes" | "canceladas" | "pruebas";
 
 // Las canceladas (y las cotizaciones) tienen su propia pestaña: no entran en "Órdenes".
 const TAB_STATUSES: Record<Tab, OrdenStatus[]> = {
   cotizaciones: ["cotizacion"],
   ordenes: ["en_proceso", "listo_entregar", "pagado", "entregado"],
   canceladas: ["cancelado"],
+  // Pruebas internas: no tienen cliente ni entrega y no cuentan en finanzas.
+  pruebas: ["test"],
 };
 
 /** Sustantivo (singular, plural) de cada pestaña para los textos de conteo y vacío. */
@@ -49,6 +51,7 @@ const TAB_NOUN: Record<Tab, [string, string]> = {
   cotizaciones: ["cotización", "cotizaciones"],
   ordenes: ["orden", "órdenes"],
   canceladas: ["cancelada", "canceladas"],
+  pruebas: ["prueba", "pruebas"],
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -99,6 +102,7 @@ export function OrdenesView() {
   }
 
   const [sing, plur] = TAB_NOUN[tab];
+  const esPruebas = tab === "pruebas";
 
   function handleTabChange(t: Tab) {
     setTab(t);
@@ -128,6 +132,7 @@ export function OrdenesView() {
             { value: "ordenes" as Tab, label: "Órdenes" },
             { value: "cotizaciones" as Tab, label: "Cotizaciones" },
             { value: "canceladas" as Tab, label: "Canceladas" },
+            { value: "pruebas" as Tab, label: "Pruebas" },
           ]}
           value={tab}
           onChange={handleTabChange}
@@ -155,7 +160,7 @@ export function OrdenesView() {
             </span>
           )}
         </button>
-        <NuevaOrdenButton />
+        <NuevaOrdenButton modo={esPruebas ? "prueba" : "orden"} />
         </div>
       </div>
 
@@ -177,7 +182,9 @@ export function OrdenesView() {
             placeholder={
               tab === "cotizaciones"
                 ? "Buscar cotización por cliente o número…"
-                : "Buscar orden por cliente o número…"
+                : esPruebas
+                  ? "Buscar prueba por número…"
+                  : "Buscar orden por cliente o número…"
             }
             className={inputCls}
           />
@@ -221,11 +228,13 @@ export function OrdenesView() {
             <thead>
               <tr className="bg-hc-hover border-b border-hc-line">
                 <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
-                  {tab === "cotizaciones" ? "Cotización" : "Orden"}
+                  {tab === "cotizaciones" ? "Cotización" : esPruebas ? "Prueba" : "Orden"}
                 </th>
-                <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
-                  Cliente
-                </th>
+                {!esPruebas && (
+                  <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
+                    Cliente
+                  </th>
+                )}
                 <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Fecha
                 </th>
@@ -235,7 +244,7 @@ export function OrdenesView() {
                   </th>
                 )}
                 <th className="px-4 py-3 text-left   text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
-                  Entrega
+                  {esPruebas ? "Realización" : "Entrega"}
                 </th>
                 <th className="px-4 py-3 text-right  text-[11px] font-semibold text-hc-muted uppercase tracking-wider">
                   Total
@@ -279,11 +288,13 @@ export function OrdenesView() {
                       {fmtDate(o.createdAt)}
                     </p>
                   </td>
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-hc-ink">
-                      {o.clienteNombre ?? "Sin cliente"}
-                    </p>
-                  </td>
+                  {!esPruebas && (
+                    <td className="px-4 py-3">
+                      <p className="font-medium text-hc-ink">
+                        {o.clienteNombre ?? "Sin cliente"}
+                      </p>
+                    </td>
+                  )}
                   <td className="px-4 py-3 text-hc-soft/70 text-[13px]">
                     {fmtDate(o.createdAt)}
                   </td>
@@ -293,7 +304,13 @@ export function OrdenesView() {
                     </td>
                   )}
                   <td className="px-4 py-3 text-hc-soft/70 text-[13px]">
-                    {o.fechaEntrega ? (
+                    {esPruebas ? (
+                      o.fechaRealizacion ? (
+                        formatFechaCalendario(o.fechaRealizacion)
+                      ) : (
+                        <span className="text-hc-soft">—</span>
+                      )
+                    ) : o.fechaEntrega ? (
                       <>
                         {formatFechaCalendario(o.fechaEntrega)}
                         {o.horaEntrega && ` · ${o.horaEntrega}`}
@@ -356,12 +373,14 @@ export function OrdenesView() {
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <p className="font-bold text-hc-ink">
-                    {tab === "cotizaciones" ? "Cotización" : "Orden"} #
+                    {tab === "cotizaciones" ? "Cotización" : esPruebas ? "Prueba" : "Orden"} #
                     {o.numero}
                   </p>
-                  <p className="text-[12px] text-hc-muted">
-                    {o.clienteNombre ?? "Sin cliente"}
-                  </p>
+                  {!esPruebas && (
+                    <p className="text-[12px] text-hc-muted">
+                      {o.clienteNombre ?? "Sin cliente"}
+                    </p>
+                  )}
                   {o.items.length > 0 && (
                     <p className="mt-1 text-[12px] text-hc-ink line-clamp-3 break-words">
                       {resumenProductos(o.items)}
@@ -377,7 +396,9 @@ export function OrdenesView() {
               </div>
               <div className="flex items-center justify-between text-[11px] text-hc-muted">
                 <span>{fmtDate(o.createdAt)}</span>
-                {o.fechaEntrega ? (
+                {esPruebas && o.fechaRealizacion ? (
+                  <span>Realización: {formatFechaCalendario(o.fechaRealizacion)}</span>
+                ) : o.fechaEntrega ? (
                   <span>
                     Entrega: {formatFechaCalendario(o.fechaEntrega)}
                     {o.horaEntrega && ` · ${o.horaEntrega}`}

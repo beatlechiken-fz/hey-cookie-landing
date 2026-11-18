@@ -17,7 +17,7 @@ export function CartButton() {
   return (
     <>
       <button
-        onClick={abrir}
+        onClick={() => abrir()}
         className="relative p-2 rounded-lg hover:bg-hc-soft/10 text-hc-ink transition"
       >
         <svg

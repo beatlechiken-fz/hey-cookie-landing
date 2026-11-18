@@ -6,7 +6,9 @@ export type OrdenStatus =
   | "listo_entregar"
   | "pagado"
   | "entregado"
-  | "cancelado";
+  | "cancelado"
+  /** Prueba interna: estado único y final, sin cliente ni finanzas. */
+  | "test";
 
 export const ORDEN_STATUS_LABELS: Record<OrdenStatus, string> = {
   cotizacion: "Cotización",
@@ -15,6 +17,7 @@ export const ORDEN_STATUS_LABELS: Record<OrdenStatus, string> = {
   pagado: "Pagado",
   entregado: "Entregado",
   cancelado: "Cancelado",
+  test: "Prueba",
 };
 
 export interface OrdenItem {
@@ -56,6 +59,8 @@ export interface Orden {
   fechaEntrega: string | null;
   /** Hora de entrega opcional, formato "HH:MM". */
   horaEntrega: string | null;
+  /** Solo pruebas (status "test"): día en que se realiza, "YYYY-MM-DD". */
+  fechaRealizacion: string | null;
   direccionEntrega: string | null;
   items: OrdenItem[];
   cupones: OrdenCuponAplicado[];
@@ -80,6 +85,18 @@ export interface CreateOrdenDTO {
   direccionEntrega?: string | null;
   /** Solo aplica si status = "en_proceso" — en cotización nunca se descuenta. */
   descontarInventario?: boolean;
+}
+
+/**
+ * Prueba interna: se guarda en `ordenes` con status "test". Sin cliente, sin
+ * fecha de entrega, sin cupones ni descuentos (total = subtotal) y nunca
+ * cuenta para finanzas, inventario ni cashback.
+ */
+export interface CreatePruebaDTO {
+  items: OrdenItem[];
+  notas?: string | null;
+  /** "YYYY-MM-DD" */
+  fechaRealizacion: string;
 }
 
 export interface UpdateOrdenStatusDTO {
@@ -133,6 +150,8 @@ export const ORDEN_STATUS_EN_CURSO: OrdenStatus[] = [
  */
 export function puedeCambiarEstado(desde: OrdenStatus, hacia: OrdenStatus): boolean {
   if (desde === hacia) return false;
+  // Una prueba nace y se queda como prueba; nada entra ni sale de "test".
+  if (desde === "test" || hacia === "test") return false;
   if (desde === "entregado" || desde === "cancelado") return false;
   if (hacia === "cancelado") return true;
   if (hacia === "cotizacion") return false;

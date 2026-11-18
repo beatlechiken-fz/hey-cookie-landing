@@ -3,6 +3,7 @@
 import type {
   Orden,
   CreateOrdenDTO,
+  CreatePruebaDTO,
   OrdenStatus,
   UpdateOrdenItemDTO,
   AddOrdenItemDTO,
@@ -16,6 +17,7 @@ export interface OrdenRepository {
   findAll(filters: OrdenFilters): Promise<PaginatedResult<Orden>>;
   findById(id: string): Promise<Orden | null>;
   create(dto: CreateOrdenDTO): Promise<Orden>;
+  createPrueba(dto: CreatePruebaDTO): Promise<Orden>;
   updateStatus(id: string, status: OrdenStatus, descontarInventario?: boolean): Promise<Orden>;
   setInventarioDescontado(id: string, value: boolean): Promise<void>;
   updateFechaEntrega(id: string, fechaEntrega?: string | null, horaEntrega?: string | null): Promise<Orden>;

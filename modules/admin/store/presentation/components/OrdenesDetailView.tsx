@@ -11,6 +11,7 @@ import type {
   OrdenStatus,
 } from "@/modules/admin/store/domain/entities/Orden.entity";
 import { OrdenDetailCard } from "./OrdenDetailCard";
+import { PruebaDetailCard } from "./PruebaDetailCard";
 
 interface Props {
   ordenId: string;
@@ -60,8 +61,8 @@ export function OrdenDetailView({ ordenId }: Props) {
 
   // Determinar si es cotización u orden para el breadcrumb
   const esCotizacion = orden?.status === "cotizacion";
-  const seccion = esCotizacion ? "cotizaciones" : "ordenes";
-  const label = esCotizacion ? "Cotizaciones" : "Órdenes";
+  const esPrueba = orden?.status === "test";
+  const label = esCotizacion ? "Cotizaciones" : esPrueba ? "Pruebas" : "Órdenes";
 
   return (
     <div className="flex flex-col gap-5">
@@ -125,7 +126,8 @@ export function OrdenDetailView({ ordenId }: Props) {
       )}
 
       {/* Detalle — reutiliza exactamente el mismo componente que en clientes */}
-      {orden && !isPending && (
+      {orden && !isPending && esPrueba && <PruebaDetailCard orden={orden} />}
+      {orden && !isPending && !esPrueba && (
         <OrdenDetailCard
           orden={orden}
           onUpdateStatus={handleUpdateStatus}

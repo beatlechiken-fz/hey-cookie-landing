@@ -52,6 +52,16 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
     const body = await req.json();
     const repo = new OrdenRepositoryImpl();
 
+    // Una prueba interna es inmutable: ni estado, ni fecha, ni cliente, ni finanzas.
+    const actualOrden = await repo.findById(id);
+    if (!actualOrden)
+      return NextResponse.json({ error: "Orden no encontrada" }, { status: 404 });
+    if (actualOrden.status === "test")
+      return NextResponse.json(
+        { error: "Una prueba no se puede modificar." },
+        { status: 409 },
+      );
+
     let updated: Orden | undefined;
 
     // Actualizar status

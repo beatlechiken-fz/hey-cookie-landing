@@ -2,7 +2,11 @@
 // src/modules/admin/store/presentation/hooks/useOrdenes.ts
 
 import { useState } from "react";
-import type { CreateOrdenDTO, Orden } from "../../domain/entities/Orden.entity";
+import type {
+  CreateOrdenDTO,
+  CreatePruebaDTO,
+  Orden,
+} from "../../domain/entities/Orden.entity";
 
 async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -37,7 +41,24 @@ export function useOrdenes() {
     }
   };
 
-  return { createOrden, creating, error };
+  /** Prueba interna (status "test"): sin cliente, cupones ni finanzas. */
+  const createPrueba = async (dto: CreatePruebaDTO): Promise<Orden> => {
+    setCreating(true);
+    setError(null);
+    try {
+      return await apiFetch<Orden>("/api/admin/ordenes/pruebas", {
+        method: "POST",
+        body: JSON.stringify(dto),
+      });
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Error al crear la prueba");
+      throw e;
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  return { createOrden, createPrueba, creating, error };
 }
 
 /** Valida un cupón contra el backend dado un código y subtotal actual */

@@ -127,6 +127,7 @@ export async function GET(req: NextRequest) {
         .lte("fecha", hoy),
       db.from("ordenes")
         .select("id, numero, cliente_nombre, status, total, fecha_entrega, created_at")
+        .neq("status", "test") // pruebas internas: no son ventas
         .order("created_at", { ascending: false })
         .limit(200),
       db.from("clientes").select("*", { count: "exact", head: true }),
@@ -147,7 +148,7 @@ export async function GET(req: NextRequest) {
           .select("id, status")
           .gte("created_at", iniMes)
           .lte("created_at", `${hoy}T23:59:59`)
-          .neq("status", "cancelado");
+          .not("status", "in", "(cancelado,test)");
         if (filtros.finanzas === "si") q = q.eq("finanzas", true);
         if (filtros.finanzas === "no") q = q.eq("finanzas", false);
         return q;

@@ -44,6 +44,9 @@ export interface ComandaData {
   createdAt: string;
   notas: string | null;
   items: ItemComanda[];
+  /** Prueba interna (status "test"): la comanda se titula distinto y lleva fecha de realización. */
+  esPrueba?: boolean;
+  fechaRealizacion?: string | null;
 }
 
 /** Redondea a 2 decimales */
@@ -321,6 +324,8 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
       createdAt: orden.created_at,
       notas: orden.notas ?? null,
       items: comandaItems,
+      esPrueba: orden.status === "test",
+      fechaRealizacion: orden.fecha_realizacion ?? null,
     } satisfies ComandaData);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

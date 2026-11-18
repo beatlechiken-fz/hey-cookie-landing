@@ -11,7 +11,8 @@ import { GelatinaCotizadorModal } from "./configurador/GelatinaCotizadorModal";
 import { PersonalizadoConfiguradorModal } from "./configurador/PersonalizadoConfiguradorModal";
 import { ProductoConfiguradorModal } from "./ProductoConfiguradorModal";
 import { ProductoPickerModal } from "./ProductoPickerModal";
-import { EVENTO_ORDEN_CREADA } from "../hooks/useCartDrawerAdmin";
+import { EVENTO_ORDEN_CREADA, useCartDrawerAdmin } from "../hooks/useCartDrawerAdmin";
+import { AgregarItemCustomModal, type AddItemPayload } from "./AgregarItemCustomModal";
 import type {
   CreateOrdenDTO,
   OrdenItem,
@@ -32,7 +33,7 @@ interface Props {
 
 const noSuscribir = () => () => {};
 
-type Agregando = "catalogo" | "pastel" | "gelatina" | "armado";
+type Agregando = "catalogo" | "pastel" | "gelatina" | "armado" | "libre";
 
 // Formas de sumar productos a la orden sin salir del carrito.
 const OPCIONES_AGREGAR: { key: Agregando; label: string; d: string }[] = [
@@ -41,6 +42,19 @@ const OPCIONES_AGREGAR: { key: Agregando; label: string; d: string }[] = [
   { key: "gelatina", label: "Gelatina", d: "M4 18h16l-1.5-9.5A2 2 0 0 0 16.5 7h-9a2 2 0 0 0-2 1.5ZM3 21h18" },
   { key: "armado", label: "Armado", d: "M3 7h7v7H3ZM17.5 14a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM4 18h16" },
 ];
+
+// En una prueba también se puede capturar una línea libre (nombre + montos).
+const OPCION_LIBRE = {
+  key: "libre" as const,
+  label: "Custom",
+  d: "M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z",
+};
+
+/** Hoy en formato YYYY-MM-DD (hora local). */
+function hoyLocal() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
 
 export function CartDrawer({ open, onClose }: Props) {
   // Se monta en <body> con un portal: dentro de la topbar (que usa
@@ -60,6 +74,30 @@ export function CartDrawer({ open, onClose }: Props) {
   const subtotal = useCartStore((s) => s.subtotal());
   const descuentoTotal = useCartStore((s) => s.descuentoTotal());
   const total = useCartStore((s) => s.total());
+  const addItem = useCartStore((s) => s.addItem);
+
+  // "prueba": prueba interna — sin cliente, entrega, cupones, descuentos,
+  // envío ni inventario; lleva fecha de realización y no cuenta en finanzas.
+  const modo = useCartDrawerAdmin((s) => s.modo);
+  const setModo = useCartDrawerAdmin((s) => s.setModo);
+  const esPrueba = modo === "prueba";
+  const [fechaRealizacion, setFechaRealizacion] = useState(hoyLocal);
+  const opcionesAgregar = esPrueba ? [...OPCIONES_AGREGAR, OPCION_LIBRE] : OPCIONES_AGREGAR;
+
+  function agregarLineaLibre(p: AddItemPayload) {
+    addItem({
+      nombre: p.nombre,
+      configuracion: { tipo: "linea-libre" },
+      cantidad: p.cantidad,
+      costoUnitario: p.costoUnitario,
+      precioUnitario: p.precioUnitario,
+      desgloseCostos: null,
+      observaciones: p.observaciones ?? null,
+      cuponesItem: [],
+      origen: "linea-libre",
+    });
+    setAgregando(null);
+  }
 
   // ── Editar item del carrito: reabre el modal correcto con la config precargada ──
   const [editItem, setEditItem] = useState<CartItem | null>(null);
@@ -110,7 +148,7 @@ export function CartDrawer({ open, onClose }: Props) {
     setEditProducto(null);
   }
 
-  const { createOrden, creating } = useOrdenes();
+  const { createOrden, createPrueba, creating } = useOrdenes();
   const { validar, validating, error: cuponError } = useValidarCupon();
   const router = useRouter();
 
@@ -153,6 +191,7 @@ export function CartDrawer({ open, onClose }: Props) {
       setNotas("");
       setIncluirEnvio(false);
       setDescontarInv(true);
+      setFechaRealizacion(hoyLocal());
     }
   }, [open]);
 
@@ -300,6 +339,33 @@ export function CartDrawer({ open, onClose }: Props) {
     }
   }
 
+  async function handleGenerarPrueba() {
+    if (items.length === 0) return;
+    setLocalCuponError(null);
+    if (!fechaRealizacion) {
+      setLocalCuponError("Elige la fecha de realización de la prueba");
+      return;
+    }
+    try {
+      const prueba = await createPrueba({
+        fechaRealizacion,
+        notas: notas.trim() || null,
+        items: buildOrdenItems(),
+      });
+      window.dispatchEvent(new Event(EVENTO_ORDEN_CREADA));
+      setSuccessMsg(`Prueba #${prueba.numero} generada`);
+      clearCart();
+      setTimeout(() => {
+        setSuccessMsg(null);
+        setModo("orden");
+        onClose();
+        router.push(`/admin/dashboard/store/ordenes/${prueba.id}`);
+      }, 1200);
+    } catch (e: unknown) {
+      setLocalCuponError(e instanceof Error ? e.message : "Error al generar la prueba");
+    }
+  }
+
   const editIcon = (
     <svg
       viewBox="0 0 24 24"
@@ -360,8 +426,13 @@ export function CartDrawer({ open, onClose }: Props) {
                   <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
                 <h2 className="font-bold text-hc-soft text-base">
-                  Nueva orden
+                  {esPrueba ? "Nueva prueba" : "Nueva orden"}
                 </h2>
+                {esPrueba && (
+                  <span className="rounded-full border border-slate-300 bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-600">
+                    No cuenta en finanzas
+                  </span>
+                )}
               </div>
               <button
                 onClick={onClose}
@@ -380,8 +451,47 @@ export function CartDrawer({ open, onClose }: Props) {
               </button>
             </div>
 
+            {/* Prueba: solo fecha de realización y observaciones */}
+            {esPrueba && (
+              <div className="px-6 py-4 border-b border-hc-line shrink-0 flex flex-col gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    htmlFor="prueba-fecha"
+                    className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider"
+                  >
+                    Fecha de realización
+                  </label>
+                  <input
+                    id="prueba-fecha"
+                    type="date"
+                    required
+                    value={fechaRealizacion}
+                    onChange={(e) => setFechaRealizacion(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    htmlFor="prueba-notas"
+                    className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider"
+                  >
+                    Observaciones{" "}
+                    <span className="text-hc-soft normal-case font-normal">(opcional)</span>
+                  </label>
+                  <textarea
+                    id="prueba-notas"
+                    value={notas}
+                    onChange={(e) => setNotas(e.target.value)}
+                    rows={2}
+                    placeholder="Qué se quiere probar, ajustes a la receta…"
+                    className="w-full px-3 py-2 rounded-lg border border-hc-line-strong bg-white text-sm text-hc-ink resize-none focus:outline-none focus:border-hc-rose focus:ring-4 focus:ring-hc-rose/10 transition"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Selector de cliente */}
-            <div className="px-6 py-4 border-b border-hc-line shrink-0 relative">
+            <div className={`px-6 py-4 border-b border-hc-line shrink-0 relative ${esPrueba ? "hidden" : ""}`}>
               <label className="text-[11px] font-semibold text-hc-soft uppercase tracking-wider">
                 Cliente
               </label>
@@ -554,7 +664,7 @@ export function CartDrawer({ open, onClose }: Props) {
                   Agregar producto
                 </p>
                 <div className="grid grid-cols-2 gap-2">
-                  {OPCIONES_AGREGAR.map((o) => (
+                  {opcionesAgregar.map((o) => (
                     <button
                       key={o.key}
                       type="button"
@@ -586,7 +696,9 @@ export function CartDrawer({ open, onClose }: Props) {
                     <path d="M16 10a4 4 0 0 1-8 0" />
                   </svg>
                   <p className="text-hc-soft text-sm">
-                    Agrega productos para armar la orden
+                    {esPrueba
+                      ? "Agrega productos para armar la prueba"
+                      : "Agrega productos para armar la orden"}
                   </p>
                 </div>
               ) : (
@@ -608,7 +720,7 @@ export function CartDrawer({ open, onClose }: Props) {
                             </p>
                           </div>
                           <div className="flex items-center gap-0.5 shrink-0">
-                            {resolveOrigen(item) && (
+                            {resolveOrigen(item) && resolveOrigen(item) !== "linea-libre" && (
                               <button
                                 onClick={() => handleEdit(item)}
                                 disabled={loadingEditProducto}
@@ -693,6 +805,9 @@ export function CartDrawer({ open, onClose }: Props) {
 
                   <div className="h-px bg-hc-sunken" />
 
+                  {/* Cupones, cupón personalizado y envío: no aplican en una prueba */}
+                  {!esPrueba && (
+                  <>
                   {/* Cupones aplicados */}
                   {cupones.length > 0 && (
                     <div className="flex flex-col gap-2">
@@ -853,6 +968,9 @@ export function CartDrawer({ open, onClose }: Props) {
                     </button>
                   </div>
 
+                  </>
+                  )}
+
                   {/* Totales */}
                   <div className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between text-sm">
@@ -861,7 +979,7 @@ export function CartDrawer({ open, onClose }: Props) {
                         ${subtotal.toFixed(2)}
                       </span>
                     </div>
-                    {descuentoTotal > 0 && (
+                    {!esPrueba && descuentoTotal > 0 && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-green-600">Descuento</span>
                         <span className="text-green-600 font-medium">
@@ -869,7 +987,7 @@ export function CartDrawer({ open, onClose }: Props) {
                         </span>
                       </div>
                     )}
-                    {incluirEnvio && (
+                    {!esPrueba && incluirEnvio && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-hc-muted">Envío</span>
                         <span className="text-hc-ink font-medium">
@@ -880,7 +998,11 @@ export function CartDrawer({ open, onClose }: Props) {
                     <div className="flex items-center justify-between pt-1.5 border-t border-hc-line">
                       <span className="text-hc-soft font-bold">Total</span>
                       <span className="text-hc-rose font-bold text-xl">
-                        ${(total + (incluirEnvio ? COSTO_ENVIO : 0)).toFixed(2)}
+                        $
+                        {(esPrueba
+                          ? subtotal
+                          : total + (incluirEnvio ? COSTO_ENVIO : 0)
+                        ).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -896,6 +1018,20 @@ export function CartDrawer({ open, onClose }: Props) {
                     {successMsg}
                   </div>
                 )}
+                {esPrueba ? (
+                  <>
+                    {localCuponError && (
+                      <p className="text-[12px] text-red-600">{localCuponError}</p>
+                    )}
+                    <button
+                      onClick={handleGenerarPrueba}
+                      disabled={creating || !!successMsg}
+                      className="w-full py-2.5 rounded-xl bg-hc-rose text-white text-sm font-bold hover:bg-hc-rose-hover disabled:opacity-50 transition"
+                    >
+                      {creating ? "Generando…" : "Generar prueba"}
+                    </button>
+                  </>
+                ) : (
                 <div className="flex gap-3">
                   <button
                     onClick={() => handleGenerar("cotizacion")}
@@ -912,6 +1048,7 @@ export function CartDrawer({ open, onClose }: Props) {
                     {creating ? "Generando…" : "Generar orden"}
                   </button>
                 </div>
+                )}
               </div>
             )}
           </motion.div>
@@ -964,6 +1101,11 @@ export function CartDrawer({ open, onClose }: Props) {
         <PastelConfiguradorModal open={agregando === "pastel"} onClose={() => setAgregando(null)} />
         <GelatinaCotizadorModal open={agregando === "gelatina"} onClose={() => setAgregando(null)} />
         <PersonalizadoConfiguradorModal open={agregando === "armado"} onClose={() => setAgregando(null)} />
+        <AgregarItemCustomModal
+          open={agregando === "libre"}
+          onClose={() => setAgregando(null)}
+          onSave={agregarLineaLibre}
+        />
       </div>
     )}
     </>,

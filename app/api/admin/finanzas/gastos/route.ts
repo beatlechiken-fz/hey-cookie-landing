@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
       .select("id, status, created_at")
       .gte("created_at", desde)
       .lte("created_at", `${hasta}T23:59:59`)
-      .neq("status", "cancelado");
+      .not("status", "in", "(cancelado,test)"); // pruebas internas no cuentan
     // Flag "finanzas": solo marcadas / solo sin marcar.
     if (filtros.finanzas === "si") ordenesQ = ordenesQ.eq("finanzas", true);
     if (filtros.finanzas === "no") ordenesQ = ordenesQ.eq("finanzas", false);

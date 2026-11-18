@@ -7,6 +7,7 @@ import type {
   OrdenItem,
   OrdenCuponAplicado,
   CreateOrdenDTO,
+  CreatePruebaDTO,
   OrdenStatus,
   UpdateOrdenItemDTO,
   AddOrdenItemDTO,
@@ -67,6 +68,7 @@ function toEntity(
     notas: row.notas ?? null,
     fechaEntrega: row.fecha_entrega ?? null,
     horaEntrega: row.hora_entrega ? String(row.hora_entrega).slice(0, 5) : null,
+    fechaRealizacion: row.fecha_realizacion ?? null,
     direccionEntrega: row.direccion_entrega ?? null,
     items,
     cupones,
@@ -110,6 +112,8 @@ export class OrdenSupabaseDatasource {
       .select("*, clientes(nombre)", { count: "exact" });
     if (statuses?.length) q = q.in("status", statuses);
     else if (status) q = q.eq("status", status);
+    // Las pruebas internas solo salen cuando se piden explícitamente.
+    else q = q.neq("status", "test");
     if (clienteId) q = q.eq("cliente_id", clienteId);
     if (search) {
       const s = search.trim();
@@ -260,6 +264,52 @@ export class OrdenSupabaseDatasource {
     }
 
     return this.findById(orden.id) as Promise<Orden>;
+  }
+
+  /**
+   * Crea una prueba interna (status "test"): sin cliente, entrega, cupones,
+   * descuentos ni inventario. total = subtotal y finanzas siempre en false.
+   */
+  async createPrueba(dto: CreatePruebaDTO): Promise<Orden> {
+    const db = this.db;
+    const subtotal = dto.items.reduce((s, i) => s + i.subtotal, 0);
+
+    const { data: prueba, error } = await db
+      .from(TABLE)
+      .insert({
+        cliente_id: null,
+        status: "test",
+        subtotal,
+        descuento_total: 0,
+        total: subtotal,
+        notas: dto.notas ?? null,
+        fecha_realizacion: dto.fechaRealizacion,
+        descontar_inventario: false,
+        finanzas: false,
+      })
+      .select()
+      .single();
+    if (error) throw new Error(`create prueba: ${error.message}`);
+
+    const rows = dto.items.map((i) => ({
+      orden_id: prueba.id,
+      tipo: i.tipo,
+      nombre: i.nombre,
+      configuracion: i.configuracion,
+      cantidad: i.cantidad,
+      costo_unitario: i.costoUnitario,
+      precio_unitario: i.precioUnitario,
+      subtotal: i.subtotal,
+      desglose_costos: i.desgloseCostos ?? null,
+      observaciones: cleanObs(i.observaciones),
+    }));
+    const { error: ie } = await db.from(TABLE_ITEMS).insert(rows);
+    if (ie) {
+      await db.from(TABLE).delete().eq("id", prueba.id);
+      throw new Error(`create prueba items: ${ie.message}`);
+    }
+
+    return this.findById(prueba.id) as Promise<Orden>;
   }
 
   async updateStatus(

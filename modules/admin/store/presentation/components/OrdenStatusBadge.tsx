@@ -12,6 +12,7 @@ const STATUS_STYLES: Record<OrdenStatus, string> = {
   pagado: "bg-green-50 text-green-700 border-green-200",
   entregado: "bg-teal-50 text-teal-700 border-teal-200",
   cancelado: "bg-red-50 text-red-600 border-red-200",
+  test: "bg-slate-100 text-slate-600 border-slate-300",
 };
 
 export function OrdenStatusBadge({ status }: { status: OrdenStatus }) {

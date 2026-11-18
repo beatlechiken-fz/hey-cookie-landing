@@ -18,7 +18,8 @@ export type CartItemOrigen =
   | "producto-modal" // público, ProductoModal (producto de catálogo)
   | "cookie-modal" // público, CookieModal (galleta simple, sin configurador)
   | "pastel-custom" // público, CustomPipeline (Arma tu Postre — pastel)
-  | "gelatina-custom"; // público, CustomPipeline (Arma tu Postre — gelatina)
+  | "gelatina-custom" // público, CustomPipeline (Arma tu Postre — gelatina)
+  | "linea-libre"; // admin, AgregarItemCustomModal (nombre + montos manuales, sin configurador)
 
 export interface CartItem {
   id: string;

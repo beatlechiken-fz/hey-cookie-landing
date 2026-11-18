@@ -37,6 +37,13 @@ export async function POST(req: NextRequest, { params }: Params) {
   const monto = Number(body.monto);
   if (!monto || monto <= 0)
     return NextResponse.json({ error: "Monto inválido" }, { status: 400 });
+  const { data: ord } = await getSupabaseAdmin()
+    .from("ordenes")
+    .select("status")
+    .eq("id", id)
+    .maybeSingle();
+  if (ord?.status === "test")
+    return NextResponse.json({ error: "Una prueba no lleva pagos." }, { status: 409 });
   const fecha: string = body.fecha ?? new Date().toISOString().slice(0, 10);
   if (body.observaciones != null && typeof body.observaciones !== "string")
     return NextResponse.json({ error: "Observación inválida" }, { status: 400 });

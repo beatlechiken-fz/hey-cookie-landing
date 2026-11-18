@@ -8,6 +8,7 @@ import {
   OBSERVACIONES_MAX,
   puedeCambiarEstado,
   type CreateOrdenDTO,
+  type CreatePruebaDTO,
   type Orden,
   type OrdenStatus,
   type UpdateOrdenItemDTO,
@@ -64,7 +65,43 @@ export class CreateOrdenUseCase {
   execute(dto: CreateOrdenDTO) {
     if (dto.items.length === 0)
       throw new Error("La orden debe tener al menos un producto");
+    // Las pruebas tienen su propio caso de uso (sin cliente, cupones ni finanzas).
+    if (dto.status !== "cotizacion" && dto.status !== "en_proceso")
+      throw new Error("Una orden nueva solo puede ser cotización u orden en proceso");
     return this.repo.create(dto);
+  }
+}
+
+/** Prueba interna: solo productos, observaciones y fecha de realización. */
+export class CreatePruebaUseCase {
+  constructor(private repo: OrdenRepository) {}
+  execute(dto: CreatePruebaDTO) {
+    if (!Array.isArray(dto.items) || dto.items.length === 0)
+      throw new Error("La prueba debe tener al menos un producto");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dto.fechaRealizacion ?? ""))
+      throw new Error("La fecha de realización es requerida (YYYY-MM-DD)");
+    for (const i of dto.items) {
+      if (!i.nombre?.trim()) throw new Error("Cada producto necesita nombre");
+      if (!(i.cantidad >= 1)) throw new Error("La cantidad debe ser al menos 1");
+      if (i.costoUnitario < 0 || i.precioUnitario < 0)
+        throw new Error("Los montos no pueden ser negativos");
+    }
+    return this.repo.createPrueba({
+      fechaRealizacion: dto.fechaRealizacion,
+      notas: dto.notas?.trim() || null,
+      items: dto.items.map((i) => ({
+        tipo: "pastel_personalizado",
+        nombre: i.nombre.trim(),
+        configuracion: i.configuracion ?? {},
+        cantidad: i.cantidad,
+        costoUnitario: i.costoUnitario,
+        precioUnitario: i.precioUnitario,
+        // Sin descuentos: el subtotal siempre es precio × cantidad.
+        subtotal: i.precioUnitario * i.cantidad,
+        desgloseCostos: i.desgloseCostos ?? null,
+        observaciones: i.observaciones ?? null,
+      })),
+    });
   }
 }
 
@@ -114,6 +151,7 @@ export class UpdateOrdenItemObservacionesUseCase {
   async execute(ordenId: string, itemId: string, observaciones: string | null) {
     const existing = await this.repo.findById(ordenId);
     if (!existing) throw new Error(`Orden ${ordenId} no encontrada`);
+    if (existing.status === "test") throw new Error("Una prueba no se puede modificar.");
     // Las observaciones son notas: se pueden editar en cualquier estado, sin la regla de partidas.
     if (!existing.items.some((i) => i.id === itemId))
       throw new Error(`La orden no tiene un producto ${itemId}`);
@@ -144,6 +182,8 @@ export class UpdateOrdenFinanzasUseCase {
   async execute(id: string, value: boolean) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new Error(`Orden ${id} no encontrada`);
+    if (existing.status === "test")
+      throw new Error("Una prueba no cuenta para finanzas.");
     if (!ORDEN_STATUS_FINANZAS.includes(existing.status))
       throw new Error(
         "Solo se puede marcar para finanzas una venta pagada o entregada.",
