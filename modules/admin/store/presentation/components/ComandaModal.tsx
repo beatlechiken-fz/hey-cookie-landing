@@ -67,10 +67,16 @@ export function ComandaModal({ ordenId, open, onClose }: Props) {
   }
 
   const item = data?.items[Number(itemSel)];
-  const entrega = data?.fechaEntrega
-    ? formatFechaCalendario(data.fechaEntrega, { weekday: "short", day: "numeric", month: "short" }) +
-      (data.horaEntrega ? ` · ${data.horaEntrega}` : "")
-    : null;
+  const esPrueba = !!data?.esPrueba;
+  // En una prueba la fecha que importa es la de realización, no la de entrega.
+  const entrega = esPrueba
+    ? data?.fechaRealizacion
+      ? formatFechaCalendario(data.fechaRealizacion, { weekday: "short", day: "numeric", month: "short" })
+      : null
+    : data?.fechaEntrega
+      ? formatFechaCalendario(data.fechaEntrega, { weekday: "short", day: "numeric", month: "short" }) +
+        (data.horaEntrega ? ` · ${data.horaEntrega}` : "")
+      : null;
 
   return (
     <AnimatePresence>
@@ -102,10 +108,10 @@ export function ComandaModal({ ordenId, open, onClose }: Props) {
               <div className="relative flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-hc-line py-4 pl-5 pr-14 sm:pl-6">
                 <div className="min-w-0">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-hc-soft">
-                    Comanda de producción
+                    {esPrueba ? "Comanda de prueba" : "Comanda de producción"}
                   </p>
                   <h2 id="comanda-titulo" className="mt-0.5 text-[20px] font-bold text-hc-ink">
-                    Orden #{data?.numero ?? "…"}
+                    {esPrueba ? "Prueba" : "Orden"} #{data?.numero ?? "…"}
                     {data?.clienteNombre && (
                       <span className="font-semibold text-hc-muted"> · {data.clienteNombre}</span>
                     )}
@@ -116,7 +122,7 @@ export function ComandaModal({ ordenId, open, onClose }: Props) {
                         <rect x="3" y="4" width="18" height="18" rx="2" />
                         <path d="M16 2v4M8 2v4M3 10h18" />
                       </svg>
-                      Entrega {entrega}
+                      {esPrueba ? "Realización" : "Entrega"} {entrega}
                     </p>
                   )}
                 </div>

@@ -7,6 +7,7 @@
 
 import { PanelTabs } from "@/core/components/panel-shell/PanelTabs";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { NuevaOrdenButton } from "./NuevaOrdenButton";
 import { EVENTO_ORDEN_CREADA } from "../hooks/useCartDrawerAdmin";
 import { useRouter } from "@/i18n/navigation";
@@ -58,8 +59,11 @@ const TAB_NOUN: Record<Tab, [string, string]> = {
 
 export function OrdenesView() {
   const router = useRouter();
-  // "Órdenes" es siempre la pestaña inicial.
-  const [tab, setTab] = useState<Tab>("ordenes");
+  // "Órdenes" es la pestaña inicial, salvo ?tab=pruebas (regreso desde el detalle de una prueba).
+  const searchParams = useSearchParams();
+  const [tab, setTab] = useState<Tab>(
+    searchParams.get("tab") === "pruebas" ? "pruebas" : "ordenes",
+  );
   // Filtro por estatus (solo pestaña Órdenes). Vacío = todos los de la pestaña.
   const [statusSel, setStatusSel] = useState<OrdenStatus[]>([]);
   const [search, setSearch] = useState("");

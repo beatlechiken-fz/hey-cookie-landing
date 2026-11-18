@@ -70,7 +70,13 @@ export function OrdenDetailView({ ordenId }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2 text-sm text-hc-muted">
           <button
-            onClick={() => router.push("/admin/dashboard/store/ordenes")}
+            onClick={() =>
+              router.push(
+                esPrueba
+                  ? "/admin/dashboard/store/ordenes?tab=pruebas"
+                  : "/admin/dashboard/store/ordenes",
+              )
+            }
             className="hover:text-hc-rose transition font-medium"
           >
             {label}
